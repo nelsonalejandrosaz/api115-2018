@@ -48,8 +48,8 @@
                 <a href="#"><i class='fa fa-industry'></i> <span>Productos</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="">Lista de productos</a></li>
-                    <li><a href="">Nuevo producto</a></li>
+                    <li><a href="{{route('productoLista')}}">Lista de productos</a></li>
+                    <li><a href="{{route('productoNuevo')}}">Nuevo producto</a></li>
                 </ul>
             </li>
 
@@ -68,8 +68,8 @@
                 <a href="#"><i class='fa fa-tags'></i> <span>Categorías</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="#">Lista de categorías</a></li>
-                    <li><a href="#">Nueva categoría</a></li>
+                    <li><a href="{{route('categoriaLista')}}">Lista de categorías</a></li>
+                    <li><a href="{{route('categoriaNuevo')}}">Nueva categoría</a></li>
                 </ul>
             </li>
 
