@@ -30,7 +30,7 @@
                                 class="fa fa-plus"></span> Nueva</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <table id="tablaAlumnos" class="table table-hover">
+                    <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width:10%">Código</th>
@@ -48,7 +48,7 @@
                                 <td align="center">
                                     <a href="{{ route('categoriaVer', ['id' => $categoria->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     <a href="{{ route('categoriaEditar', ['id' => $categoria->id]) }}" class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-producto="{{ $categoria->nombre }}"
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-objeto="{{ $categoria->nombre }}"
                                             data-id="{{ $categoria->id }}" data-ruta="categoria">
                                         <span class="fa fa-trash"></span>
                                     </button>
@@ -69,4 +69,5 @@
 
 @section('JSExtras')
     <script src="{{ asset('/js/modal-eliminar.js') }}"></script>
+    @include('comun.dataTablesJSes')
 @endsection

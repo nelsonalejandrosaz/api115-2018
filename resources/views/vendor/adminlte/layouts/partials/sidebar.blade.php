@@ -19,37 +19,77 @@
             </div>
     @endif
 
-    <!-- search form (Optional) -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control"
-                       placeholder="{{ trans('adminlte_lang::message.search') }}..."/>
-                <span class="input-group-btn">
-                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i
-                            class="fa fa-search"></i></button>
-              </span>
-            </div>
-        </form>
-        <!-- /.search form -->
+    {{--<!-- search form (Optional) -->--}}
+        {{--<form action="#" method="get" class="sidebar-form">--}}
+            {{--<div class="input-group">--}}
+                {{--<input type="text" name="q" class="form-control"--}}
+                       {{--placeholder="{{ trans('adminlte_lang::message.search') }}..."/>--}}
+                {{--<span class="input-group-btn">--}}
+                {{--<button type='submit' name='search' id='search-btn' class="btn btn-flat"><i--}}
+                            {{--class="fa fa-search"></i></button>--}}
+              {{--</span>--}}
+            {{--</div>--}}
+        {{--</form>--}}
+        {{--<!-- /.search form -->--}}
 
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li class="header">OPCIONES</li>
+            <li class="header">Actividades</li>
             <!-- Optionally, you can add icons to the links -->
 
             {{--Inicio--}}
             <li class="active"><a href="{{ url('home') }}"><i class='fa fa-home'></i> <span>Inicio</span></a></li>
 
             {{-- Inventario general --}}
-            <li><a href=""><i class='glyphicon glyphicon-list'></i> <span>Inventario</span></a></li>
+            <li><a href="{{route('inventarioLista')}}"><i class='glyphicon glyphicon-list'></i> <span>Inventario</span></a></li>
 
             {{-- Productos --}}
             <li class="treeview">
-                <a href="#"><i class='fa fa-industry'></i> <span>Productos</span> <i
+                <a href="#"><i class='fa fa-ticket'></i> <span>Productos</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="{{route('productoLista')}}">Lista de productos</a></li>
                     <li><a href="{{route('productoNuevo')}}">Nuevo producto</a></li>
+                </ul>
+            </li>
+
+            {{-- Compras --}}
+            <li class="treeview">
+                <a href="#"><i class='fa fa-toggle-left'></i> <span>Compras</span> <i
+                            class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="{{route('compraLista')}}">Lista de compras</a></li>
+                    <li><a href="{{route('compraNueva')}}">Ingresar compra</a></li>
+                </ul>
+            </li>
+
+            {{-- Orden de pedido --}}
+            <li class="treeview">
+                <a href="#"><i class='fa fa-toggle-right'></i> <span>Orden de pedido</span> <i
+                            class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="{{route('ordenPedidoLista')}}">Lista de ordenes de pedidos</a></li>
+                    <li><a href="{{route('ordenPedidoNueva')}}">Nueva orden de pedido</a></li>
+                </ul>
+            </li>
+
+            {{-- Ventas --}}
+            <li class="treeview">
+                <a href="#"><i class='fa fa-truck'></i> <span>Ventas</span> <i
+                            class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="{{route('ordenPedidoLista')}}">Lista de ventas</a></li>
+                    <li><a href="{{route('ordenPedidoNueva')}}">Nueva venta</a></li>
+                </ul>
+            </li>
+
+            {{-- Ajustes --}}
+            <li class="treeview">
+                <a href="#"><i class='fa fa-exclamation-circle'></i> <span>Ajustes de inventario</span> <i
+                            class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="{{route('ajusteLista')}}">Lista de ajustes</a></li>
+                    <li><a href="{{route('ajusteNuevo')}}">Nuevo ajuste</a></li>
                 </ul>
             </li>
 
@@ -58,8 +98,18 @@
                 <a href="#"><i class='fa fa-link'></i> <span>Proveedores</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="">Lista de proveedores</a></li>
-                    <li><a href="">Nuevo proveedor</a></li>
+                    <li><a href="{{route('proveedorLista')}}">Lista de proveedores</a></li>
+                    <li><a href="{{route('proveedorNuevo')}}">Nuevo proveedor</a></li>
+                </ul>
+            </li>
+
+            {{-- Clientes --}}
+            <li class="treeview">
+                <a href="#"><i class='fa fa-link'></i> <span>Clientes</span> <i
+                            class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="{{route('clienteLista')}}">Lista de clientes</a></li>
+                    <li><a href="{{route('clienteNuevo')}}">Nuevo cliente</a></li>
                 </ul>
             </li>
 
@@ -83,33 +133,9 @@
                 </ul>
             </li>
 
-            {{-- Entradas --}}
-            <li class="treeview">
-                <a href="#"><i class='fa fa-arrow-down'></i> <span>Entrada de producto</span> <i
-                            class="fa fa-angle-left pull-right"></i></a>
-                <ul class="treeview-menu">
-                    <li><a href="">Lista de facturas</a></li>
-                    <li><a href="">Ingresar factura</a></li>
-                    <li><a href="">Ajustes de entrada</a></li>
-                    <li><a href="">Lista de ajustes de entrada</a></li>
-                </ul>
-            </li>
-
-            {{-- Salidas --}}
-            <li class="treeview">
-                <a href="#"><i class='fa fa-arrow-up'></i> <span>Salida de productos</span> <i
-                            class="fa fa-angle-left pull-right"></i></a>
-                <ul class="treeview-menu">
-                    <li><a href="">Lista de ordenes de pedidos</a></li>
-                    <li><a href="">Nueva orden de pedido</a></li>
-                    <li><a href="">Ajustes de salida</a></li>
-                    <li><a href="">Lista de ajustes de salida</a>
-                </ul>
-            </li>
-
             {{-- Produccion --}}
             <li class="treeview">
-                <a href="#"><i class='fa fa-gears'></i> <span>Produccion</span> <i
+                <a href="#"><i class='fa fa-industry'></i> <span>Produccion</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="#">Lista de producciones</a></li>

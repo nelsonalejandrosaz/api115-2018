@@ -20,12 +20,12 @@ class CreateProductosTable extends Migration
             $table->integer('categoria_id')->unsigned();
             $table->string('nombre')->unique();
             $table->string('codigo')->unique()->nullable();
-            $table->float('existenciaMin',8,2)->default(0);
-            $table->float('existenciaMax',8,2)->default(1000);
-            $table->float('cantidad')->default(0);
-            $table->float('precioCompra')->default(0);
-            $table->float('precioVenta')->default(0);
-            $table->float('margenGanancia')->default(0);
+            $table->float('existenciaMin',8,2)->default(0.00);
+            $table->float('existenciaMax',8,2)->default(1000.00);
+            $table->float('cantidadExistencia')->default(0.00);
+            $table->float('precioCompra')->default(0.00);
+            $table->float('precioVenta')->default(0.00);
+            $table->float('margenGanancia')->default(0.00);
             $table->timestamps();
         });
     }

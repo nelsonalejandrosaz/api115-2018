@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
  */
 class Producto extends Model
 {
@@ -55,6 +56,11 @@ class Producto extends Model
     public function categoria()
     {
         return $this->belongsTo('App\Categoria');
+    }
+
+    public function movimientos()
+    {
+        return $this->hasMany('App\Movimiento');
     }
 
     protected $fillable = [

@@ -48,7 +48,7 @@
 
                     {{-- Nombre del producto --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Nombre del producto</label>
+                        <label class="col-sm-4 control-label"><b>Nombre del producto</b></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" name="nombre" value="{{ $producto->nombre }}">
                         </div>
@@ -56,7 +56,7 @@
 
                     {{-- Categoria --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Categoria</label>
+                        <label class="col-sm-4 control-label"><b>Categoria</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="categoria_id">
                                 @foreach($categorias as $categoria)
@@ -72,7 +72,7 @@
 
                     {{-- Unidad de medida compra --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Unidad de medida</label>
+                        <label class="col-sm-4 control-label"><b>Unidad de medida</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="unidad_medida_id">
                                 @foreach($unidadMedidas as $unidadMedida)
@@ -88,7 +88,7 @@
 
                     {{-- Tipo de producto --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Tipo del producto</label>
+                        <label class="col-sm-4 control-label"><b>Tipo del producto</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="tipo_producto_id">
                                 @foreach($tipoProductos as $tipoProducto)

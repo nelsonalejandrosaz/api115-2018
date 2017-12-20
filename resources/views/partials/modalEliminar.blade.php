@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 <p>Al eliminar esto no se podrá recuperar</p>
-                <p id="mensaje"></p>
+                <p id="mensaje01"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>

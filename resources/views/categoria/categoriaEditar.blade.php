@@ -37,7 +37,7 @@
 
                     {{-- Codigo de la categoria --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Código categoría</label>
+                        <label class="col-sm-4 control-label"><b>Código categoría</b></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" placeholder="ACT" name="codigo"
                                    value="{{$categoria->codigo}}">
@@ -46,7 +46,7 @@
 
                     {{-- Nombre de la categoría --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Nombre categoría</label>
+                        <label class="col-sm-4 control-label"><b>Nombre categoría</b></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" placeholder="Categoría" name="nombre"
                                    value="{{$categoria->nombre}}">

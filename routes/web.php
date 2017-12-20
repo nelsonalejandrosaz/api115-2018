@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -37,4 +37,49 @@ Route::group(['middleware' => 'auth'], function () {
     Route::name('categoriaEditar')->get('/categoria/{id}/editar','CategoriaController@CategoriaEditar');
     Route::name('categoriaEditarPut')->put('/categoria/{id}','CategoriaController@CategoriaEditarPut');
     Route::name('categoriaEliminar')->delete('/categoria/{id}','CategoriaController@CategoriaEliminar');
+
+    /**
+     * Rutas de proveedores
+     */
+    Route::name('proveedorLista')->get('/proveedor','ProveedorController@ProveedorLista');
+    Route::name('proveedorNuevo')->get('/proveedor/nuevo','ProveedorController@ProveedorNuevo');
+    Route::name('proveedorNuevoPost')->post('/proveedor/nuevo','ProveedorController@ProveedorNuevoPost');
+    Route::name('proveedorVer')->get('/proveedor/{id}','ProveedorController@ProveedorVer');
+    Route::name('proveedorEditar')->get('/proveedor/{id}/editar','ProveedorController@ProveedorEditar');
+    Route::name('proveedorEditarPut')->put('/proveedor/{id}','ProveedorController@ProveedorEditarPut');
+    Route::name('proveedorEliminar')->delete('/proveedor/{id}','ProveedorController@ProveedorEliminar');
+
+    /**
+     * Rutas de cliente
+     */
+    Route::name('clienteLista')->get('/cliente','ClienteController@ClienteLista');
+    Route::name('clienteNuevo')->get('/cliente/nuevo','ClienteController@ClienteNuevo');
+    Route::name('clienteNuevoPost')->post('/cliente/nuevo','ClienteController@ClienteNuevoPost');
+    Route::name('clienteVer')->get('/cliente/{id}','ClienteController@ClienteVer');
+    Route::name('clienteEditar')->get('/cliente/{id}/editar','ClienteController@ClienteEditar');
+    Route::name('clienteEditarPut')->put('/cliente/{id}','ClienteController@ClienteEditarPut');
+    Route::name('clienteEliminar')->delete('/cliente/{id}','ClienteController@ClienteEliminar');
+
+    /**
+     * Movimientos
+     */
+    Route::name('compraLista')->get('/compra','CompraController@CompraLista');
+    Route::name('compraNueva')->get('/compra/nueva','CompraController@CompraNueva');
+    Route::name('compraNuevaPost')->post('/compra/nueva','CompraController@CompraNuevaPost');
+    Route::name('compraVer')->get('/compra/{id}','CompraController@CompraVer');
+    Route::name('ordenPedidoLista')->get('/ordenPedido','OrdenPedidoController@OrdenPedidoLista');
+    Route::name('ordenPedidoNueva')->get('/ordenPedido/nueva','OrdenPedidoController@OrdenPedidoNueva');
+    Route::name('ordenPedidoNuevaPost')->post('/ordenPedido/nueva','OrdenPedidoController@OrdenPedidoNuevaPost');
+    Route::name('ordenPedidoVer')->get('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoVer');
+    Route::name('ajusteLista')->get('/ajuste','AjusteController@AjusteLista');
+    Route::name('ajusteNuevo')->get('/ajuste/nuevo','AjusteController@AjusteNuevo');
+    Route::name('ajusteNuevoPost')->post('/ajuste/nuevo','AjusteController@AjusteNuevoPost');
+    Route::name('ajusteVer')->get('/ajuste/{id}','AjusteController@AjusteVer');
+
+    /**
+     * Rutas de inventario
+     */
+    Route::name('inventarioLista')->get('/inventario','InventarioController@InventarioLista');
+    Route::name('kardexProducto')->get('/inventario/{id}','InventarioController@InventarioKardex');
+
 });
