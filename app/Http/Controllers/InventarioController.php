@@ -11,7 +11,8 @@ class InventarioController extends Controller
     {
         $productos = Producto::all();
         foreach ($productos as $producto) {
-            $producto->porcentajeStock = abs(($producto->cantidad) / ($producto->existenciaMax - $producto->existenciaMin) * 100);
+            $producto->costoTotal = $producto->cantidadExistencia * $producto->costo;
+            $producto->porcentajeStock = abs(($producto->cantidadExistencia) / ($producto->existenciaMax - $producto->existenciaMin) * 100);
         }
         return view('inventario.inventarioLista')->with(['productos' => $productos]);
     }

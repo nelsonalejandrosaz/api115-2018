@@ -44,36 +44,48 @@ class ProductoController extends Controller
     public function ProductoNuevoPost(Request $request)
     {
         $this->validate($request, [
+            'codigo' => 'unique:productos|nullable',
             'nombre' => 'required|unique:productos',
             'categoria_id' => 'required',
             'tipo_producto_id' => 'required',
             'unidad_medida_id' => 'required',
             'existenciaMin' => 'numeric|nullable',
             'existenciaMax' => 'numeric|nullable',
+            'costo' => 'numeric|nullable',
+            'precio' => 'numeric|nullable',
+            'margenGanancia' => 'numeric|nullable',
         ]);
+        $existenciaMin = ($request->input('existenciaMin') == null) ? 0 : $existenciaMin = $request->input('existenciaMin');
+        $existenciaMax = ($request->input('existenciaMax') == null) ? 1000 : $existenciaMax = $request->input('existenciaMax');
+        $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
+        $precio = ($request->input('precio') == null) ? 0.00 : $request->input('precio');
+        $margenGanancia = ($request->input('margenGanancia') == null) ? 0 : $request->input('margenGanancia');
+        $producto = Producto::create([
+            'nombre' => $request->input('nombre'),
+            'tipo_producto_id' => $request->input('tipo_producto_id'),
+            'unidad_medida_id' => $request->input('unidad_medida_id'),
+            'categoria_id' => $request->input('categoria_id'),
+            'existenciaMin' => $existenciaMin,
+            'existenciaMax' => $existenciaMax,
+            'costo' => $costo,
+            'precio' => $precio,
+            'margenGanancia' => $margenGanancia,
+        ]);
+        if ($request->input('codigo') == null)
+        {
+//          Asignacion del codigo del producto
+            $ids = $producto->id;
+            $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
+            $codigo = $producto->tipoProducto->codigo . $ids;
+            $producto->codigo = $codigo;
+            $producto->update();
+        } else
+        {
+//            Asignacion del codigo del producto
+            $producto->codigo = $request->input('codigo');
+            $producto->update();
+        }
 
-//        if (Producto::where('nombre',$request->nombre)->first() != null) {
-//            $request->flash();
-//            session()->flash('mensaje.tipo', 'danger');
-//            session()->flash('mensaje.icono', 'fa-ban');
-//            session()->flash('mensaje.contenido', 'El producto con ese nombre ya existe!');
-//            return redirect()->route('productoNuevo');
-//        }
-
-        $producto = Producto::create($request->only(
-            'nombre',
-            'tipo_producto_id',
-            'unidad_medida_id',
-            'categoria_id',
-            'existenciaMin',
-            'existenciaMax'
-        ));
-        // Asignacion del codigo del producto
-        $ids = $producto->id;
-        $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
-        $codigo = $producto->tipoProducto->codigo . $ids;
-        $producto->codigo = $codigo;
-        $producto->update();
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
@@ -99,6 +111,10 @@ class ProductoController extends Controller
         $producto = Producto::find($request->id);
 
         $this->validate($request, [
+            'codigo' => [
+                'required',
+                Rule::unique('productos')->ignore($producto->id),
+            ],
             'nombre' => [
                 'required',
                 Rule::unique('productos')->ignore($producto->id),
@@ -107,22 +123,43 @@ class ProductoController extends Controller
             'unidad_medida_id' => 'required',
             'existenciaMin' => 'numeric|nullable',
             'existenciaMax' => 'numeric|nullable',
+            'costo' => 'numeric|nullable',
+            'precio' => 'numeric|nullable',
+            'margenGanancia' => 'numeric|nullable',
         ]);
 
-        $producto->update($request->only(
-            'nombre',
-            'tipo_producto_id',
-            'unidad_medida_id',
-            'categoria_id',
-            'existenciaMin',
-            'existenciaMax'));
+        $existenciaMin = ($request->input('existenciaMin') == null) ? 0 : $existenciaMin = $request->input('existenciaMin');
+        $existenciaMax = ($request->input('existenciaMax') == null) ? 1000 : $existenciaMax = $request->input('existenciaMax');
+        $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
+        $precio = ($request->input('precio') == null) ? 0.00 : $request->input('precio');
+        $margenGanancia = ($request->input('margenGanancia') == null) ? 0 : $request->input('margenGanancia');
 
-        // Asignacion del codigo del producto
-        $ids = $producto->id;
-        $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
-        $codigo = $producto->TipoProducto->codigo . $ids;
-        $producto->codigo = $codigo;
-        $producto->update();
+        $producto->update([
+            'nombre' => $request->input('nombre'),
+            'tipo_producto_id' => $request->input('tipo_producto_id'),
+            'unidad_medida_id' => $request->input('unidad_medida_id'),
+            'categoria_id' => $request->input('categoria_id'),
+            'existenciaMin' => $existenciaMin,
+            'existenciaMax' => $existenciaMax,
+            'costo' => $costo,
+            'precio' => $precio,
+            'margenGanancia' => $margenGanancia,
+        ]);
+
+        if ($request->input('codigo') == null)
+        {
+//          Asignacion del codigo del producto
+            $ids = $producto->id;
+            $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
+            $codigo = $producto->tipoProducto->codigo . $ids;
+            $producto->codigo = $codigo;
+            $producto->update();
+        } else
+        {
+//            Asignacion del codigo del producto
+            $producto->codigo = $request->input('codigo');
+            $producto->update();
+        }
 //        Mensaje de exito al editar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

@@ -33,10 +33,11 @@
                         <tr>
                             <th style="width: 10%">Código</th>
                             <th style="width: 30%">Nombre</th>
-                            <th style="width: 15%">Cantidad total</th>
-                            <th style="width: 15%">Valor total</th>
-                            <th style="width: 20%">Stock</th>
-                            <th style="width: 10%">Acción</th>
+                            <th style="width: 10%">Unidad Medida</th>
+                            <th style="width: 15%">Cantidad Existencia</th>
+                            <th style="width: 15%">Costo total</th>
+                            <th style="width: 15%">Stock</th>
+                            <th style="width: 5%">Acción</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -44,8 +45,9 @@
                             <tr>
                                 <td>{{$producto->codigo}}</td>
                                 <td>{{$producto->nombre}}</td>
-                                <td>{{$producto->cantidadActual}} {{$producto->unidadMedida->nombre}}</td>
-                                <td>${{ number_format($producto->precioCompra,2)}}</td>
+                                <td>{{$producto->unidadMedida->nombre}}</td>
+                                <td>{{$producto->cantidadExistencia}}</td>
+                                <td>${{ number_format($producto->costoTotal,2)}}</td>
                                 @if($producto->porcentajeStock >= 40)
                                     <td>
                                         <div class="progress progress-xs">

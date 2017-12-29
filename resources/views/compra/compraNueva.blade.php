@@ -80,7 +80,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Ingresado por:</b></label>
                         <div class="col-md-8">
-                            <input disabled type="text" class="form-control" name="ingresadoPor" value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
+                            <input disabled type="text" class="form-control" name="ingresado_id" value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
                         </div>
                     </div>
 
@@ -99,8 +99,7 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <td style="width: 5%">#</td>
-                            <th style="width: 40%">Producto</th>
+                            <th style="width: 45%">Producto</th>
                             <th style="width: 10%">Unidad medida</th>
                             <th style="width: 10%">Cantidad</th>
                             <th style="width: 15%">Costo unitario</th>
@@ -108,23 +107,19 @@
                             <th style="width: 5%">
                                 <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
                                         type="button">
-                                    <span class="fa fa-plus"></span> Agregar
+                                    <span class="fa fa-plus"></span>
                                 </button>
                             </th>
                         </tr>
                         <tr id="base">
-                            {{--id--}}
-                            <td>
-                                1
-                            </td>
+
                             {{--producto--}}
                             <td>
                                 <select class="form-control select2 selProd" style="width: 100%" name="productos_id[]"
                                         id="selectProductos">
                                     <option value="" disabled selected>Seleccione un producto</option>
                                     @foreach($productos as $producto)
-                                        <option value="{{ $producto->id }}"
-                                                data-um="{{ $producto->unidadMedida->abreviatura }}">{{ $producto->nombre }}</option>
+                                        <option value="{{ $producto->id }}" data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -144,14 +139,14 @@
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control costoUnitarioCls" value="0" name="" id="costoUnitario" required>
+                                    <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="0.00" name="costoUnitarios[]" id="costoUnitario" required>
                                 </div>
                             </td>
                             {{--costo total --}}
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control costoTotalCls" value="0" name="valoresTotales[]" id="costoTotal" required>
+                                    <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="0.00" name="costoTotales[]" id="costoTotal" required>
                                 </div>
                             </td>
                             <td align="center">
@@ -161,6 +156,21 @@
                             </td>
                         </tr>
                     </table>
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width:65%"></th>
+                            <th style="width:15%">Compra Total</th>
+                            <th style="width:15%">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control" value="0.00" name="compraTotal" id="compraTotal" disabled>
+                                </div>
+                            </th>
+                            <th style="width:5%"></th>
+                        </tr>
+                    </table>
+
                 </div>
 
             </div><!-- /.box-body -->
@@ -198,14 +208,6 @@
                             $('<td>')
                                 .append
                                 (
-                                    numero
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
                                     copia
                                 )
                         )
@@ -214,7 +216,9 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<div class="input-group"><input class="form-control" type="number" placeholder="100" name="cantidades[]" required><span class="input-group-addon unimed" id="spamUM">---</span></div>'
+                                    '<div class="input-group">\n' +
+                                    '<input type="text" class="form-control" placeholder="---" id="unidadMedidaLbl" disabled>\n' +
+                                    '</div>'
                                 )
                         )
                         .append
@@ -222,7 +226,31 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<div class="input-group"><span class="input-group-addon">$</span><input type="number" class="form-control" placeholder="100" name="valoresTotales[]" required></div>'
+                                    '<div class="input-group">\n' +
+                                    '<input class="form-control cantidadCls" type="number" value="0" name="cantidades[]" id="cantidad" required>\n' +
+                                    '</div>'
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>')
+                                .append
+                                (
+                                    '<div class="input-group">\n' +
+                                    '<span class="input-group-addon">$</span>\n' +
+                                    '<input type="number" step="0.01" class="form-control costoUnitarioCls" value="0.00" name="costoUnitarios[]" id="costoUnitario" required>\n' +
+                                    '</div>'
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>')
+                                .append
+                                (
+                                    '<div class="input-group">\n' +
+                                    '<span class="input-group-addon">$</span>\n' +
+                                    '<input type="number" step="0.01" class="form-control costoTotalCls" value="0.00" name="costoTotales[]" id="costoTotal" required>\n' +
+                                    '</div>'
                                 )
                         )
                         .append
@@ -247,29 +275,47 @@
             // $(this).closest('tr').remove();
             $(this).parent().parent().remove();
             numero--;
+            cambioTotal();
         }
 
         function agregarFuncion() {
             $('.selProd').each(
                 function (index, value) {
+                    $(this).keyup(unidadMedida);
                     $(this).change(unidadMedida);
                 }
             );
             $('.cantidadCls').each(
                 function (index, value) {
+                    $(this).keyup(cambioCantidad);
                     $(this).change(cambioCantidad);
                 }
             );
             $('.costoUnitarioCls').each(
                 function (index, value) {
-                    $(this).change(cambioCostoUnitario)
+                    $(this).keyup(cambioCostoUnitario);
+                    $(this).change(cambioCostoUnitario);
                 }
             );
             $('.costoTotalCls').each(
                 function (index, value) {
-                    $(this).change(cambioCostoTotal)
+                    $(this).keyup(cambioCostoTotal);
+                    $(this).change(cambioCostoTotal);
                 }
             );
+        }
+        
+        function cambioTotal() {
+            var compraTotal = 0;
+            $(".costoTotalCls").each(
+                function(index, value) {
+                    if ( $.isNumeric( $(this).val() ) ){
+                        compraTotal = compraTotal + eval($(this).val());
+                        //console.log(importe_total);
+                    }
+                }
+            );
+            $("#compraTotal").val(compraTotal);
         }
 
         function unidadMedida() {
@@ -280,7 +326,8 @@
             // $(this).parent().parent().find('#spamUM').text(unidadMedida);
             um = $(this).find('option[value="' + idSelect + '"]').data('um');
             // console.log($(this).parent().parent().find('#spamUM').text(um));
-            $(this).parent().parent().find('#unidadMedidaLbl').val(um)
+            $(this).parent().parent().find('#unidadMedidaLbl').val(um);
+            cambioTotal();
         }
 
         function cambioCantidad() {
@@ -289,11 +336,12 @@
             var costoTotal = $(this).parent().parent().parent().find('#costoTotal').val();
             if (cantidad !== 0 || costoUnitario !== 0) {
                 costoTotal = cantidad * costoUnitario;
-                $(this).parent().parent().parent().find('#costoTotal').val(costoTotal);
+                $(this).parent().parent().parent().find('#costoTotal').val(costoTotal.toFixed(2));
             } else if (cantidad !== 0 || costoTotal !== 0) {
                 costoUnitario = costoTotal / cantidad;
-                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario);
+                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario.toFixed(2));
             }
+            cambioTotal();
         }
 
         function cambioCostoUnitario() {
@@ -302,8 +350,9 @@
             var costoTotal = $(this).parent().parent().parent().find('#costoTotal').val();
             if (cantidad !== 0 || costoUnitario !== 0) {
                 costoTotal = cantidad * costoUnitario;
-                $(this).parent().parent().parent().find('#costoTotal').val(costoTotal);
+                $(this).parent().parent().parent().find('#costoTotal').val(costoTotal.toFixed(2));
             }
+            cambioTotal();
         }
 
         function cambioCostoTotal() {
@@ -312,8 +361,9 @@
             var cantidad = $(this).parent().parent().parent().find('#cantidad').val();
             if (cantidad !== 0 || costoTotal !== 0) {
                 costoUnitario = costoTotal / cantidad;
-                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario);
+                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario.toFixed(2));
             }
+            cambioTotal();
         }
 
     </script>

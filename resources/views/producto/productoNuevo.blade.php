@@ -38,10 +38,10 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Codigo del producto</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Autogenerado" name="codigo"
-                                   disabled="">
+                            <input type="text" class="form-control" placeholder="En blanco se autogenera" name="codigo" value="{{old('codigo')}}">
                         </div>
                     </div>
+
                     {{-- Nombre del producto --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Nombre del producto</b></label>
@@ -98,19 +98,46 @@
 
                     {{-- Cantidad minima --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Cantidad minima</label>
+                        <label class="col-sm-4 control-label">Cantidad mínima</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0" class="form-control" placeholder="0" name="existenciaMin"
+                            <input type="number" min="0.00" class="form-control" placeholder="0" name="existenciaMin"
                                    value="{{ old('existenciaMin') }}">
                         </div>
                     </div>
 
                     {{-- Cantidad maxima --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Cantidad maxima</label>
+                        <label class="col-sm-4 control-label">Cantidad máxima</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0" class="form-control" placeholder="0" name="existenciaMax"
+                            <input type="number" min="0.00" class="form-control" placeholder="1000" name="existenciaMax"
                                    value="{{ old('existenciaMax') }}">
+                        </div>
+                    </div>
+
+                    {{-- Costo--}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Costo compra</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
+                                   value="{{ old('costo') }}" id="costo">
+                        </div>
+                    </div>
+
+                    {{-- Precio --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Precio venta</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
+                                   value="{{ old('precio') }}" id="precio" onchange="cambioPrecio()">
+                        </div>
+                    </div>
+
+                    {{-- Margen ganancia --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Margen ganancia</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
+                                   value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">
                         </div>
                     </div>
 
@@ -127,5 +154,30 @@
 @endsection
 
 @section('JSExtras')
+    <script>
+        function cambioPrecio() {
+            var costo = $('#costo').val();
+            var precio = $('#precio').val();
+            if ($('#costo').val().length <= 0)
+            {
+                alert("Debe rellenar el campo costo antes de asignar precios");
+                $('#precio').val('');
+            }
+            margen = ((precio - costo) / costo) * 100;
+            $('#margenGanancia').val(margen.toFixed(2));
+        }
+
+        function cambioMargen() {
+            var costo = $('#costo').val();
+            var margen = $('#margenGanancia').val();
+            if ($('#costo').val().length <= 0)
+            {
+                alert("Debe rellenar el campo costo antes de asignar precios");
+                $('#margenGanancia').val('');
+            }
+            precio = costo * (1 + (margen/100));
+            $('#precio').val(precio.toFixed(2));
+        }
+    </script>
     @include('comun.select2Jses')
 @endsection

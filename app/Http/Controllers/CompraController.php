@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Compra;
+use App\Entrada;
 use App\Movimiento;
 use App\Producto;
 use App\Proveedor;
@@ -40,8 +41,9 @@ class CompraController extends Controller
             'proveedor_id' => 'required',
             'productos_id.*' => 'required',
             'numero' => 'required',
-            'cantidades.*' => 'required',
-            'valoresTotales.*' => 'required',
+            'cantidades.*' => 'required | min:1',
+            'costoUnitarios.*' => 'required',
+            'costoTotales.*' => 'required',
         ]);
 
 //        Se crea una instancia de compra
@@ -54,8 +56,7 @@ class CompraController extends Controller
             'revisado' => false,
         ]);
 //        Se guarda el archivo subido
-        if ($request->hasFile('archivo'))
-        {
+        if ($request->hasFile('archivo')) {
             $archivo = $request->file('archivo')->store('public');
             $compra->rutaArchivo = $archivo;
             $compra->update();
@@ -63,49 +64,55 @@ class CompraController extends Controller
 //        Se guardan en variables los arrays recividos del request
         $productos_id = $request->input('productos_id');
         $cantidades = $request->input('cantidades');
-        $valoresTotales = $request->input('valoresTotales');
+        $costoUnitarios = $request->input('costoUnitarios');
+        $costoTotales = $request->input('costoTotales');
 //        Se toma el tamaño de un array
         $dimension = sizeof($productos_id);
-        for ($i=0; $i < $dimension; $i++)
-        {
+        $compraTotal = 0;
+        for ($i = 0; $i < $dimension; $i++) {
 //            Calculo de valor unitario de la entrada
-            $vuMovimiento = $valoresTotales[$i] / $cantidades[$i];
+            $cuMovimiento = $costoTotales[$i] / $cantidades[$i];
 //            Se carga el producto
             $producto = Producto::find($productos_id[$i]);
 //            Calculo de existencias
             $cantidadExistencia = $producto->cantidad + $cantidades[$i];
-            if ($producto->precioCompra == 0.00)
-            {
-                $vuExistencia = $vuMovimiento;
-            } else
-            {
-                $vuExistencia = ($producto->precioCompra + $vuMovimiento) / 2;
+            if ($producto->precioCompra == 0.00) {
+                $cuExistencia = $cuMovimiento;
+            } else {
+                $cuExistencia = ($producto->precioCompra + $cuMovimiento) / 2;
             }
-            $vtExistencia = $cantidadExistencia * $vuExistencia;
+            $ctExistencia = $cantidadExistencia * $cuExistencia;
 //            Se crea el movimiento
             $movimiento = Movimiento::create([
                 'producto_id' => $producto->id,
-                'compra_id' => $compra->id,
                 'tipo_movimiento_id' => 1,
                 'fecha' => $compra->fechaIngreso,
                 'detalle' => 'Ingreso de producto',
-                'cantidadMovimiento' => $cantidades[$i],
-                'valorUnitarioMovimiento' => $vuMovimiento,
-                'valorTotalMovimiento' => $valoresTotales[$i],
                 'cantidadExistencia' => $cantidadExistencia,
-                'valorUnitarioExistencia' => $vuExistencia,
-                'valorTotalExistencia' => $vtExistencia,
+                'costoUnitarioExistencia' => $cuExistencia,
+                'costoTotalExistencia' => $ctExistencia,
                 'procesado' => false,
             ]);
+//            Se crea la entrada
+            $entrada = Entrada::create([
+                'movimiento_id' => $movimiento->id,
+                'compra_id' => $compra->id,
+                'cantidad' => $cantidades[$i],
+                'costoUnitario' => $cuMovimiento,
+                'costoTotal' => $costoTotales[$i],
+            ]);
 //            Se actualiza la existencia del producto
-            $producto->cantidad = $cantidadExistencia;
-            $producto->precioCompra = $vuExistencia;
+            $producto->cantidadExistencia = $cantidadExistencia;
+            $producto->costo = $cuExistencia;
             $producto->update();
+            $compraTotal += $costoTotales[$i];
         }
-        //        Mensaje de exito al guardar
+        $compra->compraTotal = $compraTotal;
+        $compra->save();
+//        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'La compra fue agregada correctamente!');
-        return redirect()->route('compraVer',['id' => $compra->id]);
+        return redirect()->route('compraVer', ['id' => $compra->id]);
     }
 }

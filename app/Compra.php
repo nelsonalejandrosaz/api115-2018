@@ -10,36 +10,33 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $proveedor_id
  * @property int $numero
- * @property string $detalle
+ * @property string|null $detalle
  * @property string $fechaIngreso
- * @property float $monto
- * @property int $ingresadoPor
- * @property int $revisadoPor
+ * @property float|null $compraTotal
+ * @property int|null $ingresado_id
+ * @property int|null $bodeguero_id
  * @property string $rutaArchivo
- * @property int $ingresadoInventario
+ * @property int $revisado
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $bodeguero
+ * @property-read \App\User $ingresado
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
  * @property-read \App\Proveedor $proveedor
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereBodegueroId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereCompraTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereDetalle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereFechaIngreso($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereIngresadoInventario($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereIngresadoPor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereMonto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereIngresadoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereProveedorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRevisadoPor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRevisado($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRutaArchivo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int|null $ingresadoPor_id
- * @property int|null $revisadoPor_id
- * @property int|null $revisado
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereIngresadoPorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRevisado($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRevisadoPorId($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Entrada[] $entradas
  */
 class Compra extends Model
 {
@@ -48,14 +45,19 @@ class Compra extends Model
         return $this->belongsTo('App\Proveedor');
     }
 
-    public function movimientos()
+    public function entradas()
     {
-        return $this->hasMany('App\Movimiento');
+        return $this->hasMany('App\Entrada');
     }
 
-    public function ingresadoPor()
+    public function ingresado()
     {
-        return $this->hasOne('App\User','id','ingresadoPor_id');
+        return $this->belongsTo('App\User','ingresado_id');
+    }
+
+    public function bodeguero()
+    {
+        return $this->belongsTo('App\User','bodeguero_id');
     }
 
     protected $fillable = [
@@ -63,10 +65,10 @@ class Compra extends Model
         'numero',
         'detalle',
         'fechaIngreso',
-        'monto',
+        'compraTotal',
         'rutaArchivo',
-        'ingresadoPor_id',
-        'revisadoPor_id',
+        'ingresado_id',
+        'bodeguero_id',
         'revisado',
     ];
 }

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Cliente
  *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\OrdenPedido[] $ordenesPedidos
+ * @mixin \Eloquent
  * @property int $id
  * @property string $nombre
  * @property string|null $telefono1
@@ -23,10 +25,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereTelefono1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereTelefono2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 class Cliente extends Model
 {
+    public function ordenesPedidos()
+    {
+        return $this->hasMany('App\OrdenPedido');
+    }
+
     protected $fillable = [
         'nombre',
         'telefono1',

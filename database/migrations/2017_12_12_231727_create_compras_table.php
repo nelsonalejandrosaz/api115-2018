@@ -19,11 +19,11 @@ class CreateComprasTable extends Migration
             $table->integer('numero')->unsigned();
             $table->string('detalle',140)->nullable();
             $table->date('fechaIngreso');
-            $table->float('monto',10,2)->nullable();
-            $table->integer('ingresadoPor_id')->unsigned()->nullable();
-            $table->integer('revisadoPor_id')->unsigned()->nullable();
+            $table->float('compraTotal',10,2)->nullable();
+            $table->integer('ingresado_id')->unsigned()->nullable();
+            $table->integer('bodeguero_id')->unsigned()->nullable();
             $table->string('rutaArchivo')->default('sin-documento.jpg');
-            $table->boolean('revisado')->nullable();
+            $table->boolean('revisado')->default(false);
             $table->timestamps();
         });
     }

@@ -42,7 +42,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Codigo del producto</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" name="codigo" value="{{$producto->codigo}}" disabled>
+                            <input type="text" class="form-control" name="codigo" value="{{$producto->codigo}}">
                         </div>
                     </div>
 
@@ -125,6 +125,33 @@
                         </div>
                     </div>
 
+                    {{-- Costo--}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Costo compra</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
+                                   value="{{ $producto->costo }}" id="costo">
+                        </div>
+                    </div>
+
+                    {{-- Precio --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Precio venta</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
+                                   value="{{ $producto->precio }}" id="precio" onchange="cambioPrecio()">
+                        </div>
+                    </div>
+
+                    {{-- Margen ganancia --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Margen ganancia</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
+                                   value="{{ $producto->margenGanancia }}" id="margenGanancia" onchange="cambioMargen()">
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- /.box-body -->
 
@@ -138,5 +165,30 @@
 @endsection
 
 @section('JSExtras')
+    <script>
+        function cambioPrecio() {
+            var costo = $('#costo').val();
+            var precio = $('#precio').val();
+            if ($('#costo').val().length <= 0)
+            {
+                alert("Debe rellenar el campo costo antes de asignar precios");
+                $('#precio').val('');
+            }
+            margen = ((precio - costo) / costo) * 100;
+            $('#margenGanancia').val(margen.toFixed(2));
+        }
+
+        function cambioMargen() {
+            var costo = $('#costo').val();
+            var margen = $('#margenGanancia').val();
+            if ($('#costo').val().length <= 0)
+            {
+                alert("Debe rellenar el campo costo antes de asignar precios");
+                $('#margenGanancia').val('');
+            }
+            precio = costo * (1 + (margen/100));
+            $('#precio').val(precio.toFixed(2));
+        }
+    </script>
     @include('comun.select2Jses')
 @endsection

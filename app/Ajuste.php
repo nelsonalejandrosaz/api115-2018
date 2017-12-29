@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
  * App\Ajuste
  *
  * @property int $id
+ * @property int $movimiento_id
  * @property int $tipo_ajuste_id
  * @property string $detalle
  * @property string $fechaIngreso
- * @property int $realizadoPor_id
+ * @property int $realizado_id
  * @property float $cantidadAnterior
  * @property float $valorUnitarioAnterior
  * @property float $cantidadAjuste
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Movimiento $movimiento
+ * @property-read \App\User $realizado
  * @property-read \App\TipoAjuste $tipoAjuste
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereCantidadAjuste($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereCantidadAnterior($value)
@@ -26,7 +28,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereDetalle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereFechaIngreso($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereRealizadoPorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereMovimientoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereRealizadoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereTipoAjusteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAjuste($value)
@@ -35,22 +38,23 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Ajuste extends Model
 {
-    public function tipoAjuste()
-    {
-        return $this->hasOne('App\TipoAjuste','id','tipo_ajuste_id');
-    }
-
     public function movimiento()
     {
-        return $this->hasOne('App\Movimiento');
+        return $this->belongsTo('App\Movimiento');
     }
 
-    public function realizadoPor()
+    public function tipoAjuste()
     {
-        return $this->hasOne('App\User','id','realizadoPor_id');
+        return $this->belongsTo('App\TipoAjuste','id','tipo_ajuste_id');
+    }
+
+    public function realizado()
+    {
+        return $this->belongsTo('App\User','id','realizadoPor_id');
     }
 
     protected $fillable = [
+        'movimiento_id',
         'tipo_ajuste_id',
         'detalle',
         'fechaIngreso',

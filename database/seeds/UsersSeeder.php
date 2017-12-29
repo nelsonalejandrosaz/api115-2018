@@ -24,7 +24,7 @@ class UsersSeeder extends Seeder
         User::create([
             'nombre' => 'Administrador',
             'apellido' => 'Administrador',
-            'email' => 'administrador@dev.com',
+            'email' => 'administrador@lgl.com',
             'username' => 'administrador1',
             'password' => bcrypt('12345'),
             'telefono' => '7777-7777',
@@ -33,7 +33,7 @@ class UsersSeeder extends Seeder
         User::create([
             'nombre' => 'Bodega',
             'apellido' => 'Bodega',
-            'email' => 'bodega@dev.com',
+            'email' => 'bodega@lgl.com',
             'username' => 'bodega1',
             'password' => bcrypt('12345'),
             'telefono' => '7777-7777',
@@ -42,7 +42,7 @@ class UsersSeeder extends Seeder
         User::create([
             'nombre' => 'Verdedor',
             'apellido' => 'Verdedor',
-            'email' => 'verdedor@dev.com',
+            'email' => 'verdedor@lgl.com',
             'username' => 'verdedor1',
             'password' => bcrypt('12345'),
             'telefono' => '7777-7777',

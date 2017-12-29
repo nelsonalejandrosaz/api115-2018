@@ -48,7 +48,7 @@
                                 <td>{{$producto->codigo}}</td>
                                 <td>{{$producto->nombre}}</td>
                                 <td>{{$producto->unidadMedida->nombre}}</td>
-                                <td>{{$producto->cantidad}}</td>
+                                <td>{{$producto->cantidadExistencia}}</td>
                                 <td>${{number_format($producto->precioCompra,2)}}</td>
                                 <td>${{number_format($producto->precioVenta,2)}}</td>
                                 <td align="center">

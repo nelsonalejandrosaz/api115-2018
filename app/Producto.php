@@ -15,31 +15,31 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $codigo
  * @property float $existenciaMin
  * @property float $existenciaMax
- * @property float $cantidad
- * @property float $precioCompra
- * @property float $precioVenta
+ * @property float $cantidadExistencia
+ * @property float $costo
+ * @property float $precio
  * @property float $margenGanancia
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Categoria $categoria
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
  * @property-read \App\TipoProducto $tipoProducto
  * @property-read \App\UnidadMedida $unidadMedida
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCantidad($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCantidadExistencia($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCategoriaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCodigo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCosto($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereExistenciaMax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereExistenciaMin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereMargenGanancia($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereNombre($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto wherePrecioCompra($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto wherePrecioVenta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto wherePrecio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereTipoProductoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
  */
 class Producto extends Model
 {
@@ -71,9 +71,9 @@ class Producto extends Model
         'codigo',
         'existenciaMin',
         'existenciaMax',
-        'cantidad',
-        'precioCompra',
-        'precioVenta',
+        'cantidadExistencia',
+        'costo',
+        'precio',
         'margenGanancia',
     ];
 }

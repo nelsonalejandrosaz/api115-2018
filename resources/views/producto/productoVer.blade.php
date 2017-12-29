@@ -124,6 +124,33 @@
                         </div>
                     </div>
 
+                    {{-- Costo--}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Costo compra</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
+                                   value="{{ $producto->costo }}" id="costo" disabled>
+                        </div>
+                    </div>
+
+                    {{-- Precio --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Precio venta</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
+                                   value="{{ $producto->precio }}" id="precio" disabled>
+                        </div>
+                    </div>
+
+                    {{-- Margen ganancia --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Margen ganancia</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
+                                   value="{{ $producto->margenGanancia }}" id="margenGanancia" disabled>
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- /.box-body -->
 

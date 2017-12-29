@@ -32,21 +32,24 @@
                     <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
-                            <th style="width:5%">ID</th>
                             <th style="width:10%">Número</th>
                             <th style="width:10%">Fecha ingreso</th>
-                            <th style="width:20%">Cliente</th>
+                            <th style="width:10%">Fecha entrega</th>
+                            <th style="width:25%">Cliente</th>
+                            <th style="width:20%">Vendedor</th>
                             <th style="width:10%">Estado</th>
-                            <th style="width:10%">Acción</th>
+                            <th style="width:15%">Acción</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($ordenesPedidos as $ordenPedido)
                             <tr>
-                                <td>{{$ordenPedido->id}}</td>
-                                <td>{{$ordenPedido->fechaIngreso}}</td>
-                                <td>{{$ordenPedido->cliente->nombre}}</td>
                                 <td>{{$ordenPedido->numero}}</td>
+                                <td>{{$ordenPedido->fechaIngreso}}</td>
+                                <td>{{$ordenPedido->fechaEntrega}}</td>
+                                <td>{{$ordenPedido->cliente->nombre}}</td>
+                                <td>{{$ordenPedido->vendedor->nombre}}</td>
+                                <td>{{$ordenPedido->procesado}}</td>
                                 <td align="center">
                                     <a href="{{ route('ordenPedidoVer', ['id' => $ordenPedido->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     <a href="{{ route('ordenPedidoVer', ['id' => $ordenPedido->id]) }}" class="btn btn-warning"><span class="fa fa-edit"></span></a>

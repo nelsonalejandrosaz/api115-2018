@@ -68,7 +68,7 @@
                         <tbody>
                         @foreach($movimientos as $movimiento)
                             <tr>
-                                <td>{{ \Carbon\Carbon::parse($movimiento->fechaIngreso)->format('d/m/Y')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($movimiento->fecha)->format('d/m/Y')}}</td>
                                 {{--Revisar!!!!!!!!!!!--}}
                                 @if( $movimiento->entrada != null && $movimiento->entrada->factura != null )
                                     <td><a href="{{ route('facturaVer',['id' => $movimiento->entrada->factura->id]) }}">{{$movimiento->detalle}}</a></td>
@@ -78,9 +78,9 @@
                                     <td><a href="">{{$movimiento->detalle}}</a></td>
                                 @endif
                                 @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
-                                    <td class="entradaCSS">{{$movimiento->cantidadMovimiento}}</td>
-                                    <td class="entradaCSS">${{ number_format($movimiento->valorUnitarioMovimiento,2) }}</td>
-                                    <td class="entradaCSS">${{ number_format($movimiento->valorTotalMovimiento,2) }}</td>
+                                    <td class="entradaCSS">{{$movimiento->entrada->cantidad}}</td>
+                                    <td class="entradaCSS">${{ number_format($movimiento->entrada->costoUnitario,2) }}</td>
+                                    <td class="entradaCSS">${{ number_format($movimiento->entrada->costoTotal,2) }}</td>
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
@@ -89,8 +89,8 @@
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>
                                     <td class="salidaCSS">{{$movimiento->salida->cantidad}}</td>
-                                    <td class="salidaCSS">${{ number_format($movimiento->salida->valorUnitario,2) }}</td>
-                                    <td class="salidaCSS">${{ number_format($movimiento->salida->valorTotal,2) }}</td>
+                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costoUnitario,2) }}</td>
+                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costoTotal,2) }}</td>
                                 @else
                                     <td> -- </td>
                                     <td> -- </td>
@@ -100,8 +100,8 @@
                                     <td> -- </td>
                                 @endif
                                 <td class="existenciaCSS">{{$movimiento->cantidadExistencia}}</td>
-                                <td class="existenciaCSS">${{ number_format($movimiento->valorUnitarioExistencia,2) }}</td>
-                                <td class="existenciaCSS">${{ number_format($movimiento->valorTotalExistencia,2) }}</td>
+                                <td class="existenciaCSS">${{ number_format($movimiento->costoUnitarioExistencia,2) }}</td>
+                                <td class="existenciaCSS">${{ number_format($movimiento->costoTotalExistencia,2) }}</td>
                             </tr>
                         @endforeach
                         </tbody>

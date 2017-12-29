@@ -15,20 +15,13 @@ class CreateMovimientosTable extends Migration
     {
         Schema::create('movimientos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('producto_id')->unsigned()->nullable();
-            $table->integer('orden_pedido_id')->unsigned()->nullable();
-            $table->integer('compra_id')->unsigned()->nullable();
-            $table->integer('ajuste_id')->unsigned()->nullable();
-            $table->integer('tipo_movimiento_id')->unsigned()->nullable();
+            $table->integer('producto_id')->unsigned();
+            $table->integer('tipo_movimiento_id')->unsigned();
             $table->date('fecha');
-            $table->string('detalle',140);
-            $table->float('cantidadMovimiento',10,2);
-            $table->float('valorUnitarioMovimiento',10,2);
-            $table->float('valorTotalMovimiento',10,2);
-            $table->float('cantidadExistencia',10,2)->nullable();
-            $table->float('valorUnitarioExistencia',10,2)->nullable();
-            $table->float('valorTotalExistencia',10,2)->nullable();
-            $table->boolean('procesado')->nullable();
+            $table->string('detalle',140)->nullable();
+            $table->float('cantidadExistencia')->nullable();
+            $table->float('costoUnitarioExistencia')->nullable();
+            $table->float('costoTotalExistencia')->nullable();
             $table->timestamps();
         });
     }

@@ -15,14 +15,15 @@ class CreateAjustesTable extends Migration
     {
         Schema::create('ajustes', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('movimiento_id')->unsigned();
             $table->integer('tipo_ajuste_id')->unsigned();
             $table->string('detalle',140);
             $table->date('fechaIngreso');
-            $table->integer('realizadoPor_id')->unsigned();
-            $table->float('cantidadAnterior',10,2);
-            $table->float('valorUnitarioAnterior',10,2);
-            $table->float('cantidadAjuste',10,2);
-            $table->float('valorUnitarioAjuste',10,2);
+            $table->integer('realizado_id')->unsigned();
+            $table->float('cantidadAnterior');
+            $table->float('valorUnitarioAnterior');
+            $table->float('cantidadAjuste');
+            $table->float('valorUnitarioAjuste');
             $table->timestamps();
         });
     }

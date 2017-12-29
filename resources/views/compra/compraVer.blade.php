@@ -85,7 +85,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Ingresado por:</label>
                         <div class="col-md-8">
-                            <input disabled type="text" class="form-control" name="ingresadoPor" value="{{$compra->ingresadoPor->nombre}} {{$compra->ingresadoPor->apellido}}">
+                            <input disabled type="text" class="form-control" name="ingresadoPor" value="{{$compra->ingresado->nombre}} {{$compra->ingresado->apellido}}">
                         </div>
                     </div>
 
@@ -105,26 +105,26 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <td>#</td>
-                            <th style="width: 45%">Producto</th>
-                            <th style="width: 20%">Cantidad</th>
-                            <th style="width: 20%">Precio</th>
+                            <th style="width: 50%">Producto</th>
+                            <th style="width: 10%">Unidad medida</th>
+                            <th style="width: 10%">Cantidad</th>
+                            <th style="width: 15%">Costo unitario</th>
+                            <th style="width: 15%">Costo total</th>
                         </tr>
                         @php($i = 1)
-                        @foreach($compra->movimientos as $movimiento)
+                        @foreach($compra->entradas as $entrada)
                             <tr id="base">
-                                <td>
-                                    {{$i}}
-                                </td>
+
+                                {{--producto--}}
                                 <td>
                                     <select disabled class="form-control select2 selProd" style="width: 100%"
                                             name="productos_id[]"
                                             id="selectProductos">
                                         <option value="" disabled selected>Seleccione un producto</option>
                                         @foreach($productos as $producto)
-                                            @if($producto->id == $movimiento->producto_id)
+                                            @if($producto->id == $entrada->movimiento->producto_id)
                                                 <option selected value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidadMedida->abreviatura }}">{{ $producto->nombre }}</option>
+                                                        data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
                                             @else
                                                 <option value="{{ $producto->id }}"
                                                         data-um="{{ $producto->unidadMedida->abreviatura }}">{{ $producto->nombre }}</option>
@@ -132,26 +132,50 @@
                                         @endforeach
                                     </select>
                                 </td>
+                                {{--unidad medida--}}
                                 <td>
-                                    {{-- <input type="number" class="form-control" placeholder="100" name="cantidades[]" required> --}}
                                     <div class="input-group">
-                                        <input disabled class="form-control" type="number" name="cantidades[]"
-                                               required value="{{$movimiento->cantidadMovimiento}}">
-                                        <span class="input-group-addon unimed" id="spamUM">---</span>
+                                        <input type="text" class="form-control" value="{{$entrada->movimiento->producto->unidadMedida->abreviatura}}" id="unidadMedidaLbl" disabled>
                                     </div>
                                 </td>
+                                {{--cantidad--}}
+                                <td>
+                                    <div class="input-group">
+                                        <input class="form-control cantidadCls" type="number" value="{{$entrada->cantidad}}" name="cantidades[]" id="cantidad" disabled>
+                                    </div>
+                                </td>
+                                {{--costo unitario --}}
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input disabled type="number" class="form-control"
-                                               name="valoresTotales[]"
-                                               required value="{{$movimiento->valorTotalMovimiento}}">
+                                        <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="{{$entrada->costoUnitario}}" name="costoUnitarios[]" id="costoUnitario" disabled>
+                                    </div>
+                                </td>
+                                {{--costo total --}}
+                                <td>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="{{$entrada->costoTotal}}" name="costoTotales[]" id="costoTotal" disabled>
                                     </div>
                                 </td>
                             </tr>
                             @php($i++)
                         @endforeach
                     </table>
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width:70%"></th>
+                            <th style="width:15%">Compra Total</th>
+                            <th style="width:15%">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control" value="{{$compra->compraTotal}}" name="compraTotal" id="compraTotal" disabled>
+                                </div>
+                            </th>
+                        </tr>
+                    </table>
+
                 </div>
 
             </div><!-- /.box-body -->

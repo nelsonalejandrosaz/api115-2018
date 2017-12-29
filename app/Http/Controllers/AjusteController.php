@@ -46,7 +46,7 @@ class AjusteController extends Controller
             'cantidadAjuste' => $request->input('cantidadAjuste'),
             'valorUnitarioAjuste' => $request->input('valorUnitarioAjuste'),
             'realizadoPor_id' => Auth::user()->id,
-            'cantidadAnterior' => $producto->cantidad,
+            'cantidadAnterior' => $producto->cantidadExistencia,
             'valorUnitarioAnterior' => $producto->precioCompra,
         ]);
         // Se crea el movimiento

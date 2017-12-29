@@ -13,7 +13,7 @@ class CreateCientesTable extends Migration
      */
     public function up()
     {
-        Schema::create('cliente', function (Blueprint $table) {
+        Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre',50)->unique();
             $table->string('telefono1',20)->nullable();
@@ -31,6 +31,6 @@ class CreateCientesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cliente');
+        Schema::dropIfExists('clientes');
     }
 }

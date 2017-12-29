@@ -15,19 +15,22 @@ class CreateOrdenPedidosTable extends Migration
     {
         Schema::create('orden_pedidos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('factura_id')->unsigned()->nullable();
-            $table->integer('produccion_id')->unsigned()->nullable();
+//            $table->integer('venta_id')->unsigned()->nullable();
             $table->integer('cliente_id')->unsigned();
             $table->integer('municipio_id')->unsigned();
             $table->string('direccion',140)->nullable();
-            $table->integer('numero')->nullable();
+            $table->integer('numero');
             $table->string('detalle')->nullable();
             $table->date('fechaIngreso');
             $table->date('fechaEntrega')->nullable();
-            $table->integer('ingresadoPor_id')->unsigned();
-            $table->integer('revisadoPor_id')->unsigned()->nullable();
+            $table->string('condicionPago')->nullable();
+            $table->integer('vendedor_id')->unsigned();
+            $table->integer('bodeguero_id')->unsigned()->nullable();
+            $table->float('ventasExentas')->nullable()->default(0.00);
+            $table->float('ventasGravadas')->nullable();
+            $table->float('ventaTotal')->nullable();
             $table->string('rutaArchivo')->default('sin-documento.jpg');
-            $table->boolean('revisado')->default(false);
+            $table->boolean('procesado')->default(false);
             $table->timestamps();
         });
     }
