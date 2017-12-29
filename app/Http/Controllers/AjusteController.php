@@ -36,32 +36,32 @@ class AjusteController extends Controller
         ]);
         // Fin Validacion
 
+//        Variables
+        $cantidadAjuste = $request->input('cantidadAjuste');
+        $valorUnitarioAjuste = $request->input('valorUnitarioAjuste');
         // Se carga el producto a ajustar
         $producto = Producto::find($request->input('producto_id'));
-        // Se crea el ajuste de entrada
-        $ajuste = Ajuste::create([
-            'tipo_ajuste_id' => $request->input('tipo_ajuste_id'),
-            'detalle' => $request->input('detalle'),
-            'fechaIngreso' => $request->input('fechaIngreso'),
-            'cantidadAjuste' => $request->input('cantidadAjuste'),
-            'valorUnitarioAjuste' => $request->input('valorUnitarioAjuste'),
-            'realizadoPor_id' => Auth::user()->id,
-            'cantidadAnterior' => $producto->cantidadExistencia,
-            'valorUnitarioAnterior' => $producto->precioCompra,
-        ]);
         // Se crea el movimiento
         $movimiento = Movimiento::create([
             'producto_id' => $producto->id,
             'tipo_movimiento_id' => 3,
-            'ajuste_id' => $ajuste->id,
             'fecha' => $request->input('fechaIngreso'),
             'detalle' => 'Ajuste de entrada de producto realizado por ' . Auth::user()->nombre,
-            'cantidadMovimiento' => 0.00,
-            'valorUnitarioMovimiento' => 0.00,
-            'valorTotalMovimiento' => 0.00,
-            'cantidadExistencia' => $ajuste->cantidadAjuste,
-            'valorUnitarioExistencia' => $ajuste->valorUnitarioAjuste,
-            'valorTotalExistencia' => $ajuste->cantidadAjuste * $ajuste->valorUnitarioAjuste,
+            'cantidadExistencia' => $cantidadAjuste,
+            'costoUnitarioExistencia' => $valorUnitarioAjuste,
+            'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
+        ]);
+        // Se crea el ajuste de entrada
+        $ajuste = Ajuste::create([
+            'movimiento_id' => $movimiento->id,
+            'tipo_ajuste_id' => $request->input('tipo_ajuste_id'),
+            'detalle' => $request->input('detalle'),
+            'fechaIngreso' => $request->input('fechaIngreso'),
+            'cantidadAjuste' => $cantidadAjuste,
+            'valorUnitarioAjuste' => $valorUnitarioAjuste,
+            'realizado_id' => Auth::user()->id,
+            'cantidadAnterior' => $producto->cantidadExistencia,
+            'valorUnitarioAnterior' => $producto->precio,
         ]);
         // Los nuevos valores de inventario despues del ajuste
 //        $cantidadExistencia = $ajuste->cantidad;
@@ -73,8 +73,8 @@ class AjusteController extends Controller
 //        $movimiento->valorTotalExistencia = $valorTotalExistencia;
 //        $movimiento->save();
         // Se actualiza la cantidad de producto despues de la entrada
-        $producto->cantidad = $movimiento->cantidadExistencia;
-        $producto->precioCompra = $movimiento->valorUnitarioExistencia;
+        $producto->cantidadExistencia = $movimiento->cantidadExistencia;
+        $producto->costo = $movimiento->costoUnitarioExistencia;
         $producto->save();
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');

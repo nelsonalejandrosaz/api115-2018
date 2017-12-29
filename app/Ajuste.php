@@ -45,12 +45,12 @@ class Ajuste extends Model
 
     public function tipoAjuste()
     {
-        return $this->belongsTo('App\TipoAjuste','id','tipo_ajuste_id');
+        return $this->belongsTo('App\TipoAjuste','tipo_ajuste_id');
     }
 
     public function realizado()
     {
-        return $this->belongsTo('App\User','id','realizadoPor_id');
+        return $this->belongsTo('App\User','realizado_id');
     }
 
     protected $fillable = [
@@ -58,7 +58,7 @@ class Ajuste extends Model
         'tipo_ajuste_id',
         'detalle',
         'fechaIngreso',
-        'realizadoPor_id',
+        'realizado_id',
         'cantidadAnterior',
         'valorUnitarioAnterior',
         'cantidadAjuste',

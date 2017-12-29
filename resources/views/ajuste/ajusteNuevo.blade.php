@@ -48,7 +48,7 @@
                             <select class="form-control select2" style="width: 100%" name="producto_id" id="productoID">
                                 <option value="" selected disabled>Seleccione un producto</option>
                                 @foreach($productos as $producto)
-                                    <option value="{{ $producto->id }}" data-vu="{{ $producto->precioCompra }}" data-ca="{{ $producto->cantidad }}">{{ $producto->nombre }}</option>
+                                    <option value="{{ $producto->id }}" data-vu="{{ $producto->costo }}" data-ca="{{ $producto->cantidadExistencia }}">{{ $producto->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -77,7 +77,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Realizado por:</label>
                         <div class="col-md-9 ">
-                            <input disabled type="text" class="form-control"  name="realizadoPor_id" value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
+                            <input disabled type="text" class="form-control"  name="realizado_id" value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
                         </div>
                     </div>
                 </div>
@@ -92,9 +92,9 @@
                             <input type="number" min="0" class="form-control" placeholder="0" name="cantidadAnterior" id="cantidadID" disabled>
                         </div>
                     </div>
-                    {{-- Valor unitario Actual --}}
+                    {{-- Costo unitario Actual --}}
                     <div class="form-group">
-                        <label class="col-md-4 col-sm-2 control-label">Valor unitario</label>
+                        <label class="col-md-4 col-sm-2 control-label">Costo unitario</label>
                         <div class="col-md-8 col-sm-10">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
@@ -109,9 +109,9 @@
                             <input type="number" min="0" class="form-control" placeholder="0" name="cantidadAjuste">
                         </div>
                     </div>
-                    {{-- Valor unitario ajuste --}}
+                    {{-- Costo unitario ajuste --}}
                     <div class="form-group">
-                        <label class="col-md-4 col-sm-2 control-label"><b>Valor unitario ajuste</b></label>
+                        <label class="col-md-4 col-sm-2 control-label"><b>Costo unitario ajuste</b></label>
                         <div class="col-md-8 col-sm-10">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>

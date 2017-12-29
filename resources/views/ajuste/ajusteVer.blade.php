@@ -81,7 +81,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Realizado por:</label>
                         <div class="col-md-9 ">
-                            <input disabled type="text" class="form-control"  name="realizadoPor_id" value="{{$ajuste->realizadoPor->nombre}} {{$ajuste->realizadoPor->apellido}}">
+                            <input disabled type="text" class="form-control"  name="realizado_id" value="{{$ajuste->realizado->nombre}} {{$ajuste->realizado->apellido}}">
                         </div>
                     </div>
                 </div>

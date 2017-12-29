@@ -69,14 +69,7 @@
                         @foreach($movimientos as $movimiento)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($movimiento->fecha)->format('d/m/Y')}}</td>
-                                {{--Revisar!!!!!!!!!!!--}}
-                                @if( $movimiento->entrada != null && $movimiento->entrada->factura != null )
-                                    <td><a href="{{ route('facturaVer',['id' => $movimiento->entrada->factura->id]) }}">{{$movimiento->detalle}}</a></td>
-                                @elseif( $movimiento->ajuste != null )
-                                    <td><a href="{{ route('ajusteEntradaVer',['id' => $movimiento->ajuste->id]) }}">{{$movimiento->detalle}}</a></td>
-                                @else
                                     <td><a href="">{{$movimiento->detalle}}</a></td>
-                                @endif
                                 @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
                                     <td class="entradaCSS">{{$movimiento->entrada->cantidad}}</td>
                                     <td class="entradaCSS">${{ number_format($movimiento->entrada->costoUnitario,2) }}</td>

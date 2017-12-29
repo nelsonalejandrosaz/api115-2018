@@ -51,7 +51,7 @@ class CompraController extends Controller
             'fechaIngreso' => $request->input('fechaIngreso'),
             'numero' => $request->input('numero'),
             'proveedor_id' => $request->input('proveedor_id'),
-            'ingresadoPor_id' => \Auth::user()->id,
+            'ingresado_id' => \Auth::user()->id,
             'detalle' => $request->input('detalle'),
             'revisado' => false,
         ]);
@@ -61,7 +61,7 @@ class CompraController extends Controller
             $compra->rutaArchivo = $archivo;
             $compra->update();
         }
-//        Se guardan en variables los arrays recividos del request
+//        Se guardan en variables los arrays recibidos del request
         $productos_id = $request->input('productos_id');
         $cantidades = $request->input('cantidades');
         $costoUnitarios = $request->input('costoUnitarios');
@@ -75,11 +75,11 @@ class CompraController extends Controller
 //            Se carga el producto
             $producto = Producto::find($productos_id[$i]);
 //            Calculo de existencias
-            $cantidadExistencia = $producto->cantidad + $cantidades[$i];
-            if ($producto->precioCompra == 0.00) {
+            $cantidadExistencia = $producto->cantidadExistencia + $cantidades[$i];
+            if ($producto->costo == 0.00) {
                 $cuExistencia = $cuMovimiento;
             } else {
-                $cuExistencia = ($producto->precioCompra + $cuMovimiento) / 2;
+                $cuExistencia = ($producto->costo + $cuMovimiento) / 2;
             }
             $ctExistencia = $cantidadExistencia * $cuExistencia;
 //            Se crea el movimiento
