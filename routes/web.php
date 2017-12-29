@@ -82,4 +82,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::name('inventarioLista')->get('/inventario','InventarioController@InventarioLista');
     Route::name('kardexProducto')->get('/inventario/{id}','InventarioController@InventarioKardex');
 
+    /**
+     * Rutas de formulas
+     */
+    Route::name('formulaLista')->get('/formula','FormulaController@FormulaLista');
+    Route::name('formulaNuevo')->get('/formula/nuevo','FormulaController@FormulaNuevo');
+    Route::name('formulaNuevoPost')->post('/formula/nuevo','FormulaController@FormulaNuevoPost');
+    Route::name('formulaVer')->get('/formula/{id}','FormulaController@FormulaVer');
+    Route::name('formulaEditar')->get('/formula/{id}/editar','FormulaController@FormulaEditar');
+    Route::name('formulaEditarPut')->put('/formula/{id}','FormulaController@FormulaEditarPut');
+
 });

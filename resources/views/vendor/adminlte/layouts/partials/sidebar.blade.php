@@ -13,7 +13,7 @@
                 <div class="pull-left info">
                     <p>{{ Auth::user()->nombre }}</p>
                     <!-- Status -->
-                    <a href="#"><i class="fa fa-circle text-success"></i> {{ trans('adminlte_lang::message.online') }}
+                    <a href="#"><i class="fa fa-circle text-success"></i> {{ Auth::user()->rol->nombre }}
                     </a>
                 </div>
             </div>
@@ -128,8 +128,8 @@
                 <a href="#"><i class='fa fa-puzzle-piece'></i> <span>Fórmulas</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="">Lista de fórmulas</a></li>
-                    <li><a href="">Nueva fórmula</a></li>
+                    <li><a href="{{route('formulaLista')}}">Lista de fórmulas</a></li>
+                    <li><a href="{{route('formulaNuevo')}}">Nueva fórmula</a></li>
                 </ul>
             </li>
 

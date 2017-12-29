@@ -85,12 +85,12 @@
                                     <td class="salidaCSS">${{ number_format($movimiento->salida->costoUnitario,2) }}</td>
                                     <td class="salidaCSS">${{ number_format($movimiento->salida->costoTotal,2) }}</td>
                                 @else
-                                    <td> -- </td>
-                                    <td> -- </td>
-                                    <td> -- </td>
-                                    <td> -- </td>
-                                    <td> -- </td>
-                                    <td> -- </td>
+                                    <td class="entradaCSS"> -- </td>
+                                    <td class="entradaCSS"> -- </td>
+                                    <td class="entradaCSS"> -- </td>
+                                    <td class="salidaCSS"> -- </td>
+                                    <td class="salidaCSS"> -- </td>
+                                    <td class="salidaCSS"> -- </td>
                                 @endif
                                 <td class="existenciaCSS">{{$movimiento->cantidadExistencia}}</td>
                                 <td class="existenciaCSS">${{ number_format($movimiento->costoUnitarioExistencia,2) }}</td>
