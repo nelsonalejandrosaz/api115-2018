@@ -14,7 +14,7 @@
 @endsection
 
 @section('contentheader_description')
-    -- Lista de ordenes de pedidos
+    -- Lista de ordenes de pedidos en proceso
 @endsection
 
 @section('main-content')
@@ -26,8 +26,6 @@
             <div class="box box-primary">
                 <div class="box-header">
                     <h3 class="box-title">Lista de facturas</h3>
-                    <a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary pull-right"><span
-                                class="fa fa-plus"></span> Nuevo</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
@@ -58,15 +56,8 @@
                                     @endif
                                 </td>
                                 <td align="center">
-                                    <a href="{{ route('ordenPedidoVer', ['id' => $ordenPedido->id]) }}"
+                                    <a href="{{ route('ordenPedidoVerBodega', ['id' => $ordenPedido->id]) }}"
                                        class="btn btn-info"><span class="fa fa-eye"></span></a>
-                                    <a href="{{ route('ordenPedidoVer', ['id' => $ordenPedido->id]) }}"
-                                       class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal"
-                                            data-target="#modalEliminar" data-ordenPedido="{{ $ordenPedido->id }}"
-                                            data-id="{{ $ordenPedido->id }}">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
                                 </td>
                             </tr>
                         @endforeach

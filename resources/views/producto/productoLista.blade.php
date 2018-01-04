@@ -49,8 +49,8 @@
                                 <td>{{$producto->nombre}}</td>
                                 <td>{{$producto->unidadMedida->nombre}}</td>
                                 <td>{{$producto->cantidadExistencia}}</td>
-                                <td>${{number_format($producto->precioCompra,2)}}</td>
-                                <td>${{number_format($producto->precioVenta,2)}}</td>
+                                <td>$ {{money_format('%i',$producto->costo)}}</td>
+                                <td>$ {{money_format('%i',$producto->precio)}}</td>
                                 <td align="center">
                                     <a href="{{ route('productoVer', ['id' => $producto->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     <a href="{{ route('productoEditar', ['id' => $producto->id]) }}" class="btn btn-warning"><span class="fa fa-edit"></span></a>

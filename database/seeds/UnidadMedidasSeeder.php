@@ -13,15 +13,15 @@ class UnidadMedidasSeeder extends Seeder
     public function run()
     {
         // Masa
-        UnidadMedida::create(['nombre' => 'Libras', 'abreviatura' => 'lb',]);
-        UnidadMedida::create(['nombre' => 'Kilogramos', 'abreviatura' => 'kg',]);
-        UnidadMedida::create(['nombre' => 'Gramos', 'abreviatura' => 'g',]);
+        UnidadMedida::create(['nombre' => 'Libras', 'abreviatura' => 'Lb',]);
+        UnidadMedida::create(['nombre' => 'Kilogramos', 'abreviatura' => 'Kg',]);
+        UnidadMedida::create(['nombre' => 'Gramos', 'abreviatura' => 'gr',]);
         // Volumen
-        UnidadMedida::create(['nombre' => 'Galones', 'abreviatura' => 'gal',]);
-        UnidadMedida::create(['nombre' => 'Litros', 'abreviatura' => 'l',]);
+        UnidadMedida::create(['nombre' => 'Galón', 'abreviatura' => 'Gl',]);
+        UnidadMedida::create(['nombre' => 'Litro', 'abreviatura' => 'Lt',]);
         UnidadMedida::create(['nombre' => 'Metros cúbicos', 'abreviatura' => 'm3',]);
         // Otros
-        UnidadMedida::create(['nombre' => 'Unidades', 'abreviatura' => 'u',]);
+        UnidadMedida::create(['nombre' => 'Unidad', 'abreviatura' => 'Und',]);
         UnidadMedida::create(['nombre' => 'Otros', 'abreviatura' => 'otro',]);
     }
 }

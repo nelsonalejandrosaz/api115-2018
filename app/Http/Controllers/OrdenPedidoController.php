@@ -8,6 +8,7 @@ use App\Municipio;
 use App\OrdenPedido;
 use App\Producto;
 use App\Salida;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 
 class OrdenPedidoController extends Controller
@@ -18,6 +19,12 @@ class OrdenPedidoController extends Controller
         return view('ordenPedido.ordenPedidoLista')->with(['ordenesPedidos' => $ordenesPedidos]);
     }
 
+    public function OrdenPedidoListaBodega()
+    {
+        $ordenesPedidos = OrdenPedido::whereProcesado(false)->get();
+        return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
+    }
+
     public function OrdenPedidoVer($id)
     {
         $ordenPedido = OrdenPedido::find($id);
@@ -25,6 +32,15 @@ class OrdenPedidoController extends Controller
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         return view('ordenPedido.ordenPedidoVer')->with(['ordenPedido' => $ordenPedido])->with(['productos' => $productos])->with(['clientes' => $clientes])->with(['municipios' => $municipios]);
+    }
+
+    public function OrdenPedidoVerBodega($id)
+    {
+        $ordenPedido = OrdenPedido::find($id);
+        $productos = Producto::all();
+        $clientes = Cliente::all();
+        $municipios = Municipio::all();
+        return view('ordenPedido.ordenPedidoVerBodega')->with(['ordenPedido' => $ordenPedido])->with(['productos' => $productos])->with(['clientes' => $clientes])->with(['municipios' => $municipios]);
     }
 
     public function OrdenPedidoNueva()
@@ -124,6 +140,8 @@ class OrdenPedidoController extends Controller
             $ventaGravada += $ventasGravadas[$i];
         }
         $ventaTotal = $ventaExenta + $ventaGravada;
+        $ordenPedido->ventasGravadas = $ventasGravadas;
+        $ordenPedido->ventasExentas = $ventasExentas;
         $ordenPedido->ventaTotal = $ventaTotal;
         $ordenPedido->save();
 //        Mensaje de exito al guardar
@@ -131,5 +149,26 @@ class OrdenPedidoController extends Controller
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'La orden de pedido fue agregada correctamente!');
         return redirect()->route('ordenPedidoVer', ['id' => $ordenPedido->id]);
+    }
+
+    public function OrdenPedidoPDF($id)
+    {
+        $ordenPedido = OrdenPedido::find($id);
+        $ventaTotal = money_format('%i',$ordenPedido->ventaTotal);
+        $ordenPedido->ventaTotalLetras = \NumeroALetras::convertir($ventaTotal,'dolares','centavos');
+        $pdf = PDF::loadView('pdf.ordenPedidoPDF',compact('ordenPedido'));
+        return $pdf->stream();
+    }
+
+    public function OrdenPedidoBodegaPost($id)
+    {
+        $ordenPedido = OrdenPedido::find($id);
+        $ordenPedido->procesado = true;
+        $ordenPedido->update();
+//        Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La orden de pedido fue procesada correctamente!');
+        return redirect()->route('ordenPedidoListaBodega');
     }
 }

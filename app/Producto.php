@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Formula $formula
  */
 class Producto extends Model
 {
@@ -61,6 +62,11 @@ class Producto extends Model
     public function movimientos()
     {
         return $this->hasMany('App\Movimiento');
+    }
+
+    public function formula()
+    {
+        return $this->hasOne('App\Formula');
     }
 
     protected $fillable = [

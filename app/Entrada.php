@@ -41,6 +41,7 @@ class Entrada extends Model
 
     protected $fillable = [
         'compra_id',
+        'produccion_id',
         'movimiento_id',
         'cantidad',
         'costoUnitario',

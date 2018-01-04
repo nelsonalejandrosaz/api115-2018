@@ -194,6 +194,7 @@
 
         function funcionPrincipal() {
             $("body").on("click", ".btn-danger", fEliminarProducto);
+            $(":input").on("click");
             agregarFuncion();
         }
 

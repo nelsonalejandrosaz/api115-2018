@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereVentaExenta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereVentaGravada($value)
  * @mixin \Eloquent
+ * @property-read \App\Produccion|null $produccion
  */
 class Salida extends Model
 {
@@ -49,9 +50,15 @@ class Salida extends Model
         return $this->belongsTo('App\OrdenPedido');
     }
 
+    public function produccion()
+    {
+        return $this->belongsTo('App\Produccion');
+    }
+
     protected $fillable = [
         'movimiento_id',
         'orden_pedido_id',
+        'produccion_id',
         'cantidad',
         'precioUnitario',
         'costoTotal',

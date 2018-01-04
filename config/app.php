@@ -185,6 +185,14 @@ return [
          * Laravel IDE helper
          */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        /**
+         * Laravel DomPDF
+         */
+        Barryvdh\DomPDF\ServiceProvider::class,
+        /**
+         * Excel
+         */
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -238,6 +246,14 @@ return [
          * Acacha AdminLTE template alias
          */
         'AdminLTE' => Acacha\AdminLTETemplateLaravel\Facades\AdminLTE::class,
+        /**
+         * Laravel DomPDF
+         */
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        /**
+         * Excel
+         */
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

@@ -31,11 +31,11 @@
                                 class="fa fa-plus"></span> Nueva Formula</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <table id="tablaAlumnos" class="table table-hover">
+                    <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
                             <th>Código</th>
-                            <th>Producto asosiado</th>
+                            <th>Producto asociado</th>
                             <th>Unidad de medida</th>
                             <th>Acción</th>
                         </tr>
@@ -45,7 +45,7 @@
                             <tr>
                                 <td>{{$formula->producto->codigo}}</td>
                                 <td>{{$formula->producto->nombre}}</td>
-                                <td>{{$formula->producto->unidadMedidaCompra->nombre}}</td>
+                                <td>{{$formula->producto->unidadMedida->nombre}}</td>
                                 <td align="center">
                                     <a href="{{route('formulaVer', ['id' => $formula->id])}}" class="btn btn-info"><span
                                                 class="fa fa-eye"></span></a>

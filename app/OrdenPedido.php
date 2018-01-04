@@ -52,6 +52,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereVentasExentas($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereVentasGrabadas($value)
  * @mixin \Eloquent
+ * @property float|null $ventasGravadas
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereVentasGravadas($value)
  */
 class OrdenPedido extends Model
 {
@@ -102,5 +104,10 @@ class OrdenPedido extends Model
         'ventaTotal',
         'rutaArchivo',
         'procesado',
+    ];
+
+    protected $dates = [
+        'fechaIngreso',
+        'fechaEntrega',
     ];
 }

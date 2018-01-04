@@ -69,6 +69,7 @@
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="{{route('ordenPedidoLista')}}">Lista de ordenes de pedidos</a></li>
+                    <li><a href="{{route('ordenPedidoListaBodega')}}">Lista de ordenes en proceso</a></li>
                     <li><a href="{{route('ordenPedidoNueva')}}">Nueva orden de pedido</a></li>
                 </ul>
             </li>
@@ -138,8 +139,8 @@
                 <a href="#"><i class='fa fa-industry'></i> <span>Produccion</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="#">Lista de producciones</a></li>
-                    <li><a href="#">Nueva producción</a></li>
+                    <li><a href="{{route('produccionLista')}}">Lista de producciones</a></li>
+                    <li><a href="{{route('produccionNuevo')}}">Nueva producción</a></li>
                 </ul>
             </li>
             {{-- Reportes --}}

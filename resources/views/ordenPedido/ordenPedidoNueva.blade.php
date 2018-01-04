@@ -142,7 +142,7 @@
                         <tr id="rowProducto1">
                             {{--Productos--}}
                             <td>
-                                <select class="form-control select2 selProd" name="productos_id[]" id="selectProductos">
+                                <select class="form-control select2 selProd" style="width:100%" name="productos_id[]" id="selectProductos">
                                     <option selected disabled value="">-- Seleccione un producto --</option>
                                     @foreach($productos as $producto)
                                         <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidadMedida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidadExistencia}})</option>
