@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Componente[] $componentes
+ * @property-read \App\User $ingresado
  * @property-read \App\Producto $producto
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereDescripcion($value)
@@ -24,7 +25,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereProductoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \App\User $ingresado
  */
 class Formula extends Model
 {

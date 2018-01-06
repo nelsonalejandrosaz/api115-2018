@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
  * App\Entrada
  *
  * @property int $id
- * @property int $compra_id
+ * @property int|null $compra_id
+ * @property int|null $produccion_id
  * @property int $movimiento_id
  * @property float $cantidad
  * @property float $costoUnitario
  * @property float $costoTotal
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\Compra $compra
+ * @property-read \App\Compra|null $compra
  * @property-read \App\Movimiento $movimiento
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCantidad($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCompraId($value)
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereMovimientoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereProduccionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereUpdatedAt($value)
  * @mixin \Eloquent
  */

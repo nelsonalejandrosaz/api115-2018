@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\ConversionUnidadMedida;
 use App\Movimiento;
 use App\Municipio;
 use App\OrdenPedido;
 use App\Producto;
 use App\Salida;
+use App\UnidadMedida;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 
@@ -45,16 +47,21 @@ class OrdenPedidoController extends Controller
 
     public function OrdenPedidoNueva()
     {
+        $unidadMedidas = UnidadMedida::all();
         $productosTodos = Producto::all();
         $productos = array();
         foreach ($productosTodos as $productoTodo) {
-            if ($productoTodo->cantidadExistencia > 0) {
+            if ($productoTodo->cantidadExistencia > 0 && $productoTodo->precio != 0) {
                 array_push($productos, $productoTodo);
             }
         }
         $clientes = Cliente::all();
         $municipios = Municipio::all();
-        return view('ordenPedido.ordenPedidoNueva')->with(['productos' => $productos])->with(['clientes' => $clientes])->with(['municipios' => $municipios]);
+        return view('ordenPedido.ordenPedidoNueva')
+            ->with(['productos' => $productos])
+            ->with(['clientes' => $clientes])
+            ->with(['municipios' => $municipios])
+            ->with(['unidadMedidas' => $unidadMedidas]);
     }
 
     public function OrdenPedidoNuevaPost(Request $request)
@@ -65,13 +72,11 @@ class OrdenPedidoController extends Controller
             'numero' => 'required',
             'fechaIngreso' => 'required',
             'productos_id.*' => 'required',
-            'cantidades.*' => 'required | min:1',
-            'precioUnitario.*' => 'required',
-            'precioTotal.*' => 'required',
+            'cantidades.*' => 'required',
+            'municipio_id' => 'required',
         ]);
-//        dd($request);
 
-//        Se crea la instancia de orden de pedido
+        // Se crea la instancia de orden de pedido
         $ordenPedido = OrdenPedido::create([
             'cliente_id' => $request->input('cliente_id'),
             'municipio_id' => $request->input('municipio_id'),
@@ -88,29 +93,67 @@ class OrdenPedidoController extends Controller
             $ordenPedido->rutaArchivo = $archivo;
             $ordenPedido->save();
         }
-//        Se guardan en variables los arrays recividos del request
+        // Se guardan en variables los arrays recividos del request
         $productos_id = $request->input('productos_id');
+        $unidadesMedidas = $request->input('unidad_medida_id');
         $cantidades = $request->input('cantidades');
-        $preciosUnitarios = $request->input('preciosUnitarios');
-        $ventasExentas = $request->input('ventasExentas');
-        $ventasGravadas = $request->input('ventasGravadas');
-//        Se toma tamaño del array
+        $tipoVentas = $request->input('tipoVenta');
+        //$preciosUnitarios = $request->input('preciosUnitarios');
+        //$ventasExentas = $request->input('ventasExentas');
+        //$ventasGravadas = $request->input('ventasGravadas');
+        // Se toma tamaño del array
         $dimension = sizeof($productos_id);
-        $ventaExenta = 0;
-        $ventaGravada = 0;
-        $ventaTotal = 0;
+        $ventaExenta = 0.00;
+        $ventaGravada = 0.00;
+        $ventaTotal = 0.00;
         for ($i = 0; $i < $dimension; $i++)
         {
-//            Se carga el producto
+            // Se carga el producto
             $producto = Producto::find($productos_id[$i]);
-//            Calculo costo salida
-            $cuMovimiento = $producto->costo;
-            $ctMovimiento = $cantidades[$i] * $cuMovimiento;
-//            Calculo de existencias
-            $cantidadExistencia = $producto->cantidadExistencia - $cantidades[$i];
-            $cuExistencia = $producto->costo;
-            $ctExistencia = $cantidadExistencia * $cuExistencia;
-//            Se crea el movimiento
+            $unidadMedida = $unidadesMedidas[$i];
+            // Si es la misma medida no se hacen conversiones; si no si se haran las conversiones de unidades
+            if ($unidadMedida == $producto->unidad_medida_id)
+            {
+                // Calculo cantidad y costo de salida
+                $cantidadSalida = $cantidades[$i];
+                // Calculo costo salida
+                $cuSalida = $producto->costo;
+                $ctSalida = $cantidadSalida * $cuSalida;
+                // Calculo de cantidad y costos existencias
+                $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
+                $cuExistencia = $producto->costo;
+                $ctExistencia = $cantidadExistencia * $cuExistencia;
+            } elseif ($producto->unidadMedida->conversiones->where('unidadMedidaDestino_id',$unidadMedida)->first())
+            {
+                // Se busca el factor de conversion
+                $factor = ConversionUnidadMedida::where([
+                    ['unidadMedidaOrigen_id','=', $producto->unidad_medida_id],
+                    ['unidadMedidaDestino_id', '=', $unidadMedida[$i]],
+                ])->first();
+                // Se guarda la cantidad de salida
+                $cantidadSalida = $cantidades[$i] * $factor->factor;
+                // Calculo costo salida
+                $cuSalida = $producto->costo * $factor->factor;
+                $ctSalida = $cantidadSalida * $cuSalida;
+                // Calculo de existencias
+                $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
+                $cuExistencia = $producto->costo;
+                $ctExistencia = $cantidadExistencia * $cuExistencia;
+            } else
+            {
+                dd('Error al procesar');
+            }
+            // Se calculan los precio unitarios y las ventas
+            $precioUnitarioSalida = $producto->precio;
+            if ($tipoVentas[$i] == 0) {
+                $ventaGravadaSalida = $precioUnitarioSalida * $cantidadSalida;
+                $ventaExentaSalida = 0.00;
+            } else
+            {
+                $ventaExentaSalida = $precioUnitarioSalida * $cantidadSalida;
+                $ventaGravadaSalida = 0.00;
+            }
+            // Se crea el movimiento
             $movimiento = Movimiento::create([
                 'producto_id' => $producto->id,
                 'tipo_movimiento_id' => 2,
@@ -121,30 +164,31 @@ class OrdenPedidoController extends Controller
                 'costoTotalExistencia' => $ctExistencia,
                 'procesado' => false,
             ]);
-//            Se crea la salida
+            // Se crea la salida
             $salida = Salida::create([
                 'movimiento_id' => $movimiento->id,
                 'orden_pedido_id' => $ordenPedido->id,
-                'cantidad' => $cantidades[$i],
-                'precioUnitario' => $preciosUnitarios[$i],
-                'ventaExenta' => $ventasExentas[$i],
-                'ventaGravada' => $ventasGravadas[$i],
-                'costoUnitario' => $cuMovimiento,
-                'costoTotal' => $ctMovimiento,
+                'cantidad' => $cantidadSalida,
+                'unidad_medida_id' => $unidadMedida,
+                'precioUnitario' => $precioUnitarioSalida,
+                'ventaExenta' => $ventaExentaSalida,
+                'ventaGravada' => $ventaGravadaSalida,
+                'costoUnitario' => $cuSalida,
+                'costoTotal' => $ctSalida,
             ]);
-//            Se actualiza la existencia del producto
+            // Se actualiza la existencia del producto
             $producto->cantidadExistencia = $cantidadExistencia;
             $producto->costo = $cuExistencia;
             $producto->update();
-            $ventaExenta += $ventasExentas[$i];
-            $ventaGravada += $ventasGravadas[$i];
+            $ventaExenta = $ventaTotal + $ventaExentaSalida;
+            $ventaGravada = $ventaGravada + $ventaGravadaSalida;
         }
         $ventaTotal = $ventaExenta + $ventaGravada;
-        $ordenPedido->ventasGravadas = $ventasGravadas;
-        $ordenPedido->ventasExentas = $ventasExentas;
-        $ordenPedido->ventaTotal = $ventaTotal;
+        $ordenPedido->ventasGravadas = (float) $ventaGravada;
+        $ordenPedido->ventasExentas = (float) $ventaExenta;
+        $ordenPedido->ventaTotal = (float) $ventaTotal;
         $ordenPedido->save();
-//        Mensaje de exito al guardar
+        // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'La orden de pedido fue agregada correctamente!');

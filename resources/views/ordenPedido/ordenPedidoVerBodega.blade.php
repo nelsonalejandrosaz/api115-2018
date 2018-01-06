@@ -163,7 +163,7 @@
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
-                                    <input type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->movimiento->producto->unidadMedida->abreviatura}}" disabled>
+                                    <input type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidadMedida->abreviatura}}" disabled>
                                 </td>
                                 {{--Cantidad--}}
                                 <td>

@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $revisado
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\User $bodeguero
- * @property-read \App\User $ingresado
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
+ * @property-read \App\User|null $bodeguero
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Entrada[] $entradas
+ * @property-read \App\User|null $ingresado
  * @property-read \App\Proveedor $proveedor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereBodegueroId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereCompraTotal($value)
@@ -36,7 +36,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRutaArchivo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Entrada[] $entradas
  */
 class Compra extends Model
 {

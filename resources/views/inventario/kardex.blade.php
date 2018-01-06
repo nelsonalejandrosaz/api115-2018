@@ -55,14 +55,14 @@
                         </tr>
                         <tr>
                             <th>Cantidad</th>
-                            <th>V. Unitario</th>
-                            <th>V. Total</th>
+                            <th>Costo Unitario</th>
+                            <th>Costo Total</th>
                             <th>Cantidad</th>
-                            <th>V. Unitario</th>
-                            <th>V. Total</th>
+                            <th>Costo Unitario</th>
+                            <th>Costo Total</th>
                             <th>Cantidad</th>
-                            <th>V. Unitario</th>
-                            <th>V. Total</th>
+                            <th>Costo Unitario</th>
+                            <th>Costo Total</th>
                         </tr>
                         </thead>
                         <tbody>

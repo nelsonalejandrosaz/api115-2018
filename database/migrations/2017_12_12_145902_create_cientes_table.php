@@ -15,11 +15,12 @@ class CreateCientesTable extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre',50)->unique();
+            $table->string('nombre',140)->unique();
             $table->string('telefono1',20)->nullable();
             $table->string('telefono2',20)->nullable();
-            $table->string('direccion',140)->nullable();
+            $table->string('direccion',255)->nullable();
             $table->string('nombreContacto')->nullable();
+            $table->string('numeroRegistro')->nullable();
             $table->timestamps();
         });
     }

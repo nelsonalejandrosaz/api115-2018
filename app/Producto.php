@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $categoria_id
  * @property string $nombre
  * @property string|null $codigo
- * @property float $existenciaMin
- * @property float $existenciaMax
+ * @property float|null $existenciaMin
+ * @property float|null $existenciaMax
  * @property float $cantidadExistencia
  * @property float $costo
  * @property float $precio
@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Categoria $categoria
+ * @property-read \App\Formula $formula
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
  * @property-read \App\TipoProducto $tipoProducto
  * @property-read \App\UnidadMedida $unidadMedida
@@ -40,7 +41,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \App\Formula $formula
  */
 class Producto extends Model
 {
@@ -70,9 +70,9 @@ class Producto extends Model
     }
 
     protected $fillable = [
-        'unidad_medida_id',
-        'tipo_producto_id',
         'categoria_id',
+        'tipo_producto_id',
+        'unidad_medida_id',
         'nombre',
         'codigo',
         'existenciaMin',

@@ -65,7 +65,7 @@
         @foreach($ordenPedido->salidas as $salida)
         <tr>
             <td class="tg-rg0h">{{$salida->movimiento->producto->codigo}}</td>
-            <td class="tg-rg0h">{{$salida->movimiento->producto->unidadMedida->abreviatura}}</td>
+            <td class="tg-rg0h">{{$salida->unidadMedida->abreviatura}}</td>
             <td class="tg-rg0h">{{$salida->cantidad}}</td>
             <td class="tg-rg0h" colspan="2">{{$salida->movimiento->producto->nombre}}</td>
             <td class="tg-rg0h">{{money_format('%i',$salida->precioUnitario)}}</td>

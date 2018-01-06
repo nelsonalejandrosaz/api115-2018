@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Movimiento $movimiento
  * @property-read \App\OrdenPedido|null $ordenPedido
+ * @property-read \App\Produccion|null $produccion
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCantidad($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCostoTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCostoUnitario($value)
@@ -36,7 +37,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereVentaExenta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereVentaGravada($value)
  * @mixin \Eloquent
- * @property-read \App\Produccion|null $produccion
+ * @property int $unidad_medida_id
+ * @property-read \App\UnidadMedida $unidadMedida
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereUnidadMedidaId($value)
  */
 class Salida extends Model
 {
@@ -55,11 +58,17 @@ class Salida extends Model
         return $this->belongsTo('App\Produccion');
     }
 
+    public function unidadMedida()
+    {
+        return $this->belongsTo('App\UnidadMedida');
+    }
+
     protected $fillable = [
         'movimiento_id',
         'orden_pedido_id',
         'produccion_id',
         'cantidad',
+        'unidad_medida_id',
         'precioUnitario',
         'costoTotal',
         'costoUnitario',

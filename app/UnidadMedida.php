@@ -18,12 +18,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\UnidadMedida whereNombre($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\UnidadMedida whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ConversionUnidadMedida[] $conversiones
  */
 class UnidadMedida extends Model
 {
-    public function Productos()
+    public function conversiones()
     {
-        $this->hasMany('App\Producto');
+        return $this->hasMany('App\ConversionUnidadMedida','unidadMedidaOrigen_id');
     }
 
     protected $fillable = [

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Ajuste;
 use App\Categoria;
+use App\Cliente;
+use App\ConversionUnidadMedida;
 use App\Movimiento;
 use App\Producto;
+use App\Proveedor;
 use App\TipoProducto;
 use App\UnidadMedida;
 use Carbon\Carbon;
@@ -30,20 +33,79 @@ class ConfiguracionController extends Controller
         Excel::load(Input::file('archivoXLSX'), function($reader) {
             // Getting all results
             $results = $reader->get();
+//            dd($results[5]);
+
+            /**
+             * Código para guardar categorias
+             */
+            $categorias = $results[2];
+//            dd($categorias);
+            foreach ($categorias as $categoriaX)
+            {
+                $categoria = Categoria::create([
+                    'codigo' => $categoriaX->codigo,
+                    'nombre' => $categoriaX->nombre_categoria,
+                    'descripcion' => $categoriaX->descripcion,
+                ]);
+            }
+            /**
+             * Fin de código para guardar categorías
+             */
+
+            /**
+             * Código para guardar proveedores
+             */
+            $proveedores = $results[4];
+            foreach ($proveedores as $proveedorX)
+            {
+                $proveedor = Proveedor::firstOrCreate([
+                    'nombre' => $proveedorX->nombre_o_empresa_proveedor,
+                    'telefono1' => $proveedorX->telefono_1,
+                    'telefono2' => $proveedorX->telefono_2,
+                    'direccion' => $proveedorX->direccion,
+                    'nombreContacto' => $proveedorX->nombre_persona_contacto,
+                ]);
+            }
+            /**
+             * Fin código para guardar proveedores
+             */
+
+            /**
+             * Código para guardar clientes
+             */
+            $clientes = $results[5];
+            foreach ($clientes as $clienteX)
+            {
+                $cliente = Cliente::firstOrCreate([
+                    'nombre' => $clienteX->nombre_o_empresa_cliente,
+                    'telefono1' => $clienteX->telefono_1,
+                    'telefono2' => $clienteX->telefono_2,
+                    'direccion' => $clienteX->direccion,
+                    'nombreContacto' => $clienteX->contacto,
+                    'numeroRegistro' => $clienteX->num_registro,
+                ]);
+            }
+            /**
+             * Fin código para guardar clientes
+             */
+
+            /**
+             * Código para guardar los productos con su inventario inicial
+             */
+            // Se selecciona la hoja correspondiente a productos
             $productos = $results[0];
             foreach ($productos as $producto)
             {
-//                Inicio para guardar inventario
-                $existenciaMin = 0;
-                $existenciaMax = 100;
-                $costo = 0.00;
-                $precio = 0.00;
-                $margenGanancia = 0;
+                // Inicio para guardar inventario
+                $existenciaMin = ($producto->existencia_minima == null) ? 0 : $producto->existencia_minima;
+                $existenciaMax = ($producto->existencia_maxima == null) ? 100 : $producto->existencia_maxima;
+                $costo = ($producto->costo == null) ? 0.00 : $producto->costo;
+                $precio = ($producto->precio == null) ? 0.00 : $producto->costo;
+                $margenGanancia = ($producto->margen_ganancia == null) ? 0 : $producto->margen_ganancia;
                 $unidadMedida = UnidadMedida::whereNombre($producto->unidad_de_medida)->first();
-//                dd($unidadMedida);
                 $tipoProducto = TipoProducto::whereNombre($producto->tipo_de_producto)->first();
                 $categoria = Categoria::whereNombre($producto->categoria)->first();
-                $productoDB = Producto::create([
+                $productoDB = Producto::firstOrCreate([
                     'nombre' => $producto->nombre_producto,
                     'tipo_producto_id' => $tipoProducto->id,
                     'unidad_medida_id' => $unidadMedida->id,
@@ -68,9 +130,8 @@ class ConfiguracionController extends Controller
                     $productoDB->codigo = $producto->codigo;
                     $productoDB->update();
                 }
-//                Asignacion de inventario inicial
-
-//              Variables
+                // Asignacion de inventario inicial
+                // Variables
                 $cantidadAjuste = ($producto->existencias == null) ? 0 : $producto->existencias;
                 $valorUnitarioAjuste = 0.00;
                 // Se crea el movimiento
@@ -100,8 +161,59 @@ class ConfiguracionController extends Controller
                 $productoDB->costo = $movimiento->costoUnitarioExistencia;
                 $productoDB->save();
             }
-            dd('bien');
+            /**
+             * Fin código para guardar los productos con su inventario inicial
+             */
+            dd('Datos cargados correctamente');
         });
+
+    }
+
+    public function ConversionUnidadesLista()
+    {
+        $factores = ConversionUnidadMedida::all();
+        return view('configuracion.conversionesUMLista')->with(['factores' => $factores]);
+    }
+
+    public function ConversionUnidadesVer($id)
+    {
+        $unidadMedidas = UnidadMedida::all();
+        $factor = ConversionUnidadMedida::find($id);
+        return view('configuracion.conversionesUMVer')
+            ->with(['unidadMedidas' => $unidadMedidas])
+            ->with(['factor' => $factor]);
+    }
+
+    public function ConversionUnidadesNuevo()
+    {
+        $unidadMedidas = UnidadMedida::all();
+        return view('configuracion.conversionesUM')->with(['unidadMedidas' => $unidadMedidas]);
+    }
+
+    public function ConversionUnidadesNuevoPost(Request $request)
+    {
+        // Validacion
+        $this->validate($request, [
+            'codigo' => 'required',
+            'nombre' => 'required',
+            'unidadMedidaOrigen_id' => 'required',
+            'unidadMedidaDestino_id' => 'required',
+            'factor' => 'required',
+        ]);
+
+        $factor = ConversionUnidadMedida::create([
+            'codigo' => $request->input('codigo'),
+            'nombre' => $request->input('nombre'),
+            'unidadMedidaOrigen_id' => $request->input('unidadMedidaOrigen_id'),
+            'unidadMedidaDestino_id' => $request->input('unidadMedidaDestino_id'),
+            'factor' => $request->input('factor'),
+        ]);
+
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La conversion de unidad fue agregada correctamente!');
+        return redirect()->route('conversionUnidadesVer', ['id' => $factor->id]);
 
     }
 

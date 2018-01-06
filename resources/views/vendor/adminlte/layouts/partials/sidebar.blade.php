@@ -163,6 +163,17 @@
                     <li><a href="">Nuevo usuario</a></li>
                 </ul>
             </li>
+
+            {{-- Configuracion --}}
+            <li class="treeview">
+                <a href="#"><i class='fa fa-cog'></i> <span>Configuración</span> <i
+                            class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="">Configuración usuarios</a></li>
+                    <li><a href="">Configuración inicial</a></li>
+                    <li><a href="{{route('conversionUnidadesLista')}}">Conversión de unidades</a></li>
+                </ul>
+            </li>
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

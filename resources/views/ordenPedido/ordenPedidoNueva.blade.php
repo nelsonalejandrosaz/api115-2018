@@ -7,16 +7,14 @@
 @section('CSSExtras')
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
-    {{-- DataPicker --}}
-    <link rel="stylesheet" href="{{asset('/css/datepicker.css')}}">
 @endsection
 
 @section('contentheader_title')
-    Orden de compra
+    Orden de pedido
 @endsection
 
 @section('contentheader_description')
-
+    -- Realizar una nueva orden de pedido
 @endsection
 
 @section('main-content')
@@ -24,7 +22,7 @@
     @include('partials.alertas')
 
     <!-- Form de nuevo proveedor -->
-    <div class="box box-primary">
+    <div class="box box-default">
         <div class="box-header with-border">
             <h3 class="box-title">Detalle</h3>
         </div><!-- /.box-header -->
@@ -34,6 +32,9 @@
             <div class="box-body">
                 {{-- Cabecera --}}
                 <div class="col-md-6 col-sm-12">
+
+                    {{--Factor--}}
+                    <input type="hidden" name="" id="factorID" value="0">
 
                     {{-- Fecha ingreso --}}
                     <div class="form-group">
@@ -60,7 +61,7 @@
                         <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
                             <select class="form-control select2" style="width: 100%" name="municipio_id">
-                                <option value="" selected disabled>Seleciona un municipio</option>
+                                <option value="" selected disabled>Selecciona un municipio</option>
                                 @foreach($municipios as $municipio)
                                     <option value="{{ $municipio->id }}">{{ $municipio->nombre }}</option>
                                 @endforeach
@@ -126,13 +127,13 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width:40%">Producto -- (Cantidad existencia)</th>
-                            <th style="width:5%">Unidad medida</th>
+                            <th style="width:45%">Producto -- (Cantidad existencia)</th>
+                            <th style="width:7.5%">Unidad medida</th>
                             <th style="width:5%">Cantidad</th>
-                            <th style="width:12.5%">Precio unitario</th>
-                            <th style="width:15%">Ventas exentas</th>
-                            <th style="width:15%">Ventas gravadas</th>
-                            <th style="width:2.5%">E</th>
+                            <th style="width:10%">Precio unitario</th>
+                            <th style="width:10%">Ventas exentas</th>
+                            <th style="width:10%">Ventas gravadas</th>
+                            <th style="width:7.5%">Tipo venta</th>
                             <th style="width:5%">
                                 <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()" type="button">
                                     <span class="fa fa-plus"></span>
@@ -145,42 +146,52 @@
                                 <select class="form-control select2 selProd" style="width:100%" name="productos_id[]" id="selectProductos">
                                     <option selected disabled value="">-- Seleccione un producto --</option>
                                     @foreach($productos as $producto)
-                                        <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidadMedida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidadExistencia}})</option>
+                                        <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }} -- ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}})</option>
                                     @endforeach
                                 </select>
                             </td>
+
                             {{--Unidad de medida--}}
                             <td>
-                                <input type="text" class="form-control unidadCls" name="" id="unidadMedida" disabled>
+                                <select class="form-control select2 unidadCls" style="width:100%" name="unidad_medida_id[]" id="umSelect">
+                                    @foreach($unidadMedidas as $unidadMedida)
+                                        <option value="{{ $unidadMedida->id }}">{{ $unidadMedida->abreviatura }}</option>
+                                    @endforeach
+                                </select>
                             </td>
+
                             {{--Cantidad--}}
                             <td>
-                                <input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]" id="cantidad" required>
+                                <input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]" id="cantidad" value="0" required>
                             </td>
+
                             {{--Precio unitario--}}
                             <td>
                                 <div class="input-group">
-                                    <span class="input-group-addon">$</span>
-                                    <input type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>
+                                    <input disabled type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>
                                 </div>
                             </td>
+
                             {{--Ventas exentas--}}
                             <td>
                                 <div class="input-group">
-                                    <span class="input-group-addon">$</span>
-                                    <input type="text" class="form-control veCls" name="ventasExentas[]" id="ventasExentas">
+                                    <input disabled type="text" class="form-control veCls" name="ventasExentas[]" id="ventasExentas">
                                 </div>
                             </td>
+
                             {{--Ventas afectas--}}
                             <td>
                                 <div class="input-group">
-                                    <span class="input-group-addon">$</span>
-                                    <input type="text" class="form-control vaCls" name="ventasGravadas[]" id="ventasGravadas">
+                                    <input disabled type="text" class="form-control vaCls" name="ventasGravadas[]" id="ventasGravadas">
                                 </div>
                             </td>
+
                             {{--Exenta--}}
                             <td align="center">
-                                <input type="checkbox" class="tipoVentaCls" id="tipoVenta" name="exentas[]">
+                                <select class="form-control select2 tipoVentaCls" style="width:100%" name="tipoVenta[]" id="tipoVentaSelect">
+                                    <option value="0">Gravada</option>
+                                    <option value="1">Exenta</option>
+                                </select>
                             </td>
                             <td align="center">
 
@@ -227,6 +238,7 @@
 
         function funcionNuevoProducto() {
             copia = $('#selectProductos').clone(false);
+            umCopia = $('#umSelect').clone(false);
             $('#tblProductos')
                 .append
                 (
@@ -244,7 +256,8 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<input type="text" class="form-control unidadCls" name="" id="unidadMedida" disabled>'
+//                                    '<input type="text" class="form-control unidadCls" name="" id="unidadMedida" disabled>'
+                                    umCopia
                                 )
                         )
                         .append
@@ -252,7 +265,7 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="cantidades[]" id="cantidad" required>'
+                                    '<input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="cantidades[]" id="cantidad" value="0" required>'
                                 )
                         )
                         .append
@@ -261,8 +274,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>\n' +
+                                    '<input disabled type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>\n' +
                                     '</div>'
                                 )
                         )
@@ -272,8 +284,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="text" class="form-control veCls" name="ventasExentas[]" id="ventasExentas">\n' +
+                                    '<input disabled type="text" class="form-control veCls" name="ventasExentas[]" id="ventasExentas">\n' +
                                     '</div>'
                                 )
                         )
@@ -283,8 +294,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="text" class="form-control vaCls" name="ventasGravadas[]" id="ventasGravadas">\n' +
+                                    '<input disabled type="text" class="form-control vaCls" name="ventasGravadas[]" id="ventasGravadas">\n' +
                                     '</div>'
                                 )
                         )
@@ -293,7 +303,10 @@
                             $('<td>').attr('align','center')
                                 .append
                                 (
-                                    '<input type="checkbox" class="tipoVentaCls" id="tipoVenta" name="exentas[]">'
+                                    '<select class="form-control select2 tipoVentaCls" style="width:100%" name="tipoVenta[]" id="tipoVentaSelect">\n' +
+                                    '<option value="0">Gravada</option>\n' +
+                                    '<option value="1">Exenta</option>\n' +
+                                    '</select>'
                                 )
                         )
                         .append
@@ -323,8 +336,8 @@
         function agregarFuncion() {
             $('.cantidadCls').each(
                 function(index, value){
-                    $(this).change(cambioProductoJS);
-                    $(this).keyup(cambioProductoJS);
+                    $(this).change(cambioUnidadMedida);
+                    $(this).keyup(cambioUnidadMedida);
                 });
             $('.selProd').each(
                 function(index, value){
@@ -333,6 +346,10 @@
             $('.tipoVentaCls').each(
                 function (index, value) {
                     $(this).change(cambioTipoVenta);
+                });
+            $('.unidadCls').each(
+                function (index, value) {
+                    $(this).change(cambioUnidadMedida);
                 });
         }
 
@@ -357,45 +374,104 @@
 
         function cambioProductoJS() {
             var idSelect = $(this).parent().parent().find('#selectProductos').val();
-            var cu = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('cu');
-            var um = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('um');
+            var productoPrecioUnitario = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('cu');
+            var umId = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('unidad');
             var cantidad = $(this).parent().parent().find('#cantidad').val();
-            var costoTotal = cu * cantidad;
+            var costoTotal = productoPrecioUnitario * cantidad;
             costoTotal = costoTotal.toFixed(2);
             var puntoStr = 0.00;
-            $(this).parent().parent().find('#precioUnitario').val(cu);
-            $(this).parent().parent().find('#unidadMedida').val(um);
+            $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
+            $(this).parent().parent().find('#umSelect').select2('destroy');
+            $(this).parent().parent().find('#umSelect').val(umId);
+            $(this).parent().parent().find('#umSelect').select2({
+                // Activamos la opcion "Tags" del plugin
+                tags: false,
+                tokenSeparators: [','],
+                ajax: {
+                    dataType: 'json',
+                    url: '{{ route('unidadesMedidaJSON') }}',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            umo: umId
+                        }
+                    },
+                    processResults: function (data, page) {
+                        return {
+                            results: data
+                        };
+                    },
+                },
+            });
+
             if ($(this).parent().parent().find('#tipoVenta').is(":checked")) {
-                $(this).parent().parent().find('#ventasGravadas').val(puntoStr);
+                $(this).parent().parent().find('#ventasGravadas').val(puntoStr.toFixed(2));
                 $(this).parent().parent().find('#ventasExentas').val(costoTotal);
             } else {
                 $(this).parent().parent().find('#ventasGravadas').val(costoTotal);
-                $(this).parent().parent().find('#ventasExentas').val(puntoStr);
+                $(this).parent().parent().find('#ventasExentas').val(puntoStr.toFixed(2));
             }
             cambioTotal();
         }
 
         function cambioTipoVenta() {
-            var idSelect = $(this).parent().parent().find('#selectProductos').val();
-            var cu = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('cu');
-            var um = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('um');
-            var cantidad = $(this).parent().parent().find('#cantidad').val();
-            var costoTotal = cu * cantidad;
-            costoTotal = costoTotal.toFixed(2);
-            var puntoStr = 0.00;
-            $(this).parent().parent().find('#precioUnitario').val(cu);
-            $(this).parent().parent().find('#unidadMedida').val(um);
-            if ($(this).parent().parent().find('#tipoVenta').is(":checked")) {
-                $(this).parent().parent().find('#ventasGravadas').val(puntoStr);
-                $(this).parent().parent().find('#ventasExentas').val(costoTotal);
+            var cero = 0;
+            if ($(this).parent().parent().find('#tipoVentaSelect').val() == 1) {
+                var ventasExentas = $(this).parent().parent().find('#ventasGravadas').val();
+                $(this).parent().parent().find('#ventasGravadas').val(cero.toFixed(2));
+                $(this).parent().parent().find('#ventasExentas').val(ventasExentas);
             } else {
-                $(this).parent().parent().find('#ventasGravadas').val(costoTotal);
-                $(this).parent().parent().find('#ventasExentas').val(puntoStr);
+                var ventasGravadas = $(this).parent().parent().find('#ventasExentas').val();
+                $(this).parent().parent().find('#ventasGravadas').val(ventasGravadas);
+                $(this).parent().parent().find('#ventasExentas').val(cero.toFixed(2));
+            }
+            cambioTotal();
+        }
+
+        function cambioUnidadMedida() {
+            var productoId = $(this).parent().parent().find('#selectProductos').val();
+            var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="'+productoId+'"]').data('cu');
+            var umOrigen = $(this).parent().parent().find('#selectProductos').find('option[value="'+productoId+'"]').data('unidad');
+            var umDestino = $(this).val();
+            var umDestino = $(this).parent().parent().find('#umSelect').val();
+            var puntoStr = 0.00;
+            var factor;
+            var cantidad = 0;
+            if (umOrigen == umDestino) {
+                cantidad = $(this).parent().parent().find('#cantidad').val();
+                productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="'+productoId+'"]').data('cu');
+                $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
+                var costoTotal = productoPrecioUnitario * cantidad;
+            } else {
+                $.ajax({
+                    url:'/dev/factorJSON?umo='+umOrigen+'&umd='+umDestino,
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (data) {
+                        factor = data;
+                        $('#factorID').val(factor);
+                    },
+                    async: false
+                });
+                console.log("Factor = "+ factor);
+                cantidad = $(this).parent().parent().find('#cantidad').val();
+                productoPrecioUnitario = productoPrecioUnitario * factor;
+                console.log("Precio nuevo = "+productoPrecioUnitario);
+                $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
+                var costoTotal = productoPrecioUnitario * cantidad;
+            }
+            if ($(this).parent().parent().find('#tipoVenta').is(":checked")) {
+                $(this).parent().parent().find('#ventasGravadas').val(puntoStr.toFixed(2));
+                $(this).parent().parent().find('#ventasExentas').val(costoTotal.toFixed(2));
+            } else {
+                $(this).parent().parent().find('#ventasGravadas').val(costoTotal.toFixed(2));
+                $(this).parent().parent().find('#ventasExentas').val(puntoStr.toFixed(2));
             }
             cambioTotal();
         }
 
     </script>
+
     @include('comun.select2Jses')
 @endsection
 

@@ -115,5 +115,18 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('/configuracion/producto/cvs','ConfiguracionController@ImportarDatos')->name('importarDatos');
     Route::post('/configuracion/producto/cvs','ConfiguracionController@ImportarDatosPost')->name('importarDatosPost');
+    Route::get('/conversionUnidades','ConfiguracionController@ConversionUnidadesLista')->name('conversionUnidadesLista');
+    Route::get('/conversionUnidades/nuevo','ConfiguracionController@ConversionUnidadesNuevo')->name('conversionUnidadesNuevo');
+    Route::post('/conversionUnidades/nuevo','ConfiguracionController@ConversionUnidadesNuevoPost')->name('conversionUnidadesNuevoPost');
+    Route::get('/conversionUnidades/{id}','ConfiguracionController@ConversionUnidadesVer')->name('conversionUnidadesVer');
+
+    /**
+     * Rutas de pruebas
+     */
+    Route::get('dev/prueba','DevController@select2');
+    Route::get('dev/unidadesMedidaJSON','DevController@UnidadesMedidaJSON')->name('unidadesMedidaJSON');
+    Route::get('dev/unidadesConversionJSON','DevController@UnidadesConversionJSON')->name('unidadesMedidaJSON');
+    Route::get('dev/factorJSON','DevController@FactorJSON')->name('factorJSON');
+
 
 });

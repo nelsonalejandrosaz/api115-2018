@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Categoria;
 use App\Producto;
+use App\ProductoUnidadMedida;
 use App\TipoProducto;
 use App\UnidadMedida;
 use Illuminate\Http\Request;
@@ -63,8 +64,8 @@ class ProductoController extends Controller
         $producto = Producto::create([
             'nombre' => $request->input('nombre'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
-            'unidad_medida_id' => $request->input('unidad_medida_id'),
             'categoria_id' => $request->input('categoria_id'),
+            'unidad_medida_id' => $request->input('unidad_medida_id'),
             'existenciaMin' => $existenciaMin,
             'existenciaMax' => $existenciaMax,
             'costo' => $costo,
@@ -85,7 +86,6 @@ class ProductoController extends Controller
             $producto->codigo = $request->input('codigo');
             $producto->update();
         }
-
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

@@ -64,7 +64,7 @@
                         </div>
                     </div>
 
-                    {{-- Unidad de medida compra --}}
+                    {{-- Unidad de medida prederteminada --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Unidad medida </b></label>
                         <div class="col-sm-8">

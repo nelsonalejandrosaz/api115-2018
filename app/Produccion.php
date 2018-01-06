@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Produccion
  *
- * @mixin \Eloquent
  * @property int $id
  * @property int $bodeguero_id
  * @property int $formula_id
@@ -16,6 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $detalle
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\User $bodeguero
+ * @property-read \App\Formula $formula
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Salida[] $salidas
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereBodegueroId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereCantidad($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereCreatedAt($value)
@@ -24,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereFormulaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Produccion extends Model
 {
