@@ -68,25 +68,25 @@
             <td class="tg-rg0h">{{$salida->unidadMedida->abreviatura}}</td>
             <td class="tg-rg0h">{{$salida->cantidad}}</td>
             <td class="tg-rg0h" colspan="2">{{$salida->movimiento->producto->nombre}}</td>
-            <td class="tg-rg0h">{{money_format('%i',$salida->precioUnitario)}}</td>
-            <td class="tg-rg0h">{{money_format('%i',$salida->ventaExenta)}}</td>
-            <td class="tg-rg0h">{{money_format('%i',$salida->ventaGravada)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->precioUnitario,2)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->ventaExenta,2)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->ventaGravada,2)}}</td>
         </tr>
         @endforeach
         <tr>
             <td class="tg-rg0h">SON</td>
             <td class="tg-rg0h" colspan="5">{{$ordenPedido->ventaTotalLetras}}</td>
             <td class="tg-rg0h">SUBTOTAL</td>
-            <td class="tg-rg0h">{{money_format('%i',$ordenPedido->ventasGravadas)}}</td>
+            <td class="tg-rg0h">{{number_format($ordenPedido->ventasGravadas,2)}}</td>
         </tr>
         <tr>
             <td class="tg-rg0h" colspan="6" rowspan="2"></td>
             <td class="tg-rg0h">V. EXENTAS</td>
-            <td class="tg-rg0h">{{money_format('%i',$ordenPedido->ventasExentas)}}</td>
+            <td class="tg-rg0h">{{number_format($ordenPedido->ventasExentas,2)}}</td>
         </tr>
         <tr>
             <td class="tg-rg0h">VENTAS TOTAL</td>
-            <td class="tg-rg0h">{{money_format('%i',$ordenPedido->ventaTotal)}}</td>
+            <td class="tg-rg0h">{{number_format($ordenPedido->ventaTotal,2)}}</td>
         </tr>
     </table>
 </body>

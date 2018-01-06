@@ -93,6 +93,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/venta/ordenes','VentaController@VentaListaOrdenesProcesadas')->name('ventaListaOrdenesProcesadas');
     Route::get('/venta/nueva/{id}','VentaController@VentaNueva')->name('ventaNueva');
     Route::post('/venta/nueva/{id}','VentaController@VentaNuevaPost')->name('ventaNuevaPost');
+    Route::get('/venta/factura/{id}','VentaController@VentaVerFactura')->name('ventaVerFactura');
+    Route::get('/venta/ccf/{id}','VentaController@VentaVerCCF')->name('ventaVerCFF');
 
     /**
      * Rutas de inventario

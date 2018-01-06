@@ -179,7 +179,7 @@
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{money_format('%i',$salida->precioUnitario)}}" disabled>
+                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precioUnitario,2)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}
@@ -187,7 +187,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control veCls" name="ventasExentas[]"
-                                               id="ventasExentas" value="{{money_format('%i',$salida->ventaExenta)}}" disabled>
+                                               id="ventasExentas" value="{{number_format($salida->ventaExenta,2)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas afectas--}}
@@ -195,7 +195,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control vaCls" name="ventasGravadas[]"
-                                               id="ventasGravadas" value="{{money_format('%i',$salida->ventaGravada)}}" disabled>
+                                               id="ventasGravadas" value="{{number_format($salida->ventaGravada,2)}}" disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -209,7 +209,7 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{money_format('%i',$ordenPedido->ventaTotal)}}" name="compraTotal"
+                                    <input type="number" class="form-control" value="{{number_format($ordenPedido->ventaTotal,2)}}" name="compraTotal"
                                            id="ventaTotal" disabled>
                                 </div>
                             </th>
