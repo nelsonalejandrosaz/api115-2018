@@ -198,7 +198,7 @@ class OrdenPedidoController extends Controller
     public function OrdenPedidoPDF($id)
     {
         $ordenPedido = OrdenPedido::find($id);
-        $ventaTotal = money_format('%i',$ordenPedido->ventaTotal);
+        $ventaTotal = number_format($ordenPedido->ventaTotal,2);
         $ordenPedido->ventaTotalLetras = \NumeroALetras::convertir($ventaTotal,'dolares','centavos');
         $pdf = PDF::loadView('pdf.ordenPedidoPDF',compact('ordenPedido'));
         return $pdf->stream();
