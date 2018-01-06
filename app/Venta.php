@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereVendedorId($value)
  * @mixin \Eloquent
+ * @property-read \App\TipoDocumento $tipoDocumento
  */
 class Venta extends Model
 {
@@ -40,6 +41,11 @@ class Venta extends Model
     public function vendedor()
     {
         return $this->belongsTo('App\User','id','vendedor_id');
+    }
+
+    public function tipoDocumento()
+    {
+        return $this->belongsTo('App\TipoDocumento');
     }
 
     protected $fillable = [

@@ -61,12 +61,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/cliente/{id}','ClienteController@ClienteEliminar')->name('clienteEliminar');
 
     /**
-     * Movimientos
+     * Rutas Compras
      */
     Route::get('/compra','CompraController@CompraLista')->name('compraLista');
     Route::get('/compra/nueva','CompraController@CompraNueva')->name('compraNueva');
     Route::post('/compra/nueva','CompraController@CompraNuevaPost')->name('compraNuevaPost');
     Route::get('/compra/{id}','CompraController@CompraVer')->name('compraVer');
+
+    /**
+     * Rutas Orden de pedido
+     */
     Route::get('/ordenPedido','OrdenPedidoController@OrdenPedidoLista')->name('ordenPedidoLista');
     Route::get('/ordenPedido/bodega','OrdenPedidoController@OrdenPedidoListaBodega')->name('ordenPedidoListaBodega');
     Route::get('/ordenPedido/nueva','OrdenPedidoController@OrdenPedidoNueva')->name('ordenPedidoNueva');
@@ -74,10 +78,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoBodegaPost')->name('ordenPedidoBodegaPost');
     Route::get('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
     Route::get('/ordenPedido/{id}/bodega','OrdenPedidoController@OrdenPedidoVerBodega')->name('ordenPedidoVerBodega');
+
+    /**
+     * Rutas Ajustes
+     */
     Route::get('/ajuste','AjusteController@AjusteLista')->name('ajusteLista');
     Route::get('/ajuste/nuevo','AjusteController@AjusteNuevo')->name('ajusteNuevo');
     Route::post('/ajuste/nuevo','AjusteController@AjusteNuevoPost')->name('ajusteNuevoPost');
     Route::get('/ajuste/{id}','AjusteController@AjusteVer')->name('ajusteVer');
+
+    /**
+     * Rutas Ventas
+     */
+    Route::get('/venta/ordenes','VentaController@VentaListaOrdenesProcesadas')->name('ventaListaOrdenesProcesadas');
+    Route::get('/venta/nueva/{id}','VentaController@VentaNueva')->name('ventaNueva');
+    Route::post('/venta/nueva/{id}','VentaController@VentaNuevaPost')->name('ventaNuevaPost');
 
     /**
      * Rutas de inventario

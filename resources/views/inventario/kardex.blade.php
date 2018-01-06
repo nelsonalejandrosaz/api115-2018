@@ -43,6 +43,19 @@
                     <h3 class="box-title">Kardex</h3>
                     <a href="{{ route('inventarioLista') }}" class="btn btn-lg btn-default pull-right">Regresar</a>
                 </div><!-- /.box-header -->
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-md-4  control-label">Unidad de medida</label>
+                            <div class="col-md-8 ">
+                                <input type="text" class="form-control" name="numero" value="{{$producto->unidadMedida->nombre}}"
+                                       disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="box-body table-responsive">
                     <table id="tablaKardex" class="table table-bordered table-hover">
                         <thead>

@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TipoMovimientosSeeder::class);
         $this->call(TipoAjustesSeeder::class);
         $this->call(MunicipiosSeeder::class);
+        $this->call(TipoDocumentoSeeder::class);
     }
 }

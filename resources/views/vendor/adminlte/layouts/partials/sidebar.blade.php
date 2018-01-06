@@ -79,7 +79,7 @@
                 <a href="#"><i class='fa fa-truck'></i> <span>Ventas</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="{{route('ordenPedidoLista')}}">Lista de ventas</a></li>
+                    <li><a href="{{route('ventaListaOrdenesProcesadas')}}">Lista de ventas</a></li>
                     <li><a href="{{route('ordenPedidoNueva')}}">Nueva venta</a></li>
                 </ul>
             </li>
@@ -170,7 +170,7 @@
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="">Configuración usuarios</a></li>
-                    <li><a href="">Configuración inicial</a></li>
+                    <li><a href="{{route('importarDatos')}}">Configuración inicial</a></li>
                     <li><a href="{{route('conversionUnidadesLista')}}">Conversión de unidades</a></li>
                 </ul>
             </li>
