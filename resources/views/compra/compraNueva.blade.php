@@ -132,7 +132,7 @@
                             {{--cantidad--}}
                             <td>
                                 <div class="input-group">
-                                    <input class="form-control cantidadCls" type="number" value="0" name="cantidades[]" id="cantidad" required>
+                                    <input class="form-control cantidadCls" type="number" value="0" step="0.001" name="cantidades[]" id="cantidad" required>
                                 </div>
                             </td>
                             {{--costo unitario --}}
@@ -228,7 +228,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<input class="form-control cantidadCls" type="number" value="0" name="cantidades[]" id="cantidad" required>\n' +
+                                    '<input class="form-control cantidadCls" type="number" value="0" step="0.001" name="cantidades[]" id="cantidad" required>\n' +
                                     '</div>'
                                 )
                         )
