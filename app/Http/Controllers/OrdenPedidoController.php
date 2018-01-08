@@ -12,6 +12,7 @@ use App\Salida;
 use App\UnidadMedida;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
+use NumeroALetras;
 
 class OrdenPedidoController extends Controller
 {
@@ -48,7 +49,7 @@ class OrdenPedidoController extends Controller
     public function OrdenPedidoNueva()
     {
         $unidadMedidas = UnidadMedida::all();
-        $productosTodos = Producto::all();
+        $productosTodos = Producto::all()->where('precio','>',0);
         $productos = array();
         foreach ($productosTodos as $productoTodo) {
             if ($productoTodo->cantidadExistencia > 0 && $productoTodo->precio != 0) {
@@ -58,7 +59,7 @@ class OrdenPedidoController extends Controller
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         return view('ordenPedido.ordenPedidoNueva')
-            ->with(['productos' => $productos])
+            ->with(['productos' => $productosTodos])
             ->with(['clientes' => $clientes])
             ->with(['municipios' => $municipios])
             ->with(['unidadMedidas' => $unidadMedidas]);
@@ -199,7 +200,7 @@ class OrdenPedidoController extends Controller
     {
         $ordenPedido = OrdenPedido::find($id);
         $ventaTotal = number_format($ordenPedido->ventaTotal,2);
-        $ordenPedido->ventaTotalLetras = \NumeroALetras::convertir($ventaTotal,'dolares','centavos');
+        $ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
         $pdf = PDF::loadView('pdf.ordenPedidoPDF',compact('ordenPedido'));
         return $pdf->stream();
     }

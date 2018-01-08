@@ -80,6 +80,7 @@ class Producto extends Model
         'cantidadExistencia',
         'costo',
         'precio',
+        'precioConImpuestos',
         'margenGanancia',
     ];
 }

@@ -16,11 +16,13 @@ class CreateCientesTable extends Migration
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre',140)->unique();
-            $table->string('telefono1',20)->nullable();
-            $table->string('telefono2',20)->nullable();
+            $table->string('telefono1',25)->nullable();
+            $table->string('telefono2',25)->nullable();
             $table->string('direccion',255)->nullable();
+            $table->integer('vendedor_id')->unsigned()->nullable();
+            $table->string('nit')->nullable();
+            $table->string('nrc')->nullable();
             $table->string('nombreContacto')->nullable();
-            $table->string('numeroRegistro')->nullable();
             $table->timestamps();
         });
     }

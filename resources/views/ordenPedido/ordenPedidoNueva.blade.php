@@ -56,6 +56,7 @@
                             </select>
                         </div>
                     </div>
+
                     {{-- Municipio --}}
                     <div class="form-group">
                         <label class="col-md-3  control-label">Municipio</label>
@@ -76,6 +77,18 @@
                             <textarea class="form-control" name="direccion"></textarea>
                         </div>
                     </div>
+
+                    {{-- Con impuestos --}}
+                    <div class="form-group">
+                        <label class="col-md-3  control-label">Precio</label>
+                        <div class="col-md-9 ">
+                            <select class="form-control select2" style="width: 100%" name="municipio_id">
+                                <option value="0" selected>Precio sin IVA</option>
+                                <option value="1">Precio con IVA</option>
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="col-md-6 col-sm-12">
@@ -100,7 +113,9 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label"><b>Vendedor</b></label>
                         <div class="col-md-8 ">
-                            <input type="text" class="form-control" value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}" disabled name="despachadoPor">
+                            <input type="text" class="form-control"
+                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}" disabled
+                                   name="despachadoPor">
                         </div>
                     </div>
 
@@ -135,7 +150,8 @@
                             <th style="width:10%">Ventas gravadas</th>
                             <th style="width:7.5%">Tipo venta</th>
                             <th style="width:5%">
-                                <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()" type="button">
+                                <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
+                                        type="button">
                                     <span class="fa fa-plus"></span>
                                 </button>
                             </th>
@@ -143,17 +159,40 @@
                         <tr id="rowProducto1">
                             {{--Productos--}}
                             <td>
-                                <select class="form-control select2 selProd" style="width:100%" name="productos_id[]" id="selectProductos">
+                                <select class="form-control select2 selProd" style="width:100%" name="productos_id[]"
+                                        id="selectProductos">
                                     <option selected disabled value="">-- Seleccione un producto --</option>
-                                    @foreach($productos as $producto)
-                                        <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }} -- ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}})</option>
-                                    @endforeach
+                                    <optgroup label="Productos con existencia">
+                                        @foreach($productos as $producto)
+                                            @if($producto->cantidadExistencia > 0 )
+                                                <option value="{{ $producto->id }}" data-precioUnitario="{{ $producto->precio }}" data-precioUnitarioIVA="{{$producto->precioConImpuestos}}"
+                                                        data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }}
+                                                    --
+                                                    ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}}
+                                                    )
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </optgroup>
+                                    <optgroup label="Productos sin existencia">
+                                        @foreach($productos as $producto)
+                                            @if($producto->cantidadExistencia == 0 )
+                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}"
+                                                        data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }}
+                                                    --
+                                                    ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}}
+                                                    )
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </optgroup>
                                 </select>
                             </td>
 
                             {{--Unidad de medida--}}
                             <td>
-                                <select class="form-control select2 unidadCls" style="width:100%" name="unidad_medida_id[]" id="umSelect">
+                                <select class="form-control select2 unidadCls" style="width:100%"
+                                        name="unidad_medida_id[]" id="umSelect">
                                     @foreach($unidadMedidas as $unidadMedida)
                                         <option value="{{ $unidadMedida->id }}">{{ $unidadMedida->abreviatura }}</option>
                                     @endforeach
@@ -162,33 +201,40 @@
 
                             {{--Cantidad--}}
                             <td>
-                                <input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]" id="cantidad" value="0" required>
+                                <input type="text" class="form-control cantidadCls"
+                                       pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
+                                       id="cantidad" value="0" required>
                             </td>
 
                             {{--Precio unitario--}}
                             <td>
                                 <div class="input-group">
-                                    <input disabled type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>
+                                    <input disabled type="text" class="form-control puCls"
+                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
+                                           name="preciosUnitarios[]" id="precioUnitario" required>
                                 </div>
                             </td>
 
                             {{--Ventas exentas--}}
                             <td>
                                 <div class="input-group">
-                                    <input disabled type="text" class="form-control veCls" name="ventasExentas[]" id="ventasExentas">
+                                    <input disabled type="text" class="form-control veCls" name="ventasExentas[]"
+                                           id="ventasExentas">
                                 </div>
                             </td>
 
                             {{--Ventas afectas--}}
                             <td>
                                 <div class="input-group">
-                                    <input disabled type="text" class="form-control vaCls" name="ventasGravadas[]" id="ventasGravadas">
+                                    <input disabled type="text" class="form-control vaCls" name="ventasGravadas[]"
+                                           id="ventasGravadas">
                                 </div>
                             </td>
 
                             {{--Exenta--}}
                             <td align="center">
-                                <select class="form-control select2 tipoVentaCls" style="width:100%" name="tipoVenta[]" id="tipoVentaSelect">
+                                <select class="form-control select2 tipoVentaCls" style="width:100%" name="tipoVenta[]"
+                                        id="tipoVentaSelect">
                                     <option value="0">Gravada</option>
                                     <option value="1">Exenta</option>
                                 </select>
@@ -206,7 +252,8 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="0.00" name="compraTotal" id="ventaTotal" disabled>
+                                    <input type="number" class="form-control" value="0.00" name="compraTotal"
+                                           id="ventaTotal" disabled>
                                 </div>
                             </th>
                             <th style="width:5%"></th>
@@ -231,9 +278,10 @@
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
-            $("body").on( "click", ".btn-danger",funcionEliminarProducto);
+            $("body").on("click", ".btn-danger", funcionEliminarProducto);
             agregarFuncion();
         }
+
         var numero = 2;
 
         function funcionNuevoProducto() {
@@ -242,7 +290,7 @@
             $('#tblProductos')
                 .append
                 (
-                    $('<tr>').attr('id','rowProducto'+numero)
+                    $('<tr>').attr('id', 'rowProducto' + numero)
                         .append
                         (
                             $('<td>')
@@ -300,7 +348,7 @@
                         )
                         .append
                         (
-                            $('<td>').attr('align','center')
+                            $('<td>').attr('align', 'center')
                                 .append
                                 (
                                     '<select class="form-control select2 tipoVentaCls" style="width:100%" name="tipoVenta[]" id="tipoVentaSelect">\n' +
@@ -311,7 +359,7 @@
                         )
                         .append
                         (
-                            $('<td>').attr('align','center')
+                            $('<td>').attr('align', 'center')
                                 .append
                                 (
                                     '<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
@@ -335,12 +383,12 @@
 
         function agregarFuncion() {
             $('.cantidadCls').each(
-                function(index, value){
+                function (index, value) {
                     $(this).change(cambioUnidadMedida);
                     $(this).keyup(cambioUnidadMedida);
                 });
             $('.selProd').each(
-                function(index, value){
+                function (index, value) {
                     $(this).change(cambioProductoJS);
                 });
             $('.tipoVentaCls').each(
@@ -356,15 +404,15 @@
         function cambioTotal() {
             var ventaTotal = 0;
             $(".veCls").each(
-                function(index, value) {
-                    if ( $.isNumeric( $(this).val() ) ){
+                function (index, value) {
+                    if ($.isNumeric($(this).val())) {
                         ventaTotal += eval($(this).val());
                     }
                 }
             );
             $(".vaCls").each(
-                function(index, value) {
-                    if ( $.isNumeric( $(this).val() ) ){
+                function (index, value) {
+                    if ($.isNumeric($(this).val())) {
                         ventaTotal += eval($(this).val());
                     }
                 }
@@ -374,8 +422,8 @@
 
         function cambioProductoJS() {
             var idSelect = $(this).parent().parent().find('#selectProductos').val();
-            var productoPrecioUnitario = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('cu');
-            var umId = $(this).parent().parent().find('option[value="'+idSelect+'"]').data('unidad');
+            var productoPrecioUnitario = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('cu');
+            var umId = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('unidad');
             var cantidad = $(this).parent().parent().find('#cantidad').val();
             var costoTotal = productoPrecioUnitario * cantidad;
             costoTotal = costoTotal.toFixed(2);
@@ -391,7 +439,7 @@
                     dataType: 'json',
                     url: '{{ route('unidadesMedidaJSON') }}',
                     delay: 250,
-                    data: function(params) {
+                    data: function (params) {
                         return {
                             umo: umId
                         }
@@ -430,8 +478,8 @@
 
         function cambioUnidadMedida() {
             var productoId = $(this).parent().parent().find('#selectProductos').val();
-            var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="'+productoId+'"]').data('cu');
-            var umOrigen = $(this).parent().parent().find('#selectProductos').find('option[value="'+productoId+'"]').data('unidad');
+            var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('cu');
+            var umOrigen = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('unidad');
             var umDestino = $(this).val();
             var umDestino = $(this).parent().parent().find('#umSelect').val();
             var puntoStr = 0.00;
@@ -439,12 +487,12 @@
             var cantidad = 0;
             if (umOrigen == umDestino) {
                 cantidad = $(this).parent().parent().find('#cantidad').val();
-                productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="'+productoId+'"]').data('cu');
+                productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('cu');
                 $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
                 var costoTotal = productoPrecioUnitario * cantidad;
             } else {
                 $.ajax({
-                    url:'/dev/factorJSON?umo='+umOrigen+'&umd='+umDestino,
+                    url: '/dev/factorJSON?umo=' + umOrigen + '&umd=' + umDestino,
                     type: 'GET',
                     dataType: 'JSON',
                     success: function (data) {
@@ -453,10 +501,10 @@
                     },
                     async: false
                 });
-                console.log("Factor = "+ factor);
+                console.log("Factor = " + factor);
                 cantidad = $(this).parent().parent().find('#cantidad').val();
                 productoPrecioUnitario = productoPrecioUnitario * factor;
-                console.log("Precio nuevo = "+productoPrecioUnitario);
+                console.log("Precio nuevo = " + productoPrecioUnitario);
                 $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
                 var costoTotal = productoPrecioUnitario * cantidad;
             }

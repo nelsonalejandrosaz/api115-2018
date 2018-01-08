@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,12 +18,17 @@ class ClienteController extends Controller
     public function ClienteVer(Request $request)
     {
         $cliente = Cliente::find($request->id);
-        return view('cliente.clienteVer')->with(['cliente' => $cliente]);
+        $vendedores = User::whereRolId(3)->get();
+        return view('cliente.clienteVer')
+            ->with(['cliente' => $cliente])
+            ->with(['vendedores' => $vendedores]);
     }
 
     public function ClienteNuevo(Request $request)
     {
-        return view('cliente.clienteNuevo');
+        $vendedores = User::whereRolId(3)->get();
+        return view('cliente.clienteNuevo')
+            ->with(['vendedores' => $vendedores]);
     }
 
     public function ClienteNuevoPost(Request $request)
@@ -37,7 +43,10 @@ class ClienteController extends Controller
             'nombreContacto',
             'direccion',
             'telefono1',
-            'telefono2'
+            'telefono2',
+            'nit',
+            'nrc',
+            'vendedor_id'
         ));
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
@@ -49,7 +58,10 @@ class ClienteController extends Controller
     public function ClienteEditar(Request $request)
     {
         $cliente = Cliente::find($request->id);
-        return view('cliente.clienteEditar')->with(['cliente' => $cliente]);
+        $vendedores = User::whereRolId(3)->get();
+        return view('cliente.clienteEditar')
+            ->with(['cliente' => $cliente])
+            ->with(['vendedores' => $vendedores]);
     }
 
     public function ClienteEditarPut(Request $request, $id)
@@ -69,7 +81,9 @@ class ClienteController extends Controller
             'nombreContacto',
             'direccion',
             'telefono1',
-            'telefono2'
+            'telefono2',
+            'nrc',
+            'nit'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

@@ -37,8 +37,8 @@
                             <th style="width:20%">Nombre</th>
                             <th style="width:15%">Unidad medida</th>
                             <th style="width:10%">Cantidad</th>
-                            <th style="width:15%">VU compra</th>
-                            <th style="width:15%">VU venta</th>
+                            <th style="width:15%">Costo</th>
+                            <th style="width:15%">Precio</th>
                             <th style="width:15%">Acción</th>
                         </tr>
                         </thead>

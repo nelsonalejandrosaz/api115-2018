@@ -5,7 +5,8 @@
 @endsection
 
 @section('CSSExtras')
-
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
 @endsection
 
 @section('contentheader_title')
@@ -72,6 +73,42 @@
                             <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono2 }}" >
                         </div>
                     </div>
+
+                    {{-- NIT del cliente --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">NIT</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="NIT" name="nit"
+                                   value="{{$cliente->nit}}">
+                        </div>
+                    </div>
+
+                    {{-- NRC del cliente --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">NRC</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="Número Registro de Comercio"
+                                   name="nrc" value="{{$cliente->nrc}}">
+                        </div>
+                    </div>
+
+                    {{--Vendedor--}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Vendedor</label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2" name="unidad_medida_id">
+                                <option value="" selected disabled>Sin vendedor especificado</option>
+                                @foreach($vendedores as $vendedor)
+                                    @if($vendedor->id == $cliente->vendedor_id)
+                                        <option selected value="{{ $vendedor->id }}">{{ $vendedor->nombre }} {{ $vendedor->apellido }}</option>
+                                    @else
+                                        <option value="{{ $vendedor->id }}">{{ $vendedor->nombre }} {{ $vendedor->apellido }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- /.box-body -->
 
@@ -85,5 +122,5 @@
 @endsection
 
 @section('JSExtras')
-
+    @include('comun.select2Jses')
 @endsection

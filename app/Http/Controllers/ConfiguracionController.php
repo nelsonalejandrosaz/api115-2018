@@ -42,8 +42,9 @@ class ConfiguracionController extends Controller
 //            dd($categorias);
             foreach ($categorias as $categoriaX)
             {
-                $categoria = Categoria::create([
+                $categoria = Categoria::updateOrCreate([
                     'codigo' => $categoriaX->codigo,
+                ],[
                     'nombre' => $categoriaX->nombre_categoria,
                     'descripcion' => $categoriaX->descripcion,
                 ]);
@@ -58,8 +59,9 @@ class ConfiguracionController extends Controller
             $proveedores = $results[4];
             foreach ($proveedores as $proveedorX)
             {
-                $proveedor = Proveedor::firstOrCreate([
+                $proveedor = Proveedor::updateOrCreate([
                     'nombre' => $proveedorX->nombre_o_empresa_proveedor,
+                ],[
                     'telefono1' => $proveedorX->telefono_1,
                     'telefono2' => $proveedorX->telefono_2,
                     'direccion' => $proveedorX->direccion,
@@ -76,13 +78,14 @@ class ConfiguracionController extends Controller
             $clientes = $results[5];
             foreach ($clientes as $clienteX)
             {
-                $cliente = Cliente::firstOrCreate([
+                $cliente = Cliente::updateOrCreate([
                     'nombre' => $clienteX->nombre_o_empresa_cliente,
+                ],[
                     'telefono1' => $clienteX->telefono_1,
                     'telefono2' => $clienteX->telefono_2,
                     'direccion' => $clienteX->direccion,
                     'nombreContacto' => $clienteX->contacto,
-                    'numeroRegistro' => $clienteX->num_registro,
+                    'nrc' => $clienteX->num_registro,
                 ]);
             }
             /**
@@ -96,17 +99,19 @@ class ConfiguracionController extends Controller
             $productos = $results[0];
             foreach ($productos as $producto)
             {
+//                dd($producto);
                 // Inicio para guardar inventario
                 $existenciaMin = ($producto->existencia_minima == null) ? 0 : $producto->existencia_minima;
                 $existenciaMax = ($producto->existencia_maxima == null) ? 100 : $producto->existencia_maxima;
                 $costo = ($producto->costo == null) ? 0.00 : $producto->costo;
-                $precio = ($producto->precio == null) ? 0.00 : $producto->costo;
+                $precio = ($producto->precio == null) ? 0.00 : $producto->precio;
                 $margenGanancia = ($producto->margen_ganancia == null) ? 0 : $producto->margen_ganancia;
                 $unidadMedida = UnidadMedida::whereNombre($producto->unidad_de_medida)->first();
                 $tipoProducto = TipoProducto::whereNombre($producto->tipo_de_producto)->first();
                 $categoria = Categoria::whereNombre($producto->categoria)->first();
-                $productoDB = Producto::firstOrCreate([
+                $productoDB = Producto::updateOrCreate([
                     'nombre' => $producto->nombre_producto,
+                ],[
                     'tipo_producto_id' => $tipoProducto->id,
                     'unidad_medida_id' => $unidadMedida->id,
                     'categoria_id' => $categoria->id,
@@ -114,6 +119,7 @@ class ConfiguracionController extends Controller
                     'existenciaMax' => $existenciaMax,
                     'costo' => $costo,
                     'precio' => $precio,
+                    'precioConImpuestos' => ($precio * 1.13),
                     'margenGanancia' => $margenGanancia,
                 ]);
                 if ($producto->codigo == null)
@@ -133,7 +139,7 @@ class ConfiguracionController extends Controller
                 // Asignacion de inventario inicial
                 // Variables
                 $cantidadAjuste = ($producto->existencias == null) ? 0 : $producto->existencias;
-                $valorUnitarioAjuste = 0.00;
+                $valorUnitarioAjuste = $productoDB->costo;
                 // Se crea el movimiento
                 $movimiento = Movimiento::create([
                     'producto_id' => $productoDB->id,
@@ -156,10 +162,6 @@ class ConfiguracionController extends Controller
                     'cantidadAnterior' => 0,
                     'valorUnitarioAnterior' => $productoDB->precio,
                 ]);
-                // Se actualiza la cantidad de producto despues de la entrada
-                $productoDB->cantidadExistencia = $movimiento->cantidadExistencia;
-                $productoDB->costo = $movimiento->costoUnitarioExistencia;
-                $productoDB->save();
             }
             /**
              * Fin código para guardar los productos con su inventario inicial

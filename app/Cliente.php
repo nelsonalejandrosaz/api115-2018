@@ -35,11 +35,19 @@ class Cliente extends Model
         return $this->hasMany('App\OrdenPedido');
     }
 
+    public function vendedor()
+    {
+        return $this->belongsTo('App\User','vendedor_id');
+    }
+
     protected $fillable = [
         'nombre',
         'telefono1',
         'telefono2',
         'direccion',
+        'vendedor_id',
+        'nit',
+        'nrc',
         'nombreContacto',
         'numeroRegistro',
     ];
