@@ -51,10 +51,10 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Producto</b></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="formula_id">
+                            <select class="form-control select2" name="formula_id" onchange="cambioProducto()" id="productoID">
                                 <option value="" selected disabled>Seleccione el producto a producir</option>
                                 @foreach($formulas as $formula)
-                                    <option value="{{ $formula->id }}">{{ $formula->producto->nombre }}</option>
+                                    <option value="{{ $formula->id }}" data-unidadmedida="{{$formula->producto->unidadMedida->nombre}}">{{ $formula->producto->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -80,8 +80,17 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad a producir</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" class="form-control" placeholder="0" name="cantidad"
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0" name="cantidad"
                                    value="{{ old('cantidad') }}">
+                        </div>
+                    </div>
+
+                    {{-- Unidad de medida --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Unidad de medida</b></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="Seleccione el producto" disabled id="unidadMedidalbl">
                         </div>
                     </div>
 
@@ -129,6 +138,13 @@
             }
             precio = costo * (1 + (margen/100));
             $('#precio').val(precio.toFixed(2));
+        }
+
+        function cambioProducto() {
+            var productoId = $('#productoID').val();
+            console.log(productoId);
+            var unidadMedida = $('#productoID').find('option[value="' + productoId + '"]').data('unidadmedida');
+            $('#unidadMedidalbl').val(unidadMedida);
         }
     </script>
     @include('comun.select2Jses')

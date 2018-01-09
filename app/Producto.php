@@ -41,6 +41,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property float $precioConImpuestos
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto wherePrecioConImpuestos($value)
  */
 class Producto extends Model
 {

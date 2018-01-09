@@ -22,6 +22,7 @@ class CreateMovimientosTable extends Migration
             $table->float('cantidadExistencia')->nullable();
             $table->float('costoUnitarioExistencia')->nullable();
             $table->float('costoTotalExistencia')->nullable();
+            $table->dateTime('fechaProcesado')->nullable();
             $table->boolean('procesado')->default(false);
             $table->timestamps();
         });

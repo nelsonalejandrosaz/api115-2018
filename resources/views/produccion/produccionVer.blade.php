@@ -90,6 +90,15 @@
                         </div>
                     </div>
 
+                    {{-- Unidad de medida --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Unidad de medida</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="{{$produccion->formula->producto->unidadMedida->nombre}}" disabled id="unidadMedidalbl">
+                        </div>
+                    </div>
+
                     {{-- Detalle --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Detalle</label>
@@ -128,11 +137,12 @@
                                         @endforeach
                                     </select>
                                 </td>
+
                                 {{--Cantidad--}}
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
+                                           id="cantidad" value="{{number_format($salida->cantidad,2)}}" disabled>
                                 </td>
                             </tr>
                         @endforeach

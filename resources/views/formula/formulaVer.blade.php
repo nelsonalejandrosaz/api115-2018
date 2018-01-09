@@ -34,8 +34,10 @@
         <form id="formDatos" class="form-horizontal">
             {{ csrf_field() }}
             <div class="box-body">
+
                 {{-- Fila  --}}
                 <div class="col-md-6">
+
                     {{-- Producto --}}
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Producto asociado:</b></label>
@@ -51,7 +53,26 @@
                             </select>
                         </div>
                     </div>
+
+                    {{-- Unidad de medida formula--}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Unidad de medida</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control"
+                                   value="{{$formula->producto->unidadMedida->nombre}}" name="" disabled id="unidadMedidalbl">
+                        </div>
+                    </div>
+
+                    {{-- Descripcion --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Descripción:</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" name="descripcion" disabled>{{$formula->descripcion}}</textarea>
+                        </div>
+                    </div>
+
                 </div>
+
                 <div class="col-md-6">
                     {{-- Fecha --}}
                     <div class="form-group">
@@ -65,30 +86,17 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                {{-- Fin fila --}}
 
-                {{-- Fila  --}}
-                <div class="col-md-6">
-                    {{-- Descripcion --}}
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">Descripción:</label>
-                        <div class="col-md-8">
-                            <textarea class="form-control" name="descripcion" disabled>{{$formula->descripcion}}</textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
                     {{-- Ingresado por --}}
                     <div class="form-group">
                         <label class="col-md-4 control-label">Ingresado por:</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" value="{{$formula->ingresadoPor}}" name="ingresadoPor" disabled>
+                            <input type="text" class="form-control" value="{{$formula->ingresado->nombre}} {{$formula->ingresado->apellido}}" name="ingresadoPor" disabled>
                         </div>
                     </div>
+
                 </div>
                 {{-- Fin fila --}}
-
 
                 {{-- Fila --}}
                 <div class="col-md-12">
@@ -96,9 +104,8 @@
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
                             <th style="width: 5%">#</th>
-                            <th style="width: 50%">Producto</th>
-                            <th style="width: 30%">Porcentaje</th>
-                            <th style="width: 15%">
+                            <th style="width: 60%">Producto</th>
+                            <th style="width: 35%">Porcentaje</th>
                             </th>
                         </tr>
                         @php( $i = 1 )
@@ -124,26 +131,22 @@
                                         <span class="input-group-addon">%</span>
                                     </div>
                                 </td>
-                                <td align="center">
-                                    {{-- <div id="a1" class="btn btn-danger">
-                                        <span class="fa fa-remove"></span>
-                                    </div> --}}
-                                </td>
                             </tr>
                             @php( $i++ )
                         @endforeach
                     </table>
+
                     <table class="table table-bordered">
                         <th style="width: 5%"></th>
-                        <th style="width: 50%; text-align: right; vertical-align: middle;">Total:</th>
-                        <th style="width: 30%">
+                        <th style="width: 60%; text-align: right; vertical-align: middle;">Total:</th>
+                        <th style="width: 35%">
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput" min="100" max="100" value="0" disabled>
+                                <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput" min="100" max="100" value="100" disabled>
                                 <span class="input-group-addon">%</span>
                             </div>
                         </th>
-                        <th style="width: 15%"></th>
                     </table>
+
                 </div>
                 {{-- Fin fila --}}
 

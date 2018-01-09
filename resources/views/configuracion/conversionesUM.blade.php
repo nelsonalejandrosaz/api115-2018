@@ -87,7 +87,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Factor de conversión</b></label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" class="form-control" placeholder="0" name="factor"
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0" name="factor"
                                    value="{{ old('factor') }}">
                         </div>
                     </div>

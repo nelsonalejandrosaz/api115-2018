@@ -149,6 +149,7 @@ class ConfiguracionController extends Controller
                     'cantidadExistencia' => $cantidadAjuste,
                     'costoUnitarioExistencia' => $valorUnitarioAjuste,
                     'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
+                    'fechaProcesado' => Carbon::now(),
                     'procesado' => true,
                 ]);
                 // Se crea el ajuste de entrada

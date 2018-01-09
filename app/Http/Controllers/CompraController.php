@@ -7,6 +7,7 @@ use App\Entrada;
 use App\Movimiento;
 use App\Producto;
 use App\Proveedor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CompraController extends Controller
@@ -91,7 +92,8 @@ class CompraController extends Controller
                 'cantidadExistencia' => $cantidadExistencia,
                 'costoUnitarioExistencia' => $cuExistencia,
                 'costoTotalExistencia' => $ctExistencia,
-                'procesado' => false,
+                'fechaProcesado' => Carbon::now(),
+                'procesado' => true,
             ]);
 //            Se crea la entrada
             $entrada = Entrada::create([

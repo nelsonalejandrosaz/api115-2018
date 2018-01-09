@@ -11,6 +11,7 @@ use App\Producto;
 use App\Salida;
 use App\UnidadMedida;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use NumeroALetras;
 
@@ -178,9 +179,9 @@ class OrdenPedidoController extends Controller
                 'costoTotal' => $ctSalida,
             ]);
             // Se actualiza la existencia del producto
-            $producto->cantidadExistencia = $cantidadExistencia;
-            $producto->costo = $cuExistencia;
-            $producto->update();
+            //$producto->cantidadExistencia = $cantidadExistencia;
+            //$producto->costo = $cuExistencia;
+            //$producto->update();
             $ventaExenta = $ventaTotal + $ventaExentaSalida;
             $ventaGravada = $ventaGravada + $ventaGravadaSalida;
         }
@@ -208,6 +209,31 @@ class OrdenPedidoController extends Controller
     public function OrdenPedidoBodegaPost($id)
     {
         $ordenPedido = OrdenPedido::find($id);
+        $salidas = $ordenPedido->salidas;
+        foreach ($salidas as $salida)
+        {
+            $producto = Producto::find($salida->movimiento->producto_id);
+            $cantidadExistencia = $producto->cantidadExistencia;
+            if ($cantidadExistencia < $salida->cantidad)
+            {
+                // Mensaje de exito al guardar
+                session()->flash('mensaje.tipo', 'danger');
+                session()->flash('mensaje.icono', 'fa-check');
+                session()->flash('mensaje.contenido', 'No hay suficiente producto para procesar la orden!');
+                return redirect()->route('ordenPedidoVerBodega',['id' => $ordenPedido->id]);
+            }
+        }
+        foreach ($salidas as $salida)
+        {
+            $producto = Producto::find($salida->movimiento->producto_id);
+            $cantidadExistencia = $producto->cantidadExistencia - $salida->cantidad;
+            $salida->movimiento->cantidadExistencia = $cantidadExistencia;
+            $salida->movimiento->fechaProcesado = Carbon::now();
+            $salida->movimiento->procesado = true;
+            $salida->movimiento->save();
+            $producto->cantidadExistencia = $cantidadExistencia;
+            $producto->save();
+        }
         $ordenPedido->procesado = true;
         $ordenPedido->update();
 //        Mensaje de exito al guardar

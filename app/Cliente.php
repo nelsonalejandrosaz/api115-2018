@@ -27,6 +27,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereTelefono2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $vendedor_id
+ * @property string|null $nit
+ * @property string|null $nrc
+ * @property-read \App\User|null $vendedor
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereNit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereNrc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Cliente whereVendedorId($value)
  */
 class Cliente extends Model
 {

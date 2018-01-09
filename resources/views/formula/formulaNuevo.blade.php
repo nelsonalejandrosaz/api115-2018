@@ -7,8 +7,6 @@
 @section('CSSExtras')
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
-    {{-- DataPicker --}}
-    <link rel="stylesheet" href="{{asset('/css/datapicker/bootstrap-datepicker3.css')}}">
 @endsection
 
 @section('contentheader_title')
@@ -46,14 +44,35 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Producto asociado:</b></label>
                         <div class="col-md-8">
-                            <select class="form-control select2" style="width:100%" name="producto_id">
+                            <select class="form-control select2" style="width:100%" name="producto_id" onchange="cambioProducto()" id="productoID">
+                                <option selected disabled value="0">Seleccione un producto</option>
                                 @foreach($productos as $producto)
-                                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                                    <option value="{{ $producto->id }}"
+                                            data-unidadmedida="{{$producto->unidadMedida->nombre}}">{{ $producto->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
+
+                    {{-- Unidad de medida formula--}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Unidad de medida</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control"
+                                   value="Seleccione un producto" name="" disabled id="unidadMedidalbl">
+                        </div>
+                    </div>
+
+                    {{-- Descripcion --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Descripción:</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" name="descripcion"></textarea>
+                        </div>
+                    </div>
+
                 </div>
+
                 <div class="col-md-6">
 
                     {{-- Fecha --}}
@@ -69,35 +88,18 @@
                         </div>
                     </div>
 
-                </div>
-                {{-- Fin fila --}}
-
-                {{-- Fila  --}}
-                <div class="col-md-6">
-
-                    {{-- Descripcion --}}
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">Descripción:</label>
-                        <div class="col-md-8">
-                            <textarea class="form-control" name="descripcion"></textarea>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-6">
-
                     {{-- Ingresado por --}}
                     <div class="form-group">
                         <label class="col-md-4 control-label">Ingresado por:</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control"
-                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}" name="ingresado_id" disabled>
+                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}" name="ingresado_id"
+                                   disabled>
                         </div>
                     </div>
 
                 </div>
                 {{-- Fin fila --}}
-
 
                 {{-- Fila --}}
                 <div class="col-md-12">
@@ -120,7 +122,8 @@
                                     <option selected disabled value="">Seleccione un producto</option>
                                     @foreach($productos as $producto)
                                         <option value="{{ $producto->id }}"
-                                                data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
+                                                data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}}
+                                            -- {{ $producto->nombre }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -243,27 +246,15 @@
             // console.log(totalPorcentaje);
         }
 
+        function cambioProducto() {
+            var productoId = $('#productoID').val();
+            var unidadMedida = $('#productoID').find('option[value="' + productoId + '"]').data('unidadmedida');
+            $('#unidadMedidalbl').val(unidadMedida);
+        }
+
     </script>
     {{-- Fin de funcion para cargar mas filas de productos --}}
 
-    <!-- Select2 -->
-    <script src="{{asset('/plugins/select2.full.min.js')}}"></script>
-    {{-- Data Picker --}}
-    <script src="{{asset('/js/datapicker/bootstrap-datepicker.js')}}"></script>
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $(".select2").select2();
-            // Inicializar el datapicker
-            $('.datepicker').datepicker(
-                {
-                    format: "yyyy/mm/dd",
-                    todayBtn: "linked",
-                    language: "es",
-                    autoclose: true
-                });
-
-        });
-    </script>
+    @include('comun.select2Jses')
 @endsection
 

@@ -7,6 +7,7 @@ use App\Movimiento;
 use App\Producto;
 use App\TipoAjuste;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AjusteController extends Controller
@@ -50,6 +51,7 @@ class AjusteController extends Controller
             'cantidadExistencia' => $cantidadAjuste,
             'costoUnitarioExistencia' => $valorUnitarioAjuste,
             'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
+            'fechaProcesado' => Carbon::now(),
             'procesado' => true,
         ]);
         // Se crea el ajuste de entrada

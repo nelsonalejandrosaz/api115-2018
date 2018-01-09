@@ -16,7 +16,14 @@
 @if(session()->has('mensaje.contenido'))
     <div class="alert alert-{{session('mensaje.tipo')}} alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <h4>  <i class="icon fa {{session('mensaje.icono')}}"></i> Exito!</h4>
+        <h4>
+            <i class="icon fa {{session('mensaje.icono')}}"></i>
+            @if(session()->has('mensaje.titulo'))
+                {{session('mensaje.titulo')}}
+            @else
+                Exito!
+            @endif
+        </h4>
         {{ session('mensaje.contenido') }}
     </div>
 @endif

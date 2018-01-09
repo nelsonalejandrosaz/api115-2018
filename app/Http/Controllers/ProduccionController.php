@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\ConversionUnidadMedida;
 use App\Entrada;
 use App\Formula;
 use App\Movimiento;
 use App\Produccion;
 use App\Producto;
 use App\Salida;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +26,20 @@ class ProduccionController extends Controller
         $produccion = Produccion::find($id);
         $productos = Producto::all();
         $formulas = Formula::all();
+        $unidadMedida = $produccion->formula->producto->unidad_medida_id;
+        foreach ($produccion->salidas as $salida)
+        {
+//            $salida = Salida::find(1);
+            if ($salida->movimiento->producto->unidadMedida->conversiones->where('unidadMedidaDestino_id',$unidadMedida)->first())
+            {
+                // Se busca el factor de conversion
+                $factor = ConversionUnidadMedida::where([
+                    ['unidadMedidaOrigen_id','=', $salida->movimiento->producto->unidad_medida_id],
+                    ['unidadMedidaDestino_id', '=', $unidadMedida],
+                ])->first();
+                $salida->cantidad = $salida->cantidad / $factor->factor;
+            }
+        }
         return view('produccion.produccionVer')
             ->with(['produccion' => $produccion])
             ->with(['formulas' => $formulas])
@@ -56,21 +72,60 @@ class ProduccionController extends Controller
 
 //        Se guardan en variales los componentes
         $formula = Formula::find($produccion->formula_id);
+        $unidadMedida = $formula->producto->unidad_medida_id;
+        $costoTotalProduccion = 0.00;
+
+        // Aqui va la validacion de existencias
 
 //        Se regristan las salidas
         foreach ($formula->componentes as $componente)
         {
 //            Se carga el producto
             $producto = Producto::find($componente->producto_id);
-//            Se calcula la cantidad y costo
             $cantidad = ($componente->porcentaje / 100) * $produccion->cantidad;
-            $cuMovimiento = $producto->costo;
-            $ctMovimiento = $cantidad * $cuMovimiento;
-//            Calculo de existencias
-            $cantidadExistencia = $producto->cantidadExistencia - $cantidad;
-            $cuExistencia = $producto->costo;
-            $ctExistencia = $cantidadExistencia * $cuExistencia;
-//            Se crea el movimiento
+//            Se calcula la cantidad y costo
+
+            // Si es la misma medida no se hacen conversiones; si no si se haran las conversiones de unidades
+            if ($unidadMedida == $producto->unidad_medida_id)
+            {
+                // Calculo cantidad y costo de salida
+                $cantidadSalida = $cantidad;
+                // Calculo costo salida
+                $cuSalida = $producto->costo;
+                $ctSalida = $cantidadSalida * $cuSalida;
+                // Calculo de cantidad y costos existencias
+                $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
+                $cuExistencia = $producto->costo;
+                dd($cantidadSalida);
+                $ctExistencia = $cantidadExistencia * $cuExistencia;
+            } elseif ($producto->unidadMedida->conversiones->where('unidadMedidaDestino_id',$unidadMedida)->first())
+            {
+                // Se busca el factor de conversion
+                $factor = ConversionUnidadMedida::where([
+                    ['unidadMedidaOrigen_id','=', $producto->unidad_medida_id],
+                    ['unidadMedidaDestino_id', '=', $unidadMedida],
+                ])->first();
+                // Se guarda la cantidad de salida
+                $cantidadSalida = $cantidad * $factor->factor;
+                // Calculo costo salida
+                $cuSalida = $producto->costo * $factor->factor;
+                $ctSalida = $cantidadSalida * $cuSalida;
+                // Calculo de existencias
+                $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
+                $cuExistencia = $producto->costo;
+                $ctExistencia = $cantidadExistencia * $cuExistencia;
+            } else
+            {
+                $produccion->delete();
+                // Mensaje de error al guardar
+                session()->flash('mensaje.tipo', 'danger');
+                session()->flash('mensaje.icono', 'fa-close');
+                session()->flash('mensaje.titulo', 'Error!');
+                session()->flash('mensaje.contenido', 'No existe la conversion de unidades necesaria para generar la producción!');
+                return redirect()->route('produccionNuevo');
+            }
+            // Aqui va validacion existencia de producto
+
             $movimiento = Movimiento::create([
                 'producto_id' => $producto->id,
                 'tipo_movimiento_id' => 2,
@@ -79,19 +134,22 @@ class ProduccionController extends Controller
                 'cantidadExistencia' => $cantidadExistencia,
                 'costoUnitarioExistencia' => $cuExistencia,
                 'costoTotalExistencia' => $ctExistencia,
-                'procesado' => false,
+                'fechaProcesado' => Carbon::now(),
+                'procesado' => true,
             ]);
 //            Se crea la salida
             $salida = Salida::create([
                 'movimiento_id' => $movimiento->id,
                 'produccion_id' => $produccion->id,
-                'cantidad' => $cantidad,
+                'cantidad' => $cantidadSalida,
+                'unidad_medida_id' => $unidadMedida,
                 'precioUnitario' => 0.00,
                 'ventaExenta' => 0.00,
                 'ventaGravada' => 0.00,
-                'costoUnitario' => $cuMovimiento,
-                'costoTotal' => $ctMovimiento,
+                'costoUnitario' => $cuSalida,
+                'costoTotal' => $ctSalida,
             ]);
+            $costoTotalProduccion += $ctSalida;
 //            Se actualiza la existencia del producto
             $producto->cantidadExistencia = $cantidadExistencia;
             $producto->costo = $cuExistencia;
@@ -101,12 +159,13 @@ class ProduccionController extends Controller
 //            Se carga el producto
         $producto = Producto::find($formula->producto_id);
 //            Se calcula la cantidad y costo
+        $costoUnitarioProduccion = $costoTotalProduccion / $produccion->cantidad;
         $cantidad = $produccion->cantidad;
-        $cuMovimiento = $producto->costo;
-        $ctMovimiento = $cantidad * $cuMovimiento;
+        $cuEntrada = $costoUnitarioProduccion;
+        $ctEntrada = $cantidad * $cuEntrada;
 //            Calculo de existencias
         $cantidadExistencia = $producto->cantidadExistencia + $cantidad;
-        $cuExistencia = $producto->costo;
+        $cuExistencia = $cuEntrada;
         $ctExistencia = $cantidadExistencia * $cuExistencia;
 //            Se crea el movimiento
         $movimiento = Movimiento::create([
@@ -117,17 +176,19 @@ class ProduccionController extends Controller
             'cantidadExistencia' => $cantidadExistencia,
             'costoUnitarioExistencia' => $cuExistencia,
             'costoTotalExistencia' => $ctExistencia,
-            'procesado' => false,
+            'fechaProcesado' => Carbon::now(),
+            'procesado' => true,
         ]);
 //            Se crea la entrada
         $entrada = Entrada::create([
             'movimiento_id' => $movimiento->id,
             'produccion_id' => $produccion->id,
             'cantidad' => $cantidad,
-            'costoUnitario' => $cuMovimiento,
-            'costoTotal' => $ctMovimiento,
+            'costoUnitario' => $cuEntrada,
+            'costoTotal' => $ctEntrada,
         ]);
         $producto->cantidadExistencia = $cantidadExistencia;
+        $producto->costo = $cuEntrada;
         $producto->update();
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');

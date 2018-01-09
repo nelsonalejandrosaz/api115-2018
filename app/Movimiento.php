@@ -33,6 +33,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereTipoMovimientoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $procesado
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereProcesado($value)
+ * @property \Carbon\Carbon|null $fechaProcesado
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereFechaProcesado($value)
  */
 class Movimiento extends Model
 {
@@ -69,10 +73,12 @@ class Movimiento extends Model
         'cantidadExistencia',
         'costoUnitarioExistencia',
         'costoTotalExistencia',
+        'fechaProcesado',
         'procesado',
     ];
 
     protected $dates = [
-      'fecha',
+        'fecha',
+        'fechaProcesado',
     ];
 }
