@@ -144,11 +144,12 @@ class ConfiguracionController extends Controller
                 $movimiento = Movimiento::create([
                     'producto_id' => $productoDB->id,
                     'tipo_movimiento_id' => 3,
-                    'fecha' => Carbon::now()->format('Y-d-m'),
+                    'fecha' => Carbon::now(),
                     'detalle' => 'Ajuste de entrada por inicio de inventario ',
                     'cantidadExistencia' => $cantidadAjuste,
                     'costoUnitarioExistencia' => $valorUnitarioAjuste,
                     'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
+                    'procesado' => true,
                 ]);
                 // Se crea el ajuste de entrada
                 $ajuste = Ajuste::create([
@@ -162,12 +163,19 @@ class ConfiguracionController extends Controller
                     'cantidadAnterior' => 0,
                     'valorUnitarioAnterior' => $productoDB->precio,
                 ]);
+                // Se actualiza la cantidad de producto despues de la entrada
+                $productoDB->cantidadExistencia = $movimiento->cantidadExistencia;
+                $productoDB->save();
             }
             /**
              * Fin código para guardar los productos con su inventario inicial
              */
-            dd('Datos cargados correctamente');
         });
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La importación de la configuración inicial fue ejecutada correctamente!');
+        return redirect()->route('inventarioLista');
 
     }
 

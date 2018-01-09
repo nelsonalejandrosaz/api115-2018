@@ -50,6 +50,7 @@ class AjusteController extends Controller
             'cantidadExistencia' => $cantidadAjuste,
             'costoUnitarioExistencia' => $valorUnitarioAjuste,
             'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
+            'procesado' => true,
         ]);
         // Se crea el ajuste de entrada
         $ajuste = Ajuste::create([

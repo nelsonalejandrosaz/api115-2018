@@ -82,7 +82,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Precio</label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="municipio_id">
+                            <select class="form-control select2" style="width: 100%" id="IVAid" onchange="cambioIVA()">
                                 <option value="0" selected>Precio sin IVA</option>
                                 <option value="1">Precio con IVA</option>
                             </select>
@@ -165,7 +165,7 @@
                                     <optgroup label="Productos con existencia">
                                         @foreach($productos as $producto)
                                             @if($producto->cantidadExistencia > 0 )
-                                                <option value="{{ $producto->id }}" data-precioUnitario="{{ $producto->precio }}" data-precioUnitarioIVA="{{$producto->precioConImpuestos}}"
+                                                <option value="{{ $producto->id }}" data-preciounitario="{{ $producto->precio }}" data-preciounitarioiva="{{$producto->precioConImpuestos}}"
                                                         data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }}
                                                     --
                                                     ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}}
@@ -401,6 +401,12 @@
                 });
         }
 
+        function cambioIVA() {
+            $(".cantidadCls").each(
+                cambioUnidadMedida
+            );
+        }
+
         function cambioTotal() {
             var ventaTotal = 0;
             $(".veCls").each(
@@ -422,7 +428,16 @@
 
         function cambioProductoJS() {
             var idSelect = $(this).parent().parent().find('#selectProductos').val();
-            var productoPrecioUnitario = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('cu');
+//            var productoPrecioUnitario = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('preciounitario');
+            if ($("#IVAid").val() == 0)
+            {
+                var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + idSelect + '"]').data('preciounitario');
+                console.log('Sin IVA: ' + productoPrecioUnitario);
+            } else {
+                var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + idSelect + '"]').data('preciounitarioiva');
+                console.log('Con IVA: ' + productoPrecioUnitario);
+            }
+            console.log(productoPrecioUnitario);
             var umId = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('unidad');
             var cantidad = $(this).parent().parent().find('#cantidad').val();
             var costoTotal = productoPrecioUnitario * cantidad;
@@ -477,8 +492,16 @@
         }
 
         function cambioUnidadMedida() {
+            console.log('ejecuto cambio unidad medida');
             var productoId = $(this).parent().parent().find('#selectProductos').val();
-            var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('cu');
+            if ($("#IVAid").val() == 0)
+            {
+                var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('preciounitario');
+                console.log('Sin IVA: ' + productoPrecioUnitario);
+            } else {
+                var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('preciounitarioiva');
+                console.log('Con IVA: ' + productoPrecioUnitario);
+            }
             var umOrigen = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('unidad');
             var umDestino = $(this).val();
             var umDestino = $(this).parent().parent().find('#umSelect').val();
@@ -487,7 +510,7 @@
             var cantidad = 0;
             if (umOrigen == umDestino) {
                 cantidad = $(this).parent().parent().find('#cantidad').val();
-                productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('cu');
+//                productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('preciounitarioiva');
                 $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
                 var costoTotal = productoPrecioUnitario * cantidad;
             } else {

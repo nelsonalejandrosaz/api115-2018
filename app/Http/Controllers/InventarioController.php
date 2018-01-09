@@ -20,20 +20,7 @@ class InventarioController extends Controller
     public function InventarioKardex(Request $request)
     {
         $producto = Producto::find($request->id);
-        $movimientos = $producto->movimientos;
-
-        // $kardex = Kardex::where('producto_id',$request->id)->first();
-        // $movimientos = Movimiento::where('kardex_id', $kardex->id)->get();
-
-        // foreach ($movimientos as $movimiento) {
-        //        if ($movimiento->entrada != null) {
-        //            $movimiento->entrada->valorTotal = $movimiento->entrada->cantidad * $movimiento->entrada->valorUnitario;
-        //        }
-        //        if ($movimiento->salida != null) {
-        //            $movimiento->salida->valorTotal = $movimiento->salida->cantidad * $movimiento->salida->valorUnitario;
-        //        }
-        // 	$movimiento->valorTotalExistencia = $movimiento->cantidadExistencia * $movimiento->valorUnitarioExistencia;
-        // }
+        $movimientos = $producto->movimientos()->where('procesado','=',true)->orderBy('fecha','asc')->get();
         return view('inventario.kardex')->with(['movimientos' => $movimientos])->with(['producto' => $producto]);
     }
 }

@@ -69,5 +69,10 @@ class Movimiento extends Model
         'cantidadExistencia',
         'costoUnitarioExistencia',
         'costoTotalExistencia',
+        'procesado',
+    ];
+
+    protected $dates = [
+      'fecha',
     ];
 }
