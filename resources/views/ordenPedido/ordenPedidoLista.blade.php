@@ -47,26 +47,30 @@
                             <tr>
                                 <td>{{$ordenPedido->numero}}</td>
                                 <td>{{$ordenPedido->fechaIngreso->format('d/m/Y')}}</td>
-                                <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+                                @if($ordenPedido->fechaEntrega != null)
+                                    <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+                                @else
+                                    <td>Sin fecha definida</td>
+                                @endif
                                 <td>{{$ordenPedido->cliente->nombre}}</td>
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
                                 <td>
-                                    @if($ordenPedido->procesado)
-                                        Procesado
-                                    @else
+                                    @if($ordenPedido->estado_id == 1)
                                         En proceso
+                                    @elseif($ordenPedido->estado_id == 2)
+                                        Procesado
                                     @endif
                                 </td>
                                 <td align="center">
                                     <a href="{{ route('ordenPedidoVer', ['id' => $ordenPedido->id]) }}"
                                        class="btn btn-info"><span class="fa fa-eye"></span></a>
-                                    <a href="{{ route('ordenPedidoVer', ['id' => $ordenPedido->id]) }}"
-                                       class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal"
-                                            data-target="#modalEliminar" data-ordenPedido="{{ $ordenPedido->id }}"
-                                            data-id="{{ $ordenPedido->id }}">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
+                                    @if($ordenPedido->estado_id == 1)
+                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                data-target="#modalEliminar" data-ordenPedido="{{ $ordenPedido->id }}"
+                                                data-id="{{ $ordenPedido->id }}">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

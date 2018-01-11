@@ -20,7 +20,9 @@ class CreateVentasTable extends Migration
             $table->date('fechaIngreso');
             $table->integer('vendedor_id')->unsigned();
             $table->string('nit',16)->nullable();
+            $table->string('nrc')->nullable();
             $table->string('rutaArchivo')->default('sin-documento.jpg');
+            $table->string('procesado')->default(false);
             $table->timestamps();
         });
     }

@@ -90,7 +90,9 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas Ventas
      */
-    Route::get('/venta/ordenes','VentaController@VentaListaOrdenesProcesadas')->name('ventaListaOrdenesProcesadas');
+    Route::get('/venta/ordenes','VentaController@VentaOrdenesLista')->name('ventaOrdenesLista');
+    Route::get('/venta/facturas','VentaController@VentaFacturaLista')->name('ventaFacturaLista');
+    Route::get('/venta/ccf','VentaController@VentaCCFLista')->name('ventaCCFLista');
     Route::get('/venta/nueva/{id}','VentaController@VentaNueva')->name('ventaNueva');
     Route::post('/venta/nueva/{id}','VentaController@VentaNuevaPost')->name('ventaNuevaPost');
     Route::get('/venta/factura/{id}','VentaController@VentaVerFactura')->name('ventaVerFactura');
@@ -126,6 +128,8 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas para generación de PDFs
      */
     Route::get('/pdf/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoPDF')->name('ordenPedidoPDF');
+    Route::get('/pdf/factura/{id}','VentaController@VentaFacturaPDF')->name('facturaPDF');
+
 
     /**
      * Rutas de configuracion general del sistema LGL

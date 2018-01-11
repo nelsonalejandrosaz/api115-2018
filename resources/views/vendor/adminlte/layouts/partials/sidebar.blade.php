@@ -79,8 +79,9 @@
                 <a href="#"><i class='fa fa-truck'></i> <span>Ventas</span> <i
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="{{route('ventaListaOrdenesProcesadas')}}">Lista de ventas</a></li>
-                    <li><a href="{{route('ordenPedidoNueva')}}">Nueva venta</a></li>
+                    <li><a href="{{route('ventaOrdenesLista')}}">Lista de ventas sin procesar</a></li>
+                    <li><a href="{{route('ventaFacturaLista')}}">Lista de facturas</a></li>
+                    <li><a href="{{route('ventaCCFLista')}}">Lista de créditos fiscales</a></li>
                 </ul>
             </li>
 

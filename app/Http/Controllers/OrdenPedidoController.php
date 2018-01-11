@@ -25,7 +25,7 @@ class OrdenPedidoController extends Controller
 
     public function OrdenPedidoListaBodega()
     {
-        $ordenesPedidos = OrdenPedido::whereProcesado(false)->get();
+        $ordenesPedidos = OrdenPedido::whereEstadoId(1)->get();
         return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
     }
 
@@ -88,6 +88,7 @@ class OrdenPedidoController extends Controller
             'fechaEntrega' => $request->input('fechaEntrega'),
             'condicionPago' => $request->input('condicionPago'),
             'vendedor_id' => \Auth::user()->id,
+            'estado_id' => 1,
         ]);
         //        Se guarda el archivo subido
         if ($request->hasFile('archivo')) {
@@ -234,7 +235,7 @@ class OrdenPedidoController extends Controller
             $producto->cantidadExistencia = $cantidadExistencia;
             $producto->save();
         }
-        $ordenPedido->procesado = true;
+        $ordenPedido->estado_id = 2;
         $ordenPedido->update();
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');

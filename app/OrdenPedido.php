@@ -50,6 +50,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereVentasExentas($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereVentasGravadas($value)
  * @mixin \Eloquent
+ * @property int|null $venta_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereVentaId($value)
+ * @property int $estado_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\OrdenPedido whereEstadoId($value)
  */
 class OrdenPedido extends Model
 {
@@ -99,7 +103,7 @@ class OrdenPedido extends Model
         'ventasGravadas',
         'ventaTotal',
         'rutaArchivo',
-        'procesado',
+        'estado_id',
     ];
 
     protected $dates = [

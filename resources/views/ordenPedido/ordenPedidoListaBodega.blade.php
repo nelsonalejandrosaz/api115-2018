@@ -45,7 +45,11 @@
                             <tr>
                                 <td>{{$ordenPedido->numero}}</td>
                                 <td>{{$ordenPedido->fechaIngreso->format('d/m/Y')}}</td>
-                                <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+                                @if($ordenPedido->fechaEntrega != null)
+                                    <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+                                @else
+                                    <td>Sin fecha definida</td>
+                                @endif
                                 <td>{{$ordenPedido->cliente->nombre}}</td>
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
                                 <td>
@@ -57,7 +61,7 @@
                                 </td>
                                 <td align="center">
                                     <a href="{{ route('ordenPedidoVerBodega', ['id' => $ordenPedido->id]) }}"
-                                       class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                       class="btn btn-success"><span class="fa fa-check-square-o"></span></a>
                                 </td>
                             </tr>
                         @endforeach

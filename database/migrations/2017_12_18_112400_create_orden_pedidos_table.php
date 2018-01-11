@@ -15,7 +15,7 @@ class CreateOrdenPedidosTable extends Migration
     {
         Schema::create('orden_pedidos', function (Blueprint $table) {
             $table->increments('id');
-//            $table->integer('venta_id')->unsigned()->nullable();
+            $table->integer('venta_id')->unsigned()->nullable();
             $table->integer('cliente_id')->unsigned();
             $table->integer('municipio_id')->unsigned();
             $table->string('direccion',140)->nullable();
@@ -30,7 +30,7 @@ class CreateOrdenPedidosTable extends Migration
             $table->float('ventasGravadas')->nullable();
             $table->float('ventaTotal')->nullable();
             $table->string('rutaArchivo')->default('sin-documento.jpg');
-            $table->boolean('procesado')->default(false);
+            $table->integer('estado_id')->default(0);
             $table->timestamps();
         });
     }

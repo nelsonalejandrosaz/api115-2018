@@ -131,7 +131,7 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Orden pedido n°:</label>
                         <div class="col-md-8 ">
-                            <input type="text" class="form-control" name="numero" value="{{$ordenPedido->numero}}"
+                            <input type="text" class="form-control" name="orden" value="{{$ordenPedido->numero}}"
                                    disabled>
                         </div>
                     </div>

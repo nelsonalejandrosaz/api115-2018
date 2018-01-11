@@ -29,6 +29,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereVendedorId($value)
  * @mixin \Eloquent
  * @property-read \App\TipoDocumento $tipoDocumento
+ * @property string $procesado
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereProcesado($value)
+ * @property string|null $nrc
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereNrc($value)
  */
 class Venta extends Model
 {
@@ -54,6 +58,12 @@ class Venta extends Model
         'fechaIngreso',
         'vendedor_id',
         'nit',
+        'nrc',
         'rutaArchivo',
+        'procesado',
+    ];
+
+    protected $dates = [
+        'fechaIngreso',
     ];
 }
