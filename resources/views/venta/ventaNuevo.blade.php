@@ -140,8 +140,13 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            <input type="date" class="form-control" name="fechaEntrega"
-                                   value="{{$ordenPedido->fechaEntrega->format('Y-d-m')}}" disabled>
+                            @if($ordenPedido->fechaEntrega != null)
+                                <input type="date" class="form-control" name="fechaEntrega"
+                                       value="{{$ordenPedido->fechaEntrega->format('Y-m-d')}}" disabled>
+                            @else
+                                <input type="text" class="form-control" name="fechaEntrega"
+                                       value="Sin fecha definida" disabled>
+                            @endif
                         </div>
                     </div>
 

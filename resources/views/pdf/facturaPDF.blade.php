@@ -30,7 +30,7 @@
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">XXX6969</td>
+        <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b" colspan="4">{{$venta->ordenPedido->cliente->nit}}</td>
         <td class="tg-cw2b" colspan="2"></td>

@@ -118,6 +118,28 @@ class VentaController extends Controller
 
     }
 
+    public function VentaVerCCF($id)
+    {
+        // Se carga la venta
+        $venta = Venta::find($id);
+        $salidas = $venta->ordenPedido->salidas;
+        $ordenPedido = $venta->ordenPedido;
+        $productos = Producto::all();
+        $clientes = Cliente::all();
+        $municipios = Municipio::all();
+        $tipoDocumentos = TipoDocumento::all();
+        $ordenPedido->porcentajeIVA = $ordenPedido->ventasGravadas * 0.13;
+        $ordenPedido->ventaTotal = $ordenPedido->ventaTotal * 1.13;
+        return view('venta.ventaCCFVer')
+            ->with(['ordenPedido' => $ordenPedido])
+            ->with(['venta' => $venta])
+            ->with(['productos' => $productos])
+            ->with(['clientes' => $clientes])
+            ->with(['municipios' => $municipios])
+            ->with(['tipoDocumentos' => $tipoDocumentos])
+            ->with(['salidas' => $salidas]);
+    }
+
     public function VentaFacturaPDF($id)
     {
         $venta = Venta::find($id);
@@ -134,6 +156,19 @@ class VentaController extends Controller
         $ventaTotal = number_format($venta->ordenPedido->ventaTotal,2);
         $venta->ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
         $pdf = PDF::loadView('pdf.facturaPDF',compact('venta'));
+        $nombreFactura = "Factura numero " . $venta->numero . ".pdf";
+        return $pdf->stream($nombreFactura);
+    }
+
+    public function VentaCCFPDF($id)
+    {
+        $venta = Venta::find($id);
+        $venta->ordenPedido->vendedor->nombreCompleto = $venta->ordenPedido->vendedor->nombre . " " . $venta->ordenPedido->vendedor->apellido;
+        $venta->ordenPedido->porcentajeIVA = $venta->ordenPedido->ventasGravadas * 0.13;
+        $venta->ordenPedido->ventaTotal = $venta->ordenPedido->ventaTotal * 1.13;
+        $ventaTotal = number_format($venta->ordenPedido->ventaTotal,2);
+        $venta->ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
+        $pdf = PDF::loadView('pdf.creditoFiscalPDF',compact('venta'));
         $nombreFactura = "Factura numero " . $venta->numero . ".pdf";
         return $pdf->stream($nombreFactura);
     }

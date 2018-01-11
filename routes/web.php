@@ -129,6 +129,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('/pdf/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoPDF')->name('ordenPedidoPDF');
     Route::get('/pdf/factura/{id}','VentaController@VentaFacturaPDF')->name('facturaPDF');
+    Route::get('/pdf/ccf/{id}','VentaController@VentaCCFPDF')->name('CCFPDF');
 
 
     /**

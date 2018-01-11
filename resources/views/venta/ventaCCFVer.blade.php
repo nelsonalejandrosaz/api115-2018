@@ -127,8 +127,13 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            <input type="date" class="form-control" name="fechaEntrega"
-                                   value="{{$ordenPedido->fechaEntrega->format('Y-d-m')}}" disabled>
+                            @if($ordenPedido->fechaEntrega != null)
+                                <input type="date" class="form-control" name="fechaEntrega"
+                                       value="{{$ordenPedido->fechaEntrega->format('Y-m-d')}}" disabled>
+                            @else
+                                <input type="text" class="form-control" name="fechaEntrega"
+                                       value="Sin fecha definida" disabled>
+                            @endif
                         </div>
                     </div>
 
@@ -221,15 +226,38 @@
                     <table class="table table-bordered">
                         <tr>
                             <th style="width:65%"></th>
-                            <th style="width:15%">Venta Total</th>
+                            <th style="width:15%">Subtotal</th>
                             <th style="width:15%">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control" value="{{number_format($ordenPedido->ventasGravadas,2)}}" name="compraTotal"
+                                           id="ventaTotal" disabled>
+                                </div>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th></th>
+                            <th>13% IVA</th>
+                            <th>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control" value="{{number_format($ordenPedido->porcentajeIVA,2)}}" name="compraTotal"
+                                           id="ventaTotal" disabled>
+                                </div>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th></th>
+                            <th>Venta Total</th>
+                            <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control" value="{{number_format($ordenPedido->ventaTotal,2)}}" name="compraTotal"
                                            id="ventaTotal" disabled>
                                 </div>
                             </th>
-                            <th style="width:5%"></th>
                         </tr>
                     </table>
 
@@ -238,7 +266,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('ventaFacturaLista') }}" class="btn btn-lg btn-default">Ver lista</a>
-                <a href="{{ route('facturaPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-success pull-right">Imprimir factura</a>
+                <a href="{{ route('CCFPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-success pull-right">Imprimir CCF</a>
             </div>
         </form>
     </div><!-- /.box -->

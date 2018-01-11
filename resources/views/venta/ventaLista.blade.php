@@ -47,8 +47,12 @@
                             <tr>
                                 <td>{{$ordenPedido->numero}}</td>
                                 <td>{{$ordenPedido->fechaIngreso->format('d/m/Y')}}</td>
-                                <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
-                                <td>{{$ordenPedido->cliente->nombre}}</td>
+                                @if($ordenPedido->fechaEntrega != null)
+                                    <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+                                @else
+                                    <td>Sin fecha especificada</td>
+                                @endif
+                                    <td>{{$ordenPedido->cliente->nombre}}</td>
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
                                 <td>
                                     @if($ordenPedido->estado_id == 2)

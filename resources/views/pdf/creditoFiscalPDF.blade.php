@@ -32,13 +32,13 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b">XXX12345</td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="4">0506-010299-103-2</td>
+        <td class="tg-cw2b" colspan="4">{{$venta->ordenPedido->cliente->nit}}</td>
         <td class="tg-cw2b" colspan="2"></td>
-        <td class="tg-iuhm">30-07-2017</td>
+        <td class="tg-iuhm">{{$venta->fechaIngreso->format('d-m-Y')}}</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">CLIENTE EL MANGUITO S.A DE C.V.</td>
+        <td class="tg-cw2b">{{$venta->ordenPedido->cliente->nombre}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -49,99 +49,25 @@
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="6">DIRECCION EL ROBLE, A LA PAR DEL CONACASTE, CASA 32 BLOCK A</td>
+        <td class="tg-cw2b" colspan="6">{{strtoupper($venta->ordenPedido->direccion)}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-iuhm"></td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">MEJICANOS</td>
+        <td class="tg-cw2b">{{strtoupper($venta->ordenPedido->municipio->nombre)}}</td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">SAN SANLVADOR</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">553374</td>
+        <td class="tg-cw2b">--</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">PRODUCTOS ALIMENTICIOS</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="2">CREDITO A 30 DIAS</td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">JUAN JOSE PEREZ</td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">{{$venta->ordenPedido->numero}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-iuhm"></td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">XXX1234</td>
-        <td class="tg-cw2b" colspan="3">PRODUCTO A</td>
-        <td class="tg-cw2b">KGS</td>
-        <td class="tg-cw2b">9999</td>
-        <td class="tg-cw2b">$9999.99</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm">$9999.99</td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">XXX1234</td>
-        <td class="tg-cw2b" colspan="3">PRODUCTO A</td>
-        <td class="tg-cw2b">KGS</td>
-        <td class="tg-cw2b">9999</td>
-        <td class="tg-cw2b">$9999.99</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm">$9999.99</td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">XXX1234</td>
-        <td class="tg-cw2b" colspan="3">PRODUCTO A</td>
-        <td class="tg-cw2b">KGS</td>
-        <td class="tg-cw2b">9999</td>
-        <td class="tg-cw2b">$9999.99</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm">$9999.99</td>
-    </tr>
-    <tr>
         <td class="tg-cw2b">--</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -149,12 +75,9 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
+        <td class="tg-cw2b" colspan="2">{{strtoupper($venta->ordenPedido->condicionPago)}}</td>
     </tr>
     <tr>
-        <td class="tg-cw2b">--</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -162,83 +85,10 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
+        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->ordenPedido->vendedor->nombreCompleto)}}</td>
     </tr>
     <tr>
-        <td class="tg-cw2b">--</td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">--</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">--</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">--</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">--</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">--</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-iuhm"></td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b">--</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -251,11 +101,49 @@
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="5"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-iuhm"></td>
+    </tr>
+    @php($i = 1)
+    @foreach($venta->ordenPedido->salidas as $salida)
+        <tr>
+            <td class="tg-cw2b">{{$salida->movimiento->producto->codigo}}</td>
+            <td class="tg-cw2b" colspan="3">{{$salida->movimiento->producto->nombre}}</td>
+            <td class="tg-cw2b">{{$salida->unidadMedida->abreviatura}}</td>
+            <td class="tg-cw2b">{{$salida->cantidad}}</td>
+            <td class="tg-cw2b">${{number_format($salida->precioUnitario,2)}}</td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-iuhm">${{number_format($salida->ventaGravada,2)}}</td>
+        </tr>
+        @php($i++)
+    @endforeach
+    @for($i;$i<=12;$i++)
+        <tr>
+            <td class="tg-cw2b">--</td>
+            <td class="tg-cw2b" colspan="3"></td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-cw2b"></td>
+            <td class="tg-iuhm"></td>
+        </tr>
+    @endfor
+    <tr>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="5">{{$venta->ordenPedido->ventaTotalLetras}}</td>
         <td class="tg-cw2b">SUBTOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-iuhm">$9999.99</td>
+        <td class="tg-iuhm">${{number_format($venta->ordenPedido->ventasGravadas,2)}}</td>
     </tr>
     <tr>
         <td class="tg-iuhm"></td>
@@ -279,7 +167,7 @@
         <td class="tg-iuhm">13% IVA</td>
         <td class="tg-iuhm"></td>
         <td class="tg-iuhm"></td>
-        <td class="tg-iuhm">$99.99</td>
+        <td class="tg-iuhm">${{number_format($venta->ordenPedido->porcentajeIVA,2)}}</td>
     </tr>
     <tr>
         <td class="tg-iuhm"></td>
@@ -291,7 +179,7 @@
         <td class="tg-iuhm">TOTAL</td>
         <td class="tg-iuhm"></td>
         <td class="tg-iuhm"></td>
-        <td class="tg-iuhm">$9999.99</td>
+        <td class="tg-iuhm">${{number_format($venta->ordenPedido->ventaTotal,2)}}</td>
     </tr>
     <tr>
         <td class="tg-iuhm"></td>
