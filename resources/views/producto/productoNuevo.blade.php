@@ -14,7 +14,7 @@
 @endsection
 
 @section('contentheader_description')
-    Ingresar un nuevo producto
+    -- Ingresar un nuevo producto
 @endsection
 
 @section('main-content')
@@ -98,7 +98,7 @@
 
                     {{-- Cantidad minima --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Cantidad mínima</label>
+                        <label class="col-sm-4 control-label">Cantidad mínima stock</label>
                         <div class="col-sm-8">
                             <input type="number" min="0.00" class="form-control" placeholder="0" name="existenciaMin"
                                    value="{{ old('existenciaMin') }}">
@@ -107,7 +107,7 @@
 
                     {{-- Cantidad maxima --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Cantidad máxima</label>
+                        <label class="col-sm-4 control-label">Cantidad máxima stock</label>
                         <div class="col-sm-8">
                             <input type="number" min="0.00" class="form-control" placeholder="1000" name="existenciaMax"
                                    value="{{ old('existenciaMax') }}">
@@ -118,8 +118,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Costo compra</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
-                                   value="{{ old('costo') }}" id="costo">
+                            <dvi class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
+                                       value="{{ old('costo') }}" id="costo">
+                            </dvi>
                         </div>
                     </div>
 
@@ -127,8 +130,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Precio venta</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
-                                   value="{{ old('precio') }}" id="precio" onchange="cambioPrecio()">
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
+                                       value="{{ old('precio') }}" id="precio" onchange="cambioPrecio()">
+                            </div>
                         </div>
                     </div>
 
@@ -136,8 +142,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Margen ganancia</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
-                                   value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">
+                            <div class="input-group">
+                                <span class="input-group-addon">%</span>
+                                <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
+                                       value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">
+                            </div>
                         </div>
                     </div>
 
@@ -145,8 +154,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Guardar</button>
+                <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar</button>
             </div>
         </form>
     </div><!-- /.box -->

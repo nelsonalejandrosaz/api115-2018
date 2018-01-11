@@ -96,7 +96,6 @@ class ProduccionController extends Controller
                 // Calculo de cantidad y costos existencias
                 $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
                 $cuExistencia = $producto->costo;
-                dd($cantidadSalida);
                 $ctExistencia = $cantidadExistencia * $cuExistencia;
             } elseif ($producto->unidadMedida->conversiones->where('unidadMedidaDestino_id',$unidadMedida)->first())
             {

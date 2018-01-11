@@ -91,7 +91,7 @@
         $(function () {
             $("#tablaDT").DataTable(
                 {
-                    "order": [[ 1, "desc" ]],
+                    "order": [[ 1, "asc" ]],
                     language: {
                         processing:     "Procesando...",
                         search:         "Buscar:",
