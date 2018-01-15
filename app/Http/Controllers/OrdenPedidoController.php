@@ -119,6 +119,7 @@ class OrdenPedidoController extends Controller
             {
                 // Calculo cantidad y costo de salida
                 $cantidadSalida = $cantidades[$i];
+                $cantidadSalidaOP = $cantidades[$i];
                 // Calculo costo salida
                 $cuSalida = $producto->costo;
                 $ctSalida = $cantidadSalida * $cuSalida;
@@ -126,22 +127,26 @@ class OrdenPedidoController extends Controller
                 $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
                 $cuExistencia = $producto->costo;
                 $ctExistencia = $cantidadExistencia * $cuExistencia;
+                $precioUnitarioSalidaOP = $producto->precio;
             } elseif ($producto->unidadMedida->conversiones->where('unidadMedidaDestino_id',$unidadMedida)->first())
             {
                 // Se busca el factor de conversion
+//                dd($producto->unidad_medida_id);
                 $factor = ConversionUnidadMedida::where([
                     ['unidadMedidaOrigen_id','=', $producto->unidad_medida_id],
-                    ['unidadMedidaDestino_id', '=', $unidadMedida[$i]],
+                    ['unidadMedidaDestino_id', '=', $unidadMedida],
                 ])->first();
                 // Se guarda la cantidad de salida
-                $cantidadSalida = $cantidades[$i] * $factor->factor;
+                $cantidadSalida = $cantidades[$i] / $factor->factor;
+                $cantidadSalidaOP = $cantidades[$i];
                 // Calculo costo salida
-                $cuSalida = $producto->costo * $factor->factor;
+                $cuSalida = $producto->costo;
                 $ctSalida = $cantidadSalida * $cuSalida;
                 // Calculo de existencias
                 $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
                 $cuExistencia = $producto->costo;
                 $ctExistencia = $cantidadExistencia * $cuExistencia;
+                $precioUnitarioSalidaOP = $producto->precio / $factor->factor;
             } else
             {
                 dd('Error al procesar');
@@ -172,8 +177,10 @@ class OrdenPedidoController extends Controller
                 'movimiento_id' => $movimiento->id,
                 'orden_pedido_id' => $ordenPedido->id,
                 'cantidad' => $cantidadSalida,
+                'cantidadOP' => $cantidadSalidaOP,
                 'unidad_medida_id' => $unidadMedida,
                 'precioUnitario' => $precioUnitarioSalida,
+                'precioUnitarioOP' => $precioUnitarioSalidaOP,
                 'ventaExenta' => $ventaExentaSalida,
                 'ventaGravada' => $ventaGravadaSalida,
                 'costoUnitario' => $cuSalida,
@@ -203,8 +210,9 @@ class OrdenPedidoController extends Controller
         $ordenPedido = OrdenPedido::find($id);
         $ventaTotal = number_format($ordenPedido->ventaTotal,2);
         $ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
+        $nombreArchivo = "orden-pedido-" . $ordenPedido->numero . "-" . Carbon::now()->format('d-m-Y');
         $pdf = PDF::loadView('pdf.ordenPedidoPDF',compact('ordenPedido'));
-        return $pdf->stream();
+        return $pdf->stream($nombreArchivo);
     }
 
     public function OrdenPedidoBodegaPost($id)

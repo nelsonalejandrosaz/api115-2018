@@ -106,8 +106,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Producir</button>
+                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-gears"></span> Producir</button>
             </div>
         </form>
     </div><!-- /.box -->

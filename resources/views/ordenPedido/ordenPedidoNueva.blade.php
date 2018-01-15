@@ -33,9 +33,6 @@
                 {{-- Cabecera --}}
                 <div class="col-md-6 col-sm-12">
 
-                    {{--Factor--}}
-                    <input type="hidden" name="" id="factorID" value="0">
-
                     {{-- Fecha ingreso --}}
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
@@ -48,10 +45,10 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="cliente_id">
+                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID" onchange="cambioCliente()">
                                 <option value="" selected disabled>Seleciona un cliente</option>
                                 @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                                    <option value="{{ $cliente->id }}" data-direccion="{{$cliente->direccion}}">{{ $cliente->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -59,7 +56,7 @@
 
                     {{-- Municipio --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label">Municipio</label>
+                        <label class="col-md-3  control-label"><b>Municipio</b></label>
                         <div class="col-md-9 ">
                             <select class="form-control select2" style="width: 100%" name="municipio_id">
                                 <option value="" selected disabled>Selecciona un municipio</option>
@@ -74,7 +71,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
-                            <textarea class="form-control" name="direccion"></textarea>
+                            <textarea class="form-control" name="direccion" id="direccionID"></textarea>
                         </div>
                     </div>
 
@@ -95,7 +92,7 @@
 
                     {{-- Numero Orden Pedido --}}
                     <div class="form-group">
-                        <label class="col-md-4  control-label">Orden venta n°:</label>
+                        <label class="col-md-4  control-label"><b>Orden venta n°</b></label>
                         <div class="col-md-8 ">
                             <input type="text" class="form-control" name="numero">
                         </div>
@@ -142,9 +139,9 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width:45%">Producto -- (Cantidad existencia)</th>
+                            <th style="width:40%">Producto -- (Cantidad existencia)</th>
                             <th style="width:7.5%">Unidad medida</th>
-                            <th style="width:5%">Cantidad</th>
+                            <th style="width:10%">Cantidad</th>
                             <th style="width:10%">Precio unitario</th>
                             <th style="width:10%">Ventas exentas</th>
                             <th style="width:10%">Ventas gravadas</th>
@@ -201,8 +198,8 @@
 
                             {{--Cantidad--}}
                             <td>
-                                <input type="text" class="form-control cantidadCls"
-                                       pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
+                                <input type="number" class="form-control cantidadCls"
+                                       step="0.001" min="0.001" name="cantidades[]"
                                        id="cantidad" value="0" required>
                             </td>
 
@@ -264,8 +261,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Guardar</button>
+                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar</button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -279,10 +276,26 @@
 
         function funcionPrincipal() {
             $("body").on("click", ".btn-danger", funcionEliminarProducto);
+            $(":input").click(function () {
+                $(this).select();
+            });
+            selecionarValor();
             agregarFuncion();
         }
 
-        var numero = 2;
+        function selecionarValor() {
+            $(":input").click(function () {
+                $(this).select();
+            });
+//            $(".costoUnitarioCls,.costoTotalCls").focusout(function () {
+//                var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+//                $(this).val(numeroDato.toFixed(2));
+//            });
+            $(".cantidadCls").focusout(function () {
+                var numeroCantidad = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroCantidad);
+            });
+        }
 
         function funcionNuevoProducto() {
             copia = $('#selectProductos').clone(false);
@@ -290,7 +303,7 @@
             $('#tblProductos')
                 .append
                 (
-                    $('<tr>').attr('id', 'rowProducto' + numero)
+                    $('<tr>').attr('id', 'rowProducto')
                         .append
                         (
                             $('<td>')
@@ -313,7 +326,9 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="cantidades[]" id="cantidad" value="0" required>'
+                                    '<input type="number" class="form-control cantidadCls"\n' +
+                                    'step="0.001" min="0.001" name="cantidades[]"\n' +
+                                    'id="cantidad" value="0" required>'
                                 )
                         )
                         .append
@@ -369,7 +384,7 @@
             //Initialize Select2 Elements
             $(".select2").select2();
             $(".select2").select2();
-            numero++;
+            selecionarValor();
             agregarFuncion();
         }
 
@@ -526,9 +541,9 @@
                 });
                 console.log("Factor = " + factor);
                 cantidad = $(this).parent().parent().find('#cantidad').val();
-                productoPrecioUnitario = productoPrecioUnitario * factor;
+                productoPrecioUnitario = productoPrecioUnitario / factor;
                 console.log("Precio nuevo = " + productoPrecioUnitario);
-                $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(2));
+                $(this).parent().parent().find('#precioUnitario').val(productoPrecioUnitario.toFixed(5));
                 var costoTotal = productoPrecioUnitario * cantidad;
             }
             if ($(this).parent().parent().find('#tipoVenta').is(":checked")) {
@@ -539,6 +554,12 @@
                 $(this).parent().parent().find('#ventasExentas').val(puntoStr.toFixed(2));
             }
             cambioTotal();
+        }
+
+        function cambioCliente() {
+            var idc = $("#clienteID").val();
+            var direccion = $("#clienteID").find('option[value="' + idc + '"]').data('direccion');
+            $("#direccionID").val(direccion);
         }
 
     </script>

@@ -34,8 +34,9 @@
                             <th style="width: 10%">Código</th>
                             <th style="width: 30%">Nombre</th>
                             <th style="width: 10%">Unidad Medida</th>
-                            <th style="width: 15%">Cantidad Existencia</th>
-                            <th style="width: 15%">Costo total</th>
+                            <th style="width: 10%">Cantidad Existencia</th>
+                            <th style="width: 10%">Costo unitario</th>
+                            <th style="width: 10%">Costo total</th>
                             <th style="width: 15%">Stock</th>
                             <th style="width: 5%">Acción</th>
                         </tr>
@@ -45,8 +46,9 @@
                             <tr>
                                 <td>{{$producto->codigo}}</td>
                                 <td>{{$producto->nombre}}</td>
-                                <td>{{$producto->unidadMedida->nombre}}</td>
+                                <td>{{$producto->unidadMedida->abreviatura}}</td>
                                 <td>{{$producto->cantidadExistencia}}</td>
+                                <td>${{ number_format($producto->costo,2)}}</td>
                                 <td>${{ number_format($producto->costoTotal,2)}}</td>
                                 @if($producto->porcentajeStock >= 40)
                                     <td>

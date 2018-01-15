@@ -40,19 +40,27 @@
         <div class="col-xs-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">Kardex</h3>
-                    <a href="{{ route('inventarioLista') }}" class="btn btn-lg btn-default pull-right">Regresar</a>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h3 class="box-title">Kardex</h3>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-md-4  control-label">Unidad de medida</label>
+                                <div class="col-md-8 ">
+                                    <input type="text" class="form-control" name="numero" value="{{$producto->unidadMedida->nombre}}"
+                                           disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{{ route('inventarioLista') }}" class="btn btn-lg btn-default pull-right"><span class="fa fa-mail-reply"></span> Regresar</a>
+                        </div>
+                    </div>
                 </div><!-- /.box-header -->
 
                 <div class="row">
                     <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-md-4  control-label">Unidad de medida</label>
-                            <div class="col-md-8 ">
-                                <input type="text" class="form-control" name="numero" value="{{$producto->unidadMedida->nombre}}"
-                                       disabled>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -82,7 +90,15 @@
                         @foreach($movimientos as $movimiento)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($movimiento->fecha)->format('d/m/Y')}}</td>
+                                @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
+                                    <td><a href="{{route('compraVer',['id' => $movimiento->entrada->id])}}">{{$movimiento->detalle}}</a></td>
+                                @elseif($movimiento->tipoMovimiento->codigo == "SALIDA")
+                                    <td><a href="{{route('ordenPedidoVer',['id' => $movimiento->salida->id])}}">{{$movimiento->detalle}}</a></td>
+                                @elseif($movimiento->tipoMovimiento->codigo == "AJSTENT" || $movimiento->tipoMovimiento->codigo == "AJSTSAL")
+                                    <td><a href="{{route('ajusteVer',['id' => $movimiento->ajuste->id])}}">{{$movimiento->detalle}}</a></td>
+                                @else
                                     <td><a href="">{{$movimiento->detalle}}</a></td>
+                                @endif
                                 @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
                                     <td class="entradaCSS">{{$movimiento->entrada->cantidad}}</td>
                                     <td class="entradaCSS">${{ number_format($movimiento->entrada->costoUnitario,2) }}</td>

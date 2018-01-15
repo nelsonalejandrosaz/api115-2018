@@ -10,8 +10,8 @@
 <body>
 <style type="text/css">
     .tg  {border-collapse:collapse;border-spacing:0;border:none;}
-    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:4px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
-    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:4px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
+    .tg td{font-family:sans-serif;font-size:14px;padding:4px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:sans-serif;font-size:14px;font-weight:normal;padding:4px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;}
     .tg .tg-iuhm{font-size:9px;font-family:Arial, Helvetica, sans-serif !important;;vertical-align:top}
     .tg .tg-cw2b{font-size:9px;font-family:Arial, Helvetica, sans-serif !important;}
 </style>

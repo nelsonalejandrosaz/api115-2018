@@ -46,4 +46,8 @@ class Formula extends Model
     protected $fillable = [
         'producto_id', 'ingresado_id', 'descripcion', 'fechaIngreso',
     ];
+
+    protected $dates = [
+        'fechaIngreso',
+    ];
 }

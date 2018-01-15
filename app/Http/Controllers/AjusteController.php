@@ -33,21 +33,22 @@ class AjusteController extends Controller
             'producto_id' => 'required',
             'tipo_ajuste_id' => 'required',
             'cantidadAjuste' => 'required',
-            'valorUnitarioAjuste' => 'required',
         ]);
         // Fin Validacion
 
 //        Variables
         $cantidadAjuste = $request->input('cantidadAjuste');
-        $valorUnitarioAjuste = $request->input('valorUnitarioAjuste');
+        $tipoAjuste = TipoAjuste::find($request->input('tipo_ajuste_id'));
         // Se carga el producto a ajustar
         $producto = Producto::find($request->input('producto_id'));
+        $valorUnitarioAjuste = $producto->costo;
+        $diferenciaCantidadAjuste = $cantidadAjuste - $producto->cantidadExistencia;
         // Se crea el movimiento
         $movimiento = Movimiento::create([
             'producto_id' => $producto->id,
             'tipo_movimiento_id' => 3,
             'fecha' => $request->input('fechaIngreso'),
-            'detalle' => 'Ajuste de entrada de producto realizado por ' . Auth::user()->nombre,
+            'detalle' => "Ajuste por " . $tipoAjuste->nombre. " realizado por " . Auth::user()->nombre,
             'cantidadExistencia' => $cantidadAjuste,
             'costoUnitarioExistencia' => $valorUnitarioAjuste,
             'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
@@ -65,6 +66,7 @@ class AjusteController extends Controller
             'realizado_id' => Auth::user()->id,
             'cantidadAnterior' => $producto->cantidadExistencia,
             'valorUnitarioAnterior' => $producto->precio,
+            'diferenciaCantidadAjuste' => $diferenciaCantidadAjuste,
         ]);
         // Los nuevos valores de inventario despues del ajuste
 //        $cantidadExistencia = $ajuste->cantidad;

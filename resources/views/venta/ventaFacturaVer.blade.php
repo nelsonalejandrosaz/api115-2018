@@ -12,7 +12,7 @@
 @endsection
 
 @section('contentheader_title')
-    Factura Comercial n° {{$venta->numero}}
+    Factura de Consumidor Final n° {{$venta->numero}}
 @endsection
 
 @section('contentheader_description')
@@ -187,7 +187,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidadOP}}" disabled>
                                 </td>
                                 {{--Precio unitario--}}
                                 <td>
@@ -195,7 +195,7 @@
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precioUnitario,2)}}" disabled>
+                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precioUnitarioOP,5)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}

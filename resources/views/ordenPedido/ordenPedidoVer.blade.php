@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Orden de compra
+    Orden de pedido
 @endsection
 
 @section('CSSExtras')
@@ -12,7 +12,7 @@
 @endsection
 
 @section('contentheader_title')
-    Orden de compra n° {{$ordenPedido->numero}}
+    Orden de pedido n° {{$ordenPedido->numero}}
 @endsection
 
 @section('contentheader_description')
@@ -24,7 +24,7 @@
     @include('partials.alertas')
 
     <!-- Form de nuevo proveedor -->
-    <div class="box box-primary">
+    <div class="box box-default">
         <div class="box-header with-border">
             <h3 class="box-title">Detalle</h3>
         </div><!-- /.box-header -->
@@ -185,7 +185,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidadOP}}" disabled>
                                 </td>
                                 {{--Precio unitario--}}
                                 <td>
@@ -194,7 +194,7 @@
                                         <input type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
                                                name="preciosUnitarios[]" id="precioUnitario"
-                                               value="{{number_format($salida->precioUnitario,2)}}" disabled>
+                                               value="{{number_format($salida->precioUnitarioOP,5)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}
@@ -239,9 +239,9 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default">Regresar a lista</a>
-                <a href="{{ route('ordenPedidoPDF',['id' => $ordenPedido->id]) }}"
-                   class="btn btn-lg btn-info pull-right">Imprimir Orden</a>
+                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
+                <a href="{{ route('ordenPedidoPDF',['id' => $ordenPedido->id]) }}" target="_blank"
+                   class="btn btn-lg btn-info pull-right"><span class="fa fa-print"></span> Imprimir Orden</a>
             </div>
         </form>
     </div><!-- /.box -->

@@ -145,7 +145,7 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas de pruebas
      */
-    Route::get('dev/prueba','DevController@select2');
+    Route::get('dev/pruebaFactura','DevController@select2');
     Route::get('dev/unidadesMedidaJSON','DevController@UnidadesMedidaJSON')->name('unidadesMedidaJSON');
     Route::get('dev/unidadesConversionJSON','DevController@UnidadesConversionJSON')->name('unidadesMedidaJSON');
     Route::get('dev/factorJSON','DevController@FactorJSON')->name('factorJSON');

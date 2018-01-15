@@ -24,7 +24,7 @@
     <!-- Form de nuevo proveedor -->
     <div class="box box-default">
         <div class="box-header with-border">
-            <h3 class="box-title">Detalle de factura</h3>
+            <h3 class="box-title">Detalle del documento</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
         <form class="form-horizontal" action="{{route('compraNuevaPost')}}" method="POST" enctype="multipart/form-data">
@@ -36,7 +36,7 @@
 
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
+                        <label class="col-md-4 control-label"><b>Fecha ingreso</b></label>
                         <div class="col-md-8">
                             <input type="date" class="form-control" name="fechaIngreso">
                         </div>
@@ -44,7 +44,7 @@
 
                     {{-- Proveedor --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Proveedor:</b></label>
+                        <label class="col-md-4 control-label"><b>Proveedor</b></label>
                         <div class="col-md-8">
                             <select class="form-control select2" style="width: 100%" name="proveedor_id">
                                 <option value="" disabled selected>Seleccione un proveedor</option>
@@ -57,7 +57,7 @@
 
                     {{--Detalle--}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Detalle:</label>
+                        <label class="col-md-4 control-label">Detalle</label>
                         <div class="col-md-8">
                             <textarea class="form-control" name="detalle"></textarea>
                         </div>
@@ -70,7 +70,7 @@
 
                     {{-- Numero factura --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Factura n°:</b></label>
+                        <label class="col-md-4 control-label"><b>Factura o CCF n°</b></label>
                         <div class="col-md-8">
                             <input type="text" class="form-control" name="numero">
                         </div>
@@ -80,7 +80,8 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Ingresado por:</b></label>
                         <div class="col-md-8">
-                            <input disabled type="text" class="form-control" name="ingresado_id" value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
+                            <input disabled type="text" class="form-control" name="ingresado_id"
+                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
                         </div>
                     </div>
 
@@ -99,7 +100,7 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width: 45%">Producto</th>
+                            <th style="width: 45%">Código -- Producto</th>
                             <th style="width: 10%">Unidad medida</th>
                             <th style="width: 10%">Cantidad</th>
                             <th style="width: 15%">Costo unitario</th>
@@ -119,34 +120,40 @@
                                         id="selectProductos">
                                     <option value="" disabled selected>Seleccione un producto</option>
                                     @foreach($productos as $producto)
-                                        <option value="{{ $producto->id }}" data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
+                                        <option value="{{ $producto->id }}"
+                                                data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}}
+                                            -- {{ $producto->nombre }}</option>
                                     @endforeach
                                 </select>
                             </td>
                             {{--unidad medida--}}
                             <td>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="---" id="unidadMedidaLbl" disabled>
+                                    <input type="text" class="form-control" placeholder="---" id="unidadMedidaLbl"
+                                           disabled>
                                 </div>
                             </td>
                             {{--cantidad--}}
                             <td>
                                 <div class="input-group">
-                                    <input class="form-control cantidadCls" type="number" value="0" step="0.001" name="cantidades[]" id="cantidad" required>
+                                    <input class="form-control cantidadCls" type="number" value="0" min="0.001" step="0.001"
+                                           name="cantidades[]" id="cantidad" required>
                                 </div>
                             </td>
                             {{--costo unitario --}}
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="0.00" name="costoUnitarios[]" id="costoUnitario" required>
+                                    <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01"
+                                           value="0.00" name="costoUnitarios[]" id="costoUnitario" required>
                                 </div>
                             </td>
                             {{--costo total --}}
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="0.00" name="costoTotales[]" id="costoTotal" required>
+                                    <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01"
+                                           value="0.00" name="costoTotales[]" id="costoTotal" required>
                                 </div>
                             </td>
                             <td align="center">
@@ -164,7 +171,8 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="0.00" name="compraTotal" id="compraTotal" disabled>
+                                    <input type="number" class="form-control" value="0.00" name="compraTotal"
+                                           id="compraTotal" disabled>
                                 </div>
                             </th>
                             <th style="width:5%"></th>
@@ -176,8 +184,11 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('compraLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Guardar</button>
+                <a href="{{ route('compraLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span>
+                    Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span>
+                    Guardar
+                </button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -194,8 +205,22 @@
 
         function funcionPrincipal() {
             $("body").on("click", ".btn-danger", fEliminarProducto);
-            $(":input").on("click");
+            selecionarValor();
             agregarFuncion();
+        }
+
+        function selecionarValor() {
+            $(":input").click(function () {
+                $(this).select();
+            });
+            $(".costoUnitarioCls,.costoTotalCls").focusout(function () {
+                var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroDato.toFixed(2));
+            });
+            $(".cantidadCls").focusout(function () {
+                var numeroCantidad = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroCantidad);
+            });
         }
 
         function funcionNuevoProducto() {
@@ -228,7 +253,8 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<input class="form-control cantidadCls" type="number" value="0" step="0.001" name="cantidades[]" id="cantidad" required>\n' +
+                                    '<input class="form-control cantidadCls" type="number" value="0" min="0.001" step="0.001"\n' +
+                                    '                                           name="cantidades[]" id="cantidad" required>' +
                                     '</div>'
                                 )
                         )
@@ -269,6 +295,7 @@
             numero++;
             // console.log('btn agregar');
             agregarFuncion();
+            selecionarValor();
         }
 
         function fEliminarProducto() {
@@ -305,36 +332,32 @@
                 }
             );
         }
-        
+
         function cambioTotal() {
             var compraTotal = 0;
             $(".costoTotalCls").each(
-                function(index, value) {
-                    if ( $.isNumeric( $(this).val() ) ){
+                function (index, value) {
+                    if ($.isNumeric($(this).val())) {
                         compraTotal = compraTotal + eval($(this).val());
                         //console.log(importe_total);
                     }
                 }
             );
-            $("#compraTotal").val(compraTotal);
+            $("#compraTotal").val(compraTotal.toFixed(2));
         }
 
         function unidadMedida() {
             idSelect = $(this).parent().parent().find('#selectProductos').val();
-            // console.log(idSelect);
-            // unidadMedida = $(this).find('option[value="'+idSelect+'"]').data('um');
-            // console.log($(this).find('option[value="'+idSelect+'"]').data('um'));
-            // $(this).parent().parent().find('#spamUM').text(unidadMedida);
             um = $(this).find('option[value="' + idSelect + '"]').data('um');
-            // console.log($(this).parent().parent().find('#spamUM').text(um));
             $(this).parent().parent().find('#unidadMedidaLbl').val(um);
             cambioTotal();
         }
 
         function cambioCantidad() {
-            var cantidad = $(this).parent().parent().find('#cantidad').val();
-            var costoUnitario = $(this).parent().parent().parent().find('#costoUnitario').val();
-            var costoTotal = $(this).parent().parent().parent().find('#costoTotal').val();
+            var cantidad = parseFloat($(this).parent().parent().find('#cantidad').val());
+//                parseFloat($(this).parent().parent().find('#cantidad').val());
+            var costoUnitario = parseFloat($(this).parent().parent().parent().find('#costoUnitario').val());
+            var costoTotal = parseFloat($(this).parent().parent().parent().find('#costoTotal').val());
             if (cantidad !== 0 || costoUnitario !== 0) {
                 costoTotal = cantidad * costoUnitario;
                 $(this).parent().parent().parent().find('#costoTotal').val(costoTotal.toFixed(2));
@@ -346,9 +369,9 @@
         }
 
         function cambioCostoUnitario() {
-            var costoUnitario = $(this).parent().parent().parent().find('#costoUnitario').val();
-            var cantidad = $(this).parent().parent().parent().find('#cantidad').val();
-            var costoTotal = $(this).parent().parent().parent().find('#costoTotal').val();
+            var costoUnitario = parseFloat($(this).parent().parent().parent().find('#costoUnitario').val());
+            var cantidad = parseFloat($(this).parent().parent().parent().find('#cantidad').val());
+            var costoTotal = parseFloat($(this).parent().parent().parent().find('#costoTotal').val());
             if (cantidad !== 0 || costoUnitario !== 0) {
                 costoTotal = cantidad * costoUnitario;
                 $(this).parent().parent().parent().find('#costoTotal').val(costoTotal.toFixed(2));

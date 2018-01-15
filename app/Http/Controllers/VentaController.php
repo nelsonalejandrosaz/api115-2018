@@ -100,7 +100,7 @@ class VentaController extends Controller
         $tipoDocumentos = TipoDocumento::all();
         foreach ($salidas as $salida)
         {
-            $salida->precioUnitario = $salida->precioUnitario * 1.13;
+            $salida->precioUnitarioOP = $salida->precioUnitarioOP * 1.13;
             $salida->ventaGravada = $salida->ventaGravada * 1.13;
             $salida->ventaExenta = $salida->ventaExenta * 1.13;
         }

@@ -116,7 +116,7 @@
 
                     {{-- Costo--}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Costo compra</label>
+                        <label class="col-sm-4 control-label">Costo</label>
                         <div class="col-sm-8">
                             <dvi class="input-group">
                                 <span class="input-group-addon">$</span>
@@ -143,9 +143,9 @@
                         <label class="col-sm-4 control-label">Margen ganancia</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <span class="input-group-addon">%</span>
                                 <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
-                                       value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">
+                                value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">
+                                <span class="input-group-addon">%</span>
                             </div>
                         </div>
                     </div>

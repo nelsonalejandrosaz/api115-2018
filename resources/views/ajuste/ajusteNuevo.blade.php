@@ -38,7 +38,12 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Fecha ajuste:</b></label>
                         <div class="col-md-9 ">
-                            <input type="date" class="form-control" name="fechaIngreso">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fechaIngreso">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     {{-- Producto --}}
@@ -87,7 +92,7 @@
                     <br>
                     {{-- Cantidad Actual --}}
                     <div class="form-group">
-                        <label class="col-md-4 col-sm-2 control-label">Cantidad Actual</label>
+                        <label class="col-md-4 col-sm-2 control-label">Cantidad existencia actual</label>
                         <div class="col-md-8 col-sm-10">
                             <input type="number" min="0" class="form-control" placeholder="0" name="cantidadAnterior" id="cantidadID" disabled>
                         </div>
@@ -104,21 +109,21 @@
                     </div>
                     {{-- Cantidad ajuste --}}
                     <div class="form-group">
-                        <label class="col-md-4 col-sm-2 control-label"><b>Cantidad ajuste</b></label>
+                        <label class="col-md-4 col-sm-2 control-label"><b>Cantidad existencia ajuste</b></label>
                         <div class="col-md-8 col-sm-10">
-                            <input type="number" min="0" class="form-control" placeholder="0" name="cantidadAjuste">
+                            <input type="number" min="0" step="0.01" class="form-control" placeholder="0" name="cantidadAjuste">
                         </div>
                     </div>
                     {{-- Costo unitario ajuste --}}
-                    <div class="form-group">
-                        <label class="col-md-4 col-sm-2 control-label"><b>Costo unitario ajuste</b></label>
-                        <div class="col-md-8 col-sm-10">
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="valorUnitarioAjuste">
-                            </div>
-                        </div>
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-md-4 col-sm-2 control-label"><b>Costo unitario ajuste</b></label>--}}
+                        {{--<div class="col-md-8 col-sm-10">--}}
+                            {{--<div class="input-group">--}}
+                                {{--<span class="input-group-addon">$</span>--}}
+                                {{--<input type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="valorUnitarioAjuste">--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                 </div>
 
             </div><!-- /.box-body -->

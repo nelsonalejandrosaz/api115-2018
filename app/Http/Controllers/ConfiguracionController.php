@@ -140,6 +140,7 @@ class ConfiguracionController extends Controller
                 // Variables
                 $cantidadAjuste = ($producto->existencias == null) ? 0 : $producto->existencias;
                 $valorUnitarioAjuste = $productoDB->costo;
+                $diferenciaCantidadAjuste = $cantidadAjuste - $productoDB->cantidadExistencia;
                 // Se crea el movimiento
                 $movimiento = Movimiento::create([
                     'producto_id' => $productoDB->id,
@@ -163,6 +164,7 @@ class ConfiguracionController extends Controller
                     'realizado_id' => Auth::user()->id,
                     'cantidadAnterior' => 0,
                     'valorUnitarioAnterior' => $productoDB->precio,
+                    'diferenciaCantidadAjuste' => $diferenciaCantidadAjuste,
                 ]);
                 // Se actualiza la cantidad de producto despues de la entrada
                 $productoDB->cantidadExistencia = $movimiento->cantidadExistencia;

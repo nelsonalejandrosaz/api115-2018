@@ -59,6 +59,8 @@
                                         En proceso
                                     @elseif($ordenPedido->estado_id == 2)
                                         Procesado
+                                    @elseif($ordenPedido->estado_id == 3)
+                                        Facturado
                                     @endif
                                 </td>
                                 <td align="center">

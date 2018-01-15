@@ -127,10 +127,13 @@
 
                     {{-- Costo--}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Costo compra</label>
+                        <label class="col-sm-4 control-label">Costo</label>
                         <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
                             <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
                                    value="{{ $producto->costo }}" id="costo">
+                            </div>
                         </div>
                     </div>
 
@@ -138,8 +141,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Precio venta</label>
                         <div class="col-sm-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
                             <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
                                    value="{{ $producto->precio }}" id="precio" onchange="cambioPrecio()">
+                            </div>
                         </div>
                     </div>
 
@@ -147,8 +153,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Margen ganancia</label>
                         <div class="col-sm-8">
+                            <div class="input-group">
                             <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
-                                   value="{{ $producto->margenGanancia }}" id="margenGanancia" onchange="cambioMargen()">
+                                value="{{ $producto->margenGanancia }}" id="margenGanancia" onchange="cambioMargen()">
+                                <span class="input-group-addon">%</span>
+                            </div>
                         </div>
                     </div>
 
@@ -156,8 +165,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Guardar</button>
+                <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar</button>
             </div>
         </form>
     </div><!-- /.box -->

@@ -75,7 +75,64 @@ class ProduccionController extends Controller
         $unidadMedida = $formula->producto->unidad_medida_id;
         $costoTotalProduccion = 0.00;
 
-        // Aqui va la validacion de existencias
+        /**
+         * Validacion de existencias
+         */
+        foreach ($formula->componentes as $componente)
+        {
+            $producto = Producto::find($componente->producto_id);
+            $cantidad = ($componente->porcentaje / 100) * $produccion->cantidad;
+//            Se calcula la cantidad y costo
+
+            // Si es la misma medida no se hacen conversiones; si no si se haran las conversiones de unidades
+            if ($unidadMedida == $producto->unidad_medida_id)
+            {
+                $cantidadSalida = $cantidad;
+//                dd($producto->cantidadExistencia);
+                if ($producto->cantidadExistencia < $cantidadSalida){
+                    // No alcanza la existencia para produccion
+                    $produccion->delete();
+                    // Mensaje de error al guardar
+                    session()->flash('mensaje.tipo', 'danger');
+                    session()->flash('mensaje.icono', 'fa-close');
+                    session()->flash('mensaje.titulo', 'Error!');
+                    session()->flash('mensaje.contenido', 'No hay suficiente materia prima necesaria para generar la producción!');
+                    return redirect()->route('produccionNuevo');
+                }
+
+            } elseif ($producto->unidadMedida->conversiones->where('unidadMedidaDestino_id',$unidadMedida)->first())
+            {
+                // Se busca el factor de conversion
+                $factor = ConversionUnidadMedida::where([
+                    ['unidadMedidaOrigen_id','=', $producto->unidad_medida_id],
+                    ['unidadMedidaDestino_id', '=', $unidadMedida],
+                ])->first();
+                // Se guarda la cantidad de salida
+                $cantidadSalida = $cantidad / $factor->factor;
+                if ($producto->cantidadExistencia < $cantidadSalida){
+                    // No alcanza la existencia para produccion
+                    $produccion->delete();
+                    // Mensaje de error al guardar
+                    session()->flash('mensaje.tipo', 'danger');
+                    session()->flash('mensaje.icono', 'fa-close');
+                    session()->flash('mensaje.titulo', 'Error!');
+                    session()->flash('mensaje.contenido', 'No hay suficiente materia prima necesaria para generar la producción!');
+                    return redirect()->route('produccionNuevo');
+                }
+            } else
+            {
+                $produccion->delete();
+                // Mensaje de error al guardar
+                session()->flash('mensaje.tipo', 'danger');
+                session()->flash('mensaje.icono', 'fa-close');
+                session()->flash('mensaje.titulo', 'Error!');
+                session()->flash('mensaje.contenido', 'No existe la conversion de unidades necesaria para generar la producción!');
+                return redirect()->route('produccionNuevo');
+            }
+        }
+        /**
+         * Fin validacion existencias
+         */
 
 //        Se regristan las salidas
         foreach ($formula->componentes as $componente)
@@ -90,9 +147,11 @@ class ProduccionController extends Controller
             {
                 // Calculo cantidad y costo de salida
                 $cantidadSalida = $cantidad;
+                $cantidadSalidaOP = $cantidad;
                 // Calculo costo salida
                 $cuSalida = $producto->costo;
                 $ctSalida = $cantidadSalida * $cuSalida;
+                $ctSalida = round($ctSalida,3);
                 // Calculo de cantidad y costos existencias
                 $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
                 $cuExistencia = $producto->costo;
@@ -105,9 +164,11 @@ class ProduccionController extends Controller
                     ['unidadMedidaDestino_id', '=', $unidadMedida],
                 ])->first();
                 // Se guarda la cantidad de salida
-                $cantidadSalida = $cantidad * $factor->factor;
+                $cantidadSalida = $cantidad / $factor->factor;
+                $cantidadSalidaOP = $cantidad;
+                $cantidadSalida = round($cantidadSalida,3);
                 // Calculo costo salida
-                $cuSalida = $producto->costo * $factor->factor;
+                $cuSalida = $producto->costo;
                 $ctSalida = $cantidadSalida * $cuSalida;
                 // Calculo de existencias
                 $cantidadExistencia = $producto->cantidadExistencia - $cantidadSalida;
@@ -141,8 +202,10 @@ class ProduccionController extends Controller
                 'movimiento_id' => $movimiento->id,
                 'produccion_id' => $produccion->id,
                 'cantidad' => $cantidadSalida,
+                'cantidadOP' => $cantidadSalidaOP,
                 'unidad_medida_id' => $unidadMedida,
                 'precioUnitario' => 0.00,
+                'precioUnitarioOP' => 0.00,
                 'ventaExenta' => 0.00,
                 'ventaGravada' => 0.00,
                 'costoUnitario' => $cuSalida,
@@ -164,8 +227,16 @@ class ProduccionController extends Controller
         $ctEntrada = $cantidad * $cuEntrada;
 //            Calculo de existencias
         $cantidadExistencia = $producto->cantidadExistencia + $cantidad;
-        $cuExistencia = $cuEntrada;
-        $ctExistencia = $cantidadExistencia * $cuExistencia;
+        /**
+         * Asignacion de costo bajo costo promedio ponderado
+         */
+        if ($producto->costo == 0.00) {
+            $cuExistencia = $cuEntrada;
+            $ctExistencia = $cuEntrada * $cantidadExistencia;
+        } else {
+            $ctExistencia = $producto->costo * $producto->cantidadExistencia;
+            $cuExistencia = ($ctExistencia + $ctEntrada) / $cantidadExistencia;
+        }
 //            Se crea el movimiento
         $movimiento = Movimiento::create([
             'producto_id' => $producto->id,
@@ -189,6 +260,7 @@ class ProduccionController extends Controller
         $producto->cantidadExistencia = $cantidadExistencia;
         $producto->costo = $cuEntrada;
         $producto->update();
+//        $produccion->save();
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

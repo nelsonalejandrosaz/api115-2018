@@ -22,6 +22,8 @@ class UnidadMedidasSeeder extends Seeder
         UnidadMedida::create(['nombre' => 'Metros cúbicos', 'abreviatura' => 'm3',]);
         // Otros
         UnidadMedida::create(['nombre' => 'Unidad', 'abreviatura' => 'Und',]);
+        UnidadMedida::create(['nombre' => 'Cubeta 1', 'abreviatura' => 'Cub1',]);
+        UnidadMedida::create(['nombre' => 'Cubeta 2', 'abreviatura' => 'Cub2',]);
         UnidadMedida::create(['nombre' => 'Otros', 'abreviatura' => 'otro',]);
     }
 }

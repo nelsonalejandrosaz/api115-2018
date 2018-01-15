@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Orden de compra
+    Orden de pedido
 @endsection
 
 @section('CSSExtras')
@@ -12,7 +12,7 @@
 @endsection
 
 @section('contentheader_title')
-    Orden de compra n° {{$ordenPedido->numero}}
+    Orden de pedido n° {{$ordenPedido->numero}}
 @endsection
 
 @section('contentheader_description')
@@ -117,7 +117,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidadOP}}" disabled>
                                 </td>
                             </tr>
                         @endforeach

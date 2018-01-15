@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAjuste($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAnterior($value)
  * @mixin \Eloquent
+ * @property float $diferenciaCantidadAjuste
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereDiferenciaCantidadAjuste($value)
  */
 class Ajuste extends Model
 {
@@ -63,5 +65,6 @@ class Ajuste extends Model
         'valorUnitarioAnterior',
         'cantidadAjuste',
         'valorUnitarioAjuste',
+        'diferenciaCantidadAjuste',
     ];
 }

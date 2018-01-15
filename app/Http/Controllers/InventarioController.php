@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Movimiento;
 use App\Producto;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class InventarioController extends Controller
 
 //        dd(Carbon::now());
         $producto = Producto::find($request->id);
+//        Movimiento::find(1)->ajuste
         $movimientos = $producto->movimientos()->where('procesado','=',true)->orderBy('fechaProcesado','asc')->get();
         return view('inventario.kardex')->with(['movimientos' => $movimientos])->with(['producto' => $producto]);
     }

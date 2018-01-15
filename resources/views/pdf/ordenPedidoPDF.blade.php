@@ -118,9 +118,9 @@
         <tr>
             <td class="tg-rg0h">{{$salida->movimiento->producto->codigo}}</td>
             <td class="tg-rg0h">{{$salida->unidadMedida->abreviatura}}</td>
-            <td class="tg-rg0h">{{$salida->cantidad}}</td>
+            <td class="tg-rg0h">{{$salida->cantidadOP}}</td>
             <td class="tg-rg0h" colspan="2">{{$salida->movimiento->producto->nombre}}</td>
-            <td class="tg-rg0h">{{number_format($salida->precioUnitario,2)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->precioUnitarioOP,5)}}</td>
             <td class="tg-rg0h">{{number_format($salida->ventaExenta,2)}}</td>
             <td class="tg-rg0h">{{number_format($salida->ventaGravada,2)}}</td>
         </tr>

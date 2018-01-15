@@ -77,10 +77,15 @@ class CompraController extends Controller
             $producto = Producto::find($productos_id[$i]);
 //            Calculo de existencias
             $cantidadExistencia = $producto->cantidadExistencia + $cantidades[$i];
+            /**
+             * Asignacion de costo bajo costo promedio ponderado
+             */
             if ($producto->costo == 0.00) {
                 $cuExistencia = $cuMovimiento;
             } else {
-                $cuExistencia = ($producto->costo + $cuMovimiento) / 2;
+                $ctExistencia = $producto->costo * $producto->cantidadExistencia;
+                $ctEntrada = $cuMovimiento * $cantidades[$i];
+                $cuExistencia = ($ctExistencia + $ctEntrada) / $cantidadExistencia;
             }
             $ctExistencia = $cantidadExistencia * $cuExistencia;
 //            Se crea el movimiento

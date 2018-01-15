@@ -10,7 +10,7 @@
 @endsection
 
 @section('contentheader_title')
-    Ver compra
+    Ver compra n° {{$compra->numero}}
 @endsection
 
 @section('contentheader_description')
@@ -148,14 +148,14 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="{{$entrada->costoUnitario}}" name="costoUnitarios[]" id="costoUnitario" disabled>
+                                        <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="{{number_format($entrada->costoUnitario,2)}}" name="costoUnitarios[]" id="costoUnitario" disabled>
                                     </div>
                                 </td>
                                 {{--costo total --}}
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="{{$entrada->costoTotal}}" name="costoTotales[]" id="costoTotal" disabled>
+                                        <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="{{number_format($entrada->costoTotal,2)}}" name="costoTotales[]" id="costoTotal" disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -170,7 +170,7 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{$compra->compraTotal}}" name="compraTotal" id="compraTotal" disabled>
+                                    <input type="number" class="form-control" value="{{number_format($compra->compraTotal,2)}}" name="compraTotal" id="compraTotal" disabled>
                                 </div>
                             </th>
                         </tr>
@@ -181,7 +181,7 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('compraLista') }}" class="btn btn-lg btn-default">Regresar</a>
+                <a href="{{ route('compraLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
             </div>
         </form>
     </div><!-- /.box -->

@@ -26,7 +26,7 @@
     @include('partials.alertas')
 
     <!-- Form de nuevo proveedor -->
-    <div class="box box-primary">
+    <div class="box box-default">
         <div class="box-header with-border">
             <h3 class="box-title">Detalle de formula</h3>
         </div><!-- /.box-header -->
@@ -79,7 +79,7 @@
                         <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="text" class="form-control datepicker" name="fechaIngreso" value="{{$formula->fechaIngreso}}" disabled>
+                                <input type="date" class="form-control" name="fechaIngreso" value="{{$formula->fechaIngreso->format('Y-m-d')}}" disabled>
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -153,7 +153,7 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default">Lista de formulas</a>
+                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
             </div>
         </form>
     </div><!-- /.box -->
