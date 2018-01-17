@@ -16,6 +16,7 @@ class CreateTipoAjusteTable extends Migration
         Schema::create('tipo_ajustes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('codigo',10)->unique();
+            $table->string('tipo',10);
             $table->string('nombre',50);
             $table->timestamps();
         });

@@ -9,66 +9,58 @@
 </head>
 <body>
 <style type="text/css">
-    @page  {
+
+    @page {
         /*margin: 0;*/
-        margin-left: 0.6cm;
+        margin-left: 1.4cm;
     }
+
     .tg {
         border-collapse: collapse;
         border-spacing: 0;
         border: none;
+        font-family: sans-serif;
+        font-size: 8px;
     }
 
     .tg tr {
-        height: 0.5cm;
+        /*height: 0.5cm;*/
     }
 
     .tg td {
-        font-family: 'Microsoft Sans Serif' , Arial, Helvetica, Verdana, sans-serif;
-        font-size: 14px;
-        /*padding: 4px 5px;*/
-        border-style: solid;
-        border-width: 0px;
+        border: 0px none;
         overflow: hidden;
         word-break: normal;
     }
 
     .tg th {
-        font-family: 'Microsoft Sans Serif' , Arial, Helvetica, Verdana, sans-serif;
-        font-size: 14px;
-        font-weight: normal;
-        /*padding: 4px 5px;*/
-        border-style: solid;
-        border-width: 0px;
+        border: 0px none;
         overflow: hidden;
         word-break: normal;
     }
 
     .tg .tg-cw2b {
-        font-size: 9px;
-        /*font-family: Arial, Helvetica, sans-serif !important;*/
-        font-family: 'Microsoft Sans Serif' , Arial, Helvetica, Verdana, sans-serif;
         vertical-align: top
     }
 
 </style>
 <table class="tg">
-    <tr style="height:3cm">
-        <th class="tg-cw2b" style="width:2.0cm"><br><br><br><br><br><br><br><br><br></th>
+    <tr style="height:1.3cm">
+        <th class="tg-cw2b" style="width:2.0cm"></th>
         <th class="tg-cw2b" style="width:4.7cm"><br></th>
         <th class="tg-cw2b" style="width:0.7cm"><br></th>
-        <th class="tg-cw2b" style="width:2.7cm"><br></th>
-        <th class="tg-cw2b" style="width:1.6cm"><br></th>
-        <th class="tg-cw2b" style="width:1.5cm"><br></th>
-        <th class="tg-cw2b" style="width:1.5cm"><br></th>
+        <th class="tg-cw2b" style="width:2.6cm"><br></th>
+        <th class="tg-cw2b" style="width:1.4cm"><br></th>
+        <th class="tg-cw2b" style="width:1.4cm"><br></th>
+        <th class="tg-cw2b" style="width:1.4cm"><br></th>
         <th class="tg-cw2b" style="width:0.6cm"><br></th>
         <th class="tg-cw2b" style="width:0.6cm"><br></th>
-        <th class="tg-cw2b" style="width:2.3cm"><br></th>
+        <th class="tg-cw2b" style="width:2.5cm"><br></th>
     </tr>
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">00005</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b" colspan="4">0506-060599-100-2</td>
         <td class="tg-cw2b" colspan="2"></td>
@@ -83,13 +75,14 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="2">N° ORDEN</td>
+        <td class="tg-cw2b" colspan="2"></td>
+        <td class="tg-cw2b"></td>
+    </tr>
+
+    <tr>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="5">EL CONACASTE, PJE EL ROBLE, LOCAL 45, SAN SALVADOR</td>
         <td class="tg-cw2b">59342</td>
-    </tr>
-
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="6">EL CONACASTE, PJE EL ROBLE, LOCAL 45, SAN SALVADOR</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -97,13 +90,23 @@
 
     <tr>
         <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">MEJICANOS, SAN SALVADOR</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="3">CREDITO 30 DIA</td>
+
+    </tr>
+
+    <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">CREDITO 30 DIAS</td>
+        <td class="tg-cw2b" colspan="3">ALIMENTOS</td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="3">JUAN JOSE PEREZ</td>
     </tr>
 
     <tr>
@@ -114,36 +117,10 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">JOSE JUAN PEREZ</td>
+        <td class="tg-cw2b" colspan="3"></td>
     </tr>
 
-    <!--<tr>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--<td class="tg-cw2b"></td>-->
-    <!--</tr>-->
-
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-    </tr>
-
-    <tr>
+    <tr style="height: 0.7cm">
         <td class="tg-cw2b"><br></td>
         <td class="tg-cw2b"><br></td>
         <td class="tg-cw2b"><br></td>
@@ -161,10 +138,10 @@
         <td class="tg-cw2b" colspan="3">PRODUCTO XXX123</td>
         <td class="tg-cw2b">KGS</td>
         <td class="tg-cw2b">10</td>
-        <td class="tg-cw2b">$99.99</td>
+        <td class="tg-cw2b">$ 99.99</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$999.90</td>
+        <td class="tg-cw2b">$ 999.90</td>
     </tr>
 
     <tr>
@@ -172,10 +149,10 @@
         <td class="tg-cw2b" colspan="3">PRODUCTO XXX123</td>
         <td class="tg-cw2b">KGS</td>
         <td class="tg-cw2b">10</td>
-        <td class="tg-cw2b">$99.99</td>
+        <td class="tg-cw2b">$ 99.99</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$999.90</td>
+        <td class="tg-cw2b">$ 999.90</td>
     </tr>
 
     <tr>
@@ -183,10 +160,10 @@
         <td class="tg-cw2b" colspan="3">PRODUCTO XXX123</td>
         <td class="tg-cw2b">KGS</td>
         <td class="tg-cw2b">10</td>
-        <td class="tg-cw2b">$99.99</td>
+        <td class="tg-cw2b">$ 99.99</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$999.90</td>
+        <td class="tg-cw2b">$ 999.90</td>
     </tr>
 
     <tr>
@@ -264,6 +241,19 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
+    </tr>
+
+    <tr style="height: 0.6cm">
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
+        <td class="tg-cw2b"><br></td>
     </tr>
 
     <tr>
@@ -272,7 +262,7 @@
         <td class="tg-cw2b">SUBTOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$999.90</td>
+        <td class="tg-cw2b">$ 999.90</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
@@ -281,10 +271,10 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">13% IVA</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">$ 9.99</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
@@ -308,7 +298,7 @@
         <td class="tg-cw2b">TOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$999.90</td>
+        <td class="tg-cw2b">$ 999.90</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>

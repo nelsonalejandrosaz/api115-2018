@@ -132,7 +132,7 @@
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
                             <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
-                                   value="{{ $producto->costo }}" id="costo">
+                                   value="{{ $producto->costo }}" id="costo" disabled>
                             </div>
                         </div>
                     </div>

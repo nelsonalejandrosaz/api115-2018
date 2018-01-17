@@ -141,7 +141,6 @@ class ProductoController extends Controller
             'categoria_id' => $request->input('categoria_id'),
             'existenciaMin' => $existenciaMin,
             'existenciaMax' => $existenciaMax,
-            'costo' => $costo,
             'precio' => $precio,
             'margenGanancia' => $margenGanancia,
         ]);

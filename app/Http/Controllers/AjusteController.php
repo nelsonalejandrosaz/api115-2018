@@ -88,12 +88,20 @@ class AjusteController extends Controller
         return redirect()->route('ajusteLista');
     }
 
+    public function AjusteCostoNuevo()
+    {
+        $productos = Producto::all();
+        $tipoAjustes = TipoAjuste::all();
+        return view('ajuste.ajusteCostoNuevo')->with(['productos' => $productos])->with(['tipoAjustes' => $tipoAjustes]);
+    }
+
+
+
     public function AjusteVer($id)
     {
         $ajuste = Ajuste::find($id);
         $productos = Producto::all();
         $tipoAjustes = TipoAjuste::all();
         return view('ajuste.ajusteVer')->with(['productos' => $productos])->with(['tipoAjustes' => $tipoAjustes])->with(['ajuste' => $ajuste]);
-
     }
 }

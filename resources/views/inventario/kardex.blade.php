@@ -90,15 +90,15 @@
                         @foreach($movimientos as $movimiento)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($movimiento->fecha)->format('d/m/Y')}}</td>
-                                @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
-                                    <td><a href="{{route('compraVer',['id' => $movimiento->entrada->id])}}">{{$movimiento->detalle}}</a></td>
-                                @elseif($movimiento->tipoMovimiento->codigo == "SALIDA")
-                                    <td><a href="{{route('ordenPedidoVer',['id' => $movimiento->salida->id])}}">{{$movimiento->detalle}}</a></td>
-                                @elseif($movimiento->tipoMovimiento->codigo == "AJSTENT" || $movimiento->tipoMovimiento->codigo == "AJSTSAL")
-                                    <td><a href="{{route('ajusteVer',['id' => $movimiento->ajuste->id])}}">{{$movimiento->detalle}}</a></td>
-                                @else
+                                {{--@if($movimiento->tipoMovimiento->codigo == "ENTRADA")--}}
+                                    {{--<td><a href="{{route('compraVer',['id' => $movimiento->entrada->compra->id])}}">{{$movimiento->detalle}}</a></td>--}}
+                                {{--@elseif($movimiento->tipoMovimiento->codigo == "SALIDA")--}}
+                                    {{--<td><a href="{{route('ordenPedidoVer',['id' => $movimiento->salida->ordenPedido->id])}}">{{$movimiento->detalle}}</a></td>--}}
+                                {{--@elseif($movimiento->tipoMovimiento->codigo == "AJSTENT" || $movimiento->tipoMovimiento->codigo == "AJSTSAL")--}}
+                                    {{--<td><a href="{{route('ajusteVer',['id' => $movimiento->ajuste->id])}}">{{$movimiento->detalle}}</a></td>--}}
+                                {{--@else--}}
                                     <td><a href="">{{$movimiento->detalle}}</a></td>
-                                @endif
+                                {{--@endif--}}
                                 @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
                                     <td class="entradaCSS">{{$movimiento->entrada->cantidad}}</td>
                                     <td class="entradaCSS">${{ number_format($movimiento->entrada->costoUnitario,2) }}</td>

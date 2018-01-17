@@ -83,8 +83,10 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas Ajustes
      */
     Route::get('/ajuste','AjusteController@AjusteLista')->name('ajusteLista');
-    Route::get('/ajuste/nuevo','AjusteController@AjusteNuevo')->name('ajusteNuevo');
-    Route::post('/ajuste/nuevo','AjusteController@AjusteNuevoPost')->name('ajusteNuevoPost');
+    Route::get('/ajuste/existencia/nuevo','AjusteController@AjusteNuevo')->name('ajusteNuevo');
+    Route::get('/ajuste/costo/nuevo','AjusteController@AjusteCostoNuevo')->name('ajusteCostoNuevo');
+    Route::post('/ajuste/existencia/nuevo','AjusteController@AjusteNuevoPost')->name('ajusteNuevoPost');
+    Route::post('/ajuste/costo/nuevo','AjusteController@AjusteCostoNuevoPost')->name('ajusteCostoNuevoPost');
     Route::get('/ajuste/{id}','AjusteController@AjusteVer')->name('ajusteVer');
 
     /**

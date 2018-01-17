@@ -22,8 +22,8 @@ class CreateAjustesTable extends Migration
             $table->integer('realizado_id')->unsigned();
             $table->float('cantidadAnterior');
             $table->float('valorUnitarioAnterior');
-            $table->float('cantidadAjuste');
-            $table->float('valorUnitarioAjuste');
+            $table->float('cantidadAjuste')->nullable();
+            $table->float('valorUnitarioAjuste')->nullable();
             $table->float('diferenciaCantidadAjuste');
             $table->timestamps();
         });

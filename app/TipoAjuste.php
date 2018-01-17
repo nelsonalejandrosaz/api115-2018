@@ -29,6 +29,7 @@ class TipoAjuste extends Model
 
     protected $fillable = [
         'codigo',
+        'tipo',
         'nombre',
     ];
 }

@@ -29,7 +29,7 @@ class VentaController extends Controller
     public function VentaCCFLista()
     {
         $ventas = Venta::whereTipoDocumentoId(2)->get();
-        return view('venta.ventaFacturaLista')->with(['ventas' => $ventas]);
+        return view('venta.ventaCCFLista')->with(['ventas' => $ventas]);
     }
 
     public function VentaNueva($id)

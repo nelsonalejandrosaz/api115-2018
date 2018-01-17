@@ -91,7 +91,8 @@
                             class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="{{route('ajusteLista')}}">Lista de ajustes</a></li>
-                    <li><a href="{{route('ajusteNuevo')}}">Nuevo ajuste</a></li>
+                    <li><a href="{{route('ajusteNuevo')}}">Nuevo ajuste existencia</a></li>
+                    <li><a href="{{route('ajusteCostoNuevo')}}">Nuevo ajuste costos</a></li>
                 </ul>
             </li>
 
