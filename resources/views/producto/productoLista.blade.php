@@ -21,6 +21,7 @@
 
     @include('partials.alertas')
     @include('partials.modalEliminar')
+    @include('partials.modalPrecio')
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
@@ -36,10 +37,10 @@
                             <th style="width:10%">Código</th>
                             <th style="width:20%">Nombre</th>
                             <th style="width:10%">Cantidad</th>
-                            <th style="width:15%">Unidad medida</th>
+                            <th style="width:10%">Unidad medida</th>
                             <th style="width:15%">Costo</th>
                             <th style="width:15%">Precio</th>
-                            <th style="width:15%">Acción</th>
+                            <th style="width:20%">Acción</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -48,10 +49,14 @@
                                 <td>{{$producto->codigo}}</td>
                                 <td>{{$producto->nombre}}</td>
                                 <td>{{$producto->cantidad_existencia}}</td>
-                                <td>{{$producto->unidad_medida->nombre}}</td>
+                                <td>{{$producto->unidad_medida->abreviatura}}</td>
                                 <td>$ {{number_format($producto->costo,2)}}</td>
                                 <td>$ {{number_format($producto->precio,2)}}</td>
                                 <td align="center">
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalPrecio" data-objeto="{{ $producto->nombre }}"
+                                            data-id="{{ $producto->id }}" data-precio="{{ $producto->precio }}" data-ruta="producto/precio">
+                                        <span class="fa fa-dollar"></span>
+                                    </button>
                                     <a href="{{ route('productoVer', ['id' => $producto->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     <a href="{{ route('productoEditar', ['id' => $producto->id]) }}" class="btn btn-warning"><span class="fa fa-edit"></span></a>
                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-objeto="{{ $producto->nombre }}"
@@ -80,6 +85,24 @@
     <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
     <script>
         $(function () {
+            $('#modalPrecio').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var nombreObj = button.data('objeto'); // Extract info from data-* attributes
+                var precioActual = parseFloat(button.data('precio'));
+                var idObj = button.data('id');
+                var ruta = button.data('ruta');
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                var modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#nuevoPrecio').attr("action", "/" + ruta +"/" + idObj);
+                modal.find('#precioAnteriorID').val(precioActual.toFixed(2));
+                var botonEnviar = modal.find('#btnEnviar');
+                console.log(botonEnviar);
+                botonEnviar.click(function () {
+                    $('#nuevoPrecio').submit();
+                });
+            });
+
             $("#tablaDT").DataTable(
                 {
                     "order": [[ 1, "asc" ]],

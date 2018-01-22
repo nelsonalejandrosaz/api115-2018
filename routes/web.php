@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/producto/{id}/editar','ProductoController@ProductoEditar')->name('productoEditar');
     Route::put('/producto/{id}','ProductoController@ProductoEditarPut')->name('productoEditarPut');
     Route::delete('/producto/{id}','ProductoController@ProductoEliminar')->name('productoEliminar');
+    Route::post('/producto/precio/{id}','ProductoController@ProductoPrecioNuevoPost')->name('productoPrecioNuevoPost');
 
     /**
      * Rutas de categoria

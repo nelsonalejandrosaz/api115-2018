@@ -177,4 +177,24 @@ class ProductoController extends Controller
         return redirect()->route('productoLista');
     }
 
+    public function ProductoPrecioNuevoPost(Request $request, $id)
+    {
+        /**
+         * Validacion de datos
+         */
+        $this->validate($request,[
+            'precio_nuevo' => 'required'
+        ]);
+
+        $producto = Producto::find($id);
+        $producto->precio = $request->input('precio_nuevo');
+        $producto->saveOrFail();
+        // Mensaje de exito
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El precio del producto fue actualizado correctamente!');
+        return redirect()->route('productoLista');
+
+    }
+
 }
