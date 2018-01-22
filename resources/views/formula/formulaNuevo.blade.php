@@ -172,7 +172,18 @@
 
         function funcionPrincipal() {
             $("body").on("click", ".btn-danger", funcionEliminarProducto);
+            selecionarValor();
             calcularTotal();
+        }
+
+        function selecionarValor() {
+            $(":input").click(function () {
+                $(this).select();
+            });
+            $(".cant").focusout(function () {
+                var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroDato.toFixed(2));
+            });
         }
 
         var numero = 2;
@@ -213,6 +224,7 @@
             $(".select2").select2();
             numero++;
             calcularTotal();
+            selecionarValor();
         }
 
         function funcionEliminarProducto() {
@@ -242,7 +254,7 @@
                 porcentaje = parseFloat(porcentajes[i].value);
                 totalPorcentaje = totalPorcentaje + porcentaje;
             }
-            $('#totalPorcentajeInput').val(totalPorcentaje);
+            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(2));
             // console.log(totalPorcentaje);
         }
 
