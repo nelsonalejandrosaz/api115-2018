@@ -20,25 +20,25 @@ class ProductoController extends Controller
 
     public function ProductoVer(Request $request)
     {
-        $tipoProductos = TipoProducto::all();
-        $unidadMedidas = UnidadMedida::all();
+        $tipo_productos = TipoProducto::all();
+        $unidad_medidas = UnidadMedida::all();
         $categorias = Categoria::all();
         $producto = Producto::find($request->id);
         return view('producto.productoVer')
-            ->with(['tipoProductos' => $tipoProductos])
-            ->with(['unidadMedidas' => $unidadMedidas])
+            ->with(['tipo_productos' => $tipo_productos])
+            ->with(['unidad_medidas' => $unidad_medidas])
             ->with(['producto' => $producto])
             ->with(['categorias' => $categorias]);
     }
 
     public function ProductoNuevo()
     {
-        $tipoProductos = TipoProducto::all();
-        $unidadMedidas = UnidadMedida::all();
+        $tipo_productos = TipoProducto::all();
+        $unidad_medidas = UnidadMedida::all();
         $categorias = Categoria::all();
         return view('producto.productoNuevo')
-            ->with(['tipoProductos' => $tipoProductos])
-            ->with(['unidadMedidas' => $unidadMedidas])
+            ->with(['tipo_productos' => $tipo_productos])
+            ->with(['unidad_medidas' => $unidad_medidas])
             ->with(['categorias' => $categorias]);
     }
 
@@ -50,34 +50,34 @@ class ProductoController extends Controller
             'categoria_id' => 'required',
             'tipo_producto_id' => 'required',
             'unidad_medida_id' => 'required',
-            'existenciaMin' => 'numeric|nullable',
-            'existenciaMax' => 'numeric|nullable',
+            'existencia_min' => 'numeric|nullable',
+            'existencia_max' => 'numeric|nullable',
             'costo' => 'numeric|nullable',
             'precio' => 'numeric|nullable',
-            'margenGanancia' => 'numeric|nullable',
+            'margen_ganancia' => 'numeric|nullable',
         ]);
-        $existenciaMin = ($request->input('existenciaMin') == null) ? 0 : $existenciaMin = $request->input('existenciaMin');
-        $existenciaMax = ($request->input('existenciaMax') == null) ? 1000 : $existenciaMax = $request->input('existenciaMax');
+        $existencia_min = ($request->input('existencia_min') == null) ? 0 : $existencia_min = $request->input('existencia_min');
+        $existencia_max = ($request->input('existencia_max') == null) ? 1000 : $existencia_max = $request->input('existencia_max');
         $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
         $precio = ($request->input('precio') == null) ? 0.00 : $request->input('precio');
-        $margenGanancia = ($request->input('margenGanancia') == null) ? 0 : $request->input('margenGanancia');
+        $margen_ganancia = ($request->input('margen_ganancia') == null) ? 0 : $request->input('margen_ganancia');
         $producto = Producto::create([
             'nombre' => $request->input('nombre'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
             'categoria_id' => $request->input('categoria_id'),
             'unidad_medida_id' => $request->input('unidad_medida_id'),
-            'existenciaMin' => $existenciaMin,
-            'existenciaMax' => $existenciaMax,
+            'existencia_min' => $existencia_min,
+            'existencia_max' => $existencia_max,
             'costo' => $costo,
             'precio' => $precio,
-            'margenGanancia' => $margenGanancia,
+            'margen_ganancia' => $margen_ganancia,
         ]);
         if ($request->input('codigo') == null)
         {
 //          Asignacion del codigo del producto
             $ids = $producto->id;
             $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
-            $codigo = $producto->tipoProducto->codigo . $ids;
+            $codigo = $producto->tipo_producto->codigo . $ids;
             $producto->codigo = $codigo;
             $producto->update();
         } else
@@ -95,13 +95,13 @@ class ProductoController extends Controller
 
     public function ProductoEditar(Request $request)
     {
-        $tipoProductos = TipoProducto::all();
-        $unidadMedidas = UnidadMedida::all();
+        $tipo_productos = TipoProducto::all();
+        $unidad_medidas = UnidadMedida::all();
         $categorias = Categoria::all();
         $producto = Producto::find($request->id);
         return view('producto.productoEditar')
-            ->with(['tipoProductos' => $tipoProductos])
-            ->with(['unidadMedidas' => $unidadMedidas])
+            ->with(['tipo_productos' => $tipo_productos])
+            ->with(['unidad_medidas' => $unidad_medidas])
             ->with(['producto' => $producto])
             ->with(['categorias' => $categorias]);
     }
@@ -121,28 +121,28 @@ class ProductoController extends Controller
             ],
             'tipo_producto_id' => 'required',
             'unidad_medida_id' => 'required',
-            'existenciaMin' => 'numeric|nullable',
-            'existenciaMax' => 'numeric|nullable',
+            'existencia_min' => 'numeric|nullable',
+            'existencia_max' => 'numeric|nullable',
             'costo' => 'numeric|nullable',
             'precio' => 'numeric|nullable',
-            'margenGanancia' => 'numeric|nullable',
+            'margen_ganancia' => 'numeric|nullable',
         ]);
 
-        $existenciaMin = ($request->input('existenciaMin') == null) ? 0 : $existenciaMin = $request->input('existenciaMin');
-        $existenciaMax = ($request->input('existenciaMax') == null) ? 1000 : $existenciaMax = $request->input('existenciaMax');
+        $existencia_min = ($request->input('existencia_min') == null) ? 0 : $existencia_min = $request->input('existencia_min');
+        $existencia_max = ($request->input('existencia_max') == null) ? 1000 : $existencia_max = $request->input('existencia_max');
         $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
         $precio = ($request->input('precio') == null) ? 0.00 : $request->input('precio');
-        $margenGanancia = ($request->input('margenGanancia') == null) ? 0 : $request->input('margenGanancia');
+        $margen_ganancia = ($request->input('margen_ganancia') == null) ? 0 : $request->input('margen_ganancia');
 
         $producto->update([
             'nombre' => $request->input('nombre'),
             'tipo_producto_id' => $request->input('tipo_producto_id'),
             'unidad_medida_id' => $request->input('unidad_medida_id'),
             'categoria_id' => $request->input('categoria_id'),
-            'existenciaMin' => $existenciaMin,
-            'existenciaMax' => $existenciaMax,
+            'existencia_min' => $existencia_min,
+            'existencia_max' => $existencia_max,
             'precio' => $precio,
-            'margenGanancia' => $margenGanancia,
+            'margen_ganancia' => $margen_ganancia,
         ]);
 
         if ($request->input('codigo') == null)
@@ -150,7 +150,7 @@ class ProductoController extends Controller
 //          Asignacion del codigo del producto
             $ids = $producto->id;
             $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
-            $codigo = $producto->tipoProducto->codigo . $ids;
+            $codigo = $producto->tipo_producto->codigo . $ids;
             $producto->codigo = $codigo;
             $producto->update();
         } else

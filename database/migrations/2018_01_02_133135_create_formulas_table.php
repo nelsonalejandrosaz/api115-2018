@@ -16,9 +16,10 @@ class CreateFormulasTable extends Migration
         Schema::create('formulas', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('producto_id');
-            $table->date('fechaIngreso');
+            $table->date('fecha');
             $table->string('ingresado_id');
             $table->string('descripcion')->nullable();
+            $table->boolean('activa')->default(false);
             $table->timestamps();
         });
     }

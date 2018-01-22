@@ -17,10 +17,11 @@ class CreateEntradasTable extends Migration
             $table->increments('id');
             $table->integer('compra_id')->unsigned()->nullable();
             $table->integer('produccion_id')->unsigned()->nullable();
-            $table->integer('movimiento_id')->unsigned();
             $table->float('cantidad');
-            $table->float('costoUnitario');
-            $table->float('costoTotal');
+            $table->float('cantidad_ums');
+            $table->integer('unidad_medida_id')->unsigned();
+            $table->float('costo_unitario');
+            $table->float('costo_unitario_ums');
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\Municipio;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -19,16 +20,20 @@ class ClienteController extends Controller
     {
         $cliente = Cliente::find($request->id);
         $vendedores = User::whereRolId(3)->get();
+        $municipios = Municipio::all();
         return view('cliente.clienteVer')
             ->with(['cliente' => $cliente])
-            ->with(['vendedores' => $vendedores]);
+            ->with(['vendedores' => $vendedores])
+            ->with(['municipios'=> $municipios]);
     }
 
     public function ClienteNuevo(Request $request)
     {
         $vendedores = User::whereRolId(3)->get();
+        $municipios = Municipio::all();
         return view('cliente.clienteNuevo')
-            ->with(['vendedores' => $vendedores]);
+            ->with(['vendedores' => $vendedores])
+            ->with(['municipios'=> $municipios]);
     }
 
     public function ClienteNuevoPost(Request $request)
@@ -40,13 +45,14 @@ class ClienteController extends Controller
         ]);
         $cliente = Cliente::create($request->only(
             'nombre',
-            'nombreContacto',
+            'nombre_contacto',
             'direccion',
-            'telefono1',
-            'telefono2',
+            'telefono_1',
+            'telefono_2',
             'nit',
             'nrc',
-            'vendedor_id'
+            'vendedor_id',
+            'giro'
         ));
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
@@ -59,9 +65,11 @@ class ClienteController extends Controller
     {
         $cliente = Cliente::find($request->id);
         $vendedores = User::whereRolId(3)->get();
+        $municipios = Municipio::all();
         return view('cliente.clienteEditar')
             ->with(['cliente' => $cliente])
-            ->with(['vendedores' => $vendedores]);
+            ->with(['vendedores' => $vendedores])
+            ->with(['municipios'=> $municipios]);
     }
 
     public function ClienteEditarPut(Request $request, $id)
@@ -78,12 +86,15 @@ class ClienteController extends Controller
 
         $cliente->update($request->only(
             'nombre',
-            'nombreContacto',
+            'nombre_contacto',
             'direccion',
-            'telefono1',
-            'telefono2',
+            'telefono_1',
+            'telefono_2',
             'nrc',
-            'nit'
+            'nit',
+            'giro',
+            'vendedor_id',
+            'municipio_id'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

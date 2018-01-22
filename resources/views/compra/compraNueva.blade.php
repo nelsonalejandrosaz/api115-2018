@@ -38,7 +38,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Fecha ingreso</b></label>
                         <div class="col-md-8">
-                            <input type="date" class="form-control" name="fechaIngreso">
+                            <input type="date" class="form-control" name="fecha">
                         </div>
                     </div>
 
@@ -121,7 +121,7 @@
                                     <option value="" disabled selected>Seleccione un producto</option>
                                     @foreach($productos as $producto)
                                         <option value="{{ $producto->id }}"
-                                                data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}}
+                                                data-um="{{ $producto->unidad_medida->abreviatura }}">{{$producto->codigo}}
                                             -- {{ $producto->nombre }}</option>
                                     @endforeach
                                 </select>
@@ -145,7 +145,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01"
-                                           value="0.00" name="costoUnitarios[]" id="costoUnitario" required>
+                                           value="0.00" name="costo_unitarios[]" id="costoUnitario" required>
                                 </div>
                             </td>
                             {{--costo total --}}
@@ -153,7 +153,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01"
-                                           value="0.00" name="costoTotales[]" id="costoTotal" required>
+                                           value="0.00" name="costo_totales[]" id="costoTotal" required>
                                 </div>
                             </td>
                             <td align="center">
@@ -265,7 +265,7 @@
                                 (
                                     '<div class="input-group">\n' +
                                     '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="number" step="0.01" class="form-control costoUnitarioCls" value="0.00" name="costoUnitarios[]" id="costoUnitario" required>\n' +
+                                    '<input type="number" step="0.01" class="form-control costoUnitarioCls" value="0.00" name="costo_unitarios[]" id="costoUnitario" required>\n' +
                                     '</div>'
                                 )
                         )
@@ -276,7 +276,7 @@
                                 (
                                     '<div class="input-group">\n' +
                                     '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="number" step="0.01" class="form-control costoTotalCls" value="0.00" name="costoTotales[]" id="costoTotal" required>\n' +
+                                    '<input type="number" step="0.01" class="form-control costoTotalCls" value="0.00" name="costo_totales[]" id="costoTotal" required>\n' +
                                     '</div>'
                                 )
                         )

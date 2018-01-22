@@ -27,7 +27,7 @@
             <h3 class="box-title">Detalle</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ordenPedidoNuevaPost') }}" method="POST">
+        <form class="form-horizontal" action="{{ route('ordenPedidoNuevaPost') }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
-                            <input type="date" class="form-control" name="fechaIngreso">
+                            <input type="date" class="form-control" name="fecha">
                         </div>
                     </div>
 
@@ -45,10 +45,13 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID" onchange="cambioCliente()">
+                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID"
+                                    onchange="cambioCliente()">
                                 <option value="" selected disabled>Seleciona un cliente</option>
                                 @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}" data-direccion="{{$cliente->direccion}}">{{ $cliente->nombre }}</option>
+                                    <option value="{{ $cliente->id }}"
+                                            data-direccion="{{$cliente->direccion}}"
+                                            data-municipio="{{$cliente->municipio->nombre}}">{{ $cliente->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -56,14 +59,9 @@
 
                     {{-- Municipio --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Municipio</b></label>
+                        <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="municipio_id">
-                                <option value="" selected disabled>Selecciona un municipio</option>
-                                @foreach($municipios as $municipio)
-                                    <option value="{{ $municipio->id }}">{{ $municipio->nombre }}</option>
-                                @endforeach
-                            </select>
+                            <input disabled type="text" class="form-control" placeholder="Seleccione el cliente" name="municipio" id="municipioID">
                         </div>
                     </div>
 
@@ -71,7 +69,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
-                            <textarea class="form-control" name="direccion" id="direccionID"></textarea>
+                            <textarea disabled class="form-control" placeholder="Seleccione el cliente" name="direccion" id="direccionID"></textarea>
                         </div>
                     </div>
 
@@ -102,7 +100,7 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            <input type="date" class="form-control" name="fechaEntrega">
+                            <input type="date" class="form-control" name="fecha_entrega">
                         </div>
                     </div>
 
@@ -117,10 +115,22 @@
                     </div>
 
                     {{-- Condicion pago --}}
+                    {{--<div class="form-group">--}}
+                    {{--<label class="col-md-4  control-label">Condición pago</label>--}}
+                    {{--<div class="col-md-8 ">--}}
+                    {{--<input type="text" class="form-control" name="condicion_pago_id">--}}
+                    {{--</div>--}}
+                    {{--</div>--}}
+
                     <div class="form-group">
-                        <label class="col-md-4  control-label">Condición pago</label>
+                        <label class="col-md-4  control-label"><b>Condición pago</b></label>
                         <div class="col-md-8 ">
-                            <input type="text" class="form-control" name="condicionPago">
+                            <select class="form-control select2" style="width: 100%" name="condicion_pago_id">
+                                <option value="" selected disabled>Selecciona una condición de pago</option>
+                                @foreach($condiciones_pago as $condicion_pago)
+                                    <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -128,7 +138,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Copia orden</label>
                         <div class="col-md-8">
-                            <input type="file" class="form-control" name="archivo">
+                            <input type="file" class="form-control file" name="archivo">
                         </div>
                     </div>
 
@@ -161,11 +171,13 @@
                                     <option selected disabled value="">-- Seleccione un producto --</option>
                                     <optgroup label="Productos con existencia">
                                         @foreach($productos as $producto)
-                                            @if($producto->cantidadExistencia > 0 )
-                                                <option value="{{ $producto->id }}" data-preciounitario="{{ $producto->precio }}" data-preciounitarioiva="{{$producto->precioConImpuestos}}"
-                                                        data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }}
+                                            @if($producto->cantidad_existencia > 0 )
+                                                <option value="{{ $producto->id }}"
+                                                        data-preciounitario="{{ $producto->precio }}"
+                                                        data-preciounitarioiva="{{$producto->precio_impuestos}}"
+                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->nombre }}
                                                     --
-                                                    ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}}
+                                                    ({{$producto->cantidad_existencia}} {{$producto->unidad_medida->abreviatura}}
                                                     )
                                                 </option>
                                             @endif
@@ -173,11 +185,13 @@
                                     </optgroup>
                                     <optgroup label="Productos sin existencia">
                                         @foreach($productos as $producto)
-                                            @if($producto->cantidadExistencia == 0 )
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}"
-                                                        data-unidad="{{$producto->unidadMedida->id}}">{{ $producto->nombre }}
+                                            @if($producto->cantidad_existencia == 0 )
+                                                <option value="{{ $producto->id }}"
+                                                        data-preciounitario="{{ $producto->precio }}"
+                                                        data-preciounitarioiva="{{$producto->precio_impuestos}}"
+                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->nombre }}
                                                     --
-                                                    ({{$producto->cantidadExistencia}} {{$producto->unidadMedida->abreviatura}}
+                                                    ({{$producto->cantidad_existencia}} {{$producto->unidad_medida->abreviatura}}
                                                     )
                                                 </option>
                                             @endif
@@ -190,8 +204,8 @@
                             <td>
                                 <select class="form-control select2 unidadCls" style="width:100%"
                                         name="unidad_medida_id[]" id="umSelect">
-                                    @foreach($unidadMedidas as $unidadMedida)
-                                        <option value="{{ $unidadMedida->id }}">{{ $unidadMedida->abreviatura }}</option>
+                                    @foreach($unidad_medidas as $unidad_medida)
+                                        <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->abreviatura }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -261,8 +275,11 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar</button>
+                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span
+                            class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span>
+                    Guardar
+                </button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -444,8 +461,7 @@
         function cambioProductoJS() {
             var idSelect = $(this).parent().parent().find('#selectProductos').val();
 //            var productoPrecioUnitario = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('preciounitario');
-            if ($("#IVAid").val() == 0)
-            {
+            if ($("#IVAid").val() == 0) {
                 var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + idSelect + '"]').data('preciounitario');
                 console.log('Sin IVA: ' + productoPrecioUnitario);
             } else {
@@ -509,8 +525,7 @@
         function cambioUnidadMedida() {
             console.log('ejecuto cambio unidad medida');
             var productoId = $(this).parent().parent().find('#selectProductos').val();
-            if ($("#IVAid").val() == 0)
-            {
+            if ($("#IVAid").val() == 0) {
                 var productoPrecioUnitario = $(this).parent().parent().find('#selectProductos').find('option[value="' + productoId + '"]').data('preciounitario');
                 console.log('Sin IVA: ' + productoPrecioUnitario);
             } else {
@@ -559,7 +574,9 @@
         function cambioCliente() {
             var idc = $("#clienteID").val();
             var direccion = $("#clienteID").find('option[value="' + idc + '"]').data('direccion');
+            var municipio = $("#clienteID").find('option[value="' + idc + '"]').data('municipio');
             $("#direccionID").val(direccion);
+            $("#municipioID").val(municipio);
         }
 
     </script>

@@ -60,16 +60,16 @@
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">{{$venta->ordenPedido->cliente->id}}</td>
+        <td class="tg-cw2b">{{$venta->orden_pedido->cliente->id}}</td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="4">{{$venta->ordenPedido->cliente->nit}}</td>
+        <td class="tg-cw2b" colspan="4">{{$venta->orden_pedido->cliente->nit}}</td>
         <td class="tg-cw2b" colspan="2"></td>
-        <td class="tg-cw2b">{{$venta->fechaIngreso->format('d-m-Y')}}</td>
+        <td class="tg-cw2b">{{$venta->fecha->format('d-m-Y')}}</td>
     </tr>
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">{{strtoupper($venta->ordenPedido->cliente->nombre)}}</td>
+        <td class="tg-cw2b">{{strtoupper($venta->orden_pedido->cliente->nombre)}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -81,7 +81,7 @@
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="5">{{strtoupper($venta->ordenPedido->direccion)}}</td>
+        <td class="tg-cw2b" colspan="5">{{strtoupper($venta->orden_pedido->cliente->direccion)}}</td>
         <td class="tg-cw2b">59342</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -90,13 +90,13 @@
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">{{strtoupper($venta->ordenPedido->municipio->nombre)}}</td>
+        <td class="tg-cw2b">{{strtoupper($venta->orden_pedido->cliente->municipio->nombre)}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->ordenPedido->condicionPago)}}</td>
+        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->orden_pedido->condicion_pago->nombre)}}</td>
 
     </tr>
 
@@ -106,7 +106,7 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->ordenPedido->vendedor->nombreCompleto)}}</td>
+        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->orden_pedido->vendedor->nombreCompleto)}}</td>
     </tr>
 
     <tr>
@@ -134,16 +134,16 @@
     </tr>
 
     @php($i = 1)
-    @foreach($venta->ordenPedido->salidas as $salida)
+    @foreach($venta->orden_pedido->salidas as $salida)
         <tr>
             <td class="tg-cw2b">{{strtoupper($salida->movimiento->producto->codigo)}}</td>
             <td class="tg-cw2b" colspan="3">{{strtoupper($salida->movimiento->producto->nombre)}}</td>
-            <td class="tg-cw2b">{{strtoupper($salida->unidadMedida->abreviatura)}}</td>
-            <td class="tg-cw2b">{{$salida->cantidad}}</td>
-            <td class="tg-cw2b">$ {{number_format($salida->precioUnitario,2)}}</td>
+            <td class="tg-cw2b">{{strtoupper($salida->unidad_medida->abreviatura)}}</td>
+            <td class="tg-cw2b">{{$salida->cantidad_ums}}</td>
+            <td class="tg-cw2b">$ {{number_format($salida->precio_unitario_ums,2)}}</td>
             <td class="tg-cw2b"></td>
             <td class="tg-cw2b"></td>
-            <td class="tg-cw2b">$ {{number_format($salida->ventaGravada,2)}}</td>
+            <td class="tg-cw2b">$ {{number_format($salida->venta_gravada,2)}}</td>
         </tr>
         @php($i++)
     @endforeach
@@ -175,11 +175,11 @@
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="5">{{$venta->ordenPedido->ventaTotalLetras}}</td>
+        <td class="tg-cw2b" colspan="5">{{$venta->orden_pedido->venta_total_letras}}</td>
         <td class="tg-cw2b">SUBTOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$ {{number_format($venta->ordenPedido->ventasGravadas,2)}}</td>
+        <td class="tg-cw2b">$ {{number_format($venta->orden_pedido->ventas_gravadas,2)}}</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
@@ -191,7 +191,7 @@
         <td class="tg-cw2b">13% IVA</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$ {{number_format($venta->ordenPedido->porcentajeIVA,2)}}</td>
+        <td class="tg-cw2b">$ {{number_format($venta->orden_pedido->porcentaje_IVA,2)}}</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
@@ -215,7 +215,7 @@
         <td class="tg-cw2b">TOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$ {{number_format($venta->ordenPedido->ventaTotal,2)}}</td>
+        <td class="tg-cw2b">$ {{number_format($venta->orden_pedido->venta_total,2)}}</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>

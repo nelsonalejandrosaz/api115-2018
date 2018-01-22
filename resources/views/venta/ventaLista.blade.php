@@ -46,9 +46,9 @@
                         @foreach($ordenesPedidos as $ordenPedido)
                             <tr>
                                 <td>{{$ordenPedido->numero}}</td>
-                                <td>{{$ordenPedido->fechaIngreso->format('d/m/Y')}}</td>
-                                @if($ordenPedido->fechaEntrega != null)
-                                    <td>{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+                                <td>{{$ordenPedido->fecha->format('d/m/Y')}}</td>
+                                @if($ordenPedido->fecha_entrega != null)
+                                    <td>{{$ordenPedido->fecha_entrega->format('d/m/Y')}}</td>
                                 @else
                                     <td>Sin fecha especificada</td>
                                 @endif

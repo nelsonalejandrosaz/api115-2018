@@ -35,8 +35,8 @@
                         <tr>
                             <th style="width:10%">Código</th>
                             <th style="width:20%">Nombre</th>
-                            <th style="width:15%">Unidad medida</th>
                             <th style="width:10%">Cantidad</th>
+                            <th style="width:15%">Unidad medida</th>
                             <th style="width:15%">Costo</th>
                             <th style="width:15%">Precio</th>
                             <th style="width:15%">Acción</th>
@@ -47,8 +47,8 @@
                             <tr>
                                 <td>{{$producto->codigo}}</td>
                                 <td>{{$producto->nombre}}</td>
-                                <td>{{$producto->unidadMedida->nombre}}</td>
-                                <td>{{$producto->cantidadExistencia}}</td>
+                                <td>{{$producto->cantidad_existencia}}</td>
+                                <td>{{$producto->unidad_medida->nombre}}</td>
                                 <td>$ {{number_format($producto->costo,2)}}</td>
                                 <td>$ {{number_format($producto->precio,2)}}</td>
                                 <td align="center">

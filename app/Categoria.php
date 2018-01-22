@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Categoria extends Model
 {
-    public function Productos()
+    public function productos()
     {
         $this->hasMany('App\Producto');
     }

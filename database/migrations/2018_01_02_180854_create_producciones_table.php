@@ -15,7 +15,7 @@ class CreateProduccionesTable extends Migration
     {
         Schema::create('producciones', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('bodeguero_id')->unsigned();
+            $table->integer('bodega_id')->unsigned();
             $table->integer('formula_id')->unsigned();
             $table->float('cantidad');
             $table->date('fecha');

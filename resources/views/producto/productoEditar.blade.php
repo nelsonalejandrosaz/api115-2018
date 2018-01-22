@@ -75,11 +75,11 @@
                         <label class="col-sm-4 control-label"><b>Unidad de medida</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="unidad_medida_id">
-                                @foreach($unidadMedidas as $unidadMedida)
-                                    @if($unidadMedida->id == $producto->unidad_medida_id)
-                                        <option selected value="{{ $unidadMedida->id }}">{{ $unidadMedida->nombre }} - {{ $unidadMedida->abreviatura }}</option>
+                                @foreach($unidad_medidas as $unidad_medida)
+                                    @if($unidad_medida->id == $producto->unidad_medida_id)
+                                        <option selected value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }} - {{ $unidad_medida->abreviatura }}</option>
                                     @else
-                                        <option value="{{ $unidadMedida->id }}">{{ $unidadMedida->nombre }} - {{ $unidadMedida->abreviatura }}</option>
+                                        <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }} - {{ $unidad_medida->abreviatura }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -91,11 +91,11 @@
                         <label class="col-sm-4 control-label"><b>Tipo del producto</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="tipo_producto_id">
-                                @foreach($tipoProductos as $tipoProducto)
-                                    @if($tipoProducto->id == $producto->tipo_producto_id)
-                                        <option selected value="{{ $tipoProducto->id }}">{{ $tipoProducto->nombre }}</option>
+                                @foreach($tipo_productos as $tipo_producto)
+                                    @if($tipo_producto->id == $producto->tipo_producto_id)
+                                        <option selected value="{{ $tipo_producto->id }}">{{ $tipo_producto->nombre }}</option>
                                     @else
-                                        <option value="{{ $tipoProducto->id }}">{{ $tipoProducto->nombre }}</option>
+                                        <option value="{{ $tipo_producto->id }}">{{ $tipo_producto->nombre }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -111,8 +111,8 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad minima</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0" class="form-control" name="existenciaMin"
-                                   value="{{ $producto->existenciaMin }}">
+                            <input type="number" min="0" class="form-control" name="existencia_min"
+                                   value="{{ $producto->existencia_min }}">
                         </div>
                     </div>
 
@@ -120,8 +120,8 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad maxima</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0" class="form-control" name="existenciaMax"
-                                   value="{{ $producto->existenciaMax }}">
+                            <input type="number" min="0" class="form-control" name="existencia_max"
+                                   value="{{ $producto->existencia_max }}">
                         </div>
                     </div>
 
@@ -154,8 +154,8 @@
                         <label class="col-sm-4 control-label">Margen ganancia</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
-                                value="{{ $producto->margenGanancia }}" id="margenGanancia" onchange="cambioMargen()">
+                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margen_ganancia"
+                                value="{{ $producto->margen_ganancia }}" id="margen_ganancia" onchange="cambioMargen()">
                                 <span class="input-group-addon">%</span>
                             </div>
                         </div>
@@ -184,16 +184,16 @@
                 $('#precio').val('');
             }
             margen = ((precio - costo) / costo) * 100;
-            $('#margenGanancia').val(margen.toFixed(2));
+            $('#margen_ganancia').val(margen.toFixed(2));
         }
 
         function cambioMargen() {
             var costo = $('#costo').val();
-            var margen = $('#margenGanancia').val();
+            var margen = $('#margen_ganancia').val();
             if ($('#costo').val().length <= 0)
             {
                 alert("Debe rellenar el campo costo antes de asignar precios");
-                $('#margenGanancia').val('');
+                $('#margen_ganancia').val('');
             }
             precio = costo * (1 + (margen/100));
             $('#precio').val(precio.toFixed(2));

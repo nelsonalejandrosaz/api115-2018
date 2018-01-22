@@ -95,7 +95,7 @@
                         <label class="col-sm-4 control-label">Unidad de medida</label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" placeholder="Producto" name="nombre"
-                                   value="{{$produccion->formula->producto->unidadMedida->nombre}}" disabled id="unidadMedidalbl">
+                                   value="{{$produccion->formula->producto->unidad_medida->nombre}}" disabled id="unidadMedidalbl">
                         </div>
                     </div>
 
@@ -127,11 +127,11 @@
                                             @if($producto->id == $salida->movimiento->producto_id)
                                                 <option selected value="{{ $producto->id }}"
                                                         data-cu="{{ $producto->precio }}"
-                                                        data-um="{{$producto->unidadMedida->abreviatura}}">{{$producto->codigo}} -- {{ $producto->nombre }}
+                                                        data-um="{{$producto->unidad_medida->abreviatura}}">{{$producto->codigo}} -- {{ $producto->nombre }}
                                                 </option>
                                             @else
                                                 <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}"
-                                                        data-um="{{$producto->unidadMedida->abreviatura}}">{{$producto->codigo}} -- {{ $producto->nombre }}
+                                                        data-um="{{$producto->unidad_medida->abreviatura}}">{{$producto->codigo}} -- {{ $producto->nombre }}
                                                 </option>
                                             @endif
                                         @endforeach
@@ -142,7 +142,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{number_format($salida->cantidadOP,2)}} {{$salida->unidadMedida->abreviatura}}" disabled>
+                                           id="cantidad" value="{{number_format($salida->cantidad_ums,2)}} {{$salida->unidad_medida->abreviatura}}" disabled>
                                 </td>
                             </tr>
                         @endforeach
@@ -153,8 +153,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Producir</button>
+                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a producciones</a>
+                <a href="" class="btn btn-lg btn-success pull-right"><span class="fa fa-print"></span> Imprimir producción</a>
             </div>
         </form>
     </div><!-- /.box -->

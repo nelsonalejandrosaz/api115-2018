@@ -14,22 +14,28 @@ class FormulaController extends Controller
     public function FormulaLista()
     {
         $formulas = Formula::all();
-        return view('formula.formulaLista')->with(['formulas' => $formulas]);
+        return view('formula.formulaLista')
+            ->with(['formulas' => $formulas]);
     }
 
     public function FormulaVer($id)
     {
         $formula = Formula::find($id);
-        $unidadMedidas = UnidadMedida::all();
+        $unidad_medidas = UnidadMedida::all();
         $productos = Producto::all();
-        return view('formula.formulaVer')->with(['formula' => $formula])->with(['unidadMedidas' => $unidadMedidas])->with(['productos' => $productos]);
+        return view('formula.formulaVer')
+            ->with(['formula' => $formula])
+            ->with(['unidad_medidas' => $unidad_medidas])
+            ->with(['productos' => $productos]);
     }
 
     public function FormulaNuevo()
     {
-        $unidadMedidas = UnidadMedida::all();
+        $unidad_medidas = UnidadMedida::all();
         $productos = Producto::all();
-        return view('formula.formulaNuevo')->with(['unidadMedidas' => $unidadMedidas])->with(['productos' => $productos]);
+        return view('formula.formulaNuevo')
+            ->with(['unidad_medidas' => $unidad_medidas])
+            ->with(['productos' => $productos]);
     }
 
     public function FormulaNuevoPost(Request $request)
@@ -37,7 +43,7 @@ class FormulaController extends Controller
         // Validacion
         $this->validate($request, [
             'producto_id' => 'required',
-            'fechaIngreso' => 'required',
+            'fecha' => 'required',
             'productos.*' => 'required',
             'porcentajes.*' => 'required',
         ]);
@@ -46,7 +52,7 @@ class FormulaController extends Controller
         // Crear una instancia de Formula
         $formula = Formula::create([
             'producto_id' => $request->input('producto_id'),
-            'fechaIngreso' => $request->input('fechaIngreso'),
+            'fecha' => $request->input('fecha'),
             'ingresado_id' => Auth::user()->id,
             'descripcion' => $request->input('descripcion'),
         ]);

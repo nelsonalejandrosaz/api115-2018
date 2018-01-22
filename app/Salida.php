@@ -8,47 +8,47 @@ use Illuminate\Database\Eloquent\Model;
  * App\Salida
  *
  * @property int $id
- * @property int $movimiento_id
  * @property int|null $orden_pedido_id
  * @property int|null $produccion_id
  * @property float $cantidad
- * @property float $precioUnitario
- * @property float $ventaExenta
- * @property float $ventaGravada
- * @property float $costoUnitario
- * @property float $costoTotal
+ * @property float $cantidad_ums
+ * @property int $unidad_medida_id
+ * @property float $precio_unitario
+ * @property float $precio_unitario_ums
+ * @property float $venta_exenta
+ * @property float $venta_gravada
+ * @property float $costo_unitario
  * @property int $exento
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Movimiento $movimiento
- * @property-read \App\OrdenPedido|null $ordenPedido
+ * @property-read \App\OrdenPedido|null $orden_pedido
  * @property-read \App\Produccion|null $produccion
+ * @property-read \App\UnidadMedida $unidad_medida
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCantidad($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCostoTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCantidadUms($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCostoUnitario($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereExento($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereMovimientoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereOrdenPedidoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida wherePrecioUnitario($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida wherePrecioUnitarioUms($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereProduccionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereVentaExenta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereVentaGravada($value)
  * @mixin \Eloquent
- * @property int $unidad_medida_id
- * @property-read \App\UnidadMedida $unidadMedida
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Salida whereUnidadMedidaId($value)
  */
 class Salida extends Model
 {
     public function movimiento()
     {
-        return $this->belongsTo('App\Movimiento');
+        return $this->hasOne('App\Movimiento');
     }
 
-    public function ordenPedido()
+    public function orden_pedido()
     {
         return $this->belongsTo('App\OrdenPedido');
     }
@@ -58,24 +58,22 @@ class Salida extends Model
         return $this->belongsTo('App\Produccion');
     }
 
-    public function unidadMedida()
+    public function unidad_medida()
     {
         return $this->belongsTo('App\UnidadMedida');
     }
 
     protected $fillable = [
-        'movimiento_id',
         'orden_pedido_id',
         'produccion_id',
         'cantidad',
-        'cantidadOP',
+        'cantidad_ums',
         'unidad_medida_id',
-        'precioUnitario',
-        'precioUnitarioOP',
-        'costoTotal',
-        'costoUnitario',
-        'ventaExenta',
-        'ventaGravada',
+        'precio_unitario',
+        'precio_unitario_ums',
+        'costo_unitario',
+        'venta_exenta',
+        'venta_gravada',
         'exento',
     ];
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $departamento_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\OrdenPedido[] $ordenesPedidos
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Cliente[] $clientes
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Municipio whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Municipio whereDepartamentoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Municipio whereId($value)
@@ -22,9 +22,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Municipio extends Model
 {
-    public function ordenesPedidos()
+    public function clientes()
     {
-        return $this->hasMany('App\OrdenPedido');
+        return $this->hasMany('App\Cliente');
     }
 
     protected $fillable = [

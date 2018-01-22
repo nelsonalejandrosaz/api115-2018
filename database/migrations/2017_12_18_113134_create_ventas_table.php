@@ -16,13 +16,13 @@ class CreateVentasTable extends Migration
         Schema::create('ventas', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('tipo_documento_id')->unsigned();
+            $table->integer('orden_pedido_id')->unsigned();
+            $table->integer('estado_venta_id')->unsigned();
             $table->string('numero')->nullable();
-            $table->date('fechaIngreso');
+            $table->date('fecha');
             $table->integer('vendedor_id')->unsigned();
-            $table->string('nit',16)->nullable();
-            $table->string('nrc')->nullable();
-            $table->string('rutaArchivo')->default('sin-documento.jpg');
-            $table->string('procesado')->default(false);
+            $table->string('ruta_archivo')->default('sin-documento.jpg');
+            $table->float('saldo')->default(0.00);
             $table->timestamps();
         });
     }

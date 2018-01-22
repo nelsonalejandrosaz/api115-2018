@@ -74,11 +74,11 @@
                         <label class="col-sm-4 control-label">Unidad de medida</label>
                         <div class="col-sm-8">
                             <select disabled class="form-control select2" name="unidad_medida_id">
-                                @foreach($unidadMedidas as $unidadMedida)
-                                    @if($unidadMedida->id == $producto->unidad_medida_id)
-                                        <option selected value="{{ $unidadMedida->id }}">{{ $unidadMedida->nombre }} - {{ $unidadMedida->abreviatura }}</option>
+                                @foreach($unidad_medidas as $unidad_medida)
+                                    @if($unidad_medida->id == $producto->unidad_medida_id)
+                                        <option selected value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }} - {{ $unidad_medida->abreviatura }}</option>
                                     @else
-                                        <option value="{{ $unidadMedida->id }}">{{ $unidadMedida->nombre }} - {{ $unidadMedida->abreviatura }}</option>
+                                        <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }} - {{ $unidad_medida->abreviatura }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -90,11 +90,11 @@
                         <label class="col-sm-4 control-label">Tipo del producto</label>
                         <div class="col-sm-8">
                             <select disabled class="form-control select2" name="tipo_producto_id">
-                                @foreach($tipoProductos as $tipoProducto)
-                                    @if($tipoProducto->id == $producto->tipo_producto_id)
-                                        <option selected value="{{ $tipoProducto->id }}">{{ $tipoProducto->nombre }}</option>
+                                @foreach($tipo_productos as $tipo_producto)
+                                    @if($tipo_producto->id == $producto->tipo_producto_id)
+                                        <option selected value="{{ $tipo_producto->id }}">{{ $tipo_producto->nombre }}</option>
                                     @else
-                                        <option value="{{ $tipoProducto->id }}">{{ $tipoProducto->nombre }}</option>
+                                        <option value="{{ $tipo_producto->id }}">{{ $tipo_producto->nombre }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -111,7 +111,7 @@
                         <label class="col-sm-4 control-label">Cantidad minima</label>
                         <div class="col-sm-8">
                             <input disabled type="number" min="0" class="form-control" name="existenciaMin"
-                                   value="{{ $producto->existenciaMin }}">
+                                   value="{{ $producto->existencia_min }}">
                         </div>
                     </div>
 
@@ -120,7 +120,7 @@
                         <label class="col-sm-4 control-label">Cantidad maxima</label>
                         <div class="col-sm-8">
                             <input disabled type="number" min="0" class="form-control" name="existenciaMax"
-                                   value="{{ $producto->existenciaMax }}">
+                                   value="{{ $producto->existencia_max }}">
                         </div>
                     </div>
 
@@ -154,7 +154,7 @@
                         <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
-                                value="{{ $producto->margenGanancia }}" id="margenGanancia" disabled>
+                                value="{{ $producto->margen_ganancia }}" id="margenGanancia" disabled>
                                 <span class="input-group-addon">%</span>
                             </div>
                         </div>

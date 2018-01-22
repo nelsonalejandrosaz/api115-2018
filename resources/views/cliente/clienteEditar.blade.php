@@ -34,50 +34,81 @@
                 <div class="col-xs-6">
                     <h4>Datos generales</h4>
                     <br>
+
                     {{-- Nombre del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Nombre cliente</b></label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-3 control-label"><b>Nombre cliente</b></label>
+                        <div class="col-sm-9">
                             <input type="text" class="form-control" placeholder="Nombre del cliente" name="nombre" value="{{ $cliente->nombre }}" >
                         </div>
                     </div>
+
                     {{-- Contacto del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Contacto</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Contacto" name="nombreContacto" value="{{ $cliente->nombreContacto }}" >
+                        <label class="col-sm-3 control-label">Contacto</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="Contacto" name="nombre_contacto" value="{{ $cliente->nombre_contacto }}" >
                         </div>
                     </div>
+
                     {{-- Direccion del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Direccion</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Direccion" name="direccion" value="{{ $cliente->direccion }}" >
+                        <label class="col-sm-3 control-label">Direccion</label>
+                        <div class="col-sm-9">
+                            <textarea name="direccion" class="form-control" id=""
+                                      cols="30">{{ $cliente->direccion }}</textarea>
                         </div>
                     </div>
+
+                    {{-- Municipio --}}
+                    <div class="form-group">
+                        <label class="col-md-3  control-label"><b>Municipio</b></label>
+                        <div class="col-md-9 ">
+                            <select class="form-control select2" style="width: 100%" name="municipio_id">
+                                <option value="" selected disabled>Selecciona un municipio</option>
+                                @foreach($municipios as $municipio)
+                                    @if ($municipio->id == $cliente->municipio_id)
+                                        <option selected value="{{ $municipio->id }}">{{ $municipio->nombre }}</option>
+                                    @else
+                                        <option value="{{ $municipio->id }}">{{ $municipio->nombre }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Giro --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Giro</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="Giro comercial"
+                                   name="giro" value="{{ $cliente->giro }}">
+                        </div>
+                    </div>
+
                 </div>
                 <div class="col-xs-6">
                     <h4>Telefonos</h4>
                     <br>
                     {{-- Telefono principal del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Telefono principal</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono1" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono1 }}" >
+                        <label class="col-sm-3 control-label">Principal</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_1" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono_1 }}" >
                         </div>
                     </div>
                     {{-- Telefono secundario del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Telefono secundario</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono2 }}" >
+                        <label class="col-sm-3 control-label">Secundario</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono_2 }}" >
                         </div>
                     </div>
 
                     {{-- NIT del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">NIT</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-3 control-label">NIT</label>
+                        <div class="col-sm-9">
                             <input type="text" class="form-control" placeholder="NIT" name="nit"
                                    value="{{$cliente->nit}}">
                         </div>
@@ -85,8 +116,8 @@
 
                     {{-- NRC del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">NRC</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-3 control-label">NRC</label>
+                        <div class="col-sm-9">
                             <input type="text" class="form-control" placeholder="Número Registro de Comercio"
                                    name="nrc" value="{{$cliente->nrc}}">
                         </div>
@@ -94,8 +125,8 @@
 
                     {{--Vendedor--}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Vendedor</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-3 control-label">Vendedor</label>
+                        <div class="col-sm-9">
                             <select class="form-control select2" name="unidad_medida_id">
                                 <option value="" selected disabled>Sin vendedor especificado</option>
                                 @foreach($vendedores as $vendedor)
@@ -113,8 +144,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('clienteLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right">Guardar</button>
+                <a href="{{ route('clienteLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar</button>
             </div>
         </form>
     </div><!-- /.box -->

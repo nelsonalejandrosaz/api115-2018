@@ -59,7 +59,7 @@
                         <label class="col-md-4 control-label">Unidad de medida</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control"
-                                   value="{{$formula->producto->unidadMedida->nombre}}" name="" disabled id="unidadMedidalbl">
+                                   value="{{$formula->producto->unidad_medida->nombre}}" name="" disabled id="unidadMedidalbl">
                         </div>
                     </div>
 
@@ -79,7 +79,7 @@
                         <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fechaIngreso" value="{{$formula->fechaIngreso->format('Y-m-d')}}" disabled>
+                                <input type="date" class="form-control" name="fecha" value="{{$formula->fecha->format('Y-m-d')}}" disabled>
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -118,9 +118,9 @@
                                     <select class="form-control select2 selProd" style="width:100%" name="productos[]" id="selectProductos" disabled>
                                         @foreach($productos as $producto)
                                             @if($componente->producto_id == $producto->id)
-                                                <option selected value="{{ $producto->id }}" data-um="{{ $producto->unidadMedida->abreviatura }}">{{ $producto->nombre }}</option>
+                                                <option selected value="{{ $producto->id }}" data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
                                             @else
-                                                <option value="{{ $producto->id }}" data-um="{{ $producto->unidadMedida->abreviatura }}">{{ $producto->nombre }}</option>
+                                                <option value="{{ $producto->id }}" data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
                                             @endif
                                         @endforeach
                                     </select>

@@ -46,9 +46,9 @@
                         @foreach($proveedores as $proveedor)
                             <tr>
                                 <td>{{$proveedor->nombre}}</td>
-                                <td>{{$proveedor->nombreContacto}}</td>
-                                <td>{{$proveedor->telefono1}}</td>
-                                <td>{{$proveedor->telefono2}}</td>
+                                <td>{{$proveedor->nombre_contacto}}</td>
+                                <td>{{$proveedor->telefono_1}}</td>
+                                <td>{{$proveedor->telefono_2}}</td>
                                 {{-- <td>{{$proveedor->direccion}}</td> --}}
                                 <td align="center">
                                     <a href="{{ route('proveedorVer', ['id' => $proveedor->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>

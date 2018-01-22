@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\EstadoOrdenPedido;
+use App\EstadoVenta;
 use App\Municipio;
 use App\OrdenPedido;
 use App\Producto;
@@ -34,13 +36,13 @@ class VentaController extends Controller
 
     public function VentaNueva($id)
     {
-        $ordenPedido = OrdenPedido::find($id);
+        $orden_pedido = OrdenPedido::find($id);
         $productos = Producto::all();
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         $tipoDocumentos = TipoDocumento::all();
         return view('venta.ventaNuevo')
-            ->with(['ordenPedido' => $ordenPedido])
+            ->with(['orden_pedido' => $orden_pedido])
             ->with(['productos' => $productos])
             ->with(['clientes' => $clientes])
             ->with(['municipios' => $municipios])
@@ -51,27 +53,34 @@ class VentaController extends Controller
     {
         // Validacion
         $this->validate($request, [
-            'fechaIngreso' => 'required',
-            'nrc' => 'required',
+            'fecha' => 'required',
             'numero' => 'required',
-            'tipo_documento_id.*' => 'required',
+            'tipo_documento_id' => 'required',
         ]);
 
         // Se carga la orden de pedido
-        $ordenPedido = OrdenPedido::find($id);
+        $orden_pedido = OrdenPedido::find($id);
+        // Se busca el estado de la orden de pedido y de factura
+        $estado_orden_pedido = EstadoOrdenPedido::whereCodigo('FC')->first();
+        $estado_venta = EstadoVenta::whereCodigo('PP')->first();
         // Se crea la venta
         $venta = Venta::create([
             'tipo_documento_id' => $request->input('tipo_documento_id'),
+            'orden_pedido_id' => $orden_pedido->id,
             'numero' => $request->input('numero'),
-            'fechaIngreso' => $request->input('fechaIngreso'),
-            'vendedor_id' => $ordenPedido->vendedor_id,
-            'nit' => $request->input('nit'),
-            'nrc' => $request->input('nrc'),
+            'fecha' => $request->input('fecha'),
+            'estado_venta_id' => $estado_venta->id,
+            'vendedor_id' => $orden_pedido->vendedor_id, // Quitar despues
+            'saldo' => $orden_pedido->venta_total,
         ]);
-        $ordenPedido->venta_id = $venta->id;
-        $ordenPedido->estado_id = 3;
-        $ordenPedido->save();
-        if ($venta->tipoDocumento->codigo == 'FAC')
+        // Se agrega el saldo al cliente
+        $cliente = Cliente::find($orden_pedido->cliente_id);
+        $cliente->saldo = $cliente->saldo + $venta->saldo;
+        $cliente->save();
+        //
+        $orden_pedido->estado_id = $estado_orden_pedido->id;
+        $orden_pedido->save();
+        if ($venta->tipo_documento->codigo == 'FAC')
         {
             // Mensaje de exito al guardar
             session()->flash('mensaje.tipo', 'success');
@@ -92,84 +101,67 @@ class VentaController extends Controller
     {
         // Se carga la venta
         $venta = Venta::find($id);
-        $salidas = $venta->ordenPedido->salidas;
-        $ordenPedido = $venta->ordenPedido;
         $productos = Producto::all();
-        $clientes = Cliente::all();
-        $municipios = Municipio::all();
-        $tipoDocumentos = TipoDocumento::all();
+        $salidas = $venta->orden_pedido->salidas;
         foreach ($salidas as $salida)
         {
-            $salida->precioUnitarioOP = $salida->precioUnitarioOP * 1.13;
-            $salida->ventaGravada = $salida->ventaGravada * 1.13;
-            $salida->ventaExenta = $salida->ventaExenta * 1.13;
+            $salida->precio_unitario_ums = $salida->precio_unitario_ums * 1.13;
+            $salida->venta_gravada = $salida->venta_gravada * 1.13;
+            $salida->venta_exenta = $salida->venta_exenta * 1.13;
         }
-        $ordenPedido->ventasExentas = $ordenPedido->ventasExentas * 1.13;
-        $ordenPedido->ventasGravadas = $ordenPedido->ventasGravadas * 1.13;
-        $ordenPedido->ventaTotal = $ordenPedido->ventaTotal * 1.13;
+        $venta->orden_pedido->ventas_exentas = $venta->orden_pedido->ventas_exentas * 1.13;
+        $venta->orden_pedido->ventas_gravadas = $venta->orden_pedido->ventas_gravadas * 1.13;
+        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
         return view('venta.ventaFacturaVer')
-            ->with(['ordenPedido' => $ordenPedido])
             ->with(['venta' => $venta])
             ->with(['productos' => $productos])
-            ->with(['clientes' => $clientes])
-            ->with(['municipios' => $municipios])
-            ->with(['tipoDocumentos' => $tipoDocumentos])
             ->with(['salidas' => $salidas]);
-
     }
 
     public function VentaVerCCF($id)
     {
         // Se carga la venta
         $venta = Venta::find($id);
-        $salidas = $venta->ordenPedido->salidas;
-        $ordenPedido = $venta->ordenPedido;
         $productos = Producto::all();
-        $clientes = Cliente::all();
-        $municipios = Municipio::all();
-        $tipoDocumentos = TipoDocumento::all();
-        $ordenPedido->porcentajeIVA = $ordenPedido->ventasGravadas * 0.13;
-        $ordenPedido->ventaTotal = $ordenPedido->ventaTotal * 1.13;
+        $salidas = $venta->orden_pedido->salidas;
+        $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * 0.13;
+        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
         return view('venta.ventaCCFVer')
-            ->with(['ordenPedido' => $ordenPedido])
             ->with(['venta' => $venta])
             ->with(['productos' => $productos])
-            ->with(['clientes' => $clientes])
-            ->with(['municipios' => $municipios])
-            ->with(['tipoDocumentos' => $tipoDocumentos])
             ->with(['salidas' => $salidas]);
     }
 
     public function VentaFacturaPDF($id)
     {
         $venta = Venta::find($id);
-        $venta->ordenPedido->vendedor->nombreCompleto = $venta->ordenPedido->vendedor->nombre . " " . $venta->ordenPedido->vendedor->apellido;
-        foreach ($venta->ordenPedido->salidas as $salida)
+        $venta->orden_pedido->vendedor->nombreCompleto = $venta->orden_pedido->vendedor->nombre . " " . $venta->orden_pedido->vendedor->apellido;
+        foreach ($venta->orden_pedido->salidas as $salida)
         {
             $salida->precioUnitario = $salida->precioUnitario * 1.13;
             $salida->ventaGravada = $salida->ventaGravada * 1.13;
             $salida->ventaExenta = $salida->ventaExenta * 1.13;
         }
-        $venta->ordenPedido->ventasExentas = $venta->ordenPedido->ventasExentas * 1.13;
-        $venta->ordenPedido->ventasGravadas = $venta->ordenPedido->ventasGravadas * 1.13;
-        $venta->ordenPedido->ventaTotal = $venta->ordenPedido->ventaTotal * 1.13;
-        $ventaTotal = number_format($venta->ordenPedido->ventaTotal,2);
-        $venta->ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
+        $venta->orden_pedido->ventas_exentas = $venta->orden_pedido->ventas_exentas * 1.13;
+        $venta->orden_pedido->ventas_gravadas = $venta->orden_pedido->ventas_gravadas * 1.13;
+        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
+        $venta_total = number_format($venta->orden_pedido->venta_total,2);
+        $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($venta_total,'dolares','centavos');
         $pdf = PDF::loadView('pdf.facturaPDF',compact('venta'));
-        $nombreFactura = "Factura numero " . $venta->numero . ".pdf";
-        return $pdf->stream($nombreFactura);
+        $nombre_factura = "Factura numero " . $venta->numero . ".pdf";
+        return $pdf->stream($nombre_factura);
     }
 
     public function VentaCCFPDF($id)
     {
         $venta = Venta::find($id);
-        $venta->ordenPedido->vendedor->nombreCompleto = $venta->ordenPedido->vendedor->nombre . " " . $venta->ordenPedido->vendedor->apellido;
-        $venta->ordenPedido->porcentajeIVA = $venta->ordenPedido->ventasGravadas * 0.13;
-        $venta->ordenPedido->ventaTotal = $venta->ordenPedido->ventaTotal * 1.13;
-        $ventaTotal = number_format($venta->ordenPedido->ventaTotal,2);
-        $venta->ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
+        $venta->orden_pedido->vendedor->nombreCompleto = $venta->orden_pedido->vendedor->nombre . " " . $venta->orden_pedido->vendedor->apellido;
+        $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * 0.13;
+        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
+        $ventaTotal = number_format($venta->orden_pedido->venta_total,2);
+        $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
         $pdf = PDF::loadView('pdf.creditoFiscalPDF',compact('venta'));
-        $nombreFactura = "Factura numero " . $venta->numero . ".pdf";
-        return $pdf->stream($nombreFactura);
+        $nombre_factura = "CCF numero " . $venta->numero . ".pdf";
+        return $pdf->stream($nombre_factura);
     }
 }

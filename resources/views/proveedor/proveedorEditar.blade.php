@@ -44,7 +44,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Contacto</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Contacto" name="nombreContacto" value="{{ $proveedor->nombreContacto }}" >
+                            <input type="text" class="form-control" placeholder="Contacto" name="nombre_contacto" value="{{ $proveedor->nombre_contacto }}" >
                         </div>
                     </div>
                     {{-- Direccion del proveedor --}}
@@ -62,14 +62,14 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Telefono principal</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono1" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $proveedor->telefono1 }}" >
+                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_1" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $proveedor->telefono_1 }}" >
                         </div>
                     </div>
                     {{-- Telefono secundario del proveedor --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Telefono secundario</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $proveedor->telefono2 }}" >
+                            <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $proveedor->telefono_2 }}" >
                         </div>
                     </div>
                 </div>

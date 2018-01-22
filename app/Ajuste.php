@@ -11,22 +11,24 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $movimiento_id
  * @property int $tipo_ajuste_id
  * @property string $detalle
- * @property string $fechaIngreso
+ * @property \Carbon\Carbon $fecha
  * @property int $realizado_id
- * @property float $cantidadAnterior
- * @property float $valorUnitarioAnterior
- * @property float $cantidadAjuste
- * @property float $valorUnitarioAjuste
+ * @property float $cantidad_anterior
+ * @property float $valor_unitario_anterior
+ * @property float|null $cantidad_ajuste
+ * @property float|null $valor_unitario_ajuste
+ * @property float $diferencia_cantidad_ajuste
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Movimiento $movimiento
  * @property-read \App\User $realizado
- * @property-read \App\TipoAjuste $tipoAjuste
+ * @property-read \App\TipoAjuste $tipo_ajuste
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereCantidadAjuste($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereCantidadAnterior($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereDetalle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereFechaIngreso($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereDiferenciaCantidadAjuste($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereFecha($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereMovimientoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereRealizadoId($value)
@@ -35,8 +37,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAjuste($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAnterior($value)
  * @mixin \Eloquent
- * @property float $diferenciaCantidadAjuste
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereDiferenciaCantidadAjuste($value)
  */
 class Ajuste extends Model
 {
@@ -45,7 +45,7 @@ class Ajuste extends Model
         return $this->belongsTo('App\Movimiento');
     }
 
-    public function tipoAjuste()
+    public function tipo_ajuste()
     {
         return $this->belongsTo('App\TipoAjuste','tipo_ajuste_id');
     }
@@ -56,15 +56,18 @@ class Ajuste extends Model
     }
 
     protected $fillable = [
-        'movimiento_id',
         'tipo_ajuste_id',
         'detalle',
-        'fechaIngreso',
+        'fecha',
         'realizado_id',
-        'cantidadAnterior',
-        'valorUnitarioAnterior',
-        'cantidadAjuste',
-        'valorUnitarioAjuste',
-        'diferenciaCantidadAjuste',
+        'cantidad_anterior',
+        'valor_unitario_anterior',
+        'cantidad_ajuste',
+        'valor_unitario_ajuste',
+        'diferencia_cantidad_ajuste',
+    ];
+
+    protected $dates = [
+        'fecha',
     ];
 }

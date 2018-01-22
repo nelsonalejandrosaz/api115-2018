@@ -16,36 +16,36 @@ class DevController extends Controller
     public function UnidadesMedidaJSON(Request $request)
     {
         $term = $request->term ?: '';
-        $unidadesMedidas = UnidadMedida::where('nombre','like',$term.'%')->get();
-//            App\Tag::where('name', 'like', $term.'%')->lists('name', 'id');
+        $unidades_medidas = UnidadMedida::where('nombre','like',$term.'%')->get();
         $valid_um = [];
-        foreach ($unidadesMedidas as $unidadMedida) {
-            $valid_um[] = ['id' => $unidadMedida->id, 'text' => $unidadMedida->nombre];
+        foreach ($unidades_medidas as $unidad_medida) {
+            $valid_um[] = ['id' => $unidad_medida->id, 'text' => $unidad_medida->nombre];
         }
         return \Response::json($valid_um);
     }
 
     public function UnidadesConversionJSON(Request $request)
     {
-        $unidadMedidaOrigen = $request->umo;
-        $unidadMedida = UnidadMedida::find($unidadMedidaOrigen);
-        $unidadesEquivalentes = $unidadMedida->conversiones;
+        $unidad_medida_origen = $request->umo;
+        $unidad_medida = UnidadMedida::find($unidad_medida_origen);
+        $unidades_equivalentes = $unidad_medida->conversiones;
+//        dd($unidades_equivalentes[0]);
         $valid = [];
-        $valid[] = ['id' => $unidadMedida->id, 'text' => $unidadMedida->abreviatura, 'data-factor' => 69];
-        foreach ($unidadesEquivalentes as $unidadEquivalente)
+        $valid[] = ['id' => $unidad_medida->id, 'text' => $unidad_medida->abreviatura, 'data-factor' => 69];
+        foreach ($unidades_equivalentes as $unidad_equivalente)
         {
-            $valid[] = ['id' => $unidadEquivalente->unidadDestino->id, 'text' => $unidadEquivalente->unidadDestino->abreviatura, 'data-factor' => 69];
+            $valid[] = ['id' => $unidad_equivalente->unidad_destino->id, 'text' => $unidad_equivalente->unidad_destino->abreviatura, 'data-factor' => 69];
         }
         return \Response::json($valid);
     }
 
     public function FactorJSON(Request $request)
     {
-        $unidadMedidaOrigen = $request->umo;
-        $unidadMedidaDestino =$request->umd;
+        $unidad_medida_origen = $request->umo;
+        $unidad_medida_destino =$request->umd;
         $factor = ConversionUnidadMedida::where([
-            ['unidadMedidaOrigen_id','=', $unidadMedidaOrigen],
-            ['unidadMedidaDestino_id', '=', $unidadMedidaDestino],
+            ['unidad_medida_origen_id','=', $unidad_medida_origen],
+            ['unidad_medida_destino_id', '=', $unidad_medida_destino],
         ])->first();
         $valid = $factor->factor;
         return \Response::json($valid);

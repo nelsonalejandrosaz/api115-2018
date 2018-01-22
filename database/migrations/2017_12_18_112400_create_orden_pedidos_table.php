@@ -15,21 +15,19 @@ class CreateOrdenPedidosTable extends Migration
     {
         Schema::create('orden_pedidos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('venta_id')->unsigned()->nullable();
             $table->integer('cliente_id')->unsigned();
-            $table->integer('municipio_id')->unsigned();
-            $table->string('direccion',140)->nullable();
             $table->integer('numero');
-            $table->string('detalle')->nullable();
-            $table->date('fechaIngreso');
-            $table->date('fechaEntrega')->nullable();
-            $table->string('condicionPago')->nullable();
+            $table->string('detalle',140)->nullable();
+            $table->date('fecha');
+            $table->dateTime('fecha_procesado')->nullable();
+            $table->date('fecha_entrega')->nullable();
+            $table->string('condicion_pago_id')->nullable();
             $table->integer('vendedor_id')->unsigned();
-            $table->integer('bodeguero_id')->unsigned()->nullable();
-            $table->float('ventasExentas')->nullable()->default(0.00);
-            $table->float('ventasGravadas')->nullable();
-            $table->float('ventaTotal')->nullable();
-            $table->string('rutaArchivo')->default('sin-documento.jpg');
+            $table->integer('bodega_id')->unsigned()->nullable();
+            $table->float('ventas_exentas')->nullable()->default(0.00);
+            $table->float('ventas_gravadas')->nullable();
+            $table->float('venta_total')->nullable();
+            $table->string('ruta_archivo')->default('sin-documento.jpg');
             $table->integer('estado_id')->default(0);
             $table->timestamps();
         });

@@ -45,7 +45,7 @@
                             <tr>
                                 <td>{{$formula->producto->codigo}}</td>
                                 <td>{{$formula->producto->nombre}}</td>
-                                <td>{{$formula->producto->unidadMedida->nombre}}</td>
+                                <td>{{$formula->producto->unidad_medida->nombre}}</td>
                                 <td align="center">
                                     <a href="{{route('formulaVer', ['id' => $formula->id])}}" class="btn btn-info"><span
                                                 class="fa fa-eye"></span></a>

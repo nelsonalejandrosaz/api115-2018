@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * App\Produccion
  *
  * @property int $id
- * @property int $bodeguero_id
+ * @property int $bodega_id
  * @property int $formula_id
  * @property float $cantidad
  * @property string $fecha
@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\User $bodeguero
  * @property-read \App\Formula $formula
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Salida[] $salidas
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereBodegueroId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereBodegaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereCantidad($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereDetalle($value)
@@ -37,7 +37,7 @@ class Produccion extends Model
 
     public function bodeguero()
     {
-        return $this->belongsTo('App\User','bodeguero_id');
+        return $this->belongsTo('App\User','bodega_id');
     }
 
     public function formula()
@@ -46,7 +46,7 @@ class Produccion extends Model
     }
 
     protected $fillable = [
-        'bodeguero_id',
+        'bodega_id',
         'formula_id',
         'cantidad',
         'fecha',

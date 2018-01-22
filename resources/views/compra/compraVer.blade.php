@@ -94,7 +94,7 @@
                         <label class="col-md-4 control-label"><b>Copia factura:</b></label>
                         <div class="col-md-8">
                             {{--<input type="file" class="form-control" name="rutaArchivo">--}}
-                            <a class="btn btn-lg btn-default" target="_blank" href="{{Storage::url($compra->rutaArchivo)}}">Ver archivo</a>
+                            <a class="btn btn-lg btn-default" target="_blank" href="{{Storage::url($compra->ruta_archivo)}}">Ver archivo</a>
                         </div>
                     </div>
 
@@ -124,10 +124,10 @@
                                         @foreach($productos as $producto)
                                             @if($producto->id == $entrada->movimiento->producto_id)
                                                 <option selected value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
+                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
                                             @else
                                                 <option value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidadMedida->abreviatura }}">{{ $producto->nombre }}</option>
+                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -135,7 +135,7 @@
                                 {{--unidad medida--}}
                                 <td>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" value="{{$entrada->movimiento->producto->unidadMedida->abreviatura}}" id="unidadMedidaLbl" disabled>
+                                        <input type="text" class="form-control" value="{{$entrada->movimiento->producto->unidad_medida->abreviatura}}" id="unidadMedidaLbl" disabled>
                                     </div>
                                 </td>
                                 {{--cantidad--}}
@@ -148,14 +148,14 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="{{number_format($entrada->costoUnitario,2)}}" name="costoUnitarios[]" id="costoUnitario" disabled>
+                                        <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01" value="{{number_format($entrada->costo_unitario,2)}}" name="costoUnitarios[]" id="costoUnitario" disabled>
                                     </div>
                                 </td>
                                 {{--costo total --}}
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="{{number_format($entrada->costoTotal,2)}}" name="costoTotales[]" id="costoTotal" disabled>
+                                        <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01" value="{{number_format($entrada->costo_total,2)}}" name="costoTotales[]" id="costoTotal" disabled>
                                     </div>
                                 </td>
                             </tr>
@@ -170,7 +170,7 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{number_format($compra->compraTotal,2)}}" name="compraTotal" id="compraTotal" disabled>
+                                    <input type="number" class="form-control" value="{{number_format($compra->compra_total,2)}}" name="compraTotal" id="compraTotal" disabled>
                                 </div>
                             </th>
                         </tr>

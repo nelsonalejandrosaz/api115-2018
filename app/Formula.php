@@ -9,17 +9,19 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $producto_id
- * @property string $fechaIngreso
+ * @property string $fecha
  * @property string $ingresado_id
  * @property string|null $descripcion
+ * @property int $activa
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Componente[] $componentes
  * @property-read \App\User $ingresado
  * @property-read \App\Producto $producto
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereActiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereDescripcion($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereFechaIngreso($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereFecha($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereIngresadoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereProductoId($value)
@@ -44,10 +46,14 @@ class Formula extends Model
     }
 
     protected $fillable = [
-        'producto_id', 'ingresado_id', 'descripcion', 'fechaIngreso',
+        'producto_id',
+        'ingresado_id',
+        'descripcion',
+        'fecha',
+        'activo',
     ];
 
     protected $dates = [
-        'fechaIngreso',
+        'fecha',
     ];
 }

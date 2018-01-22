@@ -118,11 +118,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Costo</label>
                         <div class="col-sm-8">
-                            <dvi class="input-group">
+                            <div class="input-group">
                                 <span class="input-group-addon">$</span>
                                 <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="costo"
                                        value="{{ old('costo') }}" id="costo">
-                            </dvi>
+                            </div>
                         </div>
                     </div>
 

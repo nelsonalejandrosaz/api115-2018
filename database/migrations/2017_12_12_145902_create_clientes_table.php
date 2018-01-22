@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCientesTable extends Migration
+class CreateClientesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,14 +15,18 @@ class CreateCientesTable extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('municipio_id')->default(1);
             $table->string('nombre',140)->unique();
-            $table->string('telefono1',25)->nullable();
-            $table->string('telefono2',25)->nullable();
+            $table->string('nombre_comercial',140)->nullable();
+            $table->string('telefono_1',25)->nullable();
+            $table->string('telefono_2',25)->nullable();
             $table->string('direccion',255)->nullable();
             $table->integer('vendedor_id')->unsigned()->nullable();
             $table->string('nit')->nullable();
             $table->string('nrc')->nullable();
-            $table->string('nombreContacto')->nullable();
+            $table->string('giro')->nullable();
+            $table->string('nombre_contacto')->nullable();
+            $table->float('saldo')->default(0.00);
             $table->timestamps();
         });
     }

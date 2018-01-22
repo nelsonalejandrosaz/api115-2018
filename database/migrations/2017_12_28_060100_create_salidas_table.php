@@ -15,18 +15,16 @@ class CreateSalidasTable extends Migration
     {
         Schema::create('salidas', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('movimiento_id')->unsigned();
             $table->integer('orden_pedido_id')->unsigned()->nullable();
             $table->integer('produccion_id')->unsigned()->nullable();
             $table->float('cantidad');
-            $table->float('cantidadOP');
+            $table->float('cantidad_ums');
             $table->integer('unidad_medida_id')->unsigned();
-            $table->float('precioUnitario');
-            $table->float('precioUnitarioOP',8,5);
-            $table->float('ventaExenta');
-            $table->float('ventaGravada');
-            $table->float('costoUnitario');
-            $table->float('costoTotal');
+            $table->float('precio_unitario');
+            $table->float('precio_unitario_ums',8,5);
+            $table->float('venta_exenta');
+            $table->float('venta_gravada');
+            $table->float('costo_unitario');
             $table->boolean('exento')->default(false);
             $table->timestamps();
         });

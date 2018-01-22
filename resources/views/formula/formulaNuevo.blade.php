@@ -48,7 +48,7 @@
                                 <option selected disabled value="0">Seleccione un producto</option>
                                 @foreach($productos as $producto)
                                     <option value="{{ $producto->id }}"
-                                            data-unidadmedida="{{$producto->unidadMedida->nombre}}">{{ $producto->nombre }}</option>
+                                            data-unidadmedida="{{$producto->unidad_medida->nombre}}">{{ $producto->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -80,7 +80,7 @@
                         <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fechaIngreso">
+                                <input type="date" class="form-control" name="fecha">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -122,7 +122,7 @@
                                     <option selected disabled value="">Seleccione un producto</option>
                                     @foreach($productos as $producto)
                                         <option value="{{ $producto->id }}"
-                                                data-um="{{ $producto->unidadMedida->abreviatura }}">{{$producto->codigo}}
+                                                data-um="{{ $producto->unidad_medida->abreviatura }}">{{$producto->codigo}}
                                             -- {{ $producto->nombre }}</option>
                                     @endforeach
                                 </select>

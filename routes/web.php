@@ -105,6 +105,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('/inventario','InventarioController@InventarioLista')->name('inventarioLista');
     Route::get('/inventario/{id}','InventarioController@InventarioKardex')->name('kardexProducto');
+    Route::post('/inventario/{id}','InventarioController@InventarioKardexPost')->name('kardexProductoPost');
 
     /**
      * Rutas de formulas
@@ -125,6 +126,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produccion/{id}','ProduccionController@ProduccionVer')->name('produccionVer');
     Route::get('/produccion/{id}/editar','ProduccionController@ProduccionEditar')->name('produccionEditar');
     Route::put('/produccion/{id}','ProduccionController@ProduccionEditarPut')->name('produccionEditarPut');
+
+    /**
+     * Rutas para los abonos
+     */
+    Route::get('/abono','AbonoController@AbonoLista')->name('abonoLista');
+    Route::get('/abono/nuevo/{id}','AbonoController@AbonoNuevo')->name('abonoNuevo');
+    Route::post('/abono/nuevo/{id}','AbonoController@AbonoNuevoPost')->name('abonoNuevoPost');
+    Route::get('/abono/{id}','AbonoController@AbonoVer')->name('abonoVer');
 
     /**
      * Rutas para generación de PDFs

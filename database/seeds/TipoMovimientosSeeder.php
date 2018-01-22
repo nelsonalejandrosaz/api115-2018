@@ -12,9 +12,12 @@ class TipoMovimientosSeeder extends Seeder
      */
     public function run()
     {
-        TipoMovimiento::create(['codigo' => 'ENTRADA', 'nombre' => 'Entrada']);
-        TipoMovimiento::create(['codigo' => 'SALIDA', 'nombre' => 'Salida']);
-        TipoMovimiento::create(['codigo' => 'AJSTENT', 'nombre' => 'Ajuste Entrada']);
-        TipoMovimiento::create(['codigo' => 'AJSTSAL', 'nombre' => 'Ajuste Salida']);
+        TipoMovimiento::create(['codigo' => 'ENTC', 'nombre' => 'Entrada']);
+        TipoMovimiento::create(['codigo' => 'ENTP', 'nombre' => 'Entrada producción']);
+        TipoMovimiento::create(['codigo' => 'SALO', 'nombre' => 'Salida']);
+        TipoMovimiento::create(['codigo' => 'SALP', 'nombre' => 'Salida producción']);
+        TipoMovimiento::create(['codigo' => 'AJSE', 'nombre' => 'Ajuste Entrada']);
+        TipoMovimiento::create(['codigo' => 'AJSS', 'nombre' => 'Ajuste Salida']);
+        TipoMovimiento::create(['codigo' => 'AJSC', 'nombre' => 'Ajuste Costo']);
     }
 }

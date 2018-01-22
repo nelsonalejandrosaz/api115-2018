@@ -9,18 +9,22 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $nombre
- * @property string|null $telefono1
- * @property string|null $telefono2
+ * @property string|null $telefono_1
+ * @property string|null $telefono_2
  * @property string|null $direccion
- * @property string|null $nombreContacto
+ * @property string|null $nit
+ * @property string|null $nrc
+ * @property string|null $nombre_contacto
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Compra[] $compras
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereDireccion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereNit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereNombre($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereNombreContacto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereNrc($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereTelefono1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereTelefono2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Proveedor whereUpdatedAt($value)
@@ -35,10 +39,12 @@ class Proveedor extends Model
 
     protected $fillable = [
         'nombre',
-        'telefono1',
-        'telefono2',
+        'telefono_1',
+        'telefono_2',
         'direccion',
-        'nombreContacto',
+        'nit',
+        'nrc',
+        'nombre_contacto',
     ];
 
     protected $table = 'proveedores';

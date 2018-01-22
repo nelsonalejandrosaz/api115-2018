@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Nuevo Producto
+    Nueva Producción
 @endsection
 
 @section('CSSExtras')
@@ -10,11 +10,11 @@
 @endsection
 
 @section('contentheader_title')
-    Nuevo Producto
+    Nueva Producción
 @endsection
 
 @section('contentheader_description')
-    Ingresar un nuevo producto
+    Realizar una nueva producción
 @endsection
 
 @section('main-content')
@@ -54,7 +54,7 @@
                             <select class="form-control select2" name="formula_id" onchange="cambioProducto()" id="productoID">
                                 <option value="" selected disabled>Seleccione el producto a producir</option>
                                 @foreach($formulas as $formula)
-                                    <option value="{{ $formula->id }}" data-unidadmedida="{{$formula->producto->unidadMedida->nombre}}">{{ $formula->producto->nombre }}</option>
+                                    <option value="{{ $formula->id }}" data-unidadmedida="{{$formula->producto->unidad_medida->nombre}}">{{ $formula->producto->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -89,7 +89,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Unidad de medida</b></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
+                            <input type="text" class="form-control" placeholder="Producto"
                                    value="Seleccione el producto" disabled id="unidadMedidalbl">
                         </div>
                     </div>

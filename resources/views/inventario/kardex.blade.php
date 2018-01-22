@@ -48,7 +48,7 @@
                             <div class="form-group">
                                 <label class="col-md-4  control-label">Unidad de medida</label>
                                 <div class="col-md-8 ">
-                                    <input type="text" class="form-control" name="numero" value="{{$producto->unidadMedida->nombre}}"
+                                    <input type="text" class="form-control" name="numero" value="{{$producto->unidad_medida->nombre}}"
                                            disabled>
                                 </div>
                             </div>
@@ -99,20 +99,20 @@
                                 {{--@else--}}
                                     <td><a href="">{{$movimiento->detalle}}</a></td>
                                 {{--@endif--}}
-                                @if($movimiento->tipoMovimiento->codigo == "ENTRADA")
+                                @if($movimiento->tipo_movimiento->codigo == "ENTC" || $movimiento->tipo_movimiento->codigo == "ENTP")
                                     <td class="entradaCSS">{{$movimiento->entrada->cantidad}}</td>
-                                    <td class="entradaCSS">${{ number_format($movimiento->entrada->costoUnitario,2) }}</td>
-                                    <td class="entradaCSS">${{ number_format($movimiento->entrada->costoTotal,2) }}</td>
+                                    <td class="entradaCSS">${{ number_format($movimiento->entrada->costo_unitario,2) }}</td>
+                                    <td class="entradaCSS">${{ number_format(($movimiento->entrada->costo_unitario * $movimiento->entrada->cantidad),2) }}</td>
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
-                                @elseif($movimiento->tipoMovimiento->codigo == "SALIDA")
+                                @elseif($movimiento->tipo_movimiento->codigo == "SALO" || $movimiento->tipo_movimiento->codigo == "SALP")
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>
                                     <td class="salidaCSS">{{$movimiento->salida->cantidad}}</td>
-                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costoUnitario,2) }}</td>
-                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costoTotal,2) }}</td>
+                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costo_unitario,2) }}</td>
+                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costo_total,2) }}</td>
                                 @else
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>
@@ -121,9 +121,9 @@
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
                                 @endif
-                                <td class="existenciaCSS">{{$movimiento->cantidadExistencia}}</td>
-                                <td class="existenciaCSS">${{ number_format($movimiento->costoUnitarioExistencia,2) }}</td>
-                                <td class="existenciaCSS">${{ number_format($movimiento->costoTotalExistencia,2) }}</td>
+                                <td class="existenciaCSS">{{$movimiento->cantidad_existencia}}</td>
+                                <td class="existenciaCSS">${{ number_format($movimiento->costo_unitario_existencia,2) }}</td>
+                                <td class="existenciaCSS">${{ number_format($movimiento->costo_total_existencia,2) }}</td>
                             </tr>
                         @endforeach
                         </tbody>

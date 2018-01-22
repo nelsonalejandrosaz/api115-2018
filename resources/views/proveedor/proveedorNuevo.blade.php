@@ -43,7 +43,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Contacto</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Contacto" name="contacto">
+                            <input type="text" class="form-control" placeholder="Contacto" name="nombre_contacto">
                         </div>
                     </div>
                     {{-- Direccion del proveedor --}}
@@ -62,7 +62,7 @@
                         <label class="col-sm-4 control-label">Telefono principal</label>
                         <div class="col-sm-8">
                             <input type="tel" class="form-control" id="telefonoPrincipal" placeholder="7777-7777"
-                                   name="telefonoPrincipal">
+                                   name="telefono_1">
                         </div>
                     </div>
                     {{-- Telefono secundario del proveedor --}}
@@ -70,7 +70,7 @@
                         <label class="col-sm-4 control-label">Telefono secundario</label>
                         <div class="col-sm-8">
                             <input type="tel" class="form-control" id="telefonoSecundario" placeholder="7777-7777"
-                                   name="telefonoSecundario">
+                                   name="telefono_2">
                         </div>
                     </div>
                 </div>

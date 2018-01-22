@@ -12,6 +12,7 @@ class MunicipiosSeeder extends Seeder
      */
     public function run()
     {
+        Municipio::create(['nombre' => 'Sin municipio', 'departamento_id' => '15']);
         Municipio::create(['nombre' => 'Ahuachapán', 'departamento_id' => '1']);
         Municipio::create(['nombre' => 'Jujutla', 'departamento_id' => '1']);
         Municipio::create(['nombre' => 'Atiquizaya', 'departamento_id' => '1']);

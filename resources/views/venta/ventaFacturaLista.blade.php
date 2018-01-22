@@ -34,8 +34,9 @@
                             <th style="width:10%">Número</th>
                             <th style="width:10%">Fecha emisión</th>
                             <th style="width:25%">Cliente</th>
-                            <th style="width:20%">Vendedor</th>
-                            <th style="width:20%">Condición de pago</th>
+                            <th style="width:15%">Vendedor</th>
+                            <th style="width:15%">Condición de pago</th>
+                            <th style="width:10%">Saldo</th>
                             <th style="width:15%">Acción</th>
                         </tr>
                         </thead>
@@ -43,11 +44,14 @@
                         @foreach($ventas as $venta)
                             <tr>
                                 <td>{{$venta->numero}}</td>
-                                <td>{{$venta->fechaIngreso->format('d/m/Y')}}</td>
-                                <td>{{$venta->ordenPedido->cliente->nombre}}</td>
-                                <td>{{$venta->ordenPedido->vendedor->nombre}}</td>
-                                <td>{{$venta->ordenPedido->condicionPago}}</td>
+                                <td>{{$venta->fecha->format('d/m/Y')}}</td>
+                                <td>{{$venta->orden_pedido->cliente->nombre}}</td>
+                                <td>{{$venta->orden_pedido->vendedor->nombre}}</td>
+                                <td>{{$venta->orden_pedido->condicion_pago->nombre}}</td>
+                                <td>$ {{number_format($venta->saldo,2)}}</td>
                                 <td align="center">
+                                    <a href="{{ route('abonoNuevo', ['id' => $venta->id]) }}"
+                                       class="btn btn-success"><span class="fa fa-credit-card"></span></a>
                                     <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
                                        class="btn btn-info"><span class="fa fa-eye"></span></a>
                                 </td>

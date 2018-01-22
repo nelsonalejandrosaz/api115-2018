@@ -41,7 +41,7 @@
                         <label class="col-md-4  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-8 ">
                             <input type="date" class="form-control" name="fechaIngreso"
-                                   value="{{$ordenPedido->fechaIngreso->format('Y-m-d')}}" disabled>
+                                   value="{{$ordenPedido->fecha->format('Y-m-d')}}" disabled>
                         </div>
                     </div>
 
@@ -49,9 +49,9 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            @if($ordenPedido->fechaEntrega != null)
+                            @if($ordenPedido->fecha_entrega != null)
                                 <input type="date" class="form-control" name="fechaEntrega"
-                                   value="{{$ordenPedido->fechaEntrega->format('Y-m-d')}}" disabled>
+                                   value="{{$ordenPedido->fecha_entrega->format('Y-m-d')}}" disabled>
                             @else
                                 <input type="text" class="form-control" name="fechaEntrega"
                                        value="Sin fecha especificada" disabled>
@@ -102,22 +102,22 @@
                                             id="selectProductos" disabled>
                                         @foreach($productos as $producto)
                                             @if($producto->id == $salida->movimiento->producto_id)
-                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidadMedida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidadExistencia}}) </option>
+                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidad_existencia}}) </option>
                                             @else
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidadMedida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidadExistencia}}) </option>
+                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidad_existencia}}) </option>
                                             @endif
                                         @endforeach
                                     </select>
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
-                                    <input type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidadMedida->abreviatura}}" disabled>
+                                    <input type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidad_medida->abreviatura}}" disabled>
                                 </td>
                                 {{--Cantidad--}}
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidadOP}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidad_ums}}" disabled>
                                 </td>
                             </tr>
                         @endforeach

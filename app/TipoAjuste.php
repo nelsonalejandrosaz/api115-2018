@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $codigo
+ * @property string $tipo
  * @property string $nombre
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TipoAjuste whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TipoAjuste whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TipoAjuste whereNombre($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\TipoAjuste whereTipo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TipoAjuste whereUpdatedAt($value)
  * @mixin \Eloquent
  */

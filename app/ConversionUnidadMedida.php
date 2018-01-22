@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $codigo
  * @property string $nombre
- * @property int $unidadMedidaOrigen_id
- * @property int $unidadMedidaDestino_id
+ * @property int $unidad_medida_origen_id
+ * @property int $unidad_medida_destino_id
  * @property float $factor
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \App\UnidadMedida $unidadDestino
- * @property-read \App\UnidadMedida $unidadOrigen
+ * @property-read \App\UnidadMedida $unidad_destino
+ * @property-read \App\UnidadMedida $unidad_origen
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ConversionUnidadMedida whereCodigo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ConversionUnidadMedida whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ConversionUnidadMedida whereFactor($value)
@@ -29,23 +29,24 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ConversionUnidadMedida extends Model
 {
-    public function unidadOrigen()
+    public function unidad_origen()
     {
-        return $this->belongsTo('App\UnidadMedida','unidadMedidaOrigen_id');
+        return $this->belongsTo('App\UnidadMedida','unidad_medida_origen_id');
     }
 
-    public function unidadDestino()
+    public function unidad_destino()
     {
-        return $this->belongsTo('App\UnidadMedida','unidadMedidaDestino_id');
+        return $this->belongsTo('App\UnidadMedida','unidad_medida_destino_id');
     }
 
     protected $fillable = [
         'codigo',
         'nombre',
-        'unidadMedidaOrigen_id',
-        'unidadMedidaDestino_id',
+        'unidad_medida_origen_id',
+        'unidad_medida_destino_id',
         'factor',
     ];
 
     protected $table = 'conversion_unidades_medidas';
+
 }
