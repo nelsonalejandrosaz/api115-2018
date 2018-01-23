@@ -27,6 +27,7 @@ class CreateProductosTable extends Migration
             $table->float('precio')->default(0.00);
             $table->float('precio_impuestos')->default(0.00);
             $table->float('margen_ganancia')->default(0.00);
+            $table->boolean('formula_activa')->default(false);
             $table->timestamps();
         });
     }

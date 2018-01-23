@@ -40,17 +40,11 @@
 
                     {{-- Producto --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Producto asociado:</b></label>
+                        <label class="col-md-4 control-label">Producto asociado</label>
                         <div class="col-md-8">
-                            <select class="form-control select2" style="width:100%" name="producto_id" disabled>
-                                @foreach($productos as $producto)
-                                    @if($formula->producto_id == $producto->id)
-                                        <option selected value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                                    @else
-                                        <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <input readonly type="text" class="form-control"
+                                   value="{{ $formula->producto->nombre }}"
+                                   name="producto_id">
                         </div>
                     </div>
 
@@ -58,28 +52,31 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Unidad de medida</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control"
-                                   value="{{$formula->producto->unidad_medida->nombre}}" name="" disabled id="unidadMedidalbl">
+                            <input readonly type="text" class="form-control"
+                                   value="{{ $formula->producto->unidad_medida->nombre }}" id="unidadMedidalbl">
                         </div>
                     </div>
 
                     {{-- Descripcion --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Descripción:</label>
+                        <label class="col-md-4 control-label">Descripción</label>
                         <div class="col-md-8">
-                            <textarea class="form-control" name="descripcion" disabled>{{$formula->descripcion}}</textarea>
+                            <textarea readonly class="form-control"
+                                      name="descripcion">{{$formula->descripcion}}</textarea>
                         </div>
                     </div>
 
                 </div>
 
                 <div class="col-md-6">
+
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
+                        <label class="col-md-4 control-label"><b>Fecha ingreso</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha" value="{{$formula->fecha->format('Y-m-d')}}" disabled>
+                                <input readonly type="date" class="form-control" name="fecha"
+                                       value="{{$formula->fecha->format('Y-m-d')}}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -87,11 +84,39 @@
                         </div>
                     </div>
 
+                    {{-- Version --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Version</label>
+                        <div class="col-md-8">
+                            <input readonly type="text" class="form-control"
+                                   value="{{ $formula->version}}"
+                                   name="version">
+                        </div>
+                    </div>
+
+                    {{-- Estado --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Estado</label>
+                        <div class="col-md-8">
+                            @if($formula->activa)
+                                <input readonly type="text" class="form-control"
+                                       value="Activa"
+                                       name="version">
+                            @else
+                                <input readonly type="text" class="form-control"
+                                       value="No activa"
+                                       name="version">
+                            @endif
+                        </div>
+                    </div>
+
                     {{-- Ingresado por --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Ingresado por:</label>
+                        <label class="col-md-4 control-label">Ingresado por</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" value="{{$formula->ingresado->nombre}} {{$formula->ingresado->apellido}}" name="ingresadoPor" disabled>
+                            <input readonly type="text" class="form-control"
+                                   value="{{$formula->ingresado->nombre}} {{$formula->ingresado->apellido}}"
+                                   name="ingresadoPor">
                         </div>
                     </div>
 
@@ -115,19 +140,23 @@
                                     {{$i}}
                                 </td>
                                 <td>
-                                    <select class="form-control select2 selProd" style="width:100%" name="productos[]" id="selectProductos" disabled>
+                                    <select class="form-control select2 selProd" style="width:100%" name="productos[]"
+                                            id="selectProductos" disabled>
                                         @foreach($productos as $producto)
                                             @if($componente->producto_id == $producto->id)
-                                                <option selected value="{{ $producto->id }}" data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
+                                                <option selected value="{{ $producto->id }}"
+                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
                                             @else
-                                                <option value="{{ $producto->id }}" data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
+                                                <option value="{{ $producto->id }}"
+                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
                                             @endif
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
                                     <div class="input-group">
-                                        <input type="number" class="form-control cant" value="{{$componente->porcentaje}}" name="porcentajes[]" disabled>
+                                        <input type="number" class="form-control cant"
+                                               value="{{$componente->porcentaje}}" name="porcentajes[]" disabled>
                                         <span class="input-group-addon">%</span>
                                     </div>
                                 </td>
@@ -141,7 +170,8 @@
                         <th style="width: 60%; text-align: right; vertical-align: middle;">Total:</th>
                         <th style="width: 35%">
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput" min="100" max="100" value="100" disabled>
+                                <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput"
+                                       min="100" max="100" value="100" disabled>
                                 <span class="input-group-addon">%</span>
                             </div>
                         </th>
@@ -153,7 +183,12 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
+                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span
+                            class="fa fa-mail-reply"></span> Regresar a lista</a>
+                @if(!$formula->activa)
+                    <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-warning pull-right"><span
+                                class="fa fa-linux"></span> Activar formula</a>
+                @endif
             </div>
         </form>
     </div><!-- /.box -->
@@ -166,9 +201,10 @@
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
-            $("body").on( "click", ".btn-danger",funcionEliminarProducto);
+            $("body").on("click", ".btn-danger", funcionEliminarProducto);
             calcularTotal();
         }
+
         var numero = 2;
 
         function funcionNuevoProducto() {
@@ -176,7 +212,7 @@
             $('#tblProductos')
                 .append
                 (
-                    $('<tr>').attr('id','rowProducto'+numero)
+                    $('<tr>').attr('id', 'rowProducto' + numero)
                         .append
                         (
                             $('<td>')
@@ -203,7 +239,7 @@
                         )
                         .append
                         (
-                            $('<td>').attr('align','center')
+                            $('<td>').attr('align', 'center')
                                 .append
                                 (
                                     '<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
@@ -229,7 +265,7 @@
             var total = $('#totalPorcentajeInput').val();
             if (total != 100) {
                 $('#divErrorSuma').show();
-                setTimeout(function(){
+                setTimeout(function () {
                     $('#divErrorSuma').hide();
                 }, 3000);
             } else {

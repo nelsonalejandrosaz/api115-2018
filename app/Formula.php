@@ -50,7 +50,8 @@ class Formula extends Model
         'ingresado_id',
         'descripcion',
         'fecha',
-        'activo',
+        'version',
+        'activa',
     ];
 
     protected $dates = [

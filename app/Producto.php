@@ -84,5 +84,6 @@ class Producto extends Model
         'precio',
         'precio_impuestos',
         'margen_ganancia',
+        'formula_activa',
     ];
 }

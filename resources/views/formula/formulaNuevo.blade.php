@@ -58,8 +58,8 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Unidad de medida</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control"
-                                   value="Seleccione un producto" name="" disabled id="unidadMedidalbl">
+                            <input readonly type="text" class="form-control"
+                                   value="Seleccione un producto" id="unidadMedidalbl">
                         </div>
                     </div>
 
@@ -88,13 +88,22 @@
                         </div>
                     </div>
 
+                    {{-- Version --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Version</label>
+                        <div class="col-md-8">
+                            <input readonly type="text" class="form-control"
+                                   value="1"
+                                   name="version">
+                        </div>
+                    </div>
+
                     {{-- Ingresado por --}}
                     <div class="form-group">
                         <label class="col-md-4 control-label">Ingresado por:</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control"
-                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}" name="ingresado_id"
-                                   disabled>
+                            <input readonly type="text" class="form-control"
+                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}" name="ingresado_id">
                         </div>
                     </div>
 
@@ -106,12 +115,12 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width: 60%">Código -- Producto</th>
+                            <th style="width: 65%">Código -- Producto</th>
                             <th style="width: 30%">Porcentaje</th>
-                            <th style="width: 10%">
+                            <th style="width: 5%">
                                 <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
                                         type="button">
-                                    <span class="fa fa-plus"></span> Agregar
+                                    <span class="fa fa-plus"></span>
                                 </button>
                             </th>
                         </tr>
@@ -140,7 +149,7 @@
                         </tr>
                     </table>
                     <table class="table table-bordered">
-                        <th style="width: 60%; text-align: right; vertical-align: middle;">Total:</th>
+                        <th style="width: 65%; text-align: right; vertical-align: middle;">Total:</th>
                         <th style="width: 30%">
                             <div class="input-group">
                                 <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput"
@@ -148,7 +157,7 @@
                                 <span class="input-group-addon">%</span>
                             </div>
                         </th>
-                        <th style="width: 10%"></th>
+                        <th style="width: 5%"></th>
                     </table>
                 </div>
                 {{-- Fin fila --}}
@@ -156,8 +165,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default">Cancelar</a>
-                <button type="button" onclick="verificarSuma()" class="btn btn-lg btn-success pull-right">Guardar
+                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="button" onclick="verificarSuma()" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
                 </button>
             </div>
         </form>
