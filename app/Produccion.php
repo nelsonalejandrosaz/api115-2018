@@ -51,6 +51,8 @@ class Produccion extends Model
         'cantidad',
         'fecha',
         'detalle',
+        'lote',
+        'fecha_vencimiento',
     ];
 
     protected $table = 'producciones';

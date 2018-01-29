@@ -68,7 +68,7 @@ class Cliente extends Model
     protected $fillable = [
         'municipio_id',
         'nombre',
-        'nombre_comercial',
+        'nombre_alternativo',
         'telefono_1',
         'telefono_2',
         'direccion',

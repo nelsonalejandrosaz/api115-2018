@@ -17,14 +17,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null $existencia_max
  * @property float $cantidad_existencia
  * @property float $costo
- * @property float $precio
- * @property float $precio_impuestos
- * @property float $margen_ganancia
+ * @property int $formula_activa
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Categoria $categoria
  * @property-read \App\Formula $formula
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Precio[] $precios
  * @property-read \App\TipoProducto $tipo_producto
  * @property-read \App\UnidadMedida $unidad_medida
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCantidadExistencia($value)
@@ -34,11 +33,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereExistenciaMax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereExistenciaMin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereFormulaActiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereMargenGanancia($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereNombre($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto wherePrecio($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto wherePrecioImpuestos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereTipoProductoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUnidadMedidaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Producto whereUpdatedAt($value)
@@ -71,19 +68,24 @@ class Producto extends Model
         return $this->hasOne('App\Formula');
     }
 
+    public function precios()
+    {
+        return $this->hasMany('App\Precio');
+    }
+
     protected $fillable = [
         'categoria_id',
         'tipo_producto_id',
         'unidad_medida_id',
         'nombre',
+        'nombre_alternativo',
         'codigo',
         'existencia_min',
         'existencia_max',
         'cantidad_existencia',
         'costo',
-        'precio',
-        'precio_impuestos',
-        'margen_ganancia',
+        'factor_volumen',
+        'producto_activo',
         'formula_activa',
     ];
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\ConversionUnidadMedida;
+use App\Producto;
 use App\UnidadMedida;
 use Illuminate\Http\Request;
+use Response;
 
 class DevController extends Controller
 {
@@ -21,7 +23,7 @@ class DevController extends Controller
         foreach ($unidades_medidas as $unidad_medida) {
             $valid_um[] = ['id' => $unidad_medida->id, 'text' => $unidad_medida->nombre];
         }
-        return \Response::json($valid_um);
+        return Response::json($valid_um);
     }
 
     public function UnidadesConversionJSON(Request $request)
@@ -36,7 +38,7 @@ class DevController extends Controller
         {
             $valid[] = ['id' => $unidad_equivalente->unidad_destino->id, 'text' => $unidad_equivalente->unidad_destino->abreviatura, 'data-factor' => 69];
         }
-        return \Response::json($valid);
+        return Response::json($valid);
     }
 
     public function FactorJSON(Request $request)
@@ -48,6 +50,13 @@ class DevController extends Controller
             ['unidad_medida_destino_id', '=', $unidad_medida_destino],
         ])->first();
         $valid = $factor->factor;
-        return \Response::json($valid);
+        return Response::json($valid);
+    }
+
+    public function ProductosPresentacionesJSON(Request $request, $id)
+    {
+        $producto = Producto::find($id);
+        $precios = $producto->precios;
+        return Response::json($precios);
     }
 }

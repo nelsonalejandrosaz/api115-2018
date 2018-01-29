@@ -51,6 +51,15 @@
                         </div>
                     </div>
 
+                    {{-- Nombre alternativo del producto --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Nombre del producto</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="Producto" name="nombre_alternativo"
+                                   value="{{ old('nombre_alternativo') }}">
+                        </div>
+                    </div>
+
                     {{-- Categoria --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Categoria</b></label>
@@ -70,9 +79,9 @@
                         <div class="col-sm-8">
                             <select class="form-control select2" name="unidad_medida_id">
                                 <option value="" selected disabled>Seleccione una opción</option>
-                                @foreach($unidadMedidas as $unidadMedida)
-                                    <option value="{{ $unidadMedida->id }}">{{ $unidadMedida->nombre }}
-                                        - {{ $unidadMedida->abreviatura }}</option>
+                                @foreach($unidad_medidas as $unidad_medida)
+                                    <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
+                                        - {{ $unidad_medida->abreviatura }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -84,8 +93,8 @@
                         <div class="col-sm-8">
                             <select class="form-control select2" name="tipo_producto_id">
                                 <option value="" selected disabled>Seleccione una opción</option>
-                                @foreach($tipoProductos as $tipoProducto)
-                                    <option value="{{ $tipoProducto->id }}">{{ $tipoProducto->nombre }}</option>
+                                @foreach($tipo_productos as $tipo_producto)
+                                    <option value="{{ $tipo_producto->id }}">{{ $tipo_producto->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -100,8 +109,8 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad mínima stock</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" class="form-control" placeholder="0" name="existenciaMin"
-                                   value="{{ old('existenciaMin') }}">
+                            <input type="number" min="0.00" class="form-control" placeholder="0" name="existencia_min"
+                                   value="{{ old('existencia_min') }}">
                         </div>
                     </div>
 
@@ -109,14 +118,14 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad máxima stock</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" class="form-control" placeholder="1000" name="existenciaMax"
-                                   value="{{ old('existenciaMax') }}">
+                            <input type="number" min="0.00" class="form-control" placeholder="1000" name="existencia_max"
+                                   value="{{ old('existencia_max') }}">
                         </div>
                     </div>
 
                     {{-- Costo--}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Costo</label>
+                        <label class="col-sm-4 control-label">Costo inicial</label>
                         <div class="col-sm-8">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
@@ -127,28 +136,28 @@
                     </div>
 
                     {{-- Precio --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Precio venta</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
-                                       value="{{ old('precio') }}" id="precio" onchange="cambioPrecio()">
-                            </div>
-                        </div>
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-sm-4 control-label">Precio venta</label>--}}
+                        {{--<div class="col-sm-8">--}}
+                            {{--<div class="input-group">--}}
+                                {{--<span class="input-group-addon">$</span>--}}
+                                {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"--}}
+                                       {{--value="{{ old('precio') }}" id="precio" onchange="cambioPrecio()">--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
 
                     {{-- Margen ganancia --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Margen ganancia</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"
-                                value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">
-                                <span class="input-group-addon">%</span>
-                            </div>
-                        </div>
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-sm-4 control-label">Margen ganancia</label>--}}
+                        {{--<div class="col-sm-8">--}}
+                            {{--<div class="input-group">--}}
+                                {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"--}}
+                                {{--value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">--}}
+                                {{--<span class="input-group-addon">%</span>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
 
                 </div>
             </div><!-- /.box-body -->

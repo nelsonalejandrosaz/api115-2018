@@ -17,6 +17,7 @@ class CreateUnidadMedidasTable extends Migration
             $table->increments('id');
             $table->string('nombre',50)->unique();
             $table->string('abreviatura',10)->index();
+            $table->string('tipo',10);
             $table->timestamps();
         });
     }

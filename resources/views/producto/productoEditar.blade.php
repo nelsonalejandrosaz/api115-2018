@@ -54,6 +54,14 @@
                         </div>
                     </div>
 
+                    {{-- Nombre del producto --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Nombre alternativo</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="nombre" value="{{ $producto->nombre_alternativo }}">
+                        </div>
+                    </div>
+
                     {{-- Categoria --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Categoria</b></label>
@@ -138,28 +146,28 @@
                     </div>
 
                     {{-- Precio --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Precio venta</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"
-                                   value="{{ $producto->precio }}" id="precio" onchange="cambioPrecio()">
-                            </div>
-                        </div>
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-sm-4 control-label">Precio venta</label>--}}
+                        {{--<div class="col-sm-8">--}}
+                            {{--<div class="input-group">--}}
+                                {{--<span class="input-group-addon">$</span>--}}
+                            {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"--}}
+                                   {{--value="{{ $producto->precio }}" id="precio" onchange="cambioPrecio()">--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
 
                     {{-- Margen ganancia --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Margen ganancia</label>
-                        <div class="col-sm-8">
-                            <div class="input-group">
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margen_ganancia"
-                                value="{{ $producto->margen_ganancia }}" id="margen_ganancia" onchange="cambioMargen()">
-                                <span class="input-group-addon">%</span>
-                            </div>
-                        </div>
-                    </div>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-sm-4 control-label">Margen ganancia</label>--}}
+                        {{--<div class="col-sm-8">--}}
+                            {{--<div class="input-group">--}}
+                            {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margen_ganancia"--}}
+                                {{--value="{{ $producto->margen_ganancia }}" id="margen_ganancia" onchange="cambioMargen()">--}}
+                                {{--<span class="input-group-addon">%</span>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
 
                 </div>
             </div><!-- /.box-body -->

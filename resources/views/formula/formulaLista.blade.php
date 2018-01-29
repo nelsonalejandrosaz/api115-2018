@@ -43,6 +43,7 @@
                         <tbody>
                         @foreach($formulas as $formula)
                             <tr>
+                                {{--{{ dd($formula) }}--}}
                                 <td>{{$formula->producto->codigo}}</td>
                                 <td>{{$formula->producto->nombre}}</td>
                                 <td>{{$formula->producto->unidad_medida->nombre}}</td>

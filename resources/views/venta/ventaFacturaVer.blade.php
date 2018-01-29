@@ -110,8 +110,13 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            <input readonly type="date" class="form-control" name="fechaEntrega"
-                                   value="{{$venta->orden_pedido->fecha_entrega->format('Y-m-d')}}">
+                            @if($venta->orden_pedido->fecha_entrega != null)
+                                <input readonly type="date" class="form-control" name="fechaEntrega"
+                                       value="{{$venta->orden_pedido->fecha_entrega->format('Y-m-d')}}">
+                            @else
+                                <input readonly type="text" class="form-control" name="fechaEntrega"
+                                       value="Sin fecha definida">
+                            @endif
                         </div>
                     </div>
 
@@ -159,16 +164,7 @@
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <select class="form-control select2 selProd" style="width:100%" name="productos_id[]"
-                                            id="selectProductos" disabled>
-                                        @foreach($productos as $producto)
-                                            @if($producto->id == $salida->movimiento->producto_id)
-                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} </option>
-                                            @else
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }}) </option>
-                                            @endif
-                                        @endforeach
-                                    </select>
+                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto->nombre}} ({{ $salida->precio->presentacion }})">
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
@@ -178,7 +174,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad_ums}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
                                 </td>
                                 {{--Precio unitario--}}
                                 <td>
@@ -186,7 +182,7 @@
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario_ums,5)}}" disabled>
+                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,5)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}

@@ -15,5 +15,7 @@ class TipoProductosSeeder extends Seeder
         TipoProducto::create(['nombre' => 'Materia prima', 'codigo' => 'MP',]);
         TipoProducto::create(['nombre' => 'Producto terminado', 'codigo' => 'PT',]);
         TipoProducto::create(['nombre' => 'Reventa', 'codigo' => 'RV',]);
+        TipoProducto::create(['nombre' => 'Materia Prima y Reventa', 'codigo' => 'MR',]);
+        TipoProducto::create(['nombre' => 'Producto terminado y Materia Prima', 'codigo' => 'PM',]);
     }
 }

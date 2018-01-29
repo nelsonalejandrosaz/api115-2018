@@ -15,8 +15,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $ajuste_id
  * @property \Carbon\Carbon $fecha
  * @property string|null $detalle
+ * @property float $cantidad
+ * @property float $costo_uniario
+ * @property float $costo_total
  * @property float|null $cantidad_existencia
  * @property float|null $costo_unitario_existencia
+ * @property float|null $costo_total_existencia
  * @property \Carbon\Carbon|null $fecha_procesado
  * @property int $procesado
  * @property \Carbon\Carbon|null $created_at
@@ -27,7 +31,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Salida|null $salida
  * @property-read \App\TipoMovimiento $tipo_movimiento
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereAjusteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCantidad($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCantidadExistencia($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCostoTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCostoTotalExistencia($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCostoUniario($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCostoUnitarioExistencia($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Movimiento whereDetalle($value)
@@ -77,8 +85,12 @@ class Movimiento extends Model
         'ajuste_id',
         'fecha',
         'detalle',
+        'cantidad',
+        'costo_unitario',
+        'costo_total',
         'cantidad_existencia',
         'costo_unitario_existencia',
+        'costo_total_existencia',
         'fecha_procesado',
         'procesado',
     ];

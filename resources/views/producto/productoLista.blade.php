@@ -51,18 +51,25 @@
                                 <td>{{$producto->cantidad_existencia}}</td>
                                 <td>{{$producto->unidad_medida->abreviatura}}</td>
                                 <td>$ {{number_format($producto->costo,2)}}</td>
-                                <td>$ {{number_format($producto->precio,2)}}</td>
+                                <td>$ {{number_format($producto->precios->first()->precio,2)}}</td>
                                 <td align="center">
-                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalPrecio" data-objeto="{{ $producto->nombre }}"
-                                            data-id="{{ $producto->id }}" data-precio="{{ $producto->precio }}" data-ruta="producto/precio">
-                                        <span class="fa fa-dollar"></span>
-                                    </button>
-                                    <a href="{{ route('productoVer', ['id' => $producto->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
-                                    <a href="{{ route('productoEditar', ['id' => $producto->id]) }}" class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-objeto="{{ $producto->nombre }}"
-                                            data-id="{{ $producto->id }}" data-ruta="producto">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
+                                    {{--<button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalPrecio" data-objeto="{{ $producto->nombre }}"--}}
+                                    {{--data-id="{{ $producto->id }}" data-precio="{{ $producto->precio }}" data-ruta="producto/precio">--}}
+                                    {{--<span class="fa fa-dollar"></span>--}}
+                                    {{--</button>--}}
+                                    <a href="{{ route('productoPrecio', ['id' => $producto->id]) }}"
+                                       class="btn btn-success"><span class="fa fa-dollar"></span></a>
+                                    <a href="{{ route('productoVer', ['id' => $producto->id]) }}"
+                                       class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    <a href="{{ route('productoEditar', ['id' => $producto->id]) }}"
+                                       class="btn btn-warning"><span class="fa fa-edit"></span></a>
+                                    @if($producto->eliminar)
+                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                data-target="#modalEliminar" data-objeto="{{ $producto->nombre }}"
+                                                data-id="{{ $producto->id }}" data-ruta="producto">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -94,7 +101,7 @@
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
                 var modal = $(this);
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                modal.find('#nuevoPrecio').attr("action", "/" + ruta +"/" + idObj);
+                modal.find('#nuevoPrecio').attr("action", "/" + ruta + "/" + idObj);
                 modal.find('#precioAnteriorID').val(precioActual.toFixed(2));
                 var botonEnviar = modal.find('#btnEnviar');
                 console.log(botonEnviar);
@@ -105,26 +112,26 @@
 
             $("#tablaDT").DataTable(
                 {
-                    "order": [[ 1, "asc" ]],
+                    "order": [[1, "asc"]],
                     language: {
-                        processing:     "Procesando...",
-                        search:         "Buscar:",
-                        lengthMenu:     "Mostrar _MENU_ registros",
-                        info:           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                        infoEmpty:      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                        infoFiltered:   "(filtrado de un total de _MAX_ registros)",
-                        infoPostFix:    "",
+                        processing: "Procesando...",
+                        search: "Buscar:",
+                        lengthMenu: "Mostrar _MENU_ registros",
+                        info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        infoFiltered: "(filtrado de un total de _MAX_ registros)",
+                        infoPostFix: "",
                         loadingRecords: "Cargando...",
-                        zeroRecords:    "No se encontraron resultados",
-                        emptyTable:     "Ningún dato disponible en esta tabla",
+                        zeroRecords: "No se encontraron resultados",
+                        emptyTable: "Ningún dato disponible en esta tabla",
                         paginate: {
-                            first:      "Primero",
-                            previous:   "Anterior",
-                            next:       "Siguiente",
-                            last:       "Último"
+                            first: "Primero",
+                            previous: "Anterior",
+                            next: "Siguiente",
+                            last: "Último"
                         },
                         aria: {
-                            sortAscending:  ": Activar para ordenar la columna de manera ascendente",
+                            sortAscending: ": Activar para ordenar la columna de manera ascendente",
                             sortDescending: ": Activar para ordenar la columna de manera descendente"
                         }
                     }

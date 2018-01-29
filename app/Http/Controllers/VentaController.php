@@ -63,6 +63,7 @@ class VentaController extends Controller
         // Se busca el estado de la orden de pedido y de factura
         $estado_orden_pedido = EstadoOrdenPedido::whereCodigo('FC')->first();
         $estado_venta = EstadoVenta::whereCodigo('PP')->first();
+        $venta_total_con_impuestos = $orden_pedido->venta_total * 1.13;
         // Se crea la venta
         $venta = Venta::create([
             'tipo_documento_id' => $request->input('tipo_documento_id'),
@@ -71,11 +72,12 @@ class VentaController extends Controller
             'fecha' => $request->input('fecha'),
             'estado_venta_id' => $estado_venta->id,
             'vendedor_id' => $orden_pedido->vendedor_id, // Quitar despues
-            'saldo' => $orden_pedido->venta_total,
+            'saldo' => $venta_total_con_impuestos,
+            'venta_total_con_impuestos' => $venta_total_con_impuestos,
         ]);
-        // Se agrega el saldo al cliente
+        // Se agrega el saldo al cliente  agregar el iva
         $cliente = Cliente::find($orden_pedido->cliente_id);
-        $cliente->saldo = $cliente->saldo + $venta->saldo;
+        $cliente->saldo = $cliente->saldo + $venta_total_con_impuestos;
         $cliente->save();
         //
         $orden_pedido->estado_id = $estado_orden_pedido->id;
@@ -105,7 +107,7 @@ class VentaController extends Controller
         $salidas = $venta->orden_pedido->salidas;
         foreach ($salidas as $salida)
         {
-            $salida->precio_unitario_ums = $salida->precio_unitario_ums * 1.13;
+            $salida->precio_unitario = $salida->precio_unitario * 1.13;
             $salida->venta_gravada = $salida->venta_gravada * 1.13;
             $salida->venta_exenta = $salida->venta_exenta * 1.13;
         }

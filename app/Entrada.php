@@ -10,11 +10,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int|null $compra_id
  * @property int|null $produccion_id
- * @property float $cantidad
- * @property float $cantidad_ums
  * @property int $unidad_medida_id
+ * @property float $cantidad
  * @property float $costo_unitario
- * @property float $costo_unitario_ums
+ * @property float $costo_total
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Compra|null $compra
@@ -22,10 +21,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Produccion|null $produccion
  * @property-read \App\UnidadMedida $unidad_medida
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCantidad($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCantidadUms($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCompraId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCostoTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCostoUnitario($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCostoUnitarioUms($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entrada whereProduccionId($value)
@@ -60,8 +58,7 @@ class Entrada extends Model
         'produccion_id',
         'unidad_medida_id',
         'cantidad',
-        'cantidad_ums',
         'costo_unitario',
-        'costo_unitario_ums',
+        'costo_total',
     ];
 }

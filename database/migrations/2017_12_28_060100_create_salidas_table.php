@@ -17,15 +17,12 @@ class CreateSalidasTable extends Migration
             $table->increments('id');
             $table->integer('orden_pedido_id')->unsigned()->nullable();
             $table->integer('produccion_id')->unsigned()->nullable();
-            $table->float('cantidad');
-            $table->float('cantidad_ums');
             $table->integer('unidad_medida_id')->unsigned();
-            $table->float('precio_unitario');
-            $table->float('precio_unitario_ums',8,5);
-            $table->float('venta_exenta');
-            $table->float('venta_gravada');
-            $table->float('costo_unitario');
-            $table->boolean('exento')->default(false);
+            $table->integer('precio_id')->unsigned()->nullable();
+            $table->float('cantidad',8,3);
+            $table->float('precio_unitario',8,4);
+            $table->float('venta_exenta',8,4);
+            $table->float('venta_gravada',8,4);
             $table->timestamps();
         });
     }

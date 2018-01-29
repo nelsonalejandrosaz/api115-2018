@@ -23,12 +23,12 @@ class InventarioController extends Controller
     public function InventarioKardex(Request $request)
     {
         $producto = Producto::find($request->id);
-        $movimientos = $producto->movimientos()->where('procesado','=',true)->orderBy('fecha_procesado','asc')->get();
-        foreach ($movimientos as $movimiento)
-        {
-            $movimiento->costo_total_existencia = $movimiento->cantidad_existencia * $movimiento->costo_unitario_existencia;
-        }
-        return view('inventario.kardex')->with(['movimientos' => $movimientos])->with(['producto' => $producto]);
+        $movimientos = $producto->movimientos()
+            ->where('procesado','=',true)
+            ->orderBy('fecha_procesado','asc')->get();
+        return view('inventario.kardex')
+            ->with(['movimientos' => $movimientos])
+            ->with(['producto' => $producto]);
     }
 
     public function InventarioKardexPost(Request $request)

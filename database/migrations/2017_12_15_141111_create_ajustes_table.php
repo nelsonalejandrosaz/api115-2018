@@ -23,7 +23,7 @@ class CreateAjustesTable extends Migration
             $table->float('valor_unitario_anterior');
             $table->float('cantidad_ajuste')->nullable();
             $table->float('valor_unitario_ajuste')->nullable();
-            $table->float('diferencia_cantidad_ajuste');
+            $table->float('diferencia_ajuste');
             $table->timestamps();
         });
     }

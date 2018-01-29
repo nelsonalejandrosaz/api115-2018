@@ -39,7 +39,7 @@
                         <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
                             <input disabled type="date" class="form-control" name="fechaIngreso"
-                                   value="{{$compra->fechaIngreso}}">
+                                   value="{{$compra->fecha}}">
                         </div>
                     </div>
 

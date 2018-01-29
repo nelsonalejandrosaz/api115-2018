@@ -21,12 +21,12 @@ class CreateOrdenPedidosTable extends Migration
             $table->date('fecha');
             $table->dateTime('fecha_procesado')->nullable();
             $table->date('fecha_entrega')->nullable();
-            $table->string('condicion_pago_id')->nullable();
+            $table->integer('condicion_pago_id')->unsigned()->nullable();
             $table->integer('vendedor_id')->unsigned();
             $table->integer('bodega_id')->unsigned()->nullable();
-            $table->float('ventas_exentas')->nullable()->default(0.00);
-            $table->float('ventas_gravadas')->nullable();
-            $table->float('venta_total')->nullable();
+            $table->float('ventas_exentas',8,4)->nullable()->default(0.00);
+            $table->float('ventas_gravadas',8,4)->nullable();
+            $table->float('venta_total',8,4)->nullable();
             $table->string('ruta_archivo')->default('sin-documento.jpg');
             $table->integer('estado_id')->default(0);
             $table->timestamps();

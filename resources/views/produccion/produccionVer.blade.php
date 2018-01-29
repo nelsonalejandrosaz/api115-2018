@@ -142,7 +142,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{number_format($salida->cantidad_ums,2)}} {{$salida->unidad_medida->abreviatura}}" disabled>
+                                           id="cantidad" value="{{number_format($salida->cantidad,2)}} {{$salida->unidad_medida->abreviatura}}" disabled>
                                 </td>
                             </tr>
                         @endforeach

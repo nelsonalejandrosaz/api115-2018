@@ -30,5 +30,6 @@ class UnidadMedida extends Model
     protected $fillable = [
         'nombre',
         'abreviatura',
+        'tipo',
     ];
 }

@@ -85,6 +85,20 @@
                         </div>
                     </div>
 
+                    {{--Condición de pago--}}
+                    <div class="form-group">
+                        <label for="condicionPagoID" class="col-md-4  control-label"><b>Condición pago</b></label>
+                        <div class="col-md-8 ">
+                            <select class="form-control select2" style="width: 100%" name="condicion_pago_id"
+                                    id="condicionPagoID">
+                                <option value="" selected disabled>Selecciona una condición de pago</option>
+                                @foreach($condiciones_pago as $condicion_pago)
+                                    <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     {{-- Ruta archivo --}}
                     <div class="form-group">
                         <label class="col-md-4 control-label">Copia factura:</label>

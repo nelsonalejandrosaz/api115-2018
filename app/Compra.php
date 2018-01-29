@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $ingresado_id
  * @property int|null $bodega_id
  * @property string $ruta_archivo
- * @property int $revisado
  * @property int $condicion_pago_id
  * @property int $estado_compra_id
+ * @property float $saldo
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\User|null $bodeguero
@@ -37,8 +37,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereIngresadoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereProveedorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRevisado($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereRutaArchivo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereSaldo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Compra whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -78,8 +78,8 @@ class Compra extends Model
         'ruta_archivo',
         'ingresado_id',
         'bodega_id',
-        'revisado',
         'condicion_pago_id',
         'estado_compra_id',
+        'saldo',
     ];
 }

@@ -22,8 +22,12 @@ class CreateMovimientosTable extends Migration
             $table->integer('ajuste_id')->unsigned()->nullable();
             $table->date('fecha');
             $table->string('detalle',140)->nullable();
-            $table->float('cantidad_existencia')->nullable();
-            $table->float('costo_unitario_existencia')->nullable();
+            $table->float('cantidad',8,3);
+            $table->float('costo_unitario',8,4);
+            $table->float('costo_total',8,4);
+            $table->float('cantidad_existencia',8,3)->nullable();
+            $table->float('costo_unitario_existencia',8,4)->nullable();
+            $table->float('costo_total_existencia',8,4)->nullable();
             $table->dateTime('fecha_procesado')->nullable();
             $table->boolean('procesado')->default(false);
             $table->timestamps();

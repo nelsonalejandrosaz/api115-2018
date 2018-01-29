@@ -100,9 +100,9 @@
                                     <td><a href="">{{$movimiento->detalle}}</a></td>
                                 {{--@endif--}}
                                 @if($movimiento->tipo_movimiento->codigo == "ENTC" || $movimiento->tipo_movimiento->codigo == "ENTP")
-                                    <td class="entradaCSS">{{$movimiento->entrada->cantidad}}</td>
-                                    <td class="entradaCSS">${{ number_format($movimiento->entrada->costo_unitario,2) }}</td>
-                                    <td class="entradaCSS">${{ number_format(($movimiento->entrada->costo_unitario * $movimiento->entrada->cantidad),2) }}</td>
+                                    <td class="entradaCSS">{{$movimiento->cantidad}}</td>
+                                    <td class="entradaCSS">${{ number_format($movimiento->costo_unitario,2) }}</td>
+                                    <td class="entradaCSS">${{ number_format($movimiento->costo_total,2) }}</td>
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
                                     <td class="salidaCSS"> -- </td>
@@ -110,9 +110,9 @@
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>
-                                    <td class="salidaCSS">{{$movimiento->salida->cantidad}}</td>
-                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costo_unitario,2) }}</td>
-                                    <td class="salidaCSS">${{ number_format($movimiento->salida->costo_total,2) }}</td>
+                                    <td class="salidaCSS">{{$movimiento->cantidad}}</td>
+                                    <td class="salidaCSS">${{ number_format($movimiento->costo_unitario,2) }}</td>
+                                    <td class="salidaCSS">${{ number_format($movimiento->costo_total,2) }}</td>
                                 @else
                                     <td class="entradaCSS"> -- </td>
                                     <td class="entradaCSS"> -- </td>

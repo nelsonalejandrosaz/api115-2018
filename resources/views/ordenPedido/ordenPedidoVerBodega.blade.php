@@ -90,9 +90,10 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width:60%">Producto -- (Cantidad existencia)</th>
-                            <th style="width:20%">Unidad medida</th>
-                            <th style="width:20%">Cantidad</th>
+                            <th style="width:50%">Producto (Presentación)</th>
+                            <th style="width:15%">Unidad medida</th>
+                            <th style="width:15%">Cantidad orden pedido</th>
+                            <th style="width:20%">Cantidad a descargar</th>
                         </tr>
                         @foreach($ordenPedido->salidas as $salida)
                             <tr>
@@ -102,9 +103,9 @@
                                             id="selectProductos" disabled>
                                         @foreach($productos as $producto)
                                             @if($producto->id == $salida->movimiento->producto_id)
-                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidad_existencia}}) </option>
+                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} ({{ $salida->precio->presentacion }}) </option>
                                             @else
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} -- ({{$producto->cantidad_existencia}}) </option>
+                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} </option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -117,7 +118,13 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad_ums}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
+                                </td>
+                                {{--Cantidad a sacar--}}
+                                <td>
+                                    <input type="text" class="form-control cantidadCls"
+                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
+                                           id="cantidad" value="{{$salida->movimiento->cantidad}} {{ $salida->movimiento->producto->unidad_medida->abreviatura }}" disabled>
                                 </td>
                             </tr>
                         @endforeach
@@ -127,9 +134,9 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ordenPedidoListaBodega') }}" class="btn btn-lg btn-default">Regresar a lista</a>
+                <a href="{{ route('ordenPedidoListaBodega') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
                 {{--<a href="{{ route('ordenPedidoPDF',['id' => $ordenPedido->id]) }}" class="btn btn-lg btn-success pull-right">Procesar orden pedido</a>--}}
-                <button type="submit" class="btn btn-lg btn-success pull-right">Procesar orden pedido</button>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-check-square-o"></span> Despachar orden pedido</button>
             </div>
         </form>
     </div><!-- /.box -->

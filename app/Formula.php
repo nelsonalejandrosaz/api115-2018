@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereProductoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property float $version
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereVersion($value)
  */
 class Formula extends Model
 {

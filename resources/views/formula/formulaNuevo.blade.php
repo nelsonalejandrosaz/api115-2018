@@ -138,7 +138,7 @@
                             </td>
                             <td>
                                 <div class="input-group">
-                                    <input type="number" class="form-control cant" value="1" min="1" max="100"
+                                    <input type="number" class="form-control cant" value="1" min="0.001" max="100"
                                            name="porcentajes[]" onkeyup="calcularTotal()" onchange="calcularTotal()">
                                     <span class="input-group-addon">%</span>
                                 </div>
@@ -191,7 +191,7 @@
             });
             $(".cant").focusout(function () {
                 var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
-                $(this).val(numeroDato.toFixed(2));
+                $(this).val(numeroDato.toFixed(3));
             });
         }
 
@@ -263,7 +263,7 @@
                 porcentaje = parseFloat(porcentajes[i].value);
                 totalPorcentaje = totalPorcentaje + porcentaje;
             }
-            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(2));
+            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(3));
             // console.log(totalPorcentaje);
         }
 

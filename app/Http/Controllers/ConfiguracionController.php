@@ -7,8 +7,10 @@ use App\Categoria;
 use App\Cliente;
 use App\ConversionUnidadMedida;
 use App\Movimiento;
+use App\Precio;
 use App\Producto;
 use App\Proveedor;
+use App\TipoAjuste;
 use App\TipoMovimiento;
 use App\TipoProducto;
 use App\UnidadMedida;
@@ -34,16 +36,15 @@ class ConfiguracionController extends Controller
         Excel::load(Input::file('archivoXLSX'), function($reader) {
             // Getting all results
             $results = $reader->get();
-//            dd($results[5]);
+//            dd($results);
 
             /**
              * Código para guardar categorias
              */
             $categorias = $results[2];
-//            dd($categorias);
             foreach ($categorias as $categoriaX)
             {
-                $categoria = Categoria::updateOrCreate([
+                Categoria::updateOrCreate([
                     'codigo' => $categoriaX->codigo,
                 ],[
                     'nombre' => $categoriaX->nombre_categoria,
@@ -55,12 +56,28 @@ class ConfiguracionController extends Controller
              */
 
             /**
+             * Código para guardar tipo de productos
+             */
+            $tipo_productos = $results[3];
+            foreach ($tipo_productos as $tipo_producto_X)
+            {
+                TipoProducto::updateOrCreate([
+                    'codigo' => $tipo_producto_X->codigo,
+                ],[
+                    'nombre' => $tipo_producto_X->nombre_tipo,
+                ]);
+            }
+            /**
+             * Fin de código para guardar tipo de productos
+             */
+
+            /**
              * Código para guardar proveedores
              */
             $proveedores = $results[4];
             foreach ($proveedores as $proveedorX)
             {
-                $proveedor = Proveedor::updateOrCreate([
+                Proveedor::updateOrCreate([
                     'nombre' => $proveedorX->nombre_o_empresa_proveedor,
                 ],[
                     'telefono_1' => $proveedorX->telefono_1,
@@ -79,7 +96,7 @@ class ConfiguracionController extends Controller
             $clientes = $results[5];
             foreach ($clientes as $clienteX)
             {
-                $cliente = Cliente::updateOrCreate([
+                Cliente::updateOrCreate([
                     'nombre' => $clienteX->nombre_o_empresa_cliente,
                 ],[
                     'telefono_1' => $clienteX->telefono_1,
@@ -98,20 +115,19 @@ class ConfiguracionController extends Controller
              */
             // Se selecciona la hoja correspondiente a productos
             $productos = $results[0];
-            foreach ($productos as $producto)
+            foreach ($productos as $producto_x)
             {
-//                dd($producto);
                 // Inicio para guardar inventario
-                $existencia_min = ($producto->existencia_minima == null) ? 0 : $producto->existencia_minima;
-                $existencia_max = ($producto->existencia_maxima == null) ? 100 : $producto->existencia_maxima;
-                $costo = ($producto->costo == null) ? 0.00 : $producto->costo;
-                $precio = ($producto->precio == null) ? 0.00 : $producto->precio;
-                $margen_ganancia = ($producto->margen_ganancia == null) ? 0 : $producto->margen_ganancia;
-                $unidad_medida = UnidadMedida::whereNombre($producto->unidad_de_medida)->first();
-                $tipo_producto = TipoProducto::whereNombre($producto->tipo_de_producto)->first();
-                $categoria = Categoria::whereNombre($producto->categoria)->first();
-                $productoDB = Producto::updateOrCreate([
-                    'nombre' => $producto->nombre_producto,
+                $existencia_min = ($producto_x->existencia_minima == null) ? 0 : $producto_x->existencia_minima;
+                $existencia_max = ($producto_x->existencia_maxima == null) ? 100 : $producto_x->existencia_maxima;
+                $costo = ($producto_x->costo == null) ? 0.00 : round($producto_x->costo,2);
+                $precio = ($producto_x->precio == null) ? 0.00 : round($producto_x->precio,2);
+                $unidad_medida = UnidadMedida::whereNombre($producto_x->unidad_de_medida)->first();
+                $tipo_producto = TipoProducto::whereNombre($producto_x->tipo_de_producto)->first();
+                $categoria = Categoria::whereNombre($producto_x->categoria)->first();
+                $factor_volumen = $producto_x->factor_de_volumen;
+                $producto = Producto::updateOrCreate([
+                    'nombre' => $producto_x->nombre_producto,
                 ],[
                     'tipo_producto_id' => $tipo_producto->id,
                     'unidad_medida_id' => $unidad_medida->id,
@@ -119,60 +135,62 @@ class ConfiguracionController extends Controller
                     'existencia_min' => $existencia_min,
                     'existencia_max' => $existencia_max,
                     'costo' => $costo,
-                    'precio' => $precio,
-                    'precio_impuestos' => ($precio * 1.13),
-                    'margen_ganancia' => $margen_ganancia,
+                    'factor_volumen' => $factor_volumen,
                 ]);
-                if ($producto->codigo == null)
-                {
-//                  Asignacion del codigo del producto
-                    $ids = $productoDB->id;
-                    $ids = str_pad($ids, 5, '0', STR_PAD_LEFT);
-                    $codigo = $productoDB->tipo_producto->codigo . $ids;
-                    $productoDB->codigo = $codigo;
-                    $productoDB->update();
-                } else
-                {
-//                  Asignacion del codigo del producto
-                    $productoDB->codigo = $producto->codigo;
-                    $productoDB->update();
-                }
+                // Asignacion del codigo del producto
+                $ids = $producto->id;
+                $ids = str_pad($ids, 4, '0', STR_PAD_LEFT);
+                $codigo = $producto->tipo_producto->codigo. $producto->categoria->codigo . $ids;
+                $producto->codigo = $codigo;
+                $producto->save();
+                // Asignación de precio del producto
+                $precio = Precio::updateOrCreate([
+                    'producto_id' => $producto->id,
+                    'presentacion' => $unidad_medida->nombre,
+                ],[
+                    'unidad_medida_id' => $unidad_medida->id,
+                    'precio' => $precio,
+                    'factor' => 1,
+                ]);
                 // Asignacion de inventario inicial
                 // Variables
-                $cantidadAjuste = ($producto->existencias == null) ? 0 : $producto->existencias;
-                $valorUnitarioAjuste = $productoDB->costo;
-                $diferenciaCantidadAjuste = $cantidadAjuste - $productoDB->cantidad_existencia;
+                $cantidad_ajuste = ($producto_x->existencias == null) ? 0 : $producto_x->existencias;
+                $valor_unitario_ajuste = $producto->costo;
+                $valor_total_ajuste = $cantidad_ajuste * $valor_unitario_ajuste;
+                $diferencia_ajuste = $cantidad_ajuste - $producto->cantidad_existencia;
                 $tipo_movimiento = TipoMovimiento::whereCodigo('AJSE')->first();
-
+                $tipo_ajuste = TipoAjuste::whereCodigo('ENTINI')->first();
                 // Se crea el ajuste de entrada
                 $ajuste = Ajuste::create([
-                    'tipo_ajuste_id' => 1,
-                    'detalle' => 'Ajuste de entrada por inicio de inventario ',
-                    'fecha' => Carbon::now()->format('Y-d-m'),
-                    'cantidad_ajuste' => $cantidadAjuste,
-                    'valor_unitario_ajuste' => $valorUnitarioAjuste,
+                    'tipo_ajuste_id' => $tipo_ajuste->id,
+                    'detalle' => 'Ajuste de entrada por inicio de inventario',
+                    'fecha' => Carbon::createFromDate(2018,1,1)->format('Y-d-m'),
+                    'cantidad_ajuste' => $cantidad_ajuste,
+                    'valor_unitario_ajuste' => $valor_unitario_ajuste,
                     'realizado_id' => Auth::user()->id,
                     'cantidad_anterior' => 0,
-                    'valor_unitario_anterior' => $productoDB->precio,
-                    'diferencia_cantidad_ajuste' => $diferenciaCantidadAjuste,
+                    'valor_unitario_anterior' => 0,
+                    'diferencia_ajuste' => $diferencia_ajuste,
                 ]);
-
                 // Se crea el movimiento
                 $movimiento = Movimiento::create([
-                    'producto_id' => $productoDB->id,
+                    'producto_id' => $producto->id,
                     'tipo_movimiento_id' => $tipo_movimiento->id,
                     'ajuste_id' => $ajuste->id,
-                    'fecha' => Carbon::now(),
+                    'fecha' => Carbon::createFromDate(2018,1,1),
                     'detalle' => 'Ajuste de entrada por inicio de inventario ',
-                    'cantidad_existencia' => $cantidadAjuste,
-                    'costo_unitario_existencia' => $valorUnitarioAjuste,
-                    'fecha_procesado' => Carbon::now(),
+                    'cantidad' => $cantidad_ajuste,
+                    'costo_unitario' => $valor_unitario_ajuste,
+                    'costo_total' => $valor_total_ajuste,
+                    'cantidad_existencia' => $cantidad_ajuste,
+                    'costo_unitario_existencia' => $valor_unitario_ajuste,
+                    'costo_total_existencia' => $valor_total_ajuste,
+                    'fecha_procesado' => Carbon::createFromDate(2018,1,1),
                     'procesado' => true,
                 ]);
-
-                // Se actualiza la cantidad de producto despues de la entrada
-                $productoDB->cantidad_existencia = $movimiento->cantidad_existencia;
-                $productoDB->save();
+                // Se actualiza la cantidad de producto después de la entrada
+                $producto->cantidad_existencia = $movimiento->cantidad_existencia;
+                $producto->save();
             }
             /**
              * Fin código para guardar los productos con su inventario inicial

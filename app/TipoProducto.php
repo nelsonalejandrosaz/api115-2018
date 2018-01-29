@@ -28,6 +28,6 @@ class TipoProducto extends Model
 
     protected $fillable = [
         'codigo',
-        'nombreTipo',
+        'nombre',
     ];
 }

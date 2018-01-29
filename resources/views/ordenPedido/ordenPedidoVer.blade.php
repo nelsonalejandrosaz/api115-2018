@@ -139,7 +139,7 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width:40%">Producto -- (Cantidad existencia)</th>
+                            <th style="width:40%">Producto</th>
                             <th style="width:5%">Unidad medida</th>
                             <th style="width:5%">Cantidad</th>
                             <th style="width:12.5%">Precio unitario</th>
@@ -157,8 +157,7 @@
                                             @if($producto->id == $salida->movimiento->producto_id)
                                                 <option selected value="{{ $producto->id }}"
                                                         data-cu="{{ $producto->precio }}"
-                                                        data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }}
-                                                    -- ({{$producto->cantidad_existencia}})
+                                                        data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} ({{$salida->precio->presentacion}})
                                                 </option>
                                             @else
                                                 <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}"
@@ -178,7 +177,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad_ums}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
                                 </td>
                                 {{--Precio unitario--}}
                                 <td>
@@ -187,7 +186,7 @@
                                         <input type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
                                                name="preciosUnitarios[]" id="precioUnitario"
-                                               value="{{number_format($salida->precio_unitario_ums,5)}}" disabled>
+                                               value="{{number_format($salida->precio_unitario,5)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}

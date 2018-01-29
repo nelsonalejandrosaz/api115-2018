@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereVendedorId($value)
  * @mixin \Eloquent
+ * @property-read \App\EstadoVenta $estado_venta
  */
 class Venta extends Model
 {
@@ -66,6 +67,7 @@ class Venta extends Model
         'ruta_archivo',
         'estado_venta_id',
         'saldo',
+        'venta_total_con_impuestos',
     ];
 
     protected $dates = [

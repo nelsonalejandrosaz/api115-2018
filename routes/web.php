@@ -23,6 +23,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/producto/nuevo','ProductoController@ProductoNuevo')->name('productoNuevo');
     Route::post('/producto/nuevo','ProductoController@ProductoNuevoPost')->name('productoNuevoPost');
     Route::get('/producto/{id}','ProductoController@ProductoVer')->name('productoVer');
+    Route::get('/producto/{id}/precio','ProductoController@ProductoPrecio')->name('productoPrecio');
+    Route::post('/producto/{id}/precio','ProductoController@ProductoPrecioPost')->name('productoPrecioPost');
     Route::get('/producto/{id}/editar','ProductoController@ProductoEditar')->name('productoEditar');
     Route::put('/producto/{id}','ProductoController@ProductoEditarPut')->name('productoEditarPut');
     Route::delete('/producto/{id}','ProductoController@ProductoEliminar')->name('productoEliminar');
@@ -132,7 +134,9 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas para los abonos
      */
     Route::get('/abono','AbonoController@AbonoLista')->name('abonoLista');
+    Route::get('/abono/nuevo','AbonoController@AbonoNuevoSinVenta')->name('abonoNuevoSinVenta');
     Route::get('/abono/nuevo/{id}','AbonoController@AbonoNuevo')->name('abonoNuevo');
+    Route::post('/abono/nuevo','AbonoController@AbonoNuevoSinVentaPost')->name('abonoNuevoSinVentaPost');
     Route::post('/abono/nuevo/{id}','AbonoController@AbonoNuevoPost')->name('abonoNuevoPost');
     Route::get('/abono/{id}','AbonoController@AbonoVer')->name('abonoVer');
 
@@ -162,5 +166,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('dev/unidadesConversionJSON','DevController@UnidadesConversionJSON')->name('unidadesMedidaJSON');
     Route::get('dev/factorJSON','DevController@FactorJSON')->name('factorJSON');
 
+    /**
+     * Rutas API del SIFLGL
+     */
+    Route::get('api/precios/{id}','APIController@ProductosPresentacionesJSON')->name('preciosProducto');
+    Route::get('api/cliente/{id}','APIController@ClientesVentasPendientesJSON')->name('clienteVentasPendientes');
 
 });

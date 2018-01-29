@@ -36,7 +36,7 @@
 
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
+                        <label class="col-md-4 control-label"><b>Fecha producción</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
                                 <input type="date" class="form-control" name="fecha">
@@ -60,12 +60,43 @@
                         </div>
                     </div>
 
-                    {{-- Nombre del producto --}}
+                    {{-- Lote --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Realizado por</b></label>
+                        <label class="col-sm-4 control-label">Lote</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
-                                   value="{{Auth::user()->nombre}} {{Auth::user()->apellido}}" disabled>
+                            <input type="number" class="form-control" placeholder="ej. 12345" name="lote"
+                                   value="">
+                        </div>
+                    </div>
+
+                    {{-- Fecha vencimiento --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Fecha vencimiento</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" name="fecha_vencimiento"
+                                   value="">
+                        </div>
+                    </div>
+
+                    {{-- Registrado por --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Registrado por</b></label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="{{Auth::user()->nombre}} {{Auth::user()->apellido}}">
+                        </div>
+                    </div>
+
+                    {{-- Fabricado por --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Fabricado por</b></label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2" name="fabricado_id[]" multiple>
+                                <option value="" >Nombre bodeguero 1</option>
+                                <option value="" >Nombre bodeguero 2</option>
+                                <option value="" >Nombre bodeguero 3</option>
+                                <option value="" >Nombre bodeguero 4</option>
+                            </select>
                         </div>
                     </div>
 
@@ -87,7 +118,7 @@
 
                     {{-- Unidad de medida --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Unidad de medida</b></label>
+                        <label class="col-sm-4 control-label"><b>Unidad de producción</b></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" placeholder="Producto"
                                    value="Seleccione el producto" disabled id="unidadMedidalbl">

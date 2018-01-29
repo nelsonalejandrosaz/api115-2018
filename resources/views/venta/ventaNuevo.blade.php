@@ -16,7 +16,7 @@
 @endsection
 
 @section('contentheader_description')
-    -- Venta de orden pedido {{$ordenPedido->codigo}}
+    -- Venta de orden pedido {{$orden_pedido->codigo}}
 @endsection
 
 @section('main-content')
@@ -29,7 +29,7 @@
             <h3 class="box-title">Detalle de venta</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $ordenPedido->id]) }}" method="POST">
+        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $orden_pedido->id]) }}" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -40,7 +40,7 @@
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
                             <input type="date" class="form-control" name="fecha"
-                                   value="">
+                                   value="{{ $orden_pedido->fecha_entrega }}">
                         </div>
                     </div>
 
@@ -48,16 +48,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="cliente_id" disabled>
-                                <option value="" selected disabled>Seleciona un cliente</option>
-                                @foreach($clientes as $cliente)
-                                    @if($cliente->id == $ordenPedido->cliente_id)
-                                        <option selected value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
-                                    @else
-                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <input readonly type="text" class="form-control" name="cliente_id" value="{{$orden_pedido->cliente->nombre}}">
                         </div>
                     </div>
 
@@ -65,7 +56,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>NRC</b></label>
                         <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="nrc" value="{{$ordenPedido->cliente->nrc}}">
+                            <input readonly type="text" class="form-control" name="nrc" value="{{$orden_pedido->cliente->nrc}}">
                         </div>
                     </div>
 
@@ -74,7 +65,7 @@
                         <label class="col-md-3  control-label">Condición pago</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="condicion_pago_id"
-                                   value="{{$ordenPedido->condicion_pago->nombre}}">
+                                   value="{{$orden_pedido->condicion_pago->nombre}}">
                         </div>
                     </div>
 
@@ -82,7 +73,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="municipio" id="municipioID" value="{{$ordenPedido->cliente->municipio->nombre}}">
+                            <input readonly type="text" class="form-control" name="municipio" id="municipioID" value="{{$orden_pedido->cliente->municipio->nombre}}">
                         </div>
                     </div>
 
@@ -90,7 +81,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
-                            <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion" id="direccionID">{{$ordenPedido->cliente->direccion}}</textarea>
+                            <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion" id="direccionID">{{$orden_pedido->cliente->direccion}}</textarea>
                         </div>
                     </div>
 
@@ -123,7 +114,7 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Orden pedido n°:</label>
                         <div class="col-md-8 ">
-                            <input readonly type="text" class="form-control" name="orden" value="{{$ordenPedido->numero}}">
+                            <input readonly type="text" class="form-control" name="orden" value="{{$orden_pedido->numero}}">
                         </div>
                     </div>
 
@@ -131,9 +122,9 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            @if($ordenPedido->fechaEntrega != null)
+                            @if($orden_pedido->fechaEntrega != null)
                                 <input readonly type="date" class="form-control" name="fechaEntrega"
-                                       value="{{$ordenPedido->fecha->format('Y-m-d')}}">
+                                       value="{{$orden_pedido->fecha->format('Y-m-d')}}">
                             @else
                                 <input readonly type="text" class="form-control" name="fechaEntrega"
                                        value="Sin fecha definida">
@@ -146,7 +137,7 @@
                         <label class="col-md-4  control-label"><b>Vendedor</b></label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
-                                   value="{{$ordenPedido->vendedor->nombre}} {{$ordenPedido->vendedor->apellido}}"
+                                   value="{{$orden_pedido->vendedor->nombre}} {{$orden_pedido->vendedor->apellido}}"
                                    name="despachadoPor">
                         </div>
                     </div>
@@ -173,54 +164,45 @@
                             <th style="width:15%">Ventas exentas</th>
                             <th style="width:15%">Ventas gravadas</th>
                         </tr>
-                        @foreach($ordenPedido->salidas as $salida)
+                        @foreach($orden_pedido->salidas as $salida)
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <select class="form-control select2 selProd" style="width:100%" name="productos_id[]"
-                                            id="selectProductos" disabled>
-                                        @foreach($productos as $producto)
-                                            @if($producto->id == $salida->movimiento->producto_id)
-                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }}) </option>
-                                            @else
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }}) </option>
-                                            @endif
-                                        @endforeach
-                                    </select>
+                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto->nombre}} ({{ $salida->precio->presentacion }})">
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
-                                    <input type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidad_medida->abreviatura}}" disabled>
+                                    <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidad_medida->abreviatura}}">
                                 </td>
                                 {{--Cantidad--}}
                                 <td>
-                                    <input type="text" class="form-control cantidadCls"
+                                    <input readonly type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad_ums}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidad}}">
                                 </td>
                                 {{--Precio unitario--}}
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="text" class="form-control puCls"
+                                        <input readonly type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario_ums,5)}}" disabled>
+                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,5)}}">
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="text" class="form-control veCls" name="ventasExentas[]"
-                                               id="ventasExentas" value="{{number_format($salida->venta_exenta,2)}}" disabled>
+                                        <input readonly type="text" class="form-control veCls" name="ventasExentas[]"
+                                               id="ventasExentas" value="{{number_format($salida->venta_exenta,2)}}">
                                     </div>
                                 </td>
                                 {{--Ventas afectas--}}
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="text" class="form-control vaCls" name="ventasGravadas[]"
-                                               id="ventasGravadas" value="{{number_format($salida->venta_gravada,2)}}" disabled>
+                                        <input readonly type="text" class="form-control vaCls" name="ventasGravadas[]"
+                                               id="ventasGravadas" value="{{number_format($salida->venta_gravada,2)}}">
                                     </div>
                                 </td>
                             </tr>
@@ -234,11 +216,10 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{number_format($ordenPedido->venta_total,2)}}" name="compraTotal"
-                                           id="ventaTotal" disabled>
+                                    <input readonly type="number" class="form-control" value="{{number_format($orden_pedido->venta_total,2)}}" name="compraTotal"
+                                           id="ventaTotal">
                                 </div>
                             </th>
-                            <th style="width:5%"></th>
                         </tr>
                     </table>
 
@@ -255,188 +236,6 @@
 @endsection
 
 @section('JSExtras')
-    {{-- Funcion para cargar mas filas de productos --}}
-    <script>
-        $(document).on('ready', funcionPrincipal());
-
-        function funcionPrincipal() {
-            $("body").on("click", ".btn-danger", funcionEliminarProducto);
-            agregarFuncion();
-        }
-
-        var numero = 2;
-
-        function funcionNuevoProducto() {
-            copia = $('#selectProductos').clone(false);
-            $('#tblProductos')
-                .append
-                (
-                    $('<tr>').attr('id', 'rowProducto' + numero)
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
-                                    copia
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
-                                    '<input type="text" class="form-control unidadCls" name="" id="unidadMedida" disabled>'
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
-                                    '<input type="text" class="form-control cantidadCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="cantidades[]" id="cantidad" required>'
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
-                                    '<div class="input-group">\n' +
-                                    '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>\n' +
-                                    '</div>'
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
-                                    '<div class="input-group">\n' +
-                                    '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="text" class="form-control veCls" name="ventasExentas[]" id="ventasExentas">\n' +
-                                    '</div>'
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>')
-                                .append
-                                (
-                                    '<div class="input-group">\n' +
-                                    '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="text" class="form-control vaCls" name="ventasGravadas[]" id="ventasGravadas">\n' +
-                                    '</div>'
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>').attr('align', 'center')
-                                .append
-                                (
-                                    '<input type="checkbox" class="tipoVentaCls" id="tipoVenta" name="exentas[]">'
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>').attr('align', 'center')
-                                .append
-                                (
-                                    '<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
-                                )
-                        )
-                );
-            //Initialize Select2 Elements
-            $(".select2").select2();
-            $(".select2").select2();
-            numero++;
-            agregarFuncion();
-        }
-
-        function funcionEliminarProducto() {
-            // $(this).remove().end();
-            // $(this).closest('tr').remove();
-            // console.log($(this).parent().parent());
-            $(this).parent().parent().remove();
-            cambioTotal();
-        }
-
-        function agregarFuncion() {
-            $('.cantidadCls').each(
-                function (index, value) {
-                    $(this).change(cambioProductoJS);
-                    $(this).keyup(cambioProductoJS);
-                });
-            $('.selProd').each(
-                function (index, value) {
-                    $(this).change(cambioProductoJS);
-                });
-            $('.tipoVentaCls').each(
-                function (index, value) {
-                    $(this).change(cambioTipoVenta);
-                });
-        }
-
-        function cambioTotal() {
-            var ventaTotal = 0;
-            $(".veCls").each(
-                function (index, value) {
-                    if ($.isNumeric($(this).val())) {
-                        ventaTotal += eval($(this).val());
-                    }
-                }
-            );
-            $(".vaCls").each(
-                function (index, value) {
-                    if ($.isNumeric($(this).val())) {
-                        ventaTotal += eval($(this).val());
-                    }
-                }
-            );
-            $("#ventaTotal").val(ventaTotal.toFixed(2));
-        }
-
-        function cambioProductoJS() {
-            var idSelect = $(this).parent().parent().find('#selectProductos').val();
-            var cu = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('cu');
-            var um = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('um');
-            var cantidad = $(this).parent().parent().find('#cantidad').val();
-            var costoTotal = cu * cantidad;
-            costoTotal = costoTotal.toFixed(2);
-            var puntoStr = 0.00;
-            $(this).parent().parent().find('#precioUnitario').val(cu);
-            $(this).parent().parent().find('#unidadMedida').val(um);
-            if ($(this).parent().parent().find('#tipoVenta').is(":checked")) {
-                $(this).parent().parent().find('#ventasGravadas').val(puntoStr);
-                $(this).parent().parent().find('#ventasExentas').val(costoTotal);
-            } else {
-                $(this).parent().parent().find('#ventasGravadas').val(costoTotal);
-                $(this).parent().parent().find('#ventasExentas').val(puntoStr);
-            }
-            cambioTotal();
-        }
-
-        function cambioTipoVenta() {
-            var idSelect = $(this).parent().parent().find('#selectProductos').val();
-            var cu = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('cu');
-            var um = $(this).parent().parent().find('option[value="' + idSelect + '"]').data('um');
-            var cantidad = $(this).parent().parent().find('#cantidad').val();
-            var costoTotal = cu * cantidad;
-            costoTotal = costoTotal.toFixed(2);
-            var puntoStr = 0.00;
-            $(this).parent().parent().find('#precioUnitario').val(cu);
-            $(this).parent().parent().find('#unidadMedida').val(um);
-            if ($(this).parent().parent().find('#tipoVenta').is(":checked")) {
-                $(this).parent().parent().find('#ventasGravadas').val(puntoStr);
-                $(this).parent().parent().find('#ventasExentas').val(costoTotal);
-            } else {
-                $(this).parent().parent().find('#ventasGravadas').val(costoTotal);
-                $(this).parent().parent().find('#ventasExentas').val(puntoStr);
-            }
-            cambioTotal();
-        }
-
-    </script>
     @include('comun.select2Jses')
 @endsection
 

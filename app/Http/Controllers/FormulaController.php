@@ -14,6 +14,7 @@ class FormulaController extends Controller
     public function FormulaLista()
     {
         $formulas = Formula::all();
+//        dd($formulas);
         return view('formula.formulaLista')
             ->with(['formulas' => $formulas]);
     }

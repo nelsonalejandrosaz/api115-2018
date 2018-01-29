@@ -45,6 +45,7 @@ class Abono extends Model
         'fecha',
         'detalle',
         'cantidad',
+        'forma_pago_id',
     ];
 
     protected $dates = [

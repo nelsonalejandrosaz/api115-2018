@@ -19,6 +19,8 @@ class CreateProduccionesTable extends Migration
             $table->integer('formula_id')->unsigned();
             $table->float('cantidad');
             $table->date('fecha');
+            $table->integer('lote')->nullable();
+            $table->date('fecha_vencimiento')->nullable();
             $table->string('detalle')->nullable();
             $table->timestamps();
         });

@@ -177,7 +177,7 @@
                                 <td>
                                     <input type="text" class="form-control cantidadCls"
                                            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad_ums}}" disabled>
+                                           id="cantidad" value="{{$salida->cantidad}}" disabled>
                                 </td>
                                 {{--Precio unitario--}}
                                 <td>
@@ -185,7 +185,7 @@
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario_ums,5)}}" disabled>
+                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,5)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}

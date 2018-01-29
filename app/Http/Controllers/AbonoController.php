@@ -27,6 +27,13 @@ class AbonoController extends Controller
             ->with(['venta' => $venta]);
     }
 
+    public function AbonoNuevoSinVenta()
+    {
+        $clientes = Cliente::where('saldo','>',0)->get();
+        return view('abono.abonoNuevoSinDocumento')
+            ->with(['clientes' => $clientes]);
+    }
+
     public function AbonoNuevo($id)
     {
         $venta = Venta::find($id);
@@ -43,15 +50,16 @@ class AbonoController extends Controller
          */
         $this->validate($request, [
             'fecha' => 'required',
-            'cantidad' => 'required'
+            'cantidad' => 'required',
+            'forma_pago_id' => 'required',
         ]);
 
         // Variables
         $venta = Venta::find($id);
         $cliente = Cliente::find($venta->orden_pedido->cliente_id);
         $cantidad = $request->input('cantidad');
-        $venta->saldo = $venta->saldo - $cantidad;
-        $cliente->saldo = $cliente->saldo - $cantidad;
+        $venta->saldo = round($venta->saldo,2) - $cantidad;
+        $cliente->saldo = round($cliente->saldo,2) - $cantidad;
         // Se crea el abono
         $abono = Abono::create([
             'fecha' => $request->input('fecha'),
@@ -59,6 +67,67 @@ class AbonoController extends Controller
             'detalle' => $request->input('detalle'),
             'venta_id' => $venta->id,
             'cliente_id' => $cliente->id,
+        ]);
+        if ($venta->saldo >= 0.00)
+        {
+            $venta->save();
+        } else
+        {
+            $abono->delete();
+            // Mensaje de error
+            session()->flash('mensaje.tipo', 'warning');
+            session()->flash('mensaje.icono', 'fa-close');
+            session()->flash('mensaje.titulo','Upssss');
+            session()->flash('mensaje.contenido', 'El abono es mayor al saldo de la factura!');
+            return redirect()->route('abonoNuevo',['id' => $venta->id]);
+        }
+        if ($cliente->saldo >= 0.00)
+        {
+            $cliente->save();
+        } else
+        {
+            $abono->delete();
+            // Mensaje de error
+            session()->flash('mensaje.tipo', 'warning');
+            session()->flash('mensaje.icono', 'fa-close');
+            session()->flash('mensaje.titulo','Upssss');
+            session()->flash('mensaje.contenido', 'El abono es mayor al saldo de la factura!');
+            return redirect()->route('abonoNuevo',['id' => $venta->id]);
+        }
+        // Mensaje de exito
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El abono fue ingresado correctamente!');
+        return redirect()->route('abonoVer',['id' => $abono->id]);
+    }
+
+    public function AbonoNuevoSinVentaPost(Request $request)
+    {
+        /**
+         * Validacion
+         */
+        $this->validate($request, [
+            'fecha' => 'required',
+            'cantidad' => 'required',
+            'forma_pago_id' => 'required',
+            'cliente_id' => 'required',
+            'venta_id' => 'required',
+        ]);
+
+        // Variables
+        $cliente = Cliente::find($request->input('cliente_id'));
+        $venta = Venta::find($request->input('venta_id'));
+        $cantidad = $request->input('cantidad');
+        $venta->saldo = round($venta->saldo,2) - $cantidad;
+        $cliente->saldo = round($cliente->saldo,2) - $cantidad;
+        // Se crea el abono
+        $abono = Abono::create([
+            'fecha' => $request->input('fecha'),
+            'cantidad' => $cantidad,
+            'detalle' => $request->input('detalle'),
+            'venta_id' => $venta->id,
+            'cliente_id' => $cliente->id,
+            'forma_pago_id' => $request->input('forma_pago_id'),
         ]);
         if ($venta->saldo >= 0.00)
         {

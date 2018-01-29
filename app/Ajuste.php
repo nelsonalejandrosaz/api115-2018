@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $valor_unitario_anterior
  * @property float|null $cantidad_ajuste
  * @property float|null $valor_unitario_ajuste
- * @property float $diferencia_cantidad_ajuste
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Movimiento $movimiento
@@ -37,6 +36,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAjuste($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereValorUnitarioAnterior($value)
  * @mixin \Eloquent
+ * @property float $diferencia_ajuste
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Ajuste whereDiferenciaAjuste($value)
  */
 class Ajuste extends Model
 {
@@ -64,7 +65,7 @@ class Ajuste extends Model
         'valor_unitario_anterior',
         'cantidad_ajuste',
         'valor_unitario_ajuste',
-        'diferencia_cantidad_ajuste',
+        'diferencia_ajuste',
     ];
 
     protected $dates = [
