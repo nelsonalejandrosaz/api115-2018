@@ -106,9 +106,17 @@
 
                         </div>
                         <div class="col-md-6 col-sm-12">
-                            <h4>Control de inventario</h4>
+                            <h4>Datos producto</h4>
                             <br>
 
+                            {{-- Unidad de medida prederteminada --}}
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label"><b>Unidad medida </b></label>
+                                <div class="col-sm-8">
+                                    <input readonly type="text" class="form-control" name="unidad_medida_id"
+                                           value="{{ $producto->unidad_medida->nombre }}">
+                                </div>
+                            </div>
                         </div>
                     </div><!-- /.box-body -->
 

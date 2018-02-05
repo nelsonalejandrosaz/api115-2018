@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Movimiento;
 use App\Producto;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -11,12 +12,18 @@ class InventarioController extends Controller
 {
     public function InventarioLista()
     {
-        $productos = Producto::all();
+        if (Auth::user()->rol->nombre == 'Administrador' || Auth::user()->rol->nombre == 'Bodeguero')
+        {
+            $productos = Producto::all();
+        } else
+        {
+            $productos = Producto::where('codigo','like','PT%')->orWhere('codigo','like','RV%')->get();
+//            dd($productos);
+        }
         foreach ($productos as $producto) {
             $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
             $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
         }
-//        dd($productos[15]);
         return view('inventario.inventarioLista')->with(['productos' => $productos]);
     }
 
@@ -24,9 +31,11 @@ class InventarioController extends Controller
     {
         $producto = Producto::find($request->id);
         $mes_actual = Carbon::now()->format('m');
+        $anio_actual = Carbon::now()->format('Y');
         $mes['inicio'] = $inicio_mes = Carbon::parse('first day of this month')->format('Y-m-d');
         $mes['fin'] = $final_mes = Carbon::parse('last day of this month')->format('Y-m-d');
         $movimientos = $producto->movimientos()
+            ->whereYear('fecha','=',$anio_actual)
             ->whereMonth('fecha','=',$mes_actual)
             ->where('procesado','=',true)
             ->orderBy('fecha_procesado','asc')->get();

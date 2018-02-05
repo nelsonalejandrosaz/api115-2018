@@ -146,7 +146,7 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width:30%">Producto</th>
+                            <th style="width:30%">Código -- Producto</th>
                             <th style="width:20%">Presentación</th>
                             <th style="width:10%">Cantidad</th>
                             <th style="width:10%">Precio unitario</th>
@@ -172,7 +172,7 @@
                                                 <option value="{{ $producto->id }}"
                                                         data-preciounitario="{{ $producto->precio }}"
                                                         data-preciounitarioiva="{{$producto->precio_impuestos}}"
-                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->nombre }}
+                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->codigo }} -- {{ $producto->nombre }}
                                                 </option>
                                             @endif
                                         @endforeach
@@ -183,7 +183,7 @@
                                                 <option value="{{ $producto->id }}"
                                                         data-preciounitario="{{ $producto->precio }}"
                                                         data-preciounitarioiva="{{$producto->precio_impuestos}}"
-                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->nombre }}
+                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->codigo }} -- {{ $producto->nombre }}
                                                     --
                                                     ({{$producto->cantidad_existencia}} {{$producto->unidad_medida->abreviatura}}
                                                     )

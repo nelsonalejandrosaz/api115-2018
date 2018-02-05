@@ -54,13 +54,13 @@ class OrdenPedidoController extends Controller
     public function OrdenPedidoNueva()
     {
         $unidad_medidas = UnidadMedida::all();
-        $productos_todos = Producto::all();
+        $productos_todos = Producto::where('codigo','like','PT%')->orWhere('codigo','like','RV%')->get();
         $productos = [];
-        foreach ($productos_todos as $producto) {
-            if ($producto->precios->first()->precio != 0 ) {
-                array_push($productos, $producto);
-            }
-        }
+//        foreach ($productos_todos as $producto) {
+//            if ($producto->precios->first()->precio != 0 ) {
+//                array_push($productos, $producto);
+//            }
+//        }
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         $condiciones_pago = CondicionPago::all();
