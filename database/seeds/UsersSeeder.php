@@ -19,6 +19,7 @@ class UsersSeeder extends Seeder
             'username' => 'nelsonalejandrosaz',
             'password' => bcrypt('12345'),
             'telefono' => '7789-2352',
+            'ruta_imagen' => 'man.png',
             'rol_id' => '1',
         ]);
         User::create([
@@ -28,6 +29,7 @@ class UsersSeeder extends Seeder
             'username' => 'administrador1',
             'password' => bcrypt('12345'),
             'telefono' => '7777-7777',
+            'ruta_imagen' => 'man.png',
             'rol_id' => '1',
         ]);
         User::create([
@@ -37,16 +39,18 @@ class UsersSeeder extends Seeder
             'username' => 'bodega1',
             'password' => bcrypt('12345'),
             'telefono' => '7777-7777',
-            'rol_id' => '2',
+            'ruta_imagen' => 'man.png',
+            'rol_id' => '3',
         ]);
         User::create([
-            'nombre' => 'Verdedor',
-            'apellido' => 'Verdedor',
-            'email' => 'verdedor@lgl.com',
-            'username' => 'verdedor1',
+            'nombre' => 'Verdedora',
+            'apellido' => 'Verdedora',
+            'email' => 'verdedora@lgl.com',
+            'username' => 'verdedora1',
             'password' => bcrypt('12345'),
             'telefono' => '7777-7777',
-            'rol_id' => '3',
+            'ruta_imagen' => 'girl.png',
+            'rol_id' => '2',
         ]);
     }
 }

@@ -25,7 +25,7 @@
         <div class="col-xs-12">
             <div class="box box-default">
                 <div class="box-header">
-                    <h3 class="box-title">Lista de facturas</h3>
+                    <h3 class="box-title">Lista de producciones</h3>
                     <a href="{{ route('produccionNuevo') }}" class="btn btn-lg btn-primary pull-right"><span class="fa fa-plus"></span> Nuevo</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">

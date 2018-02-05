@@ -43,9 +43,9 @@
                         <tbody>
                         @foreach($ajustes as $ajuste)
                             <tr>
-                                <td>{{ \Carbon\Carbon::parse($ajuste->fechaIngreso)->format('d/m/Y')}}</td>
+                                <td>{{ $ajuste->fecha->format('d-m-Y')  }}</td>
                                 <td>{{$ajuste->detalle}}</td>
-                                <td>{{$ajuste->tipoAjuste->nombre}}</td>
+                                <td>{{$ajuste->tipo_ajuste->nombre}}</td>
                                 <td>{{$ajuste->realizado->nombre}}</td>
                                 <td align="center">
                                     <a href="{{ route('ajusteVer', ['id' => $ajuste->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>

@@ -3,7 +3,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Ingrese el rango de fechas a consultar</h4>
             </div>
             <div class="modal-body">
@@ -12,11 +13,26 @@
                         {{ csrf_field() }}
 
                         {{-- Fecha --}}
-                        <div class="col-sm-6">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="control-label"><b>Fecha fin:</b></label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-default pull-right" id="daterange-btn">
+                                        <span>
+                                          <i class="fa fa-calendar"></i> Elija
+                                        </span>
+                                        <i class="fa fa-caret-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Fecha --}}
+                        <div class="col-sm-5">
                             <div class="form-group">
                                 <label class="control-label"><b>Fecha inicio:</b></label>
                                 <div class="input-group">
-                                    <input required type="date" class="form-control" name="fecha_inicio">
+                                    <input readonly required type="date" class="form-control" name="fecha_inicio" id="fecha-inicio">
 
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
@@ -26,11 +42,11 @@
                         </div>
 
                         {{-- Fecha --}}
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <div class="form-group">
                                 <label class="control-label"><b>Fecha fin:</b></label>
                                 <div class="input-group">
-                                    <input required type="date" class="form-control" name="fecha_fin">
+                                    <input readonly required type="date" class="form-control" name="fecha_fin" id="fecha-fin">
                                     <div class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                     </div>

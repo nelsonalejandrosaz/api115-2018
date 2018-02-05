@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Ajuste;
 use App\Cliente;
 use App\EstadoOrdenPedido;
 use App\EstadoVenta;
+use App\Movimiento;
 use App\Municipio;
 use App\OrdenPedido;
 use App\Producto;
+use App\TipoAjuste;
 use App\TipoDocumento;
+use App\TipoMovimiento;
 use App\Venta;
+use Auth;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use NumeroALetras;
 
@@ -22,9 +28,29 @@ class VentaController extends Controller
         return view('venta.ventaLista')->with(['ordenesPedidos' => $ordenesPedidoProcesadas]);
     }
 
-    public function VentaFacturaLista()
+    public function VentaLista($filtro)
     {
-        $ventas = Venta::whereTipoDocumentoId(1)->get();
+        switch ($filtro)
+        {
+            case 'todo':
+                $ventas = Venta::where('estado_venta_id', '=', '1')->get();
+                break;
+            case 'factura':
+                $ventas = Venta::where([
+                    ['tipo_documento_id', '=', '1'],
+                    ['estado_venta_id', '<=', '2'],
+                ])->get();//whereTipoDocumentoId(1)->get();//->where([['estado_venta_id','=','1'],['estado_venta_id','=','2']])->get();
+                break;
+            case 'ccf':
+                $ventas = Venta::where([
+                    ['tipo_documento_id', '=', '1'],
+                    ['estado_venta_id', '<=', '2'],
+                ])->get();
+                break;
+            case 'anulada':
+                $ventas = Venta::where('estado_venta_id', '=', '3')->get();
+                break;
+        }
         return view('venta.ventaFacturaLista')->with(['ventas' => $ventas]);
     }
 
@@ -82,20 +108,18 @@ class VentaController extends Controller
         //
         $orden_pedido->estado_id = $estado_orden_pedido->id;
         $orden_pedido->save();
-        if ($venta->tipo_documento->codigo == 'FAC')
-        {
+        if ($venta->tipo_documento->codigo == 'FAC') {
             // Mensaje de exito al guardar
             session()->flash('mensaje.tipo', 'success');
             session()->flash('mensaje.icono', 'fa-check');
             session()->flash('mensaje.contenido', 'La factura fue procesada correctamente!');
-            return redirect()->route('ventaVerFactura',['id' => $venta->id]);
-        } else
-        {
+            return redirect()->route('ventaVerFactura', ['id' => $venta->id]);
+        } else {
             // Mensaje de exito al guardar
             session()->flash('mensaje.tipo', 'success');
             session()->flash('mensaje.icono', 'fa-check');
             session()->flash('mensaje.contenido', 'El crédito fiscal fue procesada correctamente!');
-            return redirect()->route('ventaVerCFF',['id' => $venta->id]);
+            return redirect()->route('ventaVerCFF', ['id' => $venta->id]);
         }
     }
 
@@ -105,8 +129,7 @@ class VentaController extends Controller
         $venta = Venta::find($id);
         $productos = Producto::all();
         $salidas = $venta->orden_pedido->salidas;
-        foreach ($salidas as $salida)
-        {
+        foreach ($salidas as $salida) {
             $salida->precio_unitario = $salida->precio_unitario * 1.13;
             $salida->venta_gravada = $salida->venta_gravada * 1.13;
             $salida->venta_exenta = $salida->venta_exenta * 1.13;
@@ -138,18 +161,17 @@ class VentaController extends Controller
     {
         $venta = Venta::find($id);
         $venta->orden_pedido->vendedor->nombreCompleto = $venta->orden_pedido->vendedor->nombre . " " . $venta->orden_pedido->vendedor->apellido;
-        foreach ($venta->orden_pedido->salidas as $salida)
-        {
-            $salida->precioUnitario = $salida->precioUnitario * 1.13;
-            $salida->ventaGravada = $salida->ventaGravada * 1.13;
-            $salida->ventaExenta = $salida->ventaExenta * 1.13;
+        foreach ($venta->orden_pedido->salidas as $salida) {
+            $salida->precio_unitario = $salida->precio_unitario * 1.13;
+            $salida->venta_gravada = $salida->venta_gravada * 1.13;
+            $salida->venta_exenta = $salida->venta_exenta * 1.13;
         }
         $venta->orden_pedido->ventas_exentas = $venta->orden_pedido->ventas_exentas * 1.13;
         $venta->orden_pedido->ventas_gravadas = $venta->orden_pedido->ventas_gravadas * 1.13;
         $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
-        $venta_total = number_format($venta->orden_pedido->venta_total,2);
-        $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($venta_total,'dolares','centavos');
-        $pdf = PDF::loadView('pdf.facturaPDF',compact('venta'));
+        $venta_total = number_format($venta->orden_pedido->venta_total, 2);
+        $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($venta_total, 'dolares', 'centavos');
+        $pdf = PDF::loadView('pdf.facturaPDF', compact('venta'));
         $nombre_factura = "Factura numero " . $venta->numero . ".pdf";
         return $pdf->stream($nombre_factura);
     }
@@ -160,10 +182,71 @@ class VentaController extends Controller
         $venta->orden_pedido->vendedor->nombreCompleto = $venta->orden_pedido->vendedor->nombre . " " . $venta->orden_pedido->vendedor->apellido;
         $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * 0.13;
         $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
-        $ventaTotal = number_format($venta->orden_pedido->venta_total,2);
-        $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
-        $pdf = PDF::loadView('pdf.creditoFiscalPDF',compact('venta'));
+        $ventaTotal = number_format($venta->orden_pedido->venta_total, 2);
+        $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($ventaTotal, 'dolares', 'centavos');
+        $pdf = PDF::loadView('pdf.creditoFiscalPDF', compact('venta'));
         $nombre_factura = "CCF numero " . $venta->numero . ".pdf";
         return $pdf->stream($nombre_factura);
+    }
+
+    public function VentaAnular($id)
+    {
+        $venta = Venta::find($id);
+        $salidas = $venta->orden_pedido->salidas;
+        foreach ($salidas as $salida)
+        {
+            // Variables
+            // Se carga el producto
+            $producto = Producto::find($salida->movimiento->producto_id);
+            $cantidad_ajuste = $producto->cantidad_existencia + $salida->movimiento->cantidad;
+            $diferencia_ajuste = $salida->movimiento->cantidad;
+            $tipo_ajuste = TipoAjuste::whereCodigo('ENTANU')->first();
+
+            // Se crea el ajuste de entrada
+            $ajuste = Ajuste::create([
+                'tipo_ajuste_id' => $tipo_ajuste->id,
+                'detalle' => 'Ajuste de entrada por anulación de documento de venta',
+                'fecha' => Carbon::now(),
+                'cantidad_ajuste' => $cantidad_ajuste,
+                'valor_unitario_ajuste' => $producto->costo,
+                'realizado_id' => Auth::user()->id,
+                'cantidad_anterior' => $producto->cantidad_existencia,
+                'valor_unitario_anterior' => $producto->costo,
+                'diferencia_ajuste' => $diferencia_ajuste,
+            ]);
+
+            $tipo_movimiento = TipoMovimiento::whereCodigo('AJSE')->first();
+            // Se crea el movimiento
+            $movimiento = Movimiento::create([
+                'producto_id' => $producto->id,
+                'tipo_movimiento_id' => $tipo_movimiento->id,
+                'ajuste_id' => $ajuste->id,
+                'fecha' => Carbon::now(),
+                'detalle' => 'Ajuste de entrada por anulación de documento venta n°: ' . $venta->numero,
+                'cantidad' => $diferencia_ajuste,
+                'costo_unitario' => $producto->costo,
+                'costo_total' => $cantidad_ajuste * $producto->costo,
+                'cantidad_existencia' => $cantidad_ajuste,
+                'costo_unitario_existencia' => $producto->costo,
+                'costo_total_existencia' => $cantidad_ajuste * $producto->costo,
+                'fecha_procesado' => Carbon::now(),
+                'procesado' => true,
+            ]);
+            // Se actualiza la cantidad de producto despues de la entrada
+            $producto->cantidad_existencia = $movimiento->cantidad_existencia;
+            $producto->save();
+        }
+        // Se actualiza el estado de la venta y se resta el saldo al cliente
+        $estado_venta = EstadoVenta::whereCodigo('AN')->first();
+        $venta->estado_venta_id = $estado_venta->id;
+        $venta->save();
+        $cliente = Cliente::find($venta->orden_pedido->cliente_id);
+        $cliente->saldo = $cliente->saldo - $venta->saldo;
+        $cliente->save();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El documento de la venta fue anulada correctamente!');
+        return redirect()->route('ventaLista',['filtro' => 'todo']);
     }
 }

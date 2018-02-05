@@ -51,12 +51,71 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Producto</b></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="formula_id" onchange="cambioProducto()" id="productoID">
+                            <select class="form-control select2" name="formula_id" onchange="cambioProducto()"
+                                    id="productoID">
                                 <option value="" selected disabled>Seleccione el producto a producir</option>
                                 @foreach($formulas as $formula)
-                                    <option value="{{ $formula->id }}" data-unidadmedida="{{$formula->producto->unidad_medida->nombre}}">{{ $formula->producto->nombre }}</option>
+                                    <option value="{{ $formula->id }}"
+                                            data-unidadmedida="{{$formula->producto->unidad_medida->nombre}}"
+                                            data-factor="{{$formula->producto->factor_volumen}}">{{ $formula->producto->nombre }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+
+                    {{-- Peso volumen --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Peso unidad de volumen</label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" class="form-control" placeholder="Seleccione el producto" name=""
+                                   value="" id="factorVolumenID">
+                        </div>
+                    </div>
+
+                    {{-- Registrado por --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Registrado por</b></label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="{{Auth::user()->nombre}} {{Auth::user()->apellido}}">
+                        </div>
+                    </div>
+
+                    {{-- Fabricado por --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Fabricado por</b></label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2" name="fabricado_id[]" multiple>
+                                <option value="">Nombre bodeguero 1</option>
+                                <option value="">Nombre bodeguero 2</option>
+                                <option value="">Nombre bodeguero 3</option>
+                                <option value="">Nombre bodeguero 4</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <h4>Cantidad y detalle</h4>
+                    <br>
+
+                    {{-- Cantidad produccion --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Cantidad a producir</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0.00" step="any" class="form-control" placeholder="0"
+                                   name="cantidad"
+                                   value="{{ old('cantidad') }}">
+                        </div>
+                    </div>
+
+                    {{-- Unidad de medida --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Unidad de producción</b></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="Producto"
+                                   value="Seleccione el producto" disabled id="unidadMedidalbl">
                         </div>
                     </div>
 
@@ -78,53 +137,6 @@
                         </div>
                     </div>
 
-                    {{-- Registrado por --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Registrado por</b></label>
-                        <div class="col-sm-8">
-                            <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
-                                   value="{{Auth::user()->nombre}} {{Auth::user()->apellido}}">
-                        </div>
-                    </div>
-
-                    {{-- Fabricado por --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Fabricado por</b></label>
-                        <div class="col-sm-8">
-                            <select class="form-control select2" name="fabricado_id[]" multiple>
-                                <option value="" >Nombre bodeguero 1</option>
-                                <option value="" >Nombre bodeguero 2</option>
-                                <option value="" >Nombre bodeguero 3</option>
-                                <option value="" >Nombre bodeguero 4</option>
-                            </select>
-                        </div>
-                    </div>
-
-
-
-                </div>
-                <div class="col-md-6 col-sm-12">
-                    <h4>Cantidad y detalle</h4>
-                    <br>
-
-                    {{-- Cantidad produccion --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Cantidad a producir</label>
-                        <div class="col-sm-8">
-                            <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0" name="cantidad"
-                                   value="{{ old('cantidad') }}">
-                        </div>
-                    </div>
-
-                    {{-- Unidad de medida --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Unidad de producción</b></label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto"
-                                   value="Seleccione el producto" disabled id="unidadMedidalbl">
-                        </div>
-                    </div>
-
                     {{-- Detalle --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Detalle</label>
@@ -137,8 +149,11 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-gears"></span> Producir</button>
+                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span
+                            class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-gears"></span>
+                    Producir
+                </button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -150,8 +165,7 @@
         function cambioPrecio() {
             var costo = $('#costo').val();
             var precio = $('#precio').val();
-            if ($('#costo').val().length <= 0)
-            {
+            if ($('#costo').val().length <= 0) {
                 alert("Debe rellenar el campo costo antes de asignar precios");
                 $('#precio').val('');
             }
@@ -162,20 +176,24 @@
         function cambioMargen() {
             var costo = $('#costo').val();
             var margen = $('#margenGanancia').val();
-            if ($('#costo').val().length <= 0)
-            {
+            if ($('#costo').val().length <= 0) {
                 alert("Debe rellenar el campo costo antes de asignar precios");
                 $('#margenGanancia').val('');
             }
-            precio = costo * (1 + (margen/100));
+            precio = costo * (1 + (margen / 100));
             $('#precio').val(precio.toFixed(2));
         }
 
         function cambioProducto() {
-            var productoId = $('#productoID').val();
-            console.log(productoId);
-            var unidadMedida = $('#productoID').find('option[value="' + productoId + '"]').data('unidadmedida');
+            let productoId = $('#productoID').val();
+            let unidadMedida = $('#productoID').find('option[value="' + productoId + '"]').data('unidadmedida');
+            let factor = $('#productoID').find('option[value="' + productoId + '"]').data('factor');
             $('#unidadMedidalbl').val(unidadMedida);
+            let factor_unidad = 'No hay peso para este producto';
+            if (factor.length !== 0) {
+                factor_unidad = '1 Gl = ' + factor + ' Kg';
+            }
+            $('#factorVolumenID').val(factor_unidad);
         }
     </script>
     @include('comun.select2Jses')

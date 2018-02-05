@@ -33,6 +33,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('adminlte::home');
+        $rol = \Auth::user()->rol->nombre;
+        if ($rol == "Administrador")
+        {
+            return redirect()->route('administradorInicio');
+        }
+        elseif ($rol == "Vendedor")
+        {
+            return redirect()->route('vendedorInicio');
+        }
+        else
+        {
+            return redirect()->route('bodegaInicio');
+        }
+//        return view('adminlte::home');
     }
 }

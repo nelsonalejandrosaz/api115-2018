@@ -21,9 +21,9 @@ class CreateVentasTable extends Migration
             $table->string('numero')->nullable();
             $table->date('fecha');
             $table->integer('vendedor_id')->unsigned();
-            $table->float('venta_total_con_impuestos',8,4)->nullable();
-            $table->string('ruta_archivo')->default('sin-documento.jpg');
-            $table->float('saldo',8,4)->default(0.00);
+            $table->float('venta_total_con_impuestos',12,4)->nullable();
+            $table->string('ruta_archivo')->default('sindocumento.jpg');
+            $table->float('saldo',12,4)->default(0.00);
             $table->timestamps();
         });
     }

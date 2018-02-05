@@ -20,6 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas de producto
      */
     Route::get('/producto','ProductoController@ProductoLista')->name('productoLista');
+    Route::get('/producto/desactivado','ProductoController@ProductoDesactivadoLista')->name('productoDesactivadoLista');
     Route::get('/producto/nuevo','ProductoController@ProductoNuevo')->name('productoNuevo');
     Route::post('/producto/nuevo','ProductoController@ProductoNuevoPost')->name('productoNuevoPost');
     Route::get('/producto/{id}','ProductoController@ProductoVer')->name('productoVer');
@@ -29,6 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/producto/{id}','ProductoController@ProductoEditarPut')->name('productoEditarPut');
     Route::delete('/producto/{id}','ProductoController@ProductoEliminar')->name('productoEliminar');
     Route::post('/producto/precio/{id}','ProductoController@ProductoPrecioNuevoPost')->name('productoPrecioNuevoPost');
+    Route::delete('/producto/precio/{id}','ProductoController@ProductoPrecioEliminar')->name('productoPrecioEliminar');
 
     /**
      * Rutas de categoria
@@ -58,6 +60,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/cliente','ClienteController@ClienteLista')->name('clienteLista');
     Route::get('/cliente/nuevo','ClienteController@ClienteNuevo')->name('clienteNuevo');
     Route::post('/cliente/nuevo','ClienteController@ClienteNuevoPost')->name('clienteNuevoPost');
+    Route::get('/cliente/saldo','ClienteController@ClienteSaldoLista')->name('clienteSaldoLista');
+    Route::get('/cliente/saldo/{id}','ClienteController@ClienteSaldoVer')->name('clienteSaldoVer');
     Route::get('/cliente/{id}','ClienteController@ClienteVer')->name('clienteVer');
     Route::get('/cliente/{id}/editar','ClienteController@ClienteEditar')->name('clienteEditar');
     Route::put('/cliente/{id}','ClienteController@ClienteEditarPut')->name('clienteEditarPut');
@@ -70,6 +74,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/compra/nueva','CompraController@CompraNueva')->name('compraNueva');
     Route::post('/compra/nueva','CompraController@CompraNuevaPost')->name('compraNuevaPost');
     Route::get('/compra/{id}','CompraController@CompraVer')->name('compraVer');
+    Route::post('/compra/{id}','CompraController@CompraProcesar')->name('compraProcesar');
+    Route::delete('/compra/{id}','CompraController@CompraEliminar')->name('compraEliminar');
 
     /**
      * Rutas Orden de pedido
@@ -80,6 +86,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/ordenPedido/nueva','OrdenPedidoController@OrdenPedidoNuevaPost')->name('ordenPedidoNuevaPost');
     Route::put('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoBodegaPost')->name('ordenPedidoBodegaPost');
     Route::get('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
+    Route::delete('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoEliminar')->name('ordenPedidoEliminar');
     Route::get('/ordenPedido/{id}/bodega','OrdenPedidoController@OrdenPedidoVerBodega')->name('ordenPedidoVerBodega');
 
     /**
@@ -96,12 +103,13 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas Ventas
      */
     Route::get('/venta/ordenes','VentaController@VentaOrdenesLista')->name('ventaOrdenesLista');
-    Route::get('/venta/facturas','VentaController@VentaFacturaLista')->name('ventaFacturaLista');
+    Route::get('/venta/{filtro}','VentaController@VentaLista')->name('ventaLista');
     Route::get('/venta/ccf','VentaController@VentaCCFLista')->name('ventaCCFLista');
     Route::get('/venta/nueva/{id}','VentaController@VentaNueva')->name('ventaNueva');
     Route::post('/venta/nueva/{id}','VentaController@VentaNuevaPost')->name('ventaNuevaPost');
     Route::get('/venta/factura/{id}','VentaController@VentaVerFactura')->name('ventaVerFactura');
     Route::get('/venta/ccf/{id}','VentaController@VentaVerCCF')->name('ventaVerCFF');
+    Route::delete('/venta/{id}','VentaController@VentaAnular')->name('ventaAnular');
 
     /**
      * Rutas de inventario
@@ -153,6 +161,8 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('/configuracion/producto/cvs','ConfiguracionController@ImportarDatos')->name('importarDatos');
     Route::post('/configuracion/producto/cvs','ConfiguracionController@ImportarDatosPost')->name('importarDatosPost');
+    Route::get('/configuracion/ordenes/cvs','ConfiguracionController@ImportarOrdenes')->name('importarOrdenes');
+    Route::post('/configuracion/ordenes/cvs','ConfiguracionController@ImportarOrdenesPost')->name('importarOrdenesPost');
     Route::get('/conversionUnidades','ConfiguracionController@ConversionUnidadesLista')->name('conversionUnidadesLista');
     Route::get('/conversionUnidades/nuevo','ConfiguracionController@ConversionUnidadesNuevo')->name('conversionUnidadesNuevo');
     Route::post('/conversionUnidades/nuevo','ConfiguracionController@ConversionUnidadesNuevoPost')->name('conversionUnidadesNuevoPost');
@@ -161,7 +171,7 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas de pruebas
      */
-    Route::get('dev/pruebaFactura','DevController@select2');
+    Route::get('dev/p','DevController@select2');
     Route::get('dev/unidadesMedidaJSON','DevController@UnidadesMedidaJSON')->name('unidadesMedidaJSON');
     Route::get('dev/unidadesConversionJSON','DevController@UnidadesConversionJSON')->name('unidadesMedidaJSON');
     Route::get('dev/factorJSON','DevController@FactorJSON')->name('factorJSON');
@@ -171,5 +181,12 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('api/precios/{id}','APIController@ProductosPresentacionesJSON')->name('preciosProducto');
     Route::get('api/cliente/{id}','APIController@ClientesVentasPendientesJSON')->name('clienteVentasPendientes');
+
+    /**
+     * Rutas de inicio
+     */
+    Route::get('/administrador','InicioController@AdministradorInicio')->name('administradorInicio');
+    Route::get('/vendedor','InicioController@AdministradorInicio')->name('vendedorInicio');
+    Route::get('/bodega','InicioController@AdministradorInicio')->name('bodegaInicio');
 
 });

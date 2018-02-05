@@ -9,7 +9,8 @@
     <div id="app" v-cloak>
         <div class="login-box">
             <div class="login-logo">
-                <a href=""><b>LGL</b></a>
+                {{--<a href=""><b>LGL</b></a>--}}
+                <img src="{{ asset('img/437.png') }}" class="">
                 <br>
                 <h3>Facturación e inventario</h3>
             </div><!-- /.login-logo -->

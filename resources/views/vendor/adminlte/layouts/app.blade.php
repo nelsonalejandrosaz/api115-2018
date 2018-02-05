@@ -29,8 +29,12 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="skin-yellow sidebar-mini">
-<div id="app" v-cloak>
+@if(\App\Configuracion::find(1)->color_tema != null)
+    <body class="{{ \App\Configuracion::find(1)->color_tema }} fixed">
+@else
+    <body class="skin-purple fixed">
+@endif
+    <div id="app" v-cloak>
     <div class="wrapper">
 
     @include('adminlte::layouts.partials.mainheader')

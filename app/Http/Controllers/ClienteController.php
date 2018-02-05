@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\EstadoVenta;
 use App\Municipio;
 use App\User;
 use Illuminate\Http\Request;
@@ -112,5 +113,32 @@ class ClienteController extends Controller
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El cliente fue eliminado correctamente!');
         return redirect()->route('clienteLista');
+    }
+
+    public function ClienteSaldoLista()
+    {
+        $clientes = Cliente::where('saldo','>',0)->get();
+        $estado_venta = EstadoVenta::whereCodigo('PG')->first();
+        $documentos_pendientes = 0;
+        foreach ($clientes as $cliente)
+        {
+            $ordenes = $cliente->ordenes_pedidos;
+            foreach ($ordenes as $orden)
+            {
+                if ($orden->venta->estado_venta_id = $estado_venta->id)
+                {
+                    $documentos_pendientes++;
+                }
+            }
+            $cliente->documentos_pendientes = $documentos_pendientes;
+            $documentos_pendientes = 0;
+        }
+        return view('cliente.clienteSaldoLista')->with(['clientes' => $clientes]);
+    }
+
+    public function ClienteSaldoVer($id)
+    {
+        $cliente = Cliente::find($id);
+        return view('cliente.clienteSaldoVer')->with(['cliente' => $cliente]);
     }
 }

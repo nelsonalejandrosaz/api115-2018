@@ -20,6 +20,7 @@
 @section('main-content')
 
     @include('partials.alertas')
+    @include('partials.modalEliminar')
 
     {{-- div para error de suma de porcentaje --}}
     <div id="divErrorSuma" hidden class="alert alert-danger alert-dismissable">
@@ -31,7 +32,7 @@
     <!-- Form de nuevo proveedor -->
     <div class="box box-default">
         <div class="box-header with-border">
-            <h3 class="box-title">Detalle de formula</h3>
+            <h3 class="box-title">Precios asignados</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
         <form id="formDatos" class="form-horizontal" action="{{ route('productoPrecioPost',['id' => $producto->id]) }}" method="POST">
@@ -62,6 +63,7 @@
 
                 <div class="col-md-6">
 
+                    @if(Auth::user()->rol->nombre == 'Administrador')
                     {{-- Costo--}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Costo</b></label>
@@ -73,6 +75,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     {{-- Cantidad actual --}}
                     <div class="form-group">
@@ -108,15 +111,17 @@
                             <th style="width: 15%">Precio</th>
                             <th style="width: 15%">Factor</th>
                             <th style="width: 5%">
+                                @if(Auth::user()->rol->nombre == 'Administrador')
                                 <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
                                         type="button">
                                     <span class="fa fa-plus"></span>
                                 </button>
+                                @endif
                             </th>
                         </tr>
 
                         @php($i = 1)
-                        @foreach($producto->precios()->oldest()->get() as $precio)
+                        @foreach($producto->precios as $precio)
                         <tr>
                             <td style="vertical-align: middle">
                                 Precio {{$i}}
@@ -141,55 +146,27 @@
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input required type="number" min="0.00" step="0.01" class="form-control cant" name="precio[]"
+                                    <input required type="number" min="0.00" step="any" class="form-control cant" name="precio[]"
                                            value="{{$precio->precio}}">
                                 </div>
                             </td>
                             <td>
-                                <input required type="number" min="0.00" step="0.001" class="form-control cant" name="factor[]"
+                                <input required type="number" min="0.00" step="any" class="form-control factor" name="factor[]"
                                        value="{{$precio->factor}}">
                             </td>
                             <td align="center">
-                                @if($i > 1)
-                                    <button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>
+                                @if( Auth::user()->rol->nombre == 'Administrador')
+                                    {{--<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>--}}
+                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#modalEliminar"
+                                            data-id="{{ $precio->id }}" data-ruta="producto">
+                                        <span class="fa fa-remove"></span>
+                                    </button>
                                 @endif
                             </td>
                         </tr>
                         @php($i++)
                         @endforeach
-
-                        {{--<tr>--}}
-                            {{--<td style="vertical-align: middle">--}}
-                                {{--Precio 1--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--<input type="text" class="form-control" name="presentacion[]" placeholder="ej. Tarro de 1/2 Kg">--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--<select style="width: 100%" class="form-control select2" name="unidad_medida_id[]">--}}
-                                    {{--<option value="" selected disabled>Seleccione una opción</option>--}}
-                                    {{--@foreach($unidad_medidas as $unidad_medida)--}}
-                                        {{--<option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}--}}
-                                            {{--- {{ $unidad_medida->abreviatura }}</option>--}}
-                                    {{--@endforeach--}}
-                                {{--</select>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--<div class="input-group">--}}
-                                    {{--<span class="input-group-addon">$</span>--}}
-                                    {{--<input required type="number" min="0.00" step="0.01" class="form-control cant" placeholder="0.00" name="precio[]"--}}
-                                           {{--value="">--}}
-                                {{--</div>--}}
-                            {{--</td>--}}
-                            {{--<td>--}}
-                                {{--<input required type="number" min="0.00" step="0.001" class="form-control cant" placeholder="0.00" name="factor[]"--}}
-                                       {{--value="">--}}
-                            {{--</td>--}}
-                            {{--<td align="center">--}}
-
-                            {{--</td>--}}
-                        {{--</tr>--}}
-
                     </table>
 
                 </div>
@@ -198,9 +175,11 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
+                @if(Auth::user()->rol->nombre == 'Administrador')
                 <button type="button" onclick="verificarSuma()" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
                 </button>
+                @endif
             </div>
         </form>
     </div><!-- /.box -->
@@ -213,9 +192,23 @@
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
-            $("body").on("click", ".btn-danger", funcionEliminarProducto);
+//            $("body").on("click", ".btn-danger", funcionEliminarProducto);
             selecionarValor();
             calcularTotal();
+
+            $('#modalEliminar').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var nombreObj = button.data('objeto'); // Extract info from data-* attributes
+                var precio_id = button.data('id');
+                var ruta = '/producto/precio/' + precio_id;
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                var modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#mensaje01').text('Realmente desea eliminar el precio');
+                modal.find('#mensaje02').text('Realmente desea eliminar el precio');
+                modal.find('#myform').attr("action", ruta);
+            });
+
         }
 
         function selecionarValor() {
@@ -223,8 +216,12 @@
                 $(this).select();
             });
             $(".cant").focusout(function () {
-                var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
-                $(this).val(numeroDato.toFixed(2));
+                let numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroDato.toFixed(4));
+            });
+            $(".factor").focusout(function () {
+                let numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroDato.toFixed(4));
             });
         }
 
@@ -299,9 +296,6 @@
         }
 
         function funcionEliminarProducto() {
-            // $(this).remove().end();
-            // $(this).closest('tr').remove();
-            // console.log($(this).parent().parent());
             $(this).parent().parent().remove();
             calcularTotal();
         }
@@ -317,7 +311,7 @@
                 porcentaje = parseFloat(porcentajes[i].value);
                 totalPorcentaje = totalPorcentaje + porcentaje;
             }
-            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(2));
+            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(3));
             // console.log(totalPorcentaje);
         }
 

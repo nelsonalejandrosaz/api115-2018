@@ -34,13 +34,15 @@
                 <div class="col-md-6 col-sm-12">
                     <h4>Producto</h4>
                     <br>
+
                     {{-- Fecha --}}
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Fecha ajuste:</b></label>
                         <div class="col-md-9 ">
-                            <input disabled type="date" class="form-control" name="fechaIngreso" value="{{$ajuste->fechaIngreso}}">
+                            <input disabled type="date" class="form-control" name="fecha" value="{{$ajuste->fecha->format('Y-m-d')}}">
                         </div>
                     </div>
+
                     {{-- Producto --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label"><b>Producto</b></label>
@@ -49,12 +51,13 @@
                                 <option value="" selected disabled>Seleccione un producto</option>
                                 @foreach($productos as $producto)
                                     @if($producto->id == $ajuste->movimiento->producto_id)
-                                    <option selected value="{{ $producto->id }}" data-vu="{{ $producto->precioCompra }}" data-ca="{{ $producto->cantidad }}">{{ $producto->nombre }}</option>
+                                    <option selected value="{{ $producto->id }}" data-vu="{{ $producto->costo }}" data-ca="{{ $producto->cantidad }}">{{ $producto->codigo }} -- {{ $producto->nombre }}</option>
                                     @endif
                                 @endforeach
                             </select>
                         </div>
                     </div>
+
                     {{-- Tipo de ajuste --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label"><b>Tipo</b></label>
@@ -93,7 +96,7 @@
                     <div class="form-group">
                         <label class="col-md-4 col-sm-2 control-label">Cantidad anterior</label>
                         <div class="col-md-8 col-sm-10">
-                            <input type="number" min="0" class="form-control" placeholder="0" name="cantidadAnterior" id="cantidadID" disabled value="{{$ajuste->cantidadAnterior}}">
+                            <input type="number" min="0" class="form-control" placeholder="0" name="cantidadAnterior" id="cantidadID" disabled value="{{$ajuste->cantidad_anterior}}">
                         </div>
                     </div>
                     {{-- Valor unitario Actual --}}
@@ -102,7 +105,7 @@
                         <div class="col-md-8 col-sm-10">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input disabled type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="valorUnitarioAnterior" id="valorUnitarioID" disabled value="{{$ajuste->valorUnitarioAnterior}}">
+                                <input readonly type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="valorUnitarioAnterior" id="valorUnitarioID" value="{{ number_format($ajuste->valor_unitario_anterior,2) }}">
                             </div>
                         </div>
                     </div>
@@ -110,7 +113,7 @@
                     <div class="form-group">
                         <label class="col-md-4 col-sm-2 control-label"><b>Cantidad ajuste</b></label>
                         <div class="col-md-8 col-sm-10">
-                            <input disabled type="number" min="0" class="form-control" placeholder="0" name="cantidadAjuste" value="{{$ajuste->cantidadAjuste}}">
+                            <input disabled type="number" min="0" class="form-control" placeholder="0" name="cantidadAjuste" value="{{$ajuste->cantidad_ajuste}}">
                         </div>
                     </div>
                     {{-- Valor unitario ajuste --}}
@@ -119,7 +122,7 @@
                         <div class="col-md-8 col-sm-10">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input disabled type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="valorUnitarioAjuste" value="{{$ajuste->valorUnitarioAjuste}}">
+                                <input disabled type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="valorUnitarioAjuste" value="{{ number_format($ajuste->valor_unitario_ajuste,2) }}">
                             </div>
                         </div>
                     </div>
@@ -128,7 +131,7 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ajusteLista') }}" class="btn btn-lg btn-default">Ver lista</a>
+                <a href="{{ route('ajusteLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
             </div>
         </form>
     </div><!-- /.box -->

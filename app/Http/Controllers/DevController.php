@@ -12,7 +12,7 @@ class DevController extends Controller
 {
     public function select2()
     {
-        return view('dev.prueba');
+        return view('configuracion.pruebas');
     }
 
     public function UnidadesMedidaJSON(Request $request)

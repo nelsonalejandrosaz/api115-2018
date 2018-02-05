@@ -223,7 +223,7 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ventaFacturaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
+                <a href="{{ route('ventaLista',['filtro' => 'todo']) }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
                 <a href="{{ route('facturaPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-info pull-right"><span class="fa fa-print"></span> Imprimir factura</a>
             </div>
         </form>

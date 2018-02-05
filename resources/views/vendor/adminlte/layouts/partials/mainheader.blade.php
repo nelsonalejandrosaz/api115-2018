@@ -2,7 +2,7 @@
 <header class="main-header">
 
     <!-- Logo -->
-    <a href="{{ url('/home') }}" class="logo">
+    <a href="{{ url('/home') }}" class="logo" style="height: 52px">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>LGL</b></span>
         <!-- logo for regular state and mobile devices -->
@@ -120,14 +120,14 @@
                         <!-- Menu Toggle Button -->
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <!-- The user image in the navbar-->
-                            <img src="{{ Gravatar::get($user->email) }}" class="user-image" alt="User Image"/>
+                            <img src="{{ Storage::url(Auth::user()->ruta_imagen) }}" class="user-image" alt="User Image"/>
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
                             <span class="hidden-xs">{{ Auth::user()->nombre }}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- The user image in the menu -->
                             <li class="user-header">
-                                <img src="{{ Gravatar::get($user->email) }}" class="img-circle" alt="User Image" />
+                                <img src="{{ Storage::url(Auth::user()->ruta_imagen) }}" class="img-circle" alt="User Image" />
                                 <p>
                                     {{ Auth::user()->nombre }}
                                     <small>{{ Auth::user()->username }}</small>

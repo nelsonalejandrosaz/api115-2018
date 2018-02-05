@@ -24,10 +24,10 @@ class CreateOrdenPedidosTable extends Migration
             $table->integer('condicion_pago_id')->unsigned()->nullable();
             $table->integer('vendedor_id')->unsigned();
             $table->integer('bodega_id')->unsigned()->nullable();
-            $table->float('ventas_exentas',8,4)->nullable()->default(0.00);
-            $table->float('ventas_gravadas',8,4)->nullable();
-            $table->float('venta_total',8,4)->nullable();
-            $table->string('ruta_archivo')->default('sin-documento.jpg');
+            $table->float('ventas_exentas',12,4)->nullable()->default(0.00);
+            $table->float('ventas_gravadas',12,4)->nullable()->default(0.00);
+            $table->float('venta_total',12,4)->nullable();
+            $table->string('ruta_archivo')->default('sindocumento.jpg');
             $table->integer('estado_id')->default(0);
             $table->timestamps();
         });

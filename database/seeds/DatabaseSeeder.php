@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(EstadosOrdenSeeder::class);
         $this->call(EstadosVentaSeeder::class);
         $this->call(CondicionesPagoSeeder::class);
+        $this->call(ConfiguracionesSeeder::class);
 
 //        $this->call(CategoriasSeeder::class);
 //        $this->call(ClientesSeeder::class);

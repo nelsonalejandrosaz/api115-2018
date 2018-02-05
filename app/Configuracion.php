@@ -4,11 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * App\Configuracion
- *
- * @mixin \Eloquent
- */
 class Configuracion extends Model
 {
     protected $fillable = [
@@ -16,4 +11,6 @@ class Configuracion extends Model
         'comisiones',
         'color_tema',
     ];
+
+    protected $table = 'configuraciones';
 }

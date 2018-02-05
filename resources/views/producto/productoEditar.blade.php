@@ -42,7 +42,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Codigo del producto</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" name="codigo" value="{{$producto->codigo}}">
+                            <input readonly type="text" class="form-control" name="codigo" value="{{$producto->codigo}}">
                         </div>
                     </div>
 
@@ -54,11 +54,11 @@
                         </div>
                     </div>
 
-                    {{-- Nombre del producto --}}
+                    {{-- Nombre alternativo del producto --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Nombre alternativo</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" name="nombre" value="{{ $producto->nombre_alternativo }}">
+                            <input type="text" class="form-control" name="nombre_alternativo" value="{{ $producto->nombre_alternativo }}">
                         </div>
                     </div>
 
@@ -78,16 +78,15 @@
                         </div>
                     </div>
 
-                    {{-- Unidad de medida compra --}}
+                    {{-- Unidad de medida prederteminada --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Unidad de medida</b></label>
+                        <label class="col-sm-4 control-label"><b>Unidad medida </b></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="unidad_medida_id">
+                            <select  class="form-control select2" name="unidad_medida_id">
                                 @foreach($unidad_medidas as $unidad_medida)
-                                    @if($unidad_medida->id == $producto->unidad_medida_id)
-                                        <option selected value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }} - {{ $unidad_medida->abreviatura }}</option>
-                                    @else
-                                        <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }} - {{ $unidad_medida->abreviatura }}</option>
+                                    @if($unidad_medida->abreviatura == 'Kg')
+                                        <option selected value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
+                                            - {{ $unidad_medida->abreviatura }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -145,29 +144,39 @@
                         </div>
                     </div>
 
-                    {{-- Precio --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-sm-4 control-label">Precio venta</label>--}}
-                        {{--<div class="col-sm-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<span class="input-group-addon">$</span>--}}
-                            {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"--}}
-                                   {{--value="{{ $producto->precio }}" id="precio" onchange="cambioPrecio()">--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    <h4>Peso de volumen</h4>
+                    <br>
 
-                    {{-- Margen ganancia --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-sm-4 control-label">Margen ganancia</label>--}}
-                        {{--<div class="col-sm-8">--}}
-                            {{--<div class="input-group">--}}
-                            {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margen_ganancia"--}}
-                                {{--value="{{ $producto->margen_ganancia }}" id="margen_ganancia" onchange="cambioMargen()">--}}
-                                {{--<span class="input-group-addon">%</span>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    {{-- Unidad de medida prederteminada --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Unidad medida volumen equivalente</label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2" name="unidad_medida_volumen">
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                @foreach($unidad_medidas as $unidad_medida)
+                                    @if($unidad_medida->tipo == 'Volumen')
+                                        @if($unidad_medida->nombre == $producto->unidad_factor)
+                                            <option selected value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
+                                                - {{ $unidad_medida->abreviatura }}</option>
+                                        @else
+                                            <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
+                                                - {{ $unidad_medida->abreviatura }}</option>
+                                        @endif
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Cantidad minima --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Peso unidad medida volumen</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0" step="any" class="form-control" placeholder="ej. 0" name="factor_volumen"
+                                   value="{{ $producto->factor_volumen }}">
+                        </div>
+                    </div>
+
 
                 </div>
             </div><!-- /.box-body -->

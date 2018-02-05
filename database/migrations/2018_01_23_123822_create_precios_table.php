@@ -19,8 +19,8 @@ class CreatePreciosTable extends Migration
             $table->integer('unidad_medida_id')->unsigned();
             $table->string('presentacion',50);
             $table->string('nombre_factura',15)->nullable();
-            $table->float('precio',8,5);
-            $table->float('factor',8,5);
+            $table->float('precio',12,4);
+            $table->float('factor',12,4);
             $table->unique(['producto_id','presentacion']);
             $table->timestamps();
         });

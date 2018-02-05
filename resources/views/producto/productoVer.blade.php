@@ -144,29 +144,27 @@
                         </div>
                     </div>
 
-                    {{-- Precio --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-sm-4 control-label">Precio venta</label>--}}
-                        {{--<div class="col-sm-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<span class="input-group-addon">$</span>--}}
-                                {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"--}}
-                                       {{--value="{{ $producto->precio }}" id="precio" disabled>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    <h4>Peso de volumen</h4>
+                    <br>
 
-                    {{-- Margen ganancia --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-sm-4 control-label">Margen ganancia</label>--}}
-                        {{--<div class="col-sm-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"--}}
-                                {{--value="{{ $producto->margen_ganancia }}" id="margenGanancia" disabled>--}}
-                                {{--<span class="input-group-addon">%</span>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    {{-- Unidad de medida prederteminada --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Unidad medida volumen equivalente</label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" min="0" class="form-control" placeholder="ej. 0" name="factor_volumen"
+                                   value="{{ $producto->unidad_factor }}">
+                        </div>
+                    </div>
+
+                    {{-- Cantidad minima --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Peso unidad medida volumen</label>
+                        <div class="col-sm-8">
+                            <input readonly type="number" min="0" class="form-control" placeholder="ej. 0" name="factor_volumen"
+                                   value="{{ $producto->factor_volumen }}">
+                        </div>
+                    </div>
+
 
                 </div>
             </div><!-- /.box-body -->

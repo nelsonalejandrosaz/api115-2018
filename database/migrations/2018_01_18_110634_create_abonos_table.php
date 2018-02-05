@@ -21,6 +21,7 @@ class CreateAbonosTable extends Migration
             $table->string('detalle',140)->nullable();
             $table->float('cantidad');
             $table->integer('forma_pago_id')->unsigned()->default(1);
+            $table->integer('tipo_abono_id')->unsigned()->default(1);
             $table->timestamps();
         });
     }

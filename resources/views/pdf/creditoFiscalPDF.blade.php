@@ -139,8 +139,8 @@
             <td class="tg-cw2b">{{strtoupper($salida->movimiento->producto->codigo)}}</td>
             <td class="tg-cw2b" colspan="3">{{strtoupper($salida->movimiento->producto->nombre)}}</td>
             <td class="tg-cw2b">{{strtoupper($salida->unidad_medida->abreviatura)}}</td>
-            <td class="tg-cw2b">{{$salida->cantidad_ums}}</td>
-            <td class="tg-cw2b">$ {{number_format($salida->precio_unitario_ums,2)}}</td>
+            <td class="tg-cw2b">{{$salida->cantidad}}</td>
+            <td class="tg-cw2b">$ {{number_format($salida->precio_unitario,2)}}</td>
             <td class="tg-cw2b"></td>
             <td class="tg-cw2b"></td>
             <td class="tg-cw2b">$ {{number_format($salida->venta_gravada,2)}}</td>

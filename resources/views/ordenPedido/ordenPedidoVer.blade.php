@@ -231,7 +231,7 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
+                <a href="{{ URL::previous() }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
                 <a href="{{ route('ordenPedidoPDF',['id' => $ordenPedido->id]) }}" target="_blank"
                    class="btn btn-lg btn-info pull-right"><span class="fa fa-print"></span> Imprimir Orden</a>
             </div>

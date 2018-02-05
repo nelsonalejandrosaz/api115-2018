@@ -6,6 +6,7 @@ use App\Ajuste;
 use App\Movimiento;
 use App\Producto;
 use App\TipoAjuste;
+use App\TipoMovimiento;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,59 +30,61 @@ class AjusteController extends Controller
     {
         // Validacion
         $this->validate($request, [
-            'fechaIngreso' => 'required',
+            'fecha' => 'required',
             'producto_id' => 'required',
             'tipo_ajuste_id' => 'required',
-            'cantidadAjuste' => 'required',
+            'cantidad_ajuste' => 'required',
         ]);
         // Fin Validacion
 
-//        Variables
-        $cantidadAjuste = $request->input('cantidadAjuste');
-        $tipoAjuste = TipoAjuste::find($request->input('tipo_ajuste_id'));
+        // Variables
+        $cantidad_ajuste = $request->input('cantidad_ajuste');
+        $tipo_ajuste = TipoAjuste::find($request->input('tipo_ajuste_id'));
         // Se carga el producto a ajustar
         $producto = Producto::find($request->input('producto_id'));
-        $valorUnitarioAjuste = $producto->costo;
-        $diferenciaCantidadAjuste = $cantidadAjuste - $producto->cantidadExistencia;
+        $diferencia_ajuste = abs($cantidad_ajuste - $producto->cantidad_existencia);
+
+        // Se crea el ajuste de entrada
+        $ajuste = Ajuste::create([
+            'tipo_ajuste_id' => $tipo_ajuste->id,
+            'detalle' => $request->input('detalle'),
+            'fecha' => $request->input('fecha'),
+            'cantidad_ajuste' => $cantidad_ajuste,
+            'valor_unitario_ajuste' => $producto->costo,
+            'realizado_id' => Auth::user()->id,
+            'cantidad_anterior' => $producto->cantidad_existencia,
+            'valor_unitario_anterior' => $producto->costo,
+            'diferencia_ajuste' => $diferencia_ajuste,
+        ]);
+
+        if ($ajuste->tipo_ajuste->tipo == 'ENTRADA')
+        {
+            $tipo_movimiento = TipoMovimiento::whereCodigo('AJSE')->first();
+        } else
+        {
+            $tipo_movimiento = TipoMovimiento::whereCodigo('AJSS')->first();
+        }
         // Se crea el movimiento
         $movimiento = Movimiento::create([
             'producto_id' => $producto->id,
-            'tipo_movimiento_id' => 3,
-            'fecha' => $request->input('fechaIngreso'),
-            'detalle' => "Ajuste por " . $tipoAjuste->nombre. " realizado por " . Auth::user()->nombre,
-            'cantidadExistencia' => $cantidadAjuste,
-            'costoUnitarioExistencia' => $valorUnitarioAjuste,
-            'costoTotalExistencia' => $cantidadAjuste * $valorUnitarioAjuste,
-            'fechaProcesado' => Carbon::now(),
+            'tipo_movimiento_id' => $tipo_movimiento->id,
+            'ajuste_id' => $ajuste->id,
+            'fecha' => $request->input('fecha'),
+            'detalle' => "Ajuste de " . strtolower($tipo_ajuste->tipo) . " por " . $tipo_ajuste->nombre. " realizado por " . Auth::user()->nombre,
+            'cantidad' => $diferencia_ajuste,
+            'costo_unitario' => $producto->costo,
+            'costo_total' => $cantidad_ajuste * $producto->costo,
+            'cantidad_existencia' => $cantidad_ajuste,
+            'costo_unitario_existencia' => $producto->costo,
+            'costo_total_existencia' => $cantidad_ajuste * $producto->costo,
+            'fecha_procesado' => Carbon::now(),
             'procesado' => true,
         ]);
-        // Se crea el ajuste de entrada
-        $ajuste = Ajuste::create([
-            'movimiento_id' => $movimiento->id,
-            'tipo_ajuste_id' => $request->input('tipo_ajuste_id'),
-            'detalle' => $request->input('detalle'),
-            'fechaIngreso' => $request->input('fechaIngreso'),
-            'cantidadAjuste' => $cantidadAjuste,
-            'valorUnitarioAjuste' => $valorUnitarioAjuste,
-            'realizado_id' => Auth::user()->id,
-            'cantidadAnterior' => $producto->cantidadExistencia,
-            'valorUnitarioAnterior' => $producto->precio,
-            'diferenciaCantidadAjuste' => $diferenciaCantidadAjuste,
-        ]);
-        // Los nuevos valores de inventario despues del ajuste
-//        $cantidadExistencia = $ajuste->cantidad;
-//        $valorUnitarioExistencia = $ajuste->precioCompra;
-//        $valorTotalExistencia = $valorUnitarioExistencia * $cantidadExistencia;
-        // Se completa el movimiento
-//        $movimiento->cantidadExistencia = $cantidadExistencia;
-//        $movimiento->valorUnitarioExistencia = $valorUnitarioExistencia;
-//        $movimiento->valorTotalExistencia = $valorTotalExistencia;
-//        $movimiento->save();
+
         // Se actualiza la cantidad de producto despues de la entrada
-        $producto->cantidadExistencia = $movimiento->cantidadExistencia;
-        $producto->costo = $movimiento->costoUnitarioExistencia;
+        $producto->cantidad_existencia = $movimiento->cantidad_existencia;
         $producto->save();
-//        Mensaje de exito al guardar
+        // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El ajuste fue realizado correctamente!');
@@ -95,7 +98,64 @@ class AjusteController extends Controller
         return view('ajuste.ajusteCostoNuevo')->with(['productos' => $productos])->with(['tipoAjustes' => $tipoAjustes]);
     }
 
+    public function AjusteCostoNuevoPost(Request $request)
+    {
+        // Validacion
+        $this->validate($request, [
+            'fecha' => 'required',
+            'producto_id' => 'required',
+            'tipo_ajuste_id' => 'required',
+            'costo_ajuste' => 'required',
+        ]);
+        // Fin Validacion
 
+        // Variables
+        $costo_ajuste = $request->input('costo_ajuste');
+        $tipo_ajuste = TipoAjuste::find($request->input('tipo_ajuste_id'));
+        // Se carga el producto a ajustar
+        $producto = Producto::find($request->input('producto_id'));
+        $diferencia_ajuste = 0;
+
+        // Se crea el ajuste de entrada
+        $ajuste = Ajuste::create([
+            'tipo_ajuste_id' => $tipo_ajuste->id,
+            'detalle' => $request->input('detalle'),
+            'fecha' => $request->input('fecha'),
+            'cantidad_ajuste' => 0,
+            'valor_unitario_ajuste' => $costo_ajuste,
+            'realizado_id' => Auth::user()->id,
+            'cantidad_anterior' => $producto->cantidad_existencia,
+            'valor_unitario_anterior' => $producto->costo,
+            'diferencia_ajuste' => $diferencia_ajuste,
+        ]);
+
+        $tipo_movimiento = TipoMovimiento::whereCodigo('AJSC')->first();
+        // Se crea el movimiento
+        $movimiento = Movimiento::create([
+            'producto_id' => $producto->id,
+            'tipo_movimiento_id' => $tipo_movimiento->id,
+            'ajuste_id' => $ajuste->id,
+            'fecha' => $request->input('fecha'),
+            'detalle' => "Ajuste de " . strtolower($tipo_ajuste->tipo) . " por " . $tipo_ajuste->nombre. " realizado por " . Auth::user()->nombre,
+            'cantidad' => 0,
+            'costo_unitario' => 0,
+            'costo_total' => 0,
+            'cantidad_existencia' => $producto->cantidad_existencia,
+            'costo_unitario_existencia' => $costo_ajuste,
+            'costo_total_existencia' => $producto->cantidad_existencia * $costo_ajuste,
+            'fecha_procesado' => Carbon::now(),
+            'procesado' => true,
+        ]);
+
+        // Se actualiza la cantidad de producto después de la entrada
+        $producto->costo = $costo_ajuste;
+        $producto->save();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El ajuste fue realizado correctamente!');
+        return redirect()->route('ajusteLista');
+    }
 
     public function AjusteVer($id)
     {

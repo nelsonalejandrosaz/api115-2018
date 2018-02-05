@@ -34,28 +34,20 @@
                     <h4>Datos generales</h4>
                     <br>
 
-                    {{-- Codigo del producto --}}
-                    <div class="form-group">
-                        <label class="col-sm-4 control-label">Codigo del producto</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="En blanco se autogenera" name="codigo" value="{{old('codigo')}}">
-                        </div>
-                    </div>
-
                     {{-- Nombre del producto --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Nombre del producto</b></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
+                            <input type="text" class="form-control" placeholder="ej. Producto A" name="nombre"
                                    value="{{ old('nombre') }}">
                         </div>
                     </div>
 
-                    {{-- Nombre alternativo del producto --}}
+                    {{-- Nombre del alternativo --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Nombre del producto</label>
+                        <label class="col-sm-4 control-label">Nombre alternativo</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto" name="nombre_alternativo"
+                            <input type="text" class="form-control" placeholder="ej. Producto Z" name="nombre_alternativo"
                                    value="{{ old('nombre_alternativo') }}">
                         </div>
                     </div>
@@ -77,11 +69,12 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Unidad medida </b></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="unidad_medida_id">
-                                <option value="" selected disabled>Seleccione una opción</option>
+                            <select  class="form-control select2" name="unidad_medida_id">
                                 @foreach($unidad_medidas as $unidad_medida)
-                                    <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
-                                        - {{ $unidad_medida->abreviatura }}</option>
+                                    @if($unidad_medida->abreviatura == 'Kg')
+                                        <option selected value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
+                                            - {{ $unidad_medida->abreviatura }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -109,7 +102,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad mínima stock</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" class="form-control" placeholder="0" name="existencia_min"
+                            <input type="number" min="0.00" class="form-control" placeholder="ej. 0" name="existencia_min"
                                    value="{{ old('existencia_min') }}">
                         </div>
                     </div>
@@ -118,7 +111,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Cantidad máxima stock</label>
                         <div class="col-sm-8">
-                            <input type="number" min="0.00" class="form-control" placeholder="1000" name="existencia_max"
+                            <input type="number" min="0.00" class="form-control" placeholder="ej. 500" name="existencia_max"
                                    value="{{ old('existencia_max') }}">
                         </div>
                     </div>
@@ -135,29 +128,34 @@
                         </div>
                     </div>
 
-                    {{-- Precio --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-sm-4 control-label">Precio venta</label>--}}
-                        {{--<div class="col-sm-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<span class="input-group-addon">$</span>--}}
-                                {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="0.00" name="precio"--}}
-                                       {{--value="{{ old('precio') }}" id="precio" onchange="cambioPrecio()">--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    <h4>Peso de volumen</h4>
+                    <br>
 
-                    {{-- Margen ganancia --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-sm-4 control-label">Margen ganancia</label>--}}
-                        {{--<div class="col-sm-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<input type="number" min="0.00" step="0.01" class="form-control" placeholder="10%" name="margenGanancia"--}}
-                                {{--value="{{ old('margenGanancia') }}" id="margenGanancia" onchange="cambioMargen()">--}}
-                                {{--<span class="input-group-addon">%</span>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    {{-- Unidad de medida prederteminada --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Unidad medida volumen equivalente</label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2" name="unidad_medida_volumen">
+                                <option value="" selected disabled>Seleccione una opción</option>
+                                @foreach($unidad_medidas as $unidad_medida)
+                                    @if($unidad_medida->tipo == 'Volumen')
+                                        <option value="{{ $unidad_medida->id }}">{{ $unidad_medida->nombre }}
+                                            - {{ $unidad_medida->abreviatura }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Cantidad minima --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Peso unidad medida volumen</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="0" step="any" class="form-control" placeholder="ej. 0" name="factor_volumen"
+                                   value="{{ old('existencia_min') }}">
+                        </div>
+                    </div>
+
 
                 </div>
             </div><!-- /.box-body -->

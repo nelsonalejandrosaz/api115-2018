@@ -46,16 +46,14 @@
                                 <td>{{$compra->numero}}</td>
                                 <td>{{ \Carbon\Carbon::parse($compra->fechaIngreso)->format('d/m/Y')}}</td>
                                 <td>{{$compra->proveedor->nombre}}</td>
-                                @if($compra->revisado == true)
-                                    <td>Revisado</td>
-                                @else
-                                    <td>No revisado</td>
-                                @endif
+                                <td>{{$compra->estado_compra->nombre}}</td>
                                 <td align="center">
                                     <a href="{{route('compraVer', ['id' => $compra->id])}}" class="btn btn-info"><span class="fa fa-eye"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-factura="{{ $compra->id }}" data-id="{{ $compra->id }}">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
+                                    @if($compra->estado_compra_id == \App\EstadoCompra::whereCodigo('INGRE')->first()->id)
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-factura="{{ $compra->numero }}" data-id="{{ $compra->id }}">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -72,4 +70,20 @@
 
 @section('JSExtras')
     @include('comun.dataTablesJSes')
+    <script>
+        $(function () {
+            $('#modalEliminar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget); // Button that triggered the modal
+                let numero_compra = button.data('factura'); // Extract info from data-* attributes
+                let id_compra = button.data('id');
+                let ruta = '/compra/' + id_compra;
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                let modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#mensaje01').text('Al eliminar la compra no se podrá recuperar');
+                modal.find('#mensaje02').text('Realmente desea eliminar la compra numero: ' + numero_compra);
+                modal.find('#myform').attr("action", ruta);
+            });
+        })
+    </script>
 @endsection

@@ -544,7 +544,7 @@
                 // Con IVA
                 precio_unitario = precio_unitario * valor_IVA;
                 precio_unitario_input.val(precio_unitario.toFixed(2));
-                precio_total = (cantidad * precio_unitario) * valor_IVA;
+                precio_total = cantidad * precio_unitario;
             }
             // Se verifica si es venta gravada o exenta
             if (tipo_venta === 0) {

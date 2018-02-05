@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Compra;
 use App\CondicionPago;
+use App\Configuracion;
 use App\Entrada;
 use App\EstadoCompra;
 use App\Movimiento;
@@ -26,8 +27,7 @@ class CompraController extends Controller
         $compra = Compra::find($id);
         $productos = Producto::all();
         $proveedores = Proveedor::all();
-        foreach ($compra->entradas as $entrada)
-        {
+        foreach ($compra->entradas as $entrada) {
             $entrada->costo_total = $entrada->cantidad * $entrada->costo_unitario;
         }
         return view('compra.compraVer')->with(['compra' => $compra])->with(['productos' => $productos])->with(['proveedores' => $proveedores]);
@@ -59,6 +59,7 @@ class CompraController extends Controller
 
         // Variables
         $estado_compra = EstadoCompra::whereCodigo('INGRE')->first();
+        $iva = Configuracion::find(1)->iva;
 
         // Se crea una instancia de compra
         $compra = Compra::create([
@@ -105,9 +106,9 @@ class CompraController extends Controller
             $entrada = Entrada::create([
                 'compra_id' => $compra->id,
                 'unidad_medida_id' => $producto->unidad_medida_id,
-                'cantidad' => $cantidades[$i],
-                'costo_unitario' => $costo_unitario_entrada,
-                'costo_total' => $costo_totales[$i],
+                'cantidad' => round($cantidades[$i],4),
+                'costo_unitario' => round($costo_unitario_entrada,4),
+                'costo_total' => round($costo_totales[$i],4),
             ]);
             // Se crea el movimiento
             $tipo_movimiento = TipoMovimiento::whereCodigo('ENTC')->first();
@@ -118,30 +119,72 @@ class CompraController extends Controller
                 'entrada_id' => $entrada->id,
                 'fecha' => $compra->fecha,
                 'detalle' => 'Ingreso de producto por compra con documento n° ' . $compra->numero,
-                'cantidad' => $cantidades[$i],
-                'costo_unitario' => $costo_unitario_entrada,
-                'costo_total' => $costo_totales[$i],
-                'cantidad_existencia' => $cantidad_existencia,
-                'costo_unitario_existencia' => $costo_unitario_existencia,
-                'costo_total_existencia' => $costo_total_existencia,
+                'cantidad' => round($cantidades[$i],4),
+                'costo_unitario' => round($costo_unitario_entrada,4),
+                'costo_total' => round($costo_totales[$i],4),
+                'cantidad_existencia' => round($cantidad_existencia,4),
+                'costo_unitario_existencia' => round($costo_unitario_existencia,4),
+                'costo_total_existencia' => round($costo_total_existencia,4),
                 'fecha_procesado' => Carbon::now(),
-                'procesado' => true,
+                'procesado' => false,
             ]);
             // Se actualiza la existencia del producto
-            $producto->cantidad_existencia = $cantidad_existencia;
-            $producto->costo = $costo_unitario_existencia;
-            $producto->save();
+//            $producto->cantidad_existencia = $cantidad_existencia;
+//            $producto->costo = $costo_unitario_existencia;
+//            $producto->save();
             $compra_total += $costo_totales[$i];
         }
-        $compra->compra_total = $compra_total;
-        $compra_total_con_impuestos = $compra_total * 1.13;
-        $compra->compra_total_con_impuestos = $compra_total_con_impuestos;
-        $compra->saldo = $compra_total;
+        $compra->compra_total = round($compra_total,4);
+        $compra_total_con_impuestos = $compra_total * $iva;
+        $compra->compra_total_con_impuestos = round($compra_total_con_impuestos,4);
+        $compra->saldo = round($compra_total,4);
         $compra->save();
         // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
-        session()->flash('mensaje.contenido', 'La compra fue agregada correctamente!');
+        session()->flash('mensaje.contenido', 'La compra fue ingresada correctamente! Por favor verifique en cantidades antes de procesar');
         return redirect()->route('compraVer', ['id' => $compra->id]);
+    }
+
+    public function CompraProcesar($id)
+    {
+        $compra = Compra::find($id);
+        $entradas = $compra->entradas;
+        foreach ($entradas as $entrada)
+        {
+            $producto = Producto::find($entrada->movimiento->producto_id);
+            $cantidad_existencia = $entrada->movimiento->cantidad_existencia;
+            $costo_unitario_existencia = $entrada->movimiento->costo_unitario_existencia;
+            $entrada->movimiento->procesado = true;
+            $entrada->movimiento->fecha_procesado = Carbon::now();
+            $entrada->movimiento->save();
+            $producto->cantidad_existencia = round($cantidad_existencia,4);
+            $producto->costo = round($costo_unitario_existencia,4);
+            $producto->save();
+        }
+        $compra->estado_compra_id = EstadoCompra::whereCodigo('PROCE')->first()->id;
+        $compra->save();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La compra fue procesada e ingresada a bodega correctamente!');
+        return redirect()->route('compraVer', ['id' => $compra->id]);
+    }
+
+    public function CompraEliminar($id)
+    {
+        $compra = Compra::find($id);
+        $entradas = $compra->entradas;
+        foreach ($entradas as $entrada)
+        {
+            $entrada->movimiento->delete();
+            $entrada->delete();
+        }
+        $compra->delete();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La compra fue eliminada correctamente!');
+        return redirect()->route('compraLista');
     }
 }

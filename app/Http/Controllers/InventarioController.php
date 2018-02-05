@@ -23,12 +23,17 @@ class InventarioController extends Controller
     public function InventarioKardex(Request $request)
     {
         $producto = Producto::find($request->id);
+        $mes_actual = Carbon::now()->format('m');
+        $mes['inicio'] = $inicio_mes = Carbon::parse('first day of this month')->format('Y-m-d');
+        $mes['fin'] = $final_mes = Carbon::parse('last day of this month')->format('Y-m-d');
         $movimientos = $producto->movimientos()
+            ->whereMonth('fecha','=',$mes_actual)
             ->where('procesado','=',true)
             ->orderBy('fecha_procesado','asc')->get();
         return view('inventario.kardex')
             ->with(['movimientos' => $movimientos])
-            ->with(['producto' => $producto]);
+            ->with(['producto' => $producto])
+            ->with(['mes' => $mes]);
     }
 
     public function InventarioKardexPost(Request $request)
@@ -44,12 +49,17 @@ class InventarioController extends Controller
         $fecha_inicio = $request->input('fecha_inicio');
         $fecha_fin = $request->input('fecha_fin');
         $producto = Producto::find($request->id);
+        $mes['inicio'] = $fecha_inicio;
+        $mes['fin'] = $fecha_fin;
         $movimientos = $producto->movimientos()->whereBetween('fecha',[$fecha_inicio,$fecha_fin])->where('procesado','=',true)->orderBy('fecha_procesado','asc')->get();
 //            ->where('procesado','=',true)->orderBy('fecha_procesado','asc')->get();
         foreach ($movimientos as $movimiento)
         {
             $movimiento->costo_total_existencia = $movimiento->cantidad_existencia * $movimiento->costo_unitario_existencia;
         }
-        return view('inventario.kardex')->with(['movimientos' => $movimientos])->with(['producto' => $producto]);
+        return view('inventario.kardex')
+            ->with(['movimientos' => $movimientos])
+            ->with(['producto' => $producto])
+            ->with(['mes' => $mes]);
     }
 }

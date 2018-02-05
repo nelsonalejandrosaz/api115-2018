@@ -108,8 +108,13 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            <input readonly type="date" class="form-control" name="fechaEntrega"
-                                   value="{{$venta->orden_pedido->fecha_entrega->format('Y-m-d')}}">
+                            @if($venta->orden_pedido->fecha_entrega != null)
+                                <input readonly type="date" class="form-control" name="fechaEntrega"
+                                       value="{{$venta->orden_pedido->fecha_entrega->format('Y-m-d')}}">
+                            @else
+                                <input readonly type="text" class="form-control" name="fechaEntrega"
+                                       value="Sin fecha definida">
+                            @endif
                         </div>
                     </div>
 
@@ -250,7 +255,7 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ventaFacturaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Ver lista</a>
+                <a href="{{ route('ventaLista',['fitro' => 'ccf']) }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Ver lista</a>
                 <a href="{{ route('CCFPDF',['id' => $venta->id]) }}" target="_blank" class="btn btn-lg btn-success pull-right"><span class="fa fa-print"></span> Imprimir CCF</a>
             </div>
         </form>

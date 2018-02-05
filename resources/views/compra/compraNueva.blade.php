@@ -150,7 +150,7 @@
                             {{--cantidad--}}
                             <td>
                                 <div class="input-group">
-                                    <input class="form-control cantidadCls" type="number" value="0" min="0.001" step="0.001"
+                                    <input class="form-control cantidadCls" type="number" value="0" min="0.001" step="any"
                                            name="cantidades[]" id="cantidad" required>
                                 </div>
                             </td>
@@ -158,7 +158,7 @@
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" step="0.01" class="form-control costoUnitarioCls" min="0.01"
+                                    <input type="number" step="any" class="form-control costoUnitarioCls" min="0.01"
                                            value="0.00" name="costo_unitarios[]" id="costoUnitario" required>
                                 </div>
                             </td>
@@ -166,7 +166,7 @@
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" step="0.01" class="form-control costoTotalCls" min="0.01"
+                                    <input type="number" step="any" class="form-control costoTotalCls" min="0.01"
                                            value="0.00" name="costo_totales[]" id="costoTotal" required>
                                 </div>
                             </td>
@@ -229,7 +229,7 @@
             });
             $(".costoUnitarioCls,.costoTotalCls").focusout(function () {
                 var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
-                $(this).val(numeroDato.toFixed(2));
+                $(this).val(numeroDato.toFixed(4));
             });
             $(".cantidadCls").focusout(function () {
                 var numeroCantidad = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
@@ -267,7 +267,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<input class="form-control cantidadCls" type="number" value="0" min="0.001" step="0.001"\n' +
+                                    '<input class="form-control cantidadCls" type="number" value="0" min="0.001" step="any"\n' +
                                     '                                           name="cantidades[]" id="cantidad" required>' +
                                     '</div>'
                                 )
@@ -279,7 +279,7 @@
                                 (
                                     '<div class="input-group">\n' +
                                     '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="number" step="0.01" class="form-control costoUnitarioCls" value="0.00" name="costo_unitarios[]" id="costoUnitario" required>\n' +
+                                    '<input type="number" step="any" class="form-control costoUnitarioCls" value="0.00" name="costo_unitarios[]" id="costoUnitario" required>\n' +
                                     '</div>'
                                 )
                         )
@@ -290,7 +290,7 @@
                                 (
                                     '<div class="input-group">\n' +
                                     '<span class="input-group-addon">$</span>\n' +
-                                    '<input type="number" step="0.01" class="form-control costoTotalCls" value="0.00" name="costo_totales[]" id="costoTotal" required>\n' +
+                                    '<input type="number" step="any" class="form-control costoTotalCls" value="0.00" name="costo_totales[]" id="costoTotal" required>\n' +
                                     '</div>'
                                 )
                         )
@@ -377,7 +377,7 @@
                 $(this).parent().parent().parent().find('#costoTotal').val(costoTotal.toFixed(2));
             } else if (cantidad !== 0 || costoTotal !== 0) {
                 costoUnitario = costoTotal / cantidad;
-                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario.toFixed(2));
+                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario.toFixed(4));
             }
             cambioTotal();
         }
@@ -399,7 +399,7 @@
             var cantidad = $(this).parent().parent().parent().find('#cantidad').val();
             if (cantidad !== 0 || costoTotal !== 0) {
                 costoUnitario = costoTotal / cantidad;
-                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario.toFixed(2));
+                $(this).parent().parent().parent().find('#costoUnitario').val(costoUnitario.toFixed(4));
             }
             cambioTotal();
         }

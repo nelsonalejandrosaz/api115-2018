@@ -20,6 +20,7 @@
 @section('main-content')
 
     @include('partials.alertas')
+    @include('partials.modalEliminar')
 
     <div class="row">
         <div class="col-xs-12">
@@ -68,7 +69,7 @@
                                        class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     @if($ordenPedido->estado_id == 1)
                                         <button type="button" class="btn btn-danger" data-toggle="modal"
-                                                data-target="#modalEliminar" data-ordenPedido="{{ $ordenPedido->id }}"
+                                                data-target="#modalEliminar" data-numero="{{ $ordenPedido->numero }}"
                                                 data-id="{{ $ordenPedido->id }}">
                                             <span class="fa fa-trash"></span>
                                         </button>
@@ -88,5 +89,51 @@
 @endsection
 
 @section('JSExtras')
-    @include('comun.dataTablesJSes')
+    <!-- DataTables -->
+    <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script !src="">
+        $(function () {
+            $("#tablaDT").DataTable(
+                {
+                    order: [[1, "asc"]] ,
+                    language: {
+                        processing:     "Procesando...",
+                        search:         "Buscar:",
+                        lengthMenu:     "Mostrar _MENU_ registros",
+                        info:           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        infoEmpty:      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        infoFiltered:   "(filtrado de un total de _MAX_ registros)",
+                        infoPostFix:    "",
+                        loadingRecords: "Cargando...",
+                        zeroRecords:    "No se encontraron resultados",
+                        emptyTable:     "Ningún dato disponible en esta tabla",
+                        paginate: {
+                            first:      "Primero",
+                            previous:   "Anterior",
+                            next:       "Siguiente",
+                            last:       "Último"
+                        },
+                        aria: {
+                            sortAscending:  ": Activar para ordenar la columna de manera ascendente",
+                            sortDescending: ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                }
+            );
+
+            $('#modalEliminar').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var numero_orden = button.data('numero'); // Extract info from data-* attributes
+                var id_orden = button.data('id');
+                var ruta = '/ordenPedido/' + id_orden;
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                var modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#mensaje01').text('Realmente desea desactivar:');
+                modal.find('#mensaje02').text('Realmente desea desactivar: ' + numero_orden);
+                modal.find('#myform').attr("action", ruta);
+            });
+        })
+    </script>
 @endsection

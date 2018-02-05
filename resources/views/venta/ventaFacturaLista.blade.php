@@ -20,6 +20,7 @@
 @section('main-content')
 
     @include('partials.alertas')
+    @include('partials.modalEliminar')
 
     <div class="row">
         <div class="col-xs-12">
@@ -50,10 +51,26 @@
                                 <td>{{$venta->orden_pedido->condicion_pago->nombre}}</td>
                                 <td>$ {{number_format($venta->saldo,2)}}</td>
                                 <td align="center">
-                                    <a href="{{ route('abonoNuevo', ['id' => $venta->id]) }}"
-                                       class="btn btn-success"><span class="fa fa-credit-card"></span></a>
-                                    <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
-                                       class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    @if($venta->estado_venta_id != 3)
+                                        @if(Auth::user()->rol->nombre == 'Administrador')
+                                        <a href="{{ route('abonoNuevo', ['id' => $venta->id]) }}"
+                                           class="btn btn-success"><span class="fa fa-credit-card"></span></a>
+                                        <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
+                                           class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                data-target="#modalEliminar" data-numero="{{ $venta->numero }}"
+                                                data-id="{{ $venta->id }}">
+                                            <span class="fa fa-minus-square"></span>
+                                        </button>
+                                        @endif
+                                        @if(Auth::user()->rol->nombre == 'Vendedor')
+                                                <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
+                                                   class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                        @endif
+                                    @else
+                                        <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
+                                           class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -69,5 +86,51 @@
 @endsection
 
 @section('JSExtras')
-    @include('comun.dataTablesJSes')
+    <!-- DataTables -->
+    <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script !src="">
+        $(function () {
+            $('#modalEliminar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget); // Button that triggered the modal
+                let numero_venta = button.data('numero'); // Extract info from data-* attributes
+                let id_venta = button.data('id');
+                let ruta = '/venta/' + id_venta;
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                let modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#mensaje01').text('Al anular venta se ingresara al inventario el producto y el saldo del cliente se saldará');
+                modal.find('#mensaje02').text('Realmente desea anular la venta numero: ' + numero_venta);
+                modal.find('#myform').attr("action", ruta);
+            });
+
+            $("#tablaDT").DataTable(
+                {
+                    order: [[1, "asc"]],
+                    language: {
+                        processing:     "Procesando...",
+                        search:         "Buscar:",
+                        lengthMenu:     "Mostrar _MENU_ registros",
+                        info:           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        infoEmpty:      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        infoFiltered:   "(filtrado de un total de _MAX_ registros)",
+                        infoPostFix:    "",
+                        loadingRecords: "Cargando...",
+                        zeroRecords:    "No se encontraron resultados",
+                        emptyTable:     "Ningún dato disponible en esta tabla",
+                        paginate: {
+                            first:      "Primero",
+                            previous:   "Anterior",
+                            next:       "Siguiente",
+                            last:       "Último"
+                        },
+                        aria: {
+                            sortAscending:  ": Activar para ordenar la columna de manera ascendente",
+                            sortDescending: ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                }
+            );
+        })
+    </script>
 @endsection

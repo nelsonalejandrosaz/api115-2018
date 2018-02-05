@@ -76,10 +76,11 @@ class ProduccionController extends Controller
 //            dd($cantidad_produccion);
             $producto = Producto::find($componente->producto_id);
             $cantidad = ($componente->porcentaje / 100) * $cantidad_produccion;
+            $cantidad = round($cantidad,4);
             $cantidad_real = $cantidad / $factor_gramos;
-            $cantidad_salida = $cantidad;
-//            dd($cantidad_real);
-            if ($producto->cantidad_existencia < $cantidad_real){
+            $cantidad_real = round($cantidad_real,4);
+            $cantidad_producto = round($producto->cantidad_existencia,4);
+            if ($cantidad_producto < $cantidad_real){
                 // No alcanza la existencia para produccion
                 $produccion->delete();
                 // Mensaje de error al guardar
@@ -100,17 +101,21 @@ class ProduccionController extends Controller
             // Se carga el producto
             $producto = Producto::find($componente->producto_id);
             $cantidad = ($componente->porcentaje / 100) * $cantidad_produccion;
+            $cantidad = round($cantidad,4);
             $cantidad_real = $cantidad / $factor_gramos;
+            $cantidad_real = round($cantidad_real,4);
             $cantidad_salida = $cantidad;
             // Se calcula la cantidad y costo
             // Calculo costo salida
             $costo_unitario_salida = $producto->costo;
             $costo_total_salida = $cantidad_real * $costo_unitario_salida;
+            $costo_total_salida = round($costo_total_salida,4);
 //            $costo_total_salida = round($ct_salida,3);
             // Calculo de cantidad y costos existencias
             $cantidad_existencia = $producto->cantidad_existencia - $cantidad_real;
             $costo_unitario_existencia = $producto->costo;
             $costo_total_existencia = $cantidad_existencia * $costo_unitario_existencia;
+            $costo_total_existencia = round($costo_total_existencia,4);
 
             // Se crea la salida
             $salida = Salida::create([
@@ -148,9 +153,11 @@ class ProduccionController extends Controller
         $producto = Producto::find($formula->producto_id);
         // Se calcula la cantidad y costo
         $costo_unitario_produccion = $costo_total_produccion / $produccion->cantidad;
+        $costo_unitario_produccion = round($costo_unitario_produccion,4);
         $cantidad = $produccion->cantidad;
         $costo_unitario_entrada = $costo_unitario_produccion;
         $costo_total_entrada = $cantidad * $costo_unitario_entrada;
+        $costo_total_entrada = round($costo_total_entrada,4);
 //            Calculo de existencias
         $cantidad_existencia = $producto->cantidad_existencia + $cantidad;
         /**
@@ -158,11 +165,13 @@ class ProduccionController extends Controller
          */
         if ($producto->costo == 0.00) {
             $costo_unitario_existencia = $costo_unitario_entrada;
-            $costo_total_existencia = $costo_unitario_entrada * $cantidad_existencia;
         } else {
             $costo_total_existencia = $producto->costo * $producto->cantidad_existencia;
             $costo_unitario_existencia = ($costo_total_existencia + $costo_total_entrada) / $cantidad_existencia;
+            $costo_unitario_existencia = round($costo_unitario_existencia,4);
         }
+        $costo_total_existencia = $costo_unitario_existencia * $cantidad_existencia;
+        $costo_total_existencia = round($costo_total_existencia,4);
 
         // Se crea la entrada
         $entrada = Entrada::create([

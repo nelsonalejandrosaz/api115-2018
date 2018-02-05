@@ -21,11 +21,13 @@ class CreateProductosTable extends Migration
             $table->string('nombre',140)->unique()->index();
             $table->string('nombre_alternativo',140)->nullable();
             $table->string('codigo',50)->unique()->nullable();
-            $table->float('existencia_min',8,2)->nullable()->default(0.00);
-            $table->float('existencia_max',8,2)->nullable()->default(500.00);
-            $table->float('cantidad_existencia')->default(0.00);
+            $table->float('existencia_min',10,3)->nullable()->default(0.00);
+            $table->float('existencia_max',10,3)->nullable()->default(500.00);
+            $table->float('cantidad_existencia',12,4)->default(0.000);
+            $table->float('cantidad_reserva',12,4)->default(0.000);
             $table->float('costo')->default(0.00);
-            $table->float('factor_volumen',8,3)->nullable();
+            $table->string('unidad_factor',50)->nullable();
+            $table->float('factor_volumen',12,4)->default(0);
             $table->boolean('producto_activo')->default(true);
             $table->boolean('formula_activa')->default(false);
             $table->timestamps();

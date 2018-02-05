@@ -21,25 +21,33 @@
 
     @include('partials.alertas')
     @include('partials.modalEliminar')
-    @include('partials.modalPrecio')
+
     <div class="row">
         <div class="col-xs-12">
+            {{--<div class="box box-default" id="barraHerramientasID">--}}
+            {{--<div class="box-header">--}}
+            {{--<h3 class="box-title">Productos</h3>--}}
+            {{--<a href="{{ route('productoNuevo') }}" class="btn btn-lg btn-primary pull-right"><span--}}
+            {{--class="fa fa-plus"></span> Nuevo</a>--}}
+            {{--</div>--}}
+            {{--</div>--}}
+
             <div class="box box-default">
-                <div class="box-header">
-                    <h3 class="box-title">Productos</h3>
+                <div class="box-header with-border">
+                    {{--<h3 class="box-title">Productos</h3>--}}
                     <a href="{{ route('productoNuevo') }}" class="btn btn-lg btn-primary pull-right"><span
                                 class="fa fa-plus"></span> Nuevo</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <table id="tablaDT" class="table table-hover">
+                    @if(Auth::user()->rol->nombre == 'Administrador')
+                        <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width:10%">Código</th>
-                            <th style="width:20%">Nombre</th>
+                            <th style="width:35%">Nombre (Alternativo)</th>
                             <th style="width:10%">Cantidad</th>
                             <th style="width:10%">Unidad medida</th>
                             <th style="width:15%">Costo</th>
-                            <th style="width:15%">Precio</th>
                             <th style="width:20%">Acción</th>
                         </tr>
                         </thead>
@@ -47,11 +55,15 @@
                         @foreach($productos as $producto)
                             <tr>
                                 <td>{{$producto->codigo}}</td>
-                                <td>{{$producto->nombre}}</td>
-                                <td>{{$producto->cantidad_existencia}}</td>
+                                @if($producto->nombre_alternativo != null)
+                                    <td>{{$producto->nombre}} ({{$producto->nombre_alternativo}})</td>
+                                @else
+                                    <td>{{$producto->nombre}}</td>
+                                @endif
+                                <td>{{ number_format($producto->cantidad_existencia,3)  }}</td>
                                 <td>{{$producto->unidad_medida->abreviatura}}</td>
                                 <td>$ {{number_format($producto->costo,2)}}</td>
-                                <td>$ {{number_format($producto->precios->first()->precio,2)}}</td>
+                                {{--<td>$ {{number_format($producto->precios->first()->precio,2)}}</td>--}}
                                 <td align="center">
                                     {{--<button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalPrecio" data-objeto="{{ $producto->nombre }}"--}}
                                     {{--data-id="{{ $producto->id }}" data-precio="{{ $producto->precio }}" data-ruta="producto/precio">--}}
@@ -63,13 +75,11 @@
                                        class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     <a href="{{ route('productoEditar', ['id' => $producto->id]) }}"
                                        class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    @if($producto->eliminar)
-                                        <button type="button" class="btn btn-danger" data-toggle="modal"
-                                                data-target="#modalEliminar" data-objeto="{{ $producto->nombre }}"
-                                                data-id="{{ $producto->id }}" data-ruta="producto">
-                                            <span class="fa fa-trash"></span>
-                                        </button>
-                                    @endif
+                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#modalEliminar" data-objeto="{{ $producto->nombre }}"
+                                            data-id="{{ $producto->id }}" data-ruta="producto">
+                                        <span class="fa fa-trash-o"></span>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -77,6 +87,46 @@
                         <tfoot>
                         </tfoot>
                     </table>
+                    @else
+                        <table id="tablaDT" class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th style="width:10%">Código</th>
+                                <th style="width:35%">Nombre (Alternativo)</th>
+                                <th style="width:10%">Cantidad</th>
+                                <th style="width:10%">Unidad medida</th>
+                                <th style="width:20%">Acción</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($productos as $producto)
+                                <tr>
+                                    <td>{{$producto->codigo}}</td>
+                                    @if($producto->nombre_alternativo != null)
+                                        <td>{{$producto->nombre}} ({{$producto->nombre_alternativo}})</td>
+                                    @else
+                                        <td>{{$producto->nombre}}</td>
+                                    @endif
+                                    <td>{{$producto->cantidad_existencia}}</td>
+                                    <td>{{$producto->unidad_medida->abreviatura}}</td>
+                                    {{--<td>$ {{number_format($producto->precios->first()->precio,2)}}</td>--}}
+                                    <td align="center">
+                                        {{--<button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalPrecio" data-objeto="{{ $producto->nombre }}"--}}
+                                        {{--data-id="{{ $producto->id }}" data-precio="{{ $producto->precio }}" data-ruta="producto/precio">--}}
+                                        {{--<span class="fa fa-dollar"></span>--}}
+                                        {{--</button>--}}
+                                        <a href="{{ route('productoPrecio', ['id' => $producto->id]) }}"
+                                           class="btn btn-success"><span class="fa fa-dollar"></span></a>
+                                        <a href="{{ route('productoVer', ['id' => $producto->id]) }}"
+                                           class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    @endif
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div>
@@ -86,28 +136,23 @@
 @endsection
 
 @section('JSExtras')
-    <script src="{{ asset('/js/modal-eliminar.js') }}"></script>
+    {{--<script src="{{ asset('/js/modal-eliminar.js') }}"></script>--}}
     <!-- DataTables -->
     <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
     <script>
         $(function () {
-            $('#modalPrecio').on('show.bs.modal', function (event) {
+
+            $('#modalEliminar').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
                 var nombreObj = button.data('objeto'); // Extract info from data-* attributes
-                var precioActual = parseFloat(button.data('precio'));
                 var idObj = button.data('id');
-                var ruta = button.data('ruta');
+                var ruta = '/producto/' + idObj;
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
                 var modal = $(this);
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                modal.find('#nuevoPrecio').attr("action", "/" + ruta + "/" + idObj);
-                modal.find('#precioAnteriorID').val(precioActual.toFixed(2));
-                var botonEnviar = modal.find('#btnEnviar');
-                console.log(botonEnviar);
-                botonEnviar.click(function () {
-                    $('#nuevoPrecio').submit();
-                });
+                modal.find('#mensaje02').text('Realmente desea desactivar: ' + nombreObj);
+                modal.find('#myform').attr("action", ruta);
             });
 
             $("#tablaDT").DataTable(
@@ -138,5 +183,6 @@
                 }
             );
         });
+
     </script>
 @endsection

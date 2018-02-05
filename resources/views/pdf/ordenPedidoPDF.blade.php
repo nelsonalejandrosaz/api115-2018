@@ -75,10 +75,10 @@
     </tr>
     <tr>
         <td class="tg-kr94">FECHA</td>
-        <td class="tg-kr94" colspan="3">{{$ordenPedido->fechaIngreso->format('d/m/Y')}}</td>
+        <td class="tg-kr94" colspan="3">{{$ordenPedido->fecha->format('d/m/Y')}}</td>
         <td class="tg-kr94">FECHA ENTREGA</td>
-        @if($ordenPedido->fechaEntrega != null)
-            <td class="tg-kr94" colspan="3">{{$ordenPedido->fechaEntrega->format('d/m/Y')}}</td>
+        @if($ordenPedido->fecha_entrega != null)
+            <td class="tg-kr94" colspan="3">{{$ordenPedido->fecha_entrega->format('d/m/Y')}}</td>
         @else
             <td class="tg-kr94" colspan="3">Sin fecha entrega</td>
         @endif
@@ -91,9 +91,9 @@
     </tr>
     <tr>
         <td class="tg-rg0h">MUNICIPIO</td>
-        <td class="tg-rg0h" colspan="3">{{$ordenPedido->municipio->nombre}}</td>
+        <td class="tg-rg0h" colspan="3">{{$ordenPedido->cliente->municipio->nombre}}</td>
         <td class="tg-rg0h">CONDICIÓN DE PAGO</td>
-        <td class="tg-rg0h" colspan="3">{{$ordenPedido->condicionPago}}</td>
+        <td class="tg-rg0h" colspan="3">{{$ordenPedido->condicion_pago->nombre}}</td>
     </tr>
     <tr>
         <td class="tg-rg0h">DIRECCIÓN</td>
@@ -117,28 +117,28 @@
     @foreach($ordenPedido->salidas as $salida)
         <tr>
             <td class="tg-rg0h">{{$salida->movimiento->producto->codigo}}</td>
-            <td class="tg-rg0h">{{$salida->unidadMedida->abreviatura}}</td>
-            <td class="tg-rg0h">{{$salida->cantidadOP}}</td>
+            <td class="tg-rg0h">{{$salida->unidad_medida->abreviatura}}</td>
+            <td class="tg-rg0h">{{$salida->cantidad}}</td>
             <td class="tg-rg0h" colspan="2">{{$salida->movimiento->producto->nombre}}</td>
-            <td class="tg-rg0h">{{number_format($salida->precioUnitarioOP,5)}}</td>
-            <td class="tg-rg0h">{{number_format($salida->ventaExenta,2)}}</td>
-            <td class="tg-rg0h">{{number_format($salida->ventaGravada,2)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->precio_unitario,4)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->venta_exenta,2)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->venta_gravada,2)}}</td>
         </tr>
     @endforeach
     <tr>
         <td class="tg-rg0h">SON</td>
         <td class="tg-rg0h" colspan="5">{{$ordenPedido->ventaTotalLetras}}</td>
         <td class="tg-rg0h">SUBTOTAL</td>
-        <td class="tg-rg0h">{{number_format($ordenPedido->ventasGravadas,2)}}</td>
+        <td class="tg-rg0h">{{number_format($ordenPedido->ventas_gravadas,2)}}</td>
     </tr>
     <tr>
         <td class="tg-rg0h" colspan="6" rowspan="2"></td>
         <td class="tg-rg0h">V. EXENTAS</td>
-        <td class="tg-rg0h">{{number_format($ordenPedido->ventasExentas,2)}}</td>
+        <td class="tg-rg0h">{{number_format($ordenPedido->ventas_exentas,2)}}</td>
     </tr>
     <tr>
         <td class="tg-rg0h">VENTAS TOTAL</td>
-        <td class="tg-rg0h">{{number_format($ordenPedido->ventaTotal,2)}}</td>
+        <td class="tg-rg0h">{{number_format($ordenPedido->venta_total,2)}}</td>
     </tr>
 </table>
 </body>

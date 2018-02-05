@@ -15,22 +15,14 @@ class ProductoController extends Controller
 {
     public function ProductoLista()
     {
-        $productos = Producto::all();
-        foreach ($productos as $producto)
-        {
-            $entradas = $producto->movimientos()->where('entrada_id','!=',null)->get();
-            $salidas = $producto->movimientos()->where('salida_id','!=',null)->get();
-            $entradas = sizeof($entradas);
-            $salidas = sizeof($salidas);
-            if ($entradas == 0 && $salidas == 0)
-            {
-                $producto->eliminar = true;
-            } else
-            {
-                $producto->eliminar = false;
-            }
-        }
+        $productos = Producto::whereProductoActivo(true)->get();
         return view('producto.productoLista')->with(['productos' => $productos]);
+    }
+
+    public function ProductoDesactivadoLista()
+    {
+        $productos = Producto::whereProductoActivo(false)->get();
+        return view('producto.productoDesactivadoLista')->with(['productos' => $productos]);
     }
 
     public function ProductoVer(Request $request)
@@ -71,7 +63,9 @@ class ProductoController extends Controller
         ]);
         $existencia_min = ($request->input('existencia_min') == null) ? 0 : $existencia_min = $request->input('existencia_min');
         $existencia_max = ($request->input('existencia_max') == null) ? 1000 : $existencia_max = $request->input('existencia_max');
+        $unidad_factor = ($request->input('unidad_medida_volumen') == null) ? 'Sin factor' : UnidadMedida::find($request->input('unidad_medida_volumen'))->nombre;
         $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
+        $factor_volumen = ($request->input('factor_volumen') == null) ? 0 : $request->input('factor_volumen');
         $producto = Producto::create([
             'nombre' => $request->input('nombre'),
             'nombre_alternativo' => $request->input('nombre_alternativo'),
@@ -81,22 +75,16 @@ class ProductoController extends Controller
             'existencia_min' => $existencia_min,
             'existencia_max' => $existencia_max,
             'costo' => $costo,
+            'factor_volumen' => $factor_volumen,
+            'unidad_factor' => $unidad_factor,
         ]);
-        if ($request->input('codigo') == null)
-        {
-//          Asignacion del codigo del producto
-            $ids = $producto->id;
-            $ids = str_pad($ids, 5, '0', STR_PAD_LEFT);
-            $codigo = $producto->tipo_producto->codigo. $producto->categoria->codigo . $ids;
-            $producto->codigo = $codigo;
-            $producto->update();
-        } else
-        {
-//            Asignacion del codigo del producto
-            $producto->codigo = $request->input('codigo');
-            $producto->update();
-        }
-//        Mensaje de exito al guardar
+        // Asignacion del codigo del producto
+        $ids = $producto->id;
+        $ids = str_pad($ids, 5, '0', STR_PAD_LEFT);
+        $codigo = $producto->tipo_producto->codigo. $producto->categoria->codigo . $ids;
+        $producto->codigo = $codigo;
+        $producto->save();
+        // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El producto fue ingresado correctamente!');
@@ -140,8 +128,7 @@ class ProductoController extends Controller
 
         $existencia_min = ($request->input('existencia_min') == null) ? 0 : $existencia_min = $request->input('existencia_min');
         $existencia_max = ($request->input('existencia_max') == null) ? 1000 : $existencia_max = $request->input('existencia_max');
-        $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
-        $precio = ($request->input('precio') == null) ? 0.00 : $request->input('precio');
+        $unidad_factor = ($request->input('unidad_medida_volumen') == null) ? 'Sin factor' : UnidadMedida::find($request->input('unidad_medida_volumen'))->nombre;
         $margen_ganancia = ($request->input('margen_ganancia') == null) ? 0 : $request->input('margen_ganancia');
 
         $producto->update([
@@ -152,24 +139,16 @@ class ProductoController extends Controller
             'categoria_id' => $request->input('categoria_id'),
             'existencia_min' => $existencia_min,
             'existencia_max' => $existencia_max,
-            'precio' => $precio,
             'margen_ganancia' => $margen_ganancia,
+            'factor_volumen' => $request->input('factor_volumen'),
+            'unidad_factor' => $unidad_factor,
         ]);
-
-        if ($request->input('codigo') == null)
-        {
-//          Asignacion del codigo del producto
-            $ids = $producto->id;
-            $ids = str_pad($ids, 10, '0', STR_PAD_LEFT);
-            $codigo = $producto->tipo_producto->codigo . $ids;
-            $producto->codigo = $codigo;
-            $producto->update();
-        } else
-        {
-//            Asignacion del codigo del producto
-            $producto->codigo = $request->input('codigo');
-            $producto->update();
-        }
+        // Asignacion del codigo del producto
+        $ids = $producto->id;
+        $ids = str_pad($ids, 5, '0', STR_PAD_LEFT);
+        $codigo = $producto->tipo_producto->codigo. $producto->categoria->codigo . $ids;
+        $producto->codigo = $codigo;
+        $producto->save();
 //        Mensaje de exito al editar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
@@ -180,11 +159,12 @@ class ProductoController extends Controller
     public function ProductoEliminar(Request $request)
     {
         $producto = Producto::find($request->id);
-        $producto->delete();
+        $producto->producto_activo = false;
+        $producto->save();
 //        Mensaje de exito al eliminar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
-        session()->flash('mensaje.contenido', 'El producto fue eliminado correctamente!');
+        session()->flash('mensaje.contenido', 'El producto fue desactivado correctamente!');
         return redirect()->route('productoLista');
     }
 
@@ -245,6 +225,18 @@ class ProductoController extends Controller
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El precio del producto fue actualizado correctamente!');
+        return redirect()->route('productoPrecio',['id' => $producto->id]);
+    }
+
+    public function ProductoPrecioEliminar($id)
+    {
+        $precio = Precio::find($id);
+        $producto = $precio->producto;
+        $precio->delete();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El precio fue eliminado correctamente!');
         return redirect()->route('productoPrecio',['id' => $producto->id]);
     }
 

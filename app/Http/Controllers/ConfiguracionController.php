@@ -7,6 +7,7 @@ use App\Categoria;
 use App\Cliente;
 use App\ConversionUnidadMedida;
 use App\Movimiento;
+use App\OrdenPedido;
 use App\Precio;
 use App\Producto;
 use App\Proveedor;
@@ -14,6 +15,7 @@ use App\TipoAjuste;
 use App\TipoMovimiento;
 use App\TipoProducto;
 use App\UnidadMedida;
+use App\Venta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +31,7 @@ class ConfiguracionController extends Controller
 
     public function ImportarDatosPost(Request $request)
     {
+        dd($request);
         $this->validate($request, [
             'archivoXLSX' => 'required',
         ]);
@@ -125,7 +128,7 @@ class ConfiguracionController extends Controller
                 $unidad_medida = UnidadMedida::whereNombre($producto_x->unidad_de_medida)->first();
                 $tipo_producto = TipoProducto::whereNombre($producto_x->tipo_de_producto)->first();
                 $categoria = Categoria::whereNombre($producto_x->categoria)->first();
-                $factor_volumen = $producto_x->factor_de_volumen;
+                $factor_volumen = ($producto_x->factor_de_volumen == null) ? 0 : $producto_x->factor_de_volumen;
                 $producto = Producto::updateOrCreate([
                     'nombre' => $producto_x->nombre_producto,
                 ],[
@@ -250,6 +253,59 @@ class ConfiguracionController extends Controller
         session()->flash('mensaje.contenido', 'La conversion de unidad fue agregada correctamente!');
         return redirect()->route('conversionUnidadesVer', ['id' => $factor->id]);
 
+    }
+
+    public function ImportarOrdenes()
+    {
+        return view('configuracion.importarOrden');
+    }
+
+    public function ImportarOrdenesPost(Request $request)
+    {
+        $this->validate($request, [
+            'archivoXLSX' => 'required',
+        ]);
+
+        Excel::load(Input::file('archivoXLSX'), function($reader) {
+            // Getting all results
+            $results = $reader->get();
+            /**
+             * Crear nuevas ordenes pedido
+             */
+            foreach ($results as $orden_pedido_x)
+            {
+                $orden_pedido = OrdenPedido::create([
+                    'cliente_id' => $orden_pedido_x->id,
+                    'numero' => $orden_pedido_x->doc,
+                    'detalle' => "Orden de pedido con saldo pendiente 2017",
+                    'fecha' => Carbon::createFromDate(2017,12,31),
+                    'condicion_pago_id' => 4,
+                    'vendedor_id' => 1,
+                    'ventas_exentas' => 0,
+                    'ventas_gravadas' => round(($orden_pedido_x->saldo_inicial / 1.13),4),
+                    'venta_total' => round(($orden_pedido_x->saldo_inicial / 1.13),4),
+                    'estado_id' => 2,
+                ]);
+                $venta = Venta::create([
+                    'numero' => $orden_pedido_x->doc,
+                    'orden_pedido_id' => $orden_pedido->id,
+                    'tipo_documento_id' => 1,
+                    'fecha' => Carbon::createFromDate(2017,12,31),
+                    'vendedor_id' => 1,
+                    'estado_venta_id' => 1,
+                    'saldo' => $orden_pedido_x->saldo_inicial,
+                    'venta_total_con_impuestos' => $orden_pedido_x->saldo_inicial,
+                ]);
+                $cliente = Cliente::find($orden_pedido->cliente_id);
+                $cliente->saldo = $cliente->saldo + $orden_pedido_x->saldo_inicial;
+                $cliente->save();
+            }
+        });
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La importación de la configuración inicial fue ejecutada correctamente!');
+        return redirect()->route('inventarioLista');
     }
 
 }

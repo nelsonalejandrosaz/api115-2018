@@ -26,8 +26,6 @@
             <div class="box box-default">
                 <div class="box-header">
                     <h3 class="box-title">Lista de ordenes de pedido por facturar</h3>
-                    <a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary pull-right"><span
-                                class="fa fa-plus"></span> Nuevo</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
@@ -64,11 +62,6 @@
                                 <td align="center">
                                     <a href="{{ route('ventaNueva', ['id' => $ordenPedido->id]) }}"
                                        class="btn btn-success"><span class="fa fa-money"></span></a>
-                                    {{--<button type="button" class="btn btn-danger" data-toggle="modal"--}}
-                                            {{--data-target="#modalEliminar" data-ordenPedido="{{ $ordenPedido->id }}"--}}
-                                            {{--data-id="{{ $ordenPedido->id }}">--}}
-                                        {{--<span class="fa fa-trash"></span>--}}
-                                    {{--</button>--}}
                                 </td>
                             </tr>
                         @endforeach
@@ -84,5 +77,38 @@
 @endsection
 
 @section('JSExtras')
-    @include('comun.dataTablesJSes')
+    <!-- DataTables -->
+    <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script>
+        $(function () {
+            $("#tablaDT").DataTable(
+                {
+                    order: [[1, "asc"]],
+                    language: {
+                        processing:     "Procesando...",
+                        search:         "Buscar:",
+                        lengthMenu:     "Mostrar _MENU_ registros",
+                        info:           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        infoEmpty:      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        infoFiltered:   "(filtrado de un total de _MAX_ registros)",
+                        infoPostFix:    "",
+                        loadingRecords: "Cargando...",
+                        zeroRecords:    "No se encontraron resultados",
+                        emptyTable:     "Ningún dato disponible en esta tabla",
+                        paginate: {
+                            first:      "Primero",
+                            previous:   "Anterior",
+                            next:       "Siguiente",
+                            last:       "Último"
+                        },
+                        aria: {
+                            sortAscending:  ": Activar para ordenar la columna de manera ascendente",
+                            sortDescending: ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                }
+            );
+        });
+    </script>
 @endsection

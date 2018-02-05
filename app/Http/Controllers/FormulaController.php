@@ -106,8 +106,9 @@ class FormulaController extends Controller
         ]);
         dd($request);
 
-        // Se carga la formula
+        // Se carga la formula y el producto
         $formula_anterior = Formula::find($request->id);
+        $producto = Producto::find($formula_anterior->producto_id);
 
         // Se crea una nueva formula
         $formula_nueva = Formula::create([
@@ -116,7 +117,7 @@ class FormulaController extends Controller
             'ingresado_id' => Auth::user()->id,
             'descripcion' => $request->input('descripcion'),
             'activa' => true,
-            ''
+            'version' => $formula_anterior->version + 1,
         ]);
 
         // Se guardan las variables del request
@@ -133,6 +134,17 @@ class FormulaController extends Controller
                 'porcentaje' => $porcentajes[$i],
             ]);
         }
+        // Se guarda en producto que posee una formula asociada y se desactiva la formula anterior
+        $formula_anterior->activa = false;
+        $formula_anterior->save();
+        $producto->formula_activa = true;
+        $producto->save();
+
+        // Mensaje de exito de ingreso
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La fórmula fue ingresada correctamente!');
+        return redirect()->route('formulaVer',$formula_nueva->id);
 
     }
 

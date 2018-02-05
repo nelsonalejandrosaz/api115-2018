@@ -7,6 +7,8 @@
 @section('CSSExtras')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('/plugins/dataTables.bootstrap.css') }}">
+    {{-- Daterange --}}
+    <link rel="stylesheet" href="{{asset('/plugins/daterangepicker.css')}}">
 @endsection
 
 @section('contentheader_title')
@@ -29,7 +31,8 @@
                     <h3 class="box-title">Lista de productos</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <table id="tablaDT" class="table table-bordered table-hover">
+                    @if(Auth::user()->rol->nombre == 'Administrador')
+                        <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10%">Código</th>
@@ -48,8 +51,8 @@
                                 <td>{{$producto->codigo}}</td>
                                 <td>{{$producto->nombre}}</td>
                                 <td>{{$producto->unidad_medida->abreviatura}}</td>
-                                <td>{{$producto->cantidad_existencia}}</td>
-                                <td>${{ number_format($producto->costo,2)}}</td>
+                                <td>{{number_format($producto->cantidad_existencia,3)}}</td>
+                                <td>${{ number_format($producto->costo,3)}}</td>
                                 <td>${{ number_format($producto->costo_total,2)}}</td>
                                 @if($producto->porcentaje_stock >= 40)
                                     <td>
@@ -87,6 +90,53 @@
                         <tfoot>
                         </tfoot>
                     </table>
+                    @else
+                        <table id="tablaDT" class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th style="width: 15%">Código</th>
+                                <th style="width: 40%">Nombre</th>
+                                <th style="width: 5%">Unidad Medida</th>
+                                <th style="width: 20%">Cantidad Existencia</th>
+                                <th style="width: 20%">Stock</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($productos as $producto)
+                                <tr>
+                                    <td>{{$producto->codigo}}</td>
+                                    <td>{{$producto->nombre}}</td>
+                                    <td>{{$producto->unidad_medida->abreviatura}}</td>
+                                    <td>{{number_format($producto->cantidad_existencia,3)}}</td>
+                                    @if($producto->porcentaje_stock >= 40)
+                                        <td>
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar progress-bar-success"
+                                                     style="width: {{ $producto->porcentaje_stock }}%"></div>
+                                            </div>
+                                        </td>
+                                    @elseif($producto->porcentaje_stock >= 20)
+                                        <td>
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar progress-bar-yellow"
+                                                     style="width: {{ $producto->porcentaje_stock }}%"></div>
+                                            </div>
+                                        </td>
+                                    @else
+                                        <td>
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar progress-bar-danger"
+                                                     style="width: {{ $producto->porcentaje_stock }}%"></div>
+                                            </div>
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    @endif
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div>
@@ -98,9 +148,35 @@
     <!-- DataTables -->
     <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
+    {{--Daterange--}}
+    <script src="{{asset('plugins/moment.min.js')}}"></script>
+    <script src="{{asset('plugins/daterangepicker.js')}}"></script>
+
     <script>
 
         $(function () {
+
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges   : {
+                        'Hoy'       : [moment(), moment()],
+                        'Ayer'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Últimos 7 Días' : [moment().subtract(6, 'days'), moment()],
+                        'Últimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                        'Este mes'  : [moment().startOf('month'), moment().endOf('month')],
+                        'Mes pasado'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate  : moment(),
+                    "opens": "center"
+                },
+                function (start, end) {
+//                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                    $('#fecha-inicio').val(start.format('YYYY-MM-DD'));
+                    $('#fecha-fin').val(end.format('YYYY-MM-DD'));
+                }
+            );
+
             $('#modalFecha').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
                 var nombreObj = button.data('objeto'); // Extract info from data-* attributes

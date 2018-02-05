@@ -27,7 +27,7 @@
             <h3 class="box-title">Detalle de factura</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="" method="">
+        <form class="form-horizontal" action="{{ route('compraProcesar',['id' => $compra->id]) }}" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
 
@@ -181,7 +181,12 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('compraLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
+                <a href="{{ route('compraLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
+                @if($compra->estado_compra_id == \App\EstadoCompra::whereCodigo('INGRE')->first()->id)
+                    <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-check-square-o"></span>
+                        Procesar
+                    </button>
+                @endif
             </div>
         </form>
     </div><!-- /.box -->

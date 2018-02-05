@@ -57,7 +57,7 @@ class OrdenPedidoController extends Controller
         $productos_todos = Producto::all();
         $productos = [];
         foreach ($productos_todos as $producto) {
-            if ($producto->precios->first()->precio != 0) {
+            if ($producto->precios->first()->precio != 0 ) {
                 array_push($productos, $producto);
             }
         }
@@ -66,7 +66,7 @@ class OrdenPedidoController extends Controller
         $condiciones_pago = CondicionPago::all();
         return view('ordenPedido.ordenPedidoNueva')
             ->with(['condiciones_pago' => $condiciones_pago])
-            ->with(['productos' => $productos])
+            ->with(['productos' => $productos_todos])
             ->with(['clientes' => $clientes])
             ->with(['municipios' => $municipios])
             ->with(['unidad_medidas' => $unidad_medidas]);
@@ -152,7 +152,7 @@ class OrdenPedidoController extends Controller
                 $costo_unitario = $producto->costo;
                 $costo_total = $cantidad_salida_real * $costo_unitario;
                 // Calculo de cantidad y costos existencias
-                $cantidad_existencia = $producto->cantidad_existencia - $cantidad_salida_real;
+                $cantidad_existencia = abs($producto->cantidad_existencia - $cantidad_salida_real);
                 $costo_unitario_existencia = $producto->costo;
                 $costo_total_existencia = $cantidad_existencia * $costo_unitario_existencia;
             }
@@ -168,12 +168,12 @@ class OrdenPedidoController extends Controller
             // Se crea la salida
             $salida = Salida::create([
                 'orden_pedido_id' => $orden_pedido->id,
-                'cantidad' => $cantidad_salida,
+                'cantidad' => round($cantidad_salida,4),
                 'unidad_medida_id' => $unidad_medida->id,
                 'precio_id' => $precio_presentacion->id,
-                'precio_unitario' => $precio_unitario,
-                'venta_exenta' => $venta_exenta_salida,
-                'venta_gravada' => $venta_gravada_salida,
+                'precio_unitario' => round($precio_unitario,4),
+                'venta_exenta' => round($venta_exenta_salida,4),
+                'venta_gravada' => round($venta_gravada_salida,4),
             ]);
             // Se crea el movimiento
             $tipo_movimiento = TipoMovimiento::whereCodigo('SALO')->first();
@@ -183,20 +183,20 @@ class OrdenPedidoController extends Controller
                 'salida_id' => $salida->id,
                 'fecha' => $orden_pedido->fecha,
                 'detalle' => 'Salida de producto por orden de pedido n° '. $orden_pedido->numero,
-                'cantidad' => $cantidad_salida_real,
-                'costo_unitario' => $costo_unitario,
-                'costo_total' => $costo_total,
-                'cantidad_existencia' => $cantidad_existencia,
-                'costo_unitario_existencia' => $costo_unitario_existencia,
-                'costo_total_existencia' => $costo_total_existencia,
+                'cantidad' => round($cantidad_salida_real,4),
+                'costo_unitario' => round($costo_unitario,4),
+                'costo_total' => round($costo_total,4),
+                'cantidad_existencia' => round($cantidad_existencia,4),
+                'costo_unitario_existencia' => round($costo_unitario_existencia,4),
+                'costo_total_existencia' => round($costo_total_existencia,4),
             ]);
             $venta_exenta = $venta_total + $venta_exenta_salida;
             $venta_gravada = $venta_gravada + $venta_gravada_salida;
         }
         $venta_total = $venta_exenta + $venta_gravada;
-        $orden_pedido->ventas_gravadas = (float) $venta_gravada;
-        $orden_pedido->ventas_exentas = (float) $venta_exenta;
-        $orden_pedido->venta_total = (float) $venta_total;
+        $orden_pedido->ventas_gravadas = round($venta_gravada,4);
+        $orden_pedido->ventas_exentas = round($venta_exenta,4);
+        $orden_pedido->venta_total = round($venta_total,4);
         $orden_pedido->save();
         // Mensaje de éxito al guardar
         session()->flash('mensaje.tipo', 'success');
@@ -208,7 +208,7 @@ class OrdenPedidoController extends Controller
     public function OrdenPedidoPDF($id)
     {
         $ordenPedido = OrdenPedido::find($id);
-        $ventaTotal = number_format($ordenPedido->ventaTotal,2);
+        $ventaTotal = number_format($ordenPedido->venta_total,2);
         $ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
         $nombreArchivo = "orden-pedido-" . $ordenPedido->numero . "-" . Carbon::now()->format('d-m-Y');
         $pdf = PDF::loadView('pdf.ordenPedidoPDF',compact('ordenPedido'));
@@ -230,7 +230,9 @@ class OrdenPedidoController extends Controller
         {
             $producto = Producto::find($salida->movimiento->producto_id);
             $cantidad_existencia = $producto->cantidad_existencia;
-            if ($cantidad_existencia < $salida->movimiento->cantidad)
+            $cantidad_existencia = round($cantidad_existencia,4);
+            $cantidad_salida = round($salida->movimiento->cantidad,4);
+            if ($cantidad_existencia < $cantidad_salida)
             {
                 // Mensaje de exito al guardar
                 session()->flash('mensaje.tipo', 'danger');
@@ -243,8 +245,15 @@ class OrdenPedidoController extends Controller
         foreach ($salidas as $salida)
         {
             $producto = Producto::find($salida->movimiento->producto_id);
-//            $cantidad_existencia = $producto->cantidad_existencia - $salida->movimiento->cantidad;
-//            $salida->movimiento->cantidad_existencia = $cantidad_existencia;
+            $cantidad_existencia = $producto->cantidad_existencia - $salida->movimiento->cantidad;
+            $costo_total = $salida->movimiento->cantidad * $producto->costo;
+            $costo_total_existencia = $cantidad_existencia * $producto->costo;
+            // Actualizar movimiento
+            $salida->movimiento->costo_unitario = round($producto->costo,4);
+            $salida->movimiento->costo_total = round($costo_total,4);
+            $salida->movimiento->cantidad_existencia = round($cantidad_existencia,4);
+            $salida->movimiento->costo_unitario_existencia = round($producto->costo,4);
+            $salida->movimiento->costo_total_existencia = round($costo_total_existencia,4);
             $salida->movimiento->fecha_procesado = Carbon::now();
             $salida->movimiento->procesado = true;
             $salida->movimiento->save();
@@ -254,10 +263,27 @@ class OrdenPedidoController extends Controller
         $estado_orden = EstadoOrdenPedido::whereCodigo('PR')->first();
         $orden_pedido->estado_id = $estado_orden->id;
         $orden_pedido->update();
-//        Mensaje de exito al guardar
+        // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'La orden de pedido fue procesada correctamente!');
         return redirect()->route('ordenPedidoListaBodega');
+    }
+
+    public function OrdenPedidoEliminar($id)
+    {
+        $orden_pedido = OrdenPedido::find($id);
+        $salidas = $orden_pedido->salidas;
+        foreach ($salidas as $salida)
+        {
+            $salida->movimiento->delete();
+            $salida->delete();
+        }
+        $orden_pedido->delete();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La orden de pedido fue eliminada correctamente!');
+        return redirect()->route('ordenPedidoLista');
     }
 }
