@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Formula extends Model
 {
+    use SoftDeletes;
+
     public function componentes()
     {
         return $this->hasMany('App\Componente');
@@ -23,6 +26,7 @@ class Formula extends Model
 
     protected $fillable = [
         'producto_id',
+        'cantidad_formula',
         'ingresado_id',
         'descripcion',
         'fecha',

@@ -28,6 +28,27 @@
         La suma debe sumar 100%
     </div>
 
+    <div class="hidden">
+
+        {{--Productos select--}}
+        <select required class="form-control select2" style="width:100%" name="productos[]" id="productos-select-id">
+            <option selected disabled value="">Seleccione un producto</option>
+            @foreach($productos as $producto)
+                <option value="{{ $producto->id }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
+            @endforeach
+        </select>
+
+        {{--Cantidad input--}}
+        <div class="input-group" id="cantidad-input-id">
+            <input required type="number" class="form-control cant cantidad-formula-cls" min="0.001" step="any"
+                   name="cantidades[]" value="0">
+            <span class="input-group-addon">g</span>
+        </div>
+
+        {{--Eliminar boton--}}
+        <button type="button" class="btn btn-danger" id="eliminar-button"><span class="fa fa-remove"></span></button>
+    </div>
+
     <!-- Form de nuevo proveedor -->
     <div class="box box-default">
         <div class="box-header with-border">
@@ -40,11 +61,13 @@
                 {{-- Fila  --}}
                 <div class="col-md-6">
 
+                    <h4>Información del producto</h4>
+
                     {{-- Producto --}}
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Producto asociado:</b></label>
                         <div class="col-md-8">
-                            <select class="form-control select2" style="width:100%" name="producto_id" onchange="cambioProducto()" id="productoID">
+                            <select class="form-control select2" style="width:100%" name="producto_id" id="producto-aso-select-id">
                                 <option selected disabled value="0">Seleccione un producto</option>
                                 @foreach($productos as $producto)
                                     <option value="{{ $producto->id }}"
@@ -54,12 +77,15 @@
                         </div>
                     </div>
 
-                    {{-- Unidad de medida formula--}}
+                    {{-- Cantidad formula --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Unidad de medida</label>
+                        <label class="col-md-4 control-label"><b>Cantidad fórmula</b></label>
                         <div class="col-md-8">
-                            <input readonly type="text" class="form-control"
-                                   value="Seleccione un producto" id="unidadMedidalbl">
+                            <div class="input-group">
+                                <input type="number" class="form-control" step="any"
+                                       placeholder="ej. 1" name="cantidad_formula">
+                                <span class="input-group-addon">Kgs</span>
+                            </div>
                         </div>
                     </div>
 
@@ -74,6 +100,8 @@
                 </div>
 
                 <div class="col-md-6">
+
+                    <h4>Otra información</h4>
 
                     {{-- Fecha --}}
                     <div class="form-group">
@@ -93,8 +121,8 @@
                         <label class="col-md-4 control-label">Version</label>
                         <div class="col-md-8">
                             <input readonly type="text" class="form-control"
-                                   value="1"
-                                   name="version">
+                                   value="0"
+                                   name="version" id="version-input-id">
                         </div>
                     </div>
 
@@ -113,52 +141,49 @@
                 {{-- Fila --}}
                 <div class="col-md-12">
                     {{-- Tabla de productos --}}
-                    <table class="table table-bordered" id="tblProductos">
-                        <tr>
-                            <th style="width: 65%">Código -- Producto</th>
-                            <th style="width: 30%">Porcentaje</th>
-                            <th style="width: 5%">
-                                <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
-                                        type="button">
-                                    <span class="fa fa-plus"></span>
-                                </button>
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <select class="form-control select2 selProd" style="width:100%" name="productos[]"
-                                        id="selectProductos">
-                                    <option selected disabled value="">Seleccione un producto</option>
-                                    @foreach($productos as $producto)
-                                        <option value="{{ $producto->id }}"
-                                                data-um="{{ $producto->unidad_medida->abreviatura }}">{{$producto->codigo}}
-                                            -- {{ $producto->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </td>
-                            <td>
-                                <div class="input-group">
-                                    <input type="number" class="form-control cant" value="1" min="0.001" max="100"
-                                           name="porcentajes[]" onkeyup="calcularTotal()" onchange="calcularTotal()">
-                                    <span class="input-group-addon">%</span>
-                                </div>
-                            </td>
-                            <td align="center">
+                    <table class="table table-bordered" id="tbl-componentes-id">
+                        <thead>
+                            <tr>
+                                <th style="width: 55%">Código -- Producto</th>
+                                <th style="width: 35%">Cantidad</th>
+                                <th style="width: 10%; text-align: center">
+                                    <button class="btn btn-success" id="btn-nueva-fila-id"
+                                            type="button">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                            </td>
+                        </tbody>
+                    </table>
+
+                </div>
+                {{-- Fin fila --}}
+
+                {{-- Fila --}}
+                <div class="col-md-12">
+                    {{-- Tabla de productos --}}
+                    <table class="table table-bordered" id="tbl-componentes-id">
+                        <thead>
+                        <tr>
+                            <th style="width: 55%">Total</th>
+                            <th style="width: 35%">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" step="any"
+                                           value="0" id="total-formula-id">
+                                    <span class="input-group-addon">g</span>
+                                </div>
+                            </th>
+                            <th style="width: 10%; text-align: center"></th>
                         </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
                     </table>
-                    <table class="table table-bordered">
-                        <th style="width: 65%; text-align: right; vertical-align: middle;">Total:</th>
-                        <th style="width: 30%">
-                            <div class="input-group">
-                                <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput"
-                                       min="100" max="100" value="0" disabled>
-                                <span class="input-group-addon">%</span>
-                            </div>
-                        </th>
-                        <th style="width: 5%"></th>
-                    </table>
+
                 </div>
                 {{-- Fin fila --}}
 
@@ -166,7 +191,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="button" onclick="verificarSuma()" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
                 </button>
             </div>
         </form>
@@ -175,14 +200,34 @@
 @endsection
 
 @section('JSExtras')
+    <!-- Select2 -->
+    <script src="{{asset('/plugins/select2.full.min.js')}}"></script>
     {{-- Funcion para cargar mas filas de productos --}}
     <script>
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
             $("body").on("click", ".btn-danger", funcionEliminarProducto);
+            $('#btn-nueva-fila-id').click(nuevaFila);
+            $('#producto-aso-select-id').change(cambioProducto);
             selecionarValor();
-            calcularTotal();
+            $('.select2').select2();
+            agregarFuncion();
+        }
+
+        function agregarFuncion() {
+            $('.cant').keyup(sumarTotal);
+            $('.cant').change(sumarTotal);
+            selecionarValor();
+        }
+
+        function sumarTotal() {
+            let total =0;
+            $('.cant').each(function () {
+                console.log($(this).val());
+                total += parseFloat($(this).val());
+            });
+            $('#total-formula-id').val(total);
         }
 
         function selecionarValor() {
@@ -195,20 +240,20 @@
             });
         }
 
-        var numero = 2;
-
-        function funcionNuevoProducto() {
-            copia = $('#selectProductos').clone(false);
-            $('#tblProductos')
+        function nuevaFila() {
+            let productos_select = $('#productos-select-id').clone(false);
+            let cantidad_input = $('#cantidad-input-id').clone(false);
+            let eliminar_button = $('#eliminar-button').clone(false);
+            $('#tbl-componentes-id')
                 .append
                 (
-                    $('<tr>').attr('id', 'rowProducto' + numero)
+                    $('<tr>')
                         .append
                         (
                             $('<td>')
                                 .append
                                 (
-                                    copia
+                                    productos_select
                                 )
                         )
                         .append
@@ -216,7 +261,7 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<div class="input-group"><input type="number" class="form-control cant" value="1" min="1" max="100" name="porcentajes[]" onkeyup="calcularTotal()" onchange="calcularTotal()"><span class="input-group-addon">%</span></div>'
+                                    cantidad_input
                                 )
                         )
                         .append
@@ -224,24 +269,17 @@
                             $('<td>').attr('align', 'center')
                                 .append
                                 (
-                                    '<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
+                                    eliminar_button
                                 )
                         )
                 );
-            //Initialize Select2 Elements
-            $(".select2").select2();
-            $(".select2").select2();
-            numero++;
-            calcularTotal();
-            selecionarValor();
+            $('.select2').select2();
+            agregarFuncion();
         }
 
         function funcionEliminarProducto() {
-            // $(this).remove().end();
-            // $(this).closest('tr').remove();
-            // console.log($(this).parent().parent());
             $(this).parent().parent().remove();
-            calcularTotal();
+            sumarTotal()
         }
 
         function verificarSuma() {
@@ -256,26 +294,22 @@
             }
         }
 
-        function calcularTotal() {
-            var totalPorcentaje = 0;
-            var porcentajes = $('.cant');
-            for (var i = 0; i < porcentajes.length; i++) {
-                porcentaje = parseFloat(porcentajes[i].value);
-                totalPorcentaje = totalPorcentaje + porcentaje;
-            }
-            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(3));
-            // console.log(totalPorcentaje);
+        function cambioProducto() {
+            let producto_asc_select = $('#producto-aso-select-id');
+            $.ajax({
+                url: '/api/formula/version/' + producto_asc_select.val(),
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (dato) {
+                    cambioVersion(dato);
+                },
+            });
         }
 
-        function cambioProducto() {
-            var productoId = $('#productoID').val();
-            var unidadMedida = $('#productoID').find('option[value="' + productoId + '"]').data('unidadmedida');
-            $('#unidadMedidalbl').val(unidadMedida);
+        function cambioVersion(version) {
+            $('#version-input-id').val(version);
         }
 
     </script>
-    {{-- Fin de funcion para cargar mas filas de productos --}}
-
-    @include('comun.select2Jses')
 @endsection
 

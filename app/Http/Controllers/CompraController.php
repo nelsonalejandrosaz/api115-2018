@@ -150,6 +150,7 @@ class CompraController extends Controller
     {
         $compra = Compra::find($id);
         $entradas = $compra->entradas;
+        $proveedor = Proveedor::find($compra->proveedor_id);
         foreach ($entradas as $entrada)
         {
             $producto = Producto::find($entrada->movimiento->producto_id);
@@ -164,6 +165,8 @@ class CompraController extends Controller
         }
         $compra->estado_compra_id = EstadoCompra::whereCodigo('PROCE')->first()->id;
         $compra->save();
+        $proveedor->saldo = $proveedor->saldo + $compra->compra_total;
+        $proveedor->save();
         // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

@@ -13,15 +13,21 @@ class FormulaController extends Controller
 {
     public function FormulaLista()
     {
-        $formulas = Formula::all();
-//        dd($formulas);
+        $formulas = Formula::whereActiva(true)->get();
         return view('formula.formulaLista')
+            ->with(['formulas' => $formulas]);
+    }
+
+    public function FormulaDesactivadasLista()
+    {
+        $formulas = Formula::whereActiva(false)->get();
+        return view('formula.formulaDesactivadaLista')
             ->with(['formulas' => $formulas]);
     }
 
     public function FormulaVer($id)
     {
-        $formula = Formula::find($id);
+        $formula = Formula::findOrFail($id);
         $unidad_medidas = UnidadMedida::all();
         $productos = Producto::all();
         return view('formula.formulaVer')
@@ -44,11 +50,9 @@ class FormulaController extends Controller
         // Validación de datos
         $this->validate($request, [
             'producto_id' => 'required',
+            'cantidad_formula' => 'required',
             'fecha' => 'required',
-            'productos.*' => 'required',
-            'porcentajes.*' => 'required',
         ]);
-
 
         // Se carga el producto
         $producto = Producto::find($request->input('producto_id'));
@@ -58,21 +62,23 @@ class FormulaController extends Controller
             'fecha' => $request->input('fecha'),
             'ingresado_id' => Auth::user()->id,
             'descripcion' => $request->input('descripcion'),
+            'cantidad_formula' => $request->input('cantidad_formula'),
             'activa' => true,
+            'version' => $request->input('version'),
         ]);
 
         // Se guardan las variables del request
-        $productos_id = $request->input('productos');
-        $porcentajes = $request->input('porcentajes');
-        $max = sizeof($productos_id);
+        $productos = $request->input('productos');
+        $cantidades = $request->input('cantidades');
+        $max = sizeof($productos);
 
         // Se recorre el array y se guardan los componentes de la formula
         for ($i=0; $i < $max ; $i++) {
             // Crea y guarda los componentes de la formula
             Componente::create([
                 'formula_id' => $formula->id,
-                'producto_id' => $productos_id[$i],
-                'porcentaje' => $porcentajes[$i],
+                'producto_id' => $productos[$i],
+                'cantidad' => $cantidades[$i],
             ]);
         }
 
@@ -90,64 +96,73 @@ class FormulaController extends Controller
     public function FormulaEditar($id)
     {
         $formula = Formula::find($id);
-        $formula->version = $formula->version + 1;
+        $producto = Producto::find($formula->producto_id);
         $unidad_medidas = UnidadMedida::all();
         $productos = Producto::all();
-        return view('formula.formulaEditar')->with(['formula' => $formula])->with(['unidad_medidas' => $unidad_medidas])->with(['productos' => $productos]);
+        return view('formula.formulaEditar')
+            ->with(['formula' => $formula])
+            ->with(['unidad_medidas' => $unidad_medidas])
+            ->with(['productos' => $productos]);
     }
 
-    public function FormulaEditarPut(Request $request)
+    public function FormulaEditarPut(Request $request, $id)
     {
-        // Validacion
+        // Validación de datos
         $this->validate($request, [
-            'fecha_modificacion' => 'required',
-            'productos.*' => 'required',
-            'porcentajes.*' => 'required',
-        ]);
-        dd($request);
-
-        // Se carga la formula y el producto
-        $formula_anterior = Formula::find($request->id);
-        $producto = Producto::find($formula_anterior->producto_id);
-
-        // Se crea una nueva formula
-        $formula_nueva = Formula::create([
-            'producto_id' => $formula_anterior->producto->id,
-            'fecha' => $request->input('fecha_modificacion'),
-            'ingresado_id' => Auth::user()->id,
-            'descripcion' => $request->input('descripcion'),
-            'activa' => true,
-            'version' => $formula_anterior->version + 1,
+            'cantidad_formula' => 'required',
         ]);
 
+        // Se carga la formula
+        $formula = Formula::find($id);
+        // Se carga el producto
+        $producto = Producto::find($formula->producto_id);
+        // Se crea y guarda la instancia de formula
+        $formula->cantidad_formula = $request->input('cantidad_formula');
+        $formula->save();
         // Se guardan las variables del request
-        $productos_id = $request->input('productos');
-        $porcentajes = $request->input('porcentajes');
-        $max = sizeof($productos_id);
+        $productos = $request->input('productos');
+        $cantidades = $request->input('cantidades');
+        $max = sizeof($productos);
 
         // Se recorre el array y se guardan los componentes de la formula
         for ($i=0; $i < $max ; $i++) {
             // Crea y guarda los componentes de la formula
-            Componente::create([
-                'formula_id' => $formula_nueva->id,
-                'producto_id' => $productos_id[$i],
-                'porcentaje' => $porcentajes[$i],
+            Componente::updateOrCreate([
+                'formula_id' => $formula->id,
+                'producto_id' => $productos[$i]],
+                ['cantidad' => $cantidades[$i]
             ]);
         }
-        // Se guarda en producto que posee una formula asociada y se desactiva la formula anterior
-        $formula_anterior->activa = false;
-        $formula_anterior->save();
-        $producto->formula_activa = true;
-        $producto->save();
 
         // Mensaje de exito de ingreso
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
-        session()->flash('mensaje.contenido', 'La fórmula fue ingresada correctamente!');
-        return redirect()->route('formulaVer',$formula_nueva->id);
+        session()->flash('mensaje.contenido', 'La fórmula fue actualizada correctamente!');
+        return redirect()->route('formulaVer',$formula->id);
 
     }
 
+    public function FormulaActivarPost($id)
+    {
+        $formula = Formula::find($id);
+        $producto = Producto::find($formula->producto_id);
+        $formula_activa = $producto->formula()->where('activa','=','1')->first();
+        $formula_activa->activa = false;
+        $formula_activa->save();
+        $formula->activa = true;
+        $formula->save();
+        // Mensaje de exito de ingreso
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La fórmula fue activada correctamente!');
+        return redirect()->route('formulaVer',$formula->id);
+    }
 
+    public function ComponenteEliminar($id)
+    {
+        $componente = Componente::find($id);
+        $formula = Formula::find($componente->formula_id);
+        $componente->delete();
+    }
 
 }

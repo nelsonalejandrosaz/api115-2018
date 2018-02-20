@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Produccion extends Model
 {
+    use SoftDeletes;
+
     public function salidas()
     {
         return $this->hasMany('App\Salida');
@@ -26,14 +29,21 @@ class Produccion extends Model
         return $this->hasMany('App\DetalleProduccion');
     }
 
+    public function producto()
+    {
+        return $this->belongsTo('App\Producto');
+    }
+
     protected $fillable = [
         'bodega_id',
         'formula_id',
+        'producto_id',
         'cantidad',
         'fecha',
         'detalle',
         'lote',
         'fecha_vencimiento',
+        'procesado',
     ];
 
     protected $table = 'producciones';

@@ -43,6 +43,15 @@
                         </div>
                     </div>
 
+                    {{-- Nombre alternativo del cliente --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Nombre alternativo</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="ej. Panadería de José por la quita"
+                                   name="nombre_alternativo" value="{{ $cliente->nombre_alternativo }}">
+                        </div>
+                    </div>
+
                     {{-- Contacto del cliente --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Contacto</label>
@@ -62,7 +71,7 @@
 
                     {{-- Municipio --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Municipio</b></label>
+                        <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
                             <select class="form-control select2" style="width: 100%" name="municipio_id">
                                 <option value="" selected disabled>Selecciona un municipio</option>
@@ -90,6 +99,7 @@
                 <div class="col-xs-6">
                     <h4>Telefonos</h4>
                     <br>
+
                     {{-- Telefono principal del cliente --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Principal</label>
@@ -97,11 +107,21 @@
                             <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_1" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono_1 }}" >
                         </div>
                     </div>
+
                     {{-- Telefono secundario del cliente --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Secundario</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ $cliente->telefono_2 }}" >
+                        </div>
+                    </div>
+
+                    {{-- Email cliente --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Email</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" placeholder="ej. cliente@algo.com"
+                                   name="correo" value="{{ $cliente->correo }}">
                         </div>
                     </div>
 
@@ -127,7 +147,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Vendedor</label>
                         <div class="col-sm-9">
-                            <select class="form-control select2" name="unidad_medida_id">
+                            <select class="form-control select2" name="vendedor_id">
                                 <option value="" selected disabled>Sin vendedor especificado</option>
                                 @foreach($vendedores as $vendedor)
                                     @if($vendedor->id == $cliente->vendedor_id)

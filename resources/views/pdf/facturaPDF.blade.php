@@ -45,7 +45,7 @@
 
 </style>
 <table class="tg">
-    <tr style="height:1.3cm">
+    <tr style="height:1.2cm">
         <th class="tg-cw2b" style="width:2.0cm"></th>
         <th class="tg-cw2b" style="width:4.7cm"><br></th>
         <th class="tg-cw2b" style="width:0.7cm"><br></th>
@@ -60,42 +60,53 @@
 
     <tr>
         <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>{{--Codigo del cliente--}}
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="4">{{$venta->orden_pedido->cliente->nit}}</td>
+        <td class="tg-cw2b" colspan="4">{{$venta->cliente->nit}}</td>
         <td class="tg-cw2b" colspan="2"></td>
         <td class="tg-cw2b">{{$venta->fecha->format('d-m-Y')}}</td>
     </tr>
 
     <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">{{$venta->orden_pedido->cliente->nombre}}</td>
+        <td class="tg-cw2b">{{$venta->cliente->nombre}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="2">ORDEN</td>
-        <td class="tg-cw2b">{{$venta->orden_pedido->numero}}</td>
-    </tr>
-
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="6">{{strtoupper($venta->orden_pedido->direccion)}}</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">Orden pedido:</td>
+        <td class="tg-cw2b" colspan="2">{{$venta->orden_pedido->numero}}</td>
         <td class="tg-cw2b"></td>
     </tr>
 
     <tr>
         <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="5">{{$venta->cliente->direccion}}</td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+    </tr>
+
+    <tr>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b">{{$venta->cliente->municipio->nombre}}</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="3">{{$venta->orden_pedido->condicion_pago->nombre}}</td>
+
+    </tr>
+
+    <tr>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->orden_pedido->condicion_pago->nombre)}}</td>
+        <td class="tg-cw2b" colspan="3">{{$venta->cliente->giro}}</td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="3">{{$venta->vendedor->nombre}} {{$venta->vendedor->apellido}}</td>
     </tr>
 
     <tr>
@@ -106,20 +117,7 @@
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b" colspan="3">{{strtoupper($venta->orden_pedido->vendedor->nombreCompleto)}}</td>
-    </tr>
-
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
+        <td class="tg-cw2b" colspan="3"></td>
     </tr>
 
     <tr style="height: 0.7cm">
@@ -139,7 +137,7 @@
     @foreach($venta->orden_pedido->salidas as $salida)
         <tr>
             <td class="tg-cw2b">{{$salida->movimiento->producto->codigo}}</td>
-            <td class="tg-cw2b" colspan="3">{{$salida->movimiento->producto->nombre}}</td>
+            <td class="tg-cw2b" colspan="3">{{$salida->movimiento->producto->nombre}} {{ $salida->descripcion_presentacion }}</td>
             <td class="tg-cw2b">{{$salida->unidad_medida->abreviatura}}</td>
             <td class="tg-cw2b">{{$salida->cantidad}}</td>
             <td class="tg-cw2b">$ {{number_format($salida->precio_unitario,2)}}</td>
@@ -149,7 +147,6 @@
         </tr>
         @php($i++)
     @endforeach
-
     @for($i;$i<=10;$i++)
         <tr>
             <td class="tg-cw2b">--</td>
@@ -179,18 +176,6 @@
     <tr>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b" colspan="5">{{$venta->orden_pedido->venta_total_letras}}</td>
-        <td class="tg-cw2b">SUBTOTAL</td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$ {{number_format($venta->orden_pedido->venta_total,2)}}</td>
-    </tr>
-    <tr>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
-        <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
@@ -218,7 +203,7 @@
         <td class="tg-cw2b">TOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$ {{number_format($venta->orden_pedido->venta_total,2)}}</td>
+        <td class="tg-cw2b">$ {{number_format($venta->venta_total_con_impuestos,2)}}</td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
@@ -234,4 +219,10 @@
     </tr>
 </table>
 </body>
+<script src="{{ asset('/plugins/jquery.min.js') }}" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        window.print();
+    });
+</script>
 </html>

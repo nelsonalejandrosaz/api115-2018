@@ -31,6 +31,7 @@ class CreateProductosTable extends Migration
             $table->boolean('producto_activo')->default(true);
             $table->boolean('formula_activa')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

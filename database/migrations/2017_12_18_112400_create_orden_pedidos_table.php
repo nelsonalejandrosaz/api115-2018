@@ -16,6 +16,7 @@ class CreateOrdenPedidosTable extends Migration
         Schema::create('orden_pedidos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('cliente_id')->unsigned();
+            $table->integer('tipo_documento_id')->unsigned()->nullable();
             $table->integer('numero');
             $table->string('detalle',140)->nullable();
             $table->date('fecha');

@@ -38,7 +38,12 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Fecha ingreso</b></label>
                         <div class="col-md-8">
-                            <input type="date" class="form-control" name="fecha">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha" value="{{ old('fecha') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -47,9 +52,13 @@
                         <label class="col-md-4 control-label"><b>Proveedor</b></label>
                         <div class="col-md-8">
                             <select class="form-control select2" style="width: 100%" name="proveedor_id">
-                                <option value="" disabled selected>Seleccione un proveedor</option>
+                                <option disabled selected>Seleccione un proveedor</option>
                                 @foreach($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}">{{ $proveedor->nombre }}</option>
+                                    @if($proveedor->id == old('proveedor_id'))
+                                        <option selected value="{{ $proveedor->id }}">{{ $proveedor->nombre }}</option>
+                                    @else
+                                        <option value="{{ $proveedor->id }}">{{ $proveedor->nombre }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -59,7 +68,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Detalle</label>
                         <div class="col-md-8">
-                            <textarea class="form-control" name="detalle"></textarea>
+                            <textarea class="form-control" name="detalle">{{ old('detalle') }}</textarea>
                         </div>
                     </div>
 
@@ -72,7 +81,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Factura o CCF n°</b></label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" name="numero">
+                            <input type="text" class="form-control" name="numero" value="{{ old('numero') }}">
                         </div>
                     </div>
 
@@ -80,7 +89,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Ingresado por:</b></label>
                         <div class="col-md-8">
-                            <input disabled type="text" class="form-control" name="ingresado_id"
+                            <input readonly type="text" class="form-control" name="ingresado_id"
                                    value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}">
                         </div>
                     </div>
@@ -91,9 +100,13 @@
                         <div class="col-md-8 ">
                             <select class="form-control select2" style="width: 100%" name="condicion_pago_id"
                                     id="condicionPagoID">
-                                <option value="" selected disabled>Selecciona una condición de pago</option>
+                                <option selected disabled>Selecciona una condición de pago</option>
                                 @foreach($condiciones_pago as $condicion_pago)
-                                    <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @if($condicion_pago->id == old('condicion_pago_id'))
+                                        <option selected value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @else
+                                        <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -143,14 +156,14 @@
                             {{--unidad medida--}}
                             <td>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="---" id="unidadMedidaLbl"
-                                           disabled>
+                                    <input readonly type="text" class="form-control" placeholder="---" id="unidadMedidaLbl">
                                 </div>
                             </td>
                             {{--cantidad--}}
                             <td>
                                 <div class="input-group">
-                                    <input class="form-control cantidadCls" type="number" value="0" min="0.001" step="any"
+                                    <input class="form-control cantidadCls" type="number" value="0" min="0.001"
+                                           step="any"
                                            name="cantidades[]" id="cantidad" required>
                                 </div>
                             </td>
@@ -185,8 +198,20 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="0.00" name="compraTotal"
-                                           id="compraTotal" disabled>
+                                    <input readonly type="number" class="form-control" value="0.00" name="compra-total"
+                                           id="compraTotal">
+                                </div>
+                            </th>
+                            <th style="width:5%"></th>
+                        </tr>
+                        <tr>
+                            <th style="width:65%"></th>
+                            <th style="width:15%">Compra Total + IVA</th>
+                            <th style="width:15%">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input readonly type="number" class="form-control" value="0.00" name="compra-total-iva"
+                                           id="compra-total-iva-id">
                                 </div>
                             </th>
                             <th style="width:5%"></th>
@@ -206,6 +231,10 @@
             </div>
         </form>
     </div><!-- /.box -->
+
+    <div class="hidden">
+        <input type="number" value="{{ \App\Configuracion::find(1)->iva }}" id="iva-id">
+    </div>
 
 @endsection
 
@@ -348,16 +377,22 @@
         }
 
         function cambioTotal() {
-            var compraTotal = 0;
+            let compraTotal = 0;
+            let compraTotalIVA = 0;
+            let iva = parseFloat($('#iva-id').val());
             $(".costoTotalCls").each(
                 function (index, value) {
                     if ($.isNumeric($(this).val())) {
                         compraTotal = compraTotal + eval($(this).val());
-                        //console.log(importe_total);
+                        compraTotal = parseFloat(compraTotal);
+                        compraTotalIVA = compraTotal * iva;
                     }
                 }
             );
             $("#compraTotal").val(compraTotal.toFixed(2));
+            $("#compra-total-iva-id").val(compraTotalIVA.toFixed(2));
+            console.log(iva);
+            console.log(compraTotalIVA.toFixed(2));
         }
 
         function unidadMedida() {

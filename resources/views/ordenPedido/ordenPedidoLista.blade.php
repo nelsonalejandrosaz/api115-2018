@@ -24,11 +24,71 @@
 
     <div class="row">
         <div class="col-xs-12">
+
+            {{--Cuadro de herramientas--}}
+            <div class="box box-default collapsed-box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Opciones</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div><!-- /.box-header -->
+
+                <!-- form start -->
+                <form class="form-horizontal" action="{{ route('ordenPedidoListaPost') }}" method="POST">
+                    {{ csrf_field() }}
+                    <div class="box-body">
+                        <div class="col-md-6 col-sm-12">
+                            <h4>Fechas mostradas</h4>
+                            {{-- Fecha inicio --}}
+                            <div class="form-group">
+                                <label class="col-md-4 control-label"><b>Fecha inicio</b></label>
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $extra['fecha_inicio']->format('Y-m-d') }}">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 col-sm-12">
+                            <h4><br></h4>
+                            {{-- Fecha fin --}}
+                            <div class="form-group">
+                                <label class="col-md-4 control-label"><b>Fecha fin</b></label>
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $extra['fecha_fin']->format('Y-m-d') }}">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div><!-- /.box-body -->
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-lg btn-success pull-right"><span
+                                    class="fa fa-search"></span> Consultar
+                        </button>
+                        <a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary" style="margin-right: 5px"><span
+                                    class="fa fa-plus"></span> Nueva orden pedido</a>
+                    </div>
+                </form>
+            </div>
+            {{--Fin cuadro de herramientas--}}
+
             <div class="box box-default">
-                <div class="box-header">
-                    <h3 class="box-title">Lista de facturas</h3>
-                    <a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary pull-right"><span
-                                class="fa fa-plus"></span> Nuevo</a>
+                <div class="box-header with-border">
+                    <h3 class="box-title">Lista de ordenes de pedido</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
@@ -38,9 +98,10 @@
                             <th style="width:10%">Fecha ingreso</th>
                             <th style="width:10%">Fecha entrega</th>
                             <th style="width:25%">Cliente</th>
-                            <th style="width:20%">Vendedor</th>
+                            <th style="width:15%">Vendedor</th>
+                            <th style="width:10%">Tipo doc</th>
                             <th style="width:10%">Estado</th>
-                            <th style="width:15%">Acción</th>
+                            <th style="width:10%">Acción</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -55,13 +116,14 @@
                                 @endif
                                 <td>{{$ordenPedido->cliente->nombre}}</td>
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
+                                <td>{{ $ordenPedido->tipo_documento->codigo }}</td>
                                 <td>
-                                    @if($ordenPedido->estado_id == 1)
-                                        En proceso
-                                    @elseif($ordenPedido->estado_id == 2)
-                                        Procesado
-                                    @elseif($ordenPedido->estado_id == 3)
-                                        Facturado
+                                    @if($ordenPedido->estado_orden->codigo == 'SP')
+                                        <span class="label label-warning">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'PR')
+                                        <span class="label label-info">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'FC')
+                                        <span class="label label-success">{{ $ordenPedido->estado_orden->nombre }}</span>
                                     @endif
                                 </td>
                                 <td align="center">
@@ -92,11 +154,14 @@
     <!-- DataTables -->
     <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('/plugins/moment.min.js') }}"></script>
+    <script src="{{ asset('/plugins/datetime-moment.js') }}"></script>
     <script !src="">
         $(function () {
+            $.fn.dataTable.moment( 'dd/MM/YYYY' );
             $("#tablaDT").DataTable(
                 {
-                    order: [[1, "asc"]] ,
+                    order: [[1, "desc"]] ,
                     language: {
                         processing:     "Procesando...",
                         search:         "Buscar:",

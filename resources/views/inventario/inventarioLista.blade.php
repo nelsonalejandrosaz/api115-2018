@@ -31,12 +31,11 @@
                     <h3 class="box-title">Lista de productos</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    @if(Auth::user()->rol->nombre == 'Administrador')
                         <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10%">Código</th>
-                            <th style="width: 30%">Nombre</th>
+                            <th style="width: 30%">Nombre (Nombre alternativo)</th>
                             <th style="width: 5%">Unidad Medida</th>
                             <th style="width: 10%">Cantidad Existencia</th>
                             <th style="width: 10%">Costo unitario</th>
@@ -49,7 +48,11 @@
                         @foreach($productos as $producto)
                             <tr>
                                 <td>{{$producto->codigo}}</td>
-                                <td>{{$producto->nombre}}</td>
+                                @if($producto->nombre_alternativo != null)
+                                    <td>{{$producto->nombre}} ({{$producto->nombre_alternativo}})</td>
+                                @else
+                                    <td>{{$producto->nombre}}</td>
+                                @endif
                                 <td>{{$producto->unidad_medida->abreviatura}}</td>
                                 <td>{{number_format($producto->cantidad_existencia,3)}}</td>
                                 <td>${{ number_format($producto->costo,3)}}</td>
@@ -90,53 +93,6 @@
                         <tfoot>
                         </tfoot>
                     </table>
-                    @else
-                        <table id="tablaDT" class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th style="width: 15%">Código</th>
-                                <th style="width: 40%">Nombre</th>
-                                <th style="width: 5%">Unidad Medida</th>
-                                <th style="width: 20%">Cantidad Existencia</th>
-                                <th style="width: 20%">Stock</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($productos as $producto)
-                                <tr>
-                                    <td>{{$producto->codigo}}</td>
-                                    <td>{{$producto->nombre}}</td>
-                                    <td>{{$producto->unidad_medida->abreviatura}}</td>
-                                    <td>{{number_format($producto->cantidad_existencia,3)}}</td>
-                                    @if($producto->porcentaje_stock >= 40)
-                                        <td>
-                                            <div class="progress progress-xs">
-                                                <div class="progress-bar progress-bar-success"
-                                                     style="width: {{ $producto->porcentaje_stock }}%"></div>
-                                            </div>
-                                        </td>
-                                    @elseif($producto->porcentaje_stock >= 20)
-                                        <td>
-                                            <div class="progress progress-xs">
-                                                <div class="progress-bar progress-bar-yellow"
-                                                     style="width: {{ $producto->porcentaje_stock }}%"></div>
-                                            </div>
-                                        </td>
-                                    @else
-                                        <td>
-                                            <div class="progress progress-xs">
-                                                <div class="progress-bar progress-bar-danger"
-                                                     style="width: {{ $producto->porcentaje_stock }}%"></div>
-                                            </div>
-                                        </td>
-                                    @endif
-                                </tr>
-                            @endforeach
-                            </tbody>
-                            <tfoot>
-                            </tfoot>
-                        </table>
-                    @endif
                 </div><!-- /.box-body -->
             </div><!-- /.box -->
         </div>

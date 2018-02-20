@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Clientes
+    Abonos realizados
 @endsection
 
 @section('CSSExtras')
@@ -10,7 +10,7 @@
 @endsection
 
 @section('contentheader_title')
-    Clientes
+    Abonos realizados
 @endsection
 
 @section('contentheader_description')
@@ -27,14 +27,15 @@
         <div class="col-xs-12">
             <div class="box box-default">
                 <div class="box-header">
-                    <h3 class="box-title">Clientes</h3>
-                    <a href="{{ route('clienteNuevo') }}" class="btn btn-lg btn-primary pull-right"><span
+                    <h3 class="box-title">Abonos</h3>
+                    <a href="{{ route('abonoNuevoSinVenta') }}" class="btn btn-lg btn-primary pull-right"><span
                                 class="fa fa-plus"></span> Nuevo</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
+                            <th style="width:15%">Fecha</th>
                             <th style="width:30%">Nombre cliente</th>
                             <th style="width:20%">Cantidad abono</th>
                             <th style="width:15%">n° factura</th>
@@ -45,6 +46,7 @@
                         <tbody>
                         @foreach($abonos as $abono)
                             <tr>
+                                <td>{{ $abono->fecha->format('d/m/Y') }}</td>
                                 <td>{{$abono->cliente->nombre}}</td>
                                 <td>$ {{number_format($abono->cantidad,2)}}</td>
                                 <td>{{$abono->venta->numero}}</td>

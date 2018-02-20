@@ -14,7 +14,7 @@ class ConfiguracionesSeeder extends Seeder
     {
         Configuracion::create([
             'iva' => 1.13,
-            'comisiones' => 0.05,
+            'comisiones' => 0.03,
             'color_tema' => 'skin-purple',
         ]);
     }

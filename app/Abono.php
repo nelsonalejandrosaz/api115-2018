@@ -16,6 +16,11 @@ class Abono extends Model
         return $this->belongsTo('App\Cliente');
     }
 
+    public function forma_pago()
+    {
+        return $this->belongsTo('App\TipoAbono','forma_pago_id');
+    }
+
     protected $fillable = [
         'venta_id',
         'cliente_id',

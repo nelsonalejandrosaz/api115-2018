@@ -17,6 +17,6 @@ class Componente extends Model
     }
 
     protected $fillable = [
-        'formula_id', 'producto_id', 'porcentaje',
+        'formula_id', 'producto_id', 'porcentaje', 'cantidad',
     ];
 }

@@ -2,7 +2,7 @@
 
 @section('htmlheader_title')
     {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
-    Detalle de formula
+    Ver fórmula
 @endsection
 
 @section('CSSx')
@@ -14,7 +14,7 @@
 
 @section('contentheader_title')
     {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
-    Detalle de formula
+    Ver fórmula
 @endsection
 
 @section('contentheader_description')
@@ -31,7 +31,7 @@
             <h3 class="box-title">Detalle de formula</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form id="formDatos" class="form-horizontal">
+        <form id="formDatos" class="form-horizontal" action="">
             {{ csrf_field() }}
             <div class="box-body">
 
@@ -48,12 +48,15 @@
                         </div>
                     </div>
 
-                    {{-- Unidad de medida formula--}}
+                    {{-- Cantidad--}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Unidad de medida</label>
+                        <label class="col-md-4 control-label">Cantidad fórmula</label>
                         <div class="col-md-8">
-                            <input readonly type="text" class="form-control"
-                                   value="{{ $formula->producto->unidad_medida->nombre }}" id="unidadMedidalbl">
+                            <div class="input-group">
+                                <input readonly type="text" class="form-control"
+                                       value="{{ $formula->cantidad_formula }}" id="unidadMedidalbl">
+                                <span class="input-group-addon">Kgs</span>
+                            </div>
                         </div>
                     </div>
 
@@ -72,7 +75,7 @@
 
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Fecha ingreso</b></label>
+                        <label class="col-md-4 control-label">Fecha ingreso</label>
                         <div class="col-md-8">
                             <div class="input-group">
                                 <input readonly type="date" class="form-control" name="fecha"
@@ -128,53 +131,24 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width: 5%">#</th>
                             <th style="width: 60%">Producto</th>
-                            <th style="width: 35%">Porcentaje</th>
+                            <th style="width: 35%">Cantidad</th>
                             </th>
                         </tr>
-                        @php( $i = 1 )
                         @foreach($formula->componentes as $componente)
                             <tr>
                                 <td>
-                                    {{$i}}
-                                </td>
-                                <td>
-                                    <select class="form-control select2 selProd" style="width:100%" name="productos[]"
-                                            id="selectProductos" disabled>
-                                        @foreach($productos as $producto)
-                                            @if($componente->producto_id == $producto->id)
-                                                <option selected value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
-                                            @else
-                                                <option value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>
+                                    <input readonly type="text" class="form-control" value="{{ $componente->producto->nombre }}">
                                 </td>
                                 <td>
                                     <div class="input-group">
                                         <input type="number" class="form-control cant"
-                                               value="{{$componente->porcentaje}}" name="porcentajes[]" disabled>
-                                        <span class="input-group-addon">%</span>
+                                               value="{{$componente->cantidad}}" name="porcentajes[]" disabled>
+                                        <span class="input-group-addon">g</span>
                                     </div>
                                 </td>
                             </tr>
-                            @php( $i++ )
                         @endforeach
-                    </table>
-
-                    <table class="table table-bordered">
-                        <th style="width: 5%"></th>
-                        <th style="width: 60%; text-align: right; vertical-align: middle;">Total:</th>
-                        <th style="width: 35%">
-                            <div class="input-group">
-                                <input type="number" class="form-control" placeholder="0" id="totalPorcentajeInput"
-                                       min="100" max="100" value="100" disabled>
-                                <span class="input-group-addon">%</span>
-                            </div>
-                        </th>
                     </table>
 
                 </div>
@@ -186,8 +160,7 @@
                 <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-mail-reply"></span> Regresar a lista</a>
                 @if(!$formula->activa)
-                    <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-warning pull-right"><span
-                                class="fa fa-linux"></span> Activar formula</a>
+                    <button type="submit" class="btn btn-lg btn-warning pull-right"><span class="fa fa-linux"></span> Activar formula</button>
                 @endif
             </div>
         </form>

@@ -14,11 +14,11 @@ class TipoDocumentoSeeder extends Seeder
     {
         TipoDocumento::create([
             'codigo' => 'FAC',
-            'nombre' => 'Factura',
+            'nombre' => 'Factura Consumidor Final',
         ]);
         TipoDocumento::create([
             'codigo' => 'CCF',
-            'nombre' => 'Crédito Fiscal',
+            'nombre' => 'Comprobante Crédito Fiscal',
         ]);
     }
 }

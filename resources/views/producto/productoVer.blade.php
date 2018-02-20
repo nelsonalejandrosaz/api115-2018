@@ -57,7 +57,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Nombre alternativo</label>
                         <div class="col-sm-8">
-                            <input readonly type="text" class="form-control" name="nombre" value="{{ $producto->nombre_alternativo }}">
+                            <input readonly type="text" class="form-control" name="nombre" placeholder="Sin nombre alternativo" value="{{ $producto->nombre_alternativo }}">
                         </div>
                     </div>
 
@@ -144,14 +144,14 @@
                         </div>
                     </div>
 
-                    <h4>Peso de volumen</h4>
+                    <h4>Referencia peso de volumen</h4>
                     <br>
 
                     {{-- Unidad de medida prederteminada --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Unidad medida volumen equivalente</label>
                         <div class="col-sm-8">
-                            <input readonly type="text" min="0" class="form-control" placeholder="ej. 0" name="factor_volumen"
+                            <input readonly type="text" min="0" class="form-control" placeholder="Sin unidad de referencia" name="factor_volumen"
                                    value="{{ $producto->unidad_factor }}">
                         </div>
                     </div>
@@ -160,7 +160,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Peso unidad medida volumen</label>
                         <div class="col-sm-8">
-                            <input readonly type="number" min="0" class="form-control" placeholder="ej. 0" name="factor_volumen"
+                            <input readonly type="number" class="form-control" placeholder="Sin unidad de referencia" name="factor_volumen"
                                    value="{{ $producto->factor_volumen }}">
                         </div>
                     </div>

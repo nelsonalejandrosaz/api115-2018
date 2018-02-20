@@ -44,7 +44,7 @@
                             <tr>
                                 <td>{{$produccion->id}}</td>
                                 <td>{{$produccion->fecha}}</td>
-                                <td>{{$produccion->formula->producto->nombre}}</td>
+                                <td>{{$produccion->producto->nombre}}</td>
                                 <td>{{$produccion->bodeguero->nombre}}</td>
                                 <td align="center">
                                     <a href="{{ route('produccionVer', ['id' => $produccion->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>

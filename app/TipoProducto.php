@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class TipoProducto extends Model
 {
-    public function Productos()
+    public function productos()
     {
-        $this->hasMany('App\Producto');
+        return $this->hasMany('App\Producto');
     }
 
     protected $fillable = [

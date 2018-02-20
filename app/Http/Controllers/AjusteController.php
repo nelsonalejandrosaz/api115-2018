@@ -34,6 +34,7 @@ class AjusteController extends Controller
             'producto_id' => 'required',
             'tipo_ajuste_id' => 'required',
             'cantidad_ajuste' => 'required',
+            'detalle' => 'required || max:280',
         ]);
         // Fin Validacion
 
@@ -44,7 +45,7 @@ class AjusteController extends Controller
         $producto = Producto::find($request->input('producto_id'));
         $diferencia_ajuste = abs($cantidad_ajuste - $producto->cantidad_existencia);
 
-        // Se crea el ajuste de entrada
+        // Se crea el ajuste
         $ajuste = Ajuste::create([
             'tipo_ajuste_id' => $tipo_ajuste->id,
             'detalle' => $request->input('detalle'),
@@ -106,6 +107,7 @@ class AjusteController extends Controller
             'producto_id' => 'required',
             'tipo_ajuste_id' => 'required',
             'costo_ajuste' => 'required',
+            'detalle' => 'required',
         ]);
         // Fin Validacion
 

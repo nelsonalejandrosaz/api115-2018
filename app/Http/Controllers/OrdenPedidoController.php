@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cliente;
 use App\CondicionPago;
+use App\Configuracion;
 use App\ConversionUnidadMedida;
 use App\EstadoOrdenPedido;
 use App\Movimiento;
@@ -12,6 +13,7 @@ use App\OrdenPedido;
 use App\Precio;
 use App\Producto;
 use App\Salida;
+use App\TipoDocumento;
 use App\TipoMovimiento;
 use App\UnidadMedida;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -23,19 +25,65 @@ class OrdenPedidoController extends Controller
 {
     public function OrdenPedidoLista()
     {
-        $ordenesPedidos = OrdenPedido::all();
-        return view('ordenPedido.ordenPedidoLista')->with(['ordenesPedidos' => $ordenesPedidos]);
+        $fecha_inicio = Carbon::now()->startOfMonth();
+        $fecha_fin = Carbon::now()->endOfMonth();
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
+        if (\Auth::user()->rol->nombre == 'Vendedor')
+        {
+            $ordenesPedidos = OrdenPedido::whereVendedorId(\Auth::user()->id)->get();
+            return view('ordenPedido.ordenPedidoLista')
+                ->with(['ordenesPedidos' => $ordenesPedidos])
+                ->with(['extra' => $extra]);
+        }
+        $ordenesPedidos = OrdenPedido::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
+        return view('ordenPedido.ordenPedidoLista')
+            ->with(['ordenesPedidos' => $ordenesPedidos])
+            ->with(['extra' => $extra]);
+    }
+
+    public function OrdenPedidoListaPost(Request $request)
+    {
+        $fecha_inicio = Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = Carbon::parse($request->input('fecha_fin'));
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
+        $ordenesPedidos = OrdenPedido::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
+        return view('ordenPedido.ordenPedidoLista')
+            ->with(['ordenesPedidos' => $ordenesPedidos])
+            ->with(['extra' => $extra]);
     }
 
     public function OrdenPedidoListaBodega()
     {
-        $ordenesPedidos = OrdenPedido::whereEstadoId(1)->get();
+        $estado_orden = EstadoOrdenPedido::whereCodigo('SP')->first();
+        $ordenesPedidos = OrdenPedido::whereEstadoId($estado_orden->id)->get();
+        return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
+    }
+
+    public function OrdenPedidoListaProcesadoBodega()
+    {
+        $estado_orden_1 = EstadoOrdenPedido::whereCodigo('PR')->first();
+        $estado_orden_2 = EstadoOrdenPedido::whereCodigo('FC')->first();
+        $ordenesPedidos = OrdenPedido::where('estado_id','=',$estado_orden_1->id)
+            ->orWhere('estado_id','=',$estado_orden_2->id)->get();
         return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
     }
 
     public function OrdenPedidoVer($id)
     {
         $orden_pedido = OrdenPedido::find($id);
+        if ($orden_pedido->tipo_documento->codigo == 'FAC')
+        {
+            $iva = Configuracion::find(1)->iva;
+            foreach ($orden_pedido->salidas as $salida)
+            {
+                $salida->precio_unitario = $salida->precio_unitario * $iva;
+                $salida->venta_gravada = $salida->venta_gravada * $iva;
+                $salida->venta_exenta = $salida->venta_exenta * $iva;
+            }
+            $orden_pedido->venta_total_con_iva = $orden_pedido->venta_total * $iva;
+        }
         $productos = Producto::all();
         $clientes = Cliente::all();
         $municipios = Municipio::all();
@@ -44,7 +92,7 @@ class OrdenPedidoController extends Controller
 
     public function OrdenPedidoVerBodega($id)
     {
-        $ordenPedido = OrdenPedido::find($id);
+        $ordenPedido = OrdenPedido::findOrFail($id);
         $productos = Producto::all();
         $clientes = Cliente::all();
         $municipios = Municipio::all();
@@ -54,22 +102,21 @@ class OrdenPedidoController extends Controller
     public function OrdenPedidoNueva()
     {
         $unidad_medidas = UnidadMedida::all();
-        $productos_todos = Producto::where('codigo','like','PT%')->orWhere('codigo','like','RV%')->get();
-        $productos = [];
-//        foreach ($productos_todos as $producto) {
-//            if ($producto->precios->first()->precio != 0 ) {
-//                array_push($productos, $producto);
-//            }
-//        }
+        $productos_todos = Producto::where('codigo','like','PT%')
+            ->orWhere('codigo','like','RV%')
+            ->orWhere('codigo','like','MR%')
+            ->orWhere('codigo','like','BO%')->get();
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         $condiciones_pago = CondicionPago::all();
+        $tipoDocumentos = TipoDocumento::all();
         return view('ordenPedido.ordenPedidoNueva')
             ->with(['condiciones_pago' => $condiciones_pago])
             ->with(['productos' => $productos_todos])
             ->with(['clientes' => $clientes])
             ->with(['municipios' => $municipios])
-            ->with(['unidad_medidas' => $unidad_medidas]);
+            ->with(['unidad_medidas' => $unidad_medidas])
+            ->with(['tipoDocumentos' => $tipoDocumentos]);
     }
 
     /**
@@ -83,26 +130,29 @@ class OrdenPedidoController extends Controller
         // Validacion
         $this->validate($request, [
             'cliente_id' => 'required',
-            'numero' => 'required',
             'fecha' => 'required',
             'condicion_pago_id' => 'required',
             'producto_id.*' => 'required',
             'cantidad.*' => 'required',
+            'numero' => 'numeric||nullable',
+            'tipo_documento_id' => 'required',
         ]);
 
         // Variables
         $estado_orden = EstadoOrdenPedido::whereCodigo('SP')->first();
+        $numero = ($request->input('numero') == null) ? 0 : $request->input('numero');
 
         // Se crea la instancia de orden de pedido
         $orden_pedido = OrdenPedido::create([
             'cliente_id' => $request->input('cliente_id'),
-            'numero' => $request->input('numero'),
+            'numero' => $numero,
             'detalle' => 'Orden de pedido ingresada por' . \Auth::user()->nombre,
             'fecha' => $request->input('fecha'),
             'fecha_entrega' => $request->input('fecha_entrega'),
             'condicion_pago_id' => $request->input('condicion_pago_id'),
             'vendedor_id' => \Auth::user()->id,
             'estado_id' => $estado_orden->id,
+            'tipo_documento_id' => $request->input('tipo_documento_id'),
         ]);
         //        Se guarda el archivo subido
         if ($request->hasFile('archivo')) {
@@ -110,11 +160,17 @@ class OrdenPedidoController extends Controller
             $orden_pedido->ruta_archivo = $archivo;
             $orden_pedido->save();
         }
+        if ($request->input('numero') == null)
+        {
+            $orden_pedido->numero = $orden_pedido->id;
+            $orden_pedido->save();
+        }
         // Se guardan en variables los arrays recibidos del request
         $productos_id = $request->input('producto_id');
         $presentaciones_id = $request->input('presentacion_id');
         $cantidades = $request->input('cantidad');
         $tipo_ventas = $request->input('tipo_venta');
+//        $precio = $request->input('precios_unitario'); // quitar despues
         // Se toma tamaño del array
         $dimension = sizeof($productos_id);
         $venta_exenta = 0.00;
@@ -126,7 +182,8 @@ class OrdenPedidoController extends Controller
             $producto = Producto::find($productos_id[$i]);
             $cantidad = $cantidades[$i];
             $precio_presentacion = Precio::find($presentaciones_id[$i]);
-            $precio_unitario = $precio_presentacion->precio;
+            $precio_unitario = $precio_presentacion->precio; // HABILITAR DESDES DE METER TOD O
+//            $precio_unitario = $precio[$i];
             $precio_total = $cantidad * $precio_unitario;
             $unidad_medida = $precio_presentacion->unidad_medida;
             // Si es la misma medida no se hacen conversiones; si no si se haran las conversiones de unidades
@@ -171,6 +228,7 @@ class OrdenPedidoController extends Controller
                 'cantidad' => round($cantidad_salida,4),
                 'unidad_medida_id' => $unidad_medida->id,
                 'precio_id' => $precio_presentacion->id,
+                'descripcion_presentacion' => $precio_presentacion->nombre_factura,
                 'precio_unitario' => round($precio_unitario,4),
                 'venta_exenta' => round($venta_exenta_salida,4),
                 'venta_gravada' => round($venta_gravada_salida,4),
@@ -207,8 +265,21 @@ class OrdenPedidoController extends Controller
 
     public function OrdenPedidoPDF($id)
     {
+//        dd(Carbon::now());
         $ordenPedido = OrdenPedido::find($id);
-        $ventaTotal = number_format($ordenPedido->venta_total,2);
+        $iva = Configuracion::find(1)->iva;
+        if ($ordenPedido->tipo_documento->codigo == 'FAC')
+        {
+            foreach ($ordenPedido->salidas as $salida)
+            {
+                $salida->precio_unitario = $salida->precio_unitario * $iva;
+                $salida->venta_gravada = $salida->venta_gravada * $iva;
+                $salida->venta_exenta = $salida->venta_exenta * $iva;
+            }
+        }
+        $ordenPedido->iva = $ordenPedido->venta_total * 0.13;
+        $ordenPedido->venta_total_con_iva = $ordenPedido->venta_total + $ordenPedido->iva;
+        $ventaTotal = number_format($ordenPedido->venta_total_con_iva,2);
         $ordenPedido->ventaTotalLetras = NumeroALetras::convertir($ventaTotal,'dolares','centavos');
         $nombreArchivo = "orden-pedido-" . $ordenPedido->numero . "-" . Carbon::now()->format('d-m-Y');
         $pdf = PDF::loadView('pdf.ordenPedidoPDF',compact('ordenPedido'));
@@ -232,13 +303,14 @@ class OrdenPedidoController extends Controller
             $cantidad_existencia = $producto->cantidad_existencia;
             $cantidad_existencia = round($cantidad_existencia,4);
             $cantidad_salida = round($salida->movimiento->cantidad,4);
+//            dd($cantidad_existencia < $cantidad_salida);
             if ($cantidad_existencia < $cantidad_salida)
             {
                 // Mensaje de exito al guardar
                 session()->flash('mensaje.tipo', 'danger');
                 session()->flash('mensaje.icono', 'fa-check');
                 session()->flash('mensaje.titulo', 'Upssss!');
-                session()->flash('mensaje.contenido', 'No hay suficiente producto para procesar la orden!');
+                session()->flash('mensaje.contenido', 'No hay suficiente producto ' . $producto->nombre . ' para procesar la orden!');
                 return redirect()->route('ordenPedidoVerBodega',['id' => $orden_pedido->id]);
             }
         }
@@ -276,10 +348,19 @@ class OrdenPedidoController extends Controller
         $salidas = $orden_pedido->salidas;
         foreach ($salidas as $salida)
         {
-            $salida->movimiento->delete();
-            $salida->delete();
+            try {
+                $salida->movimiento->delete();
+                $salida->delete();
+            } catch (\Exception $e) {
+                abort(403);
+            }
+
         }
-        $orden_pedido->delete();
+        try {
+            $orden_pedido->delete();
+        } catch (\Exception $e) {
+            abort(403);
+        }
         // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

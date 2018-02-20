@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Ajuste;
 use App\Cliente;
+use App\Configuracion;
 use App\EstadoOrdenPedido;
 use App\EstadoVenta;
 use App\Movimiento;
@@ -25,6 +26,11 @@ class VentaController extends Controller
     public function VentaOrdenesLista()
     {
         $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2)->get();
+        if (Auth::user()->rol->nombre == 'Vendedor')
+        {
+            $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2);
+            $ordenesPedidoProcesadas = $ordenesPedidoProcesadas->where('vendedor_id','=',Auth::user()->id)->get();
+        }
         return view('venta.ventaLista')->with(['ordenesPedidos' => $ordenesPedidoProcesadas]);
     }
 
@@ -33,23 +39,24 @@ class VentaController extends Controller
         switch ($filtro)
         {
             case 'todo':
-                $ventas = Venta::where('estado_venta_id', '=', '1')->get();
+                $ventas = Venta::where('tipo_documento_id','>','0');
                 break;
             case 'factura':
-                $ventas = Venta::where([
-                    ['tipo_documento_id', '=', '1'],
-                    ['estado_venta_id', '<=', '2'],
-                ])->get();//whereTipoDocumentoId(1)->get();//->where([['estado_venta_id','=','1'],['estado_venta_id','=','2']])->get();
+                $ventas = Venta::where('tipo_documento_id', '=', '1');
                 break;
             case 'ccf':
-                $ventas = Venta::where([
-                    ['tipo_documento_id', '=', '1'],
-                    ['estado_venta_id', '<=', '2'],
-                ])->get();
+                $ventas = Venta::where('tipo_documento_id', '=', '2');
                 break;
             case 'anulada':
-                $ventas = Venta::where('estado_venta_id', '=', '3')->get();
+                $ventas = Venta::where('estado_venta_id', '=', '3');
                 break;
+        }
+        if (Auth::user()->rol->nombre == 'Vendedor')
+        {
+            $ventas = $ventas->where('vendedor_id','=',Auth::user()->id)->get();
+        } else
+        {
+            $ventas = $ventas->get();
         }
         return view('venta.ventaFacturaLista')->with(['ventas' => $ventas]);
     }
@@ -67,12 +74,23 @@ class VentaController extends Controller
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         $tipoDocumentos = TipoDocumento::all();
-        return view('venta.ventaNuevo')
-            ->with(['orden_pedido' => $orden_pedido])
-            ->with(['productos' => $productos])
-            ->with(['clientes' => $clientes])
-            ->with(['municipios' => $municipios])
-            ->with(['tipoDocumentos' => $tipoDocumentos]);
+        if ($orden_pedido->tipo_documento->codigo == 'FAC')
+        {
+            return view('venta.ventaFCFNuevo')
+                ->with(['orden_pedido' => $orden_pedido])
+                ->with(['productos' => $productos])
+                ->with(['clientes' => $clientes])
+                ->with(['municipios' => $municipios])
+                ->with(['tipoDocumentos' => $tipoDocumentos]);
+        } else
+        {
+            return view('venta.ventaCCFNuevo')
+                ->with(['orden_pedido' => $orden_pedido])
+                ->with(['productos' => $productos])
+                ->with(['clientes' => $clientes])
+                ->with(['municipios' => $municipios])
+                ->with(['tipoDocumentos' => $tipoDocumentos]);
+        }
     }
 
     public function VentaNuevaPost(Request $request, $id)
@@ -89,6 +107,7 @@ class VentaController extends Controller
         // Se busca el estado de la orden de pedido y de factura
         $estado_orden_pedido = EstadoOrdenPedido::whereCodigo('FC')->first();
         $estado_venta = EstadoVenta::whereCodigo('PP')->first();
+        $iva = Configuracion::find(1)->iva;
         $venta_total_con_impuestos = $orden_pedido->venta_total * 1.13;
         // Se crea la venta
         $venta = Venta::create([
@@ -96,9 +115,11 @@ class VentaController extends Controller
             'orden_pedido_id' => $orden_pedido->id,
             'numero' => $request->input('numero'),
             'fecha' => $request->input('fecha'),
+            'cliente_id' => $orden_pedido->cliente_id,
             'estado_venta_id' => $estado_venta->id,
-            'vendedor_id' => $orden_pedido->vendedor_id, // Quitar despues
+            'vendedor_id' => $orden_pedido->vendedor_id,
             'saldo' => $venta_total_con_impuestos,
+            'venta_total' => $orden_pedido->venta_total,
             'venta_total_con_impuestos' => $venta_total_con_impuestos,
         ]);
         // Se agrega el saldo al cliente  agregar el iva
@@ -171,6 +192,7 @@ class VentaController extends Controller
         $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
         $venta_total = number_format($venta->orden_pedido->venta_total, 2);
         $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($venta_total, 'dolares', 'centavos');
+        return view('pdf.facturaPDF')->with(['venta' => $venta]);
         $pdf = PDF::loadView('pdf.facturaPDF', compact('venta'));
         $nombre_factura = "Factura numero " . $venta->numero . ".pdf";
         return $pdf->stream($nombre_factura);
@@ -184,6 +206,7 @@ class VentaController extends Controller
         $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
         $ventaTotal = number_format($venta->orden_pedido->venta_total, 2);
         $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($ventaTotal, 'dolares', 'centavos');
+        return view('pdf.creditoFiscalPDF')->with(['venta' => $venta]);
         $pdf = PDF::loadView('pdf.creditoFiscalPDF', compact('venta'));
         $nombre_factura = "CCF numero " . $venta->numero . ".pdf";
         return $pdf->stream($nombre_factura);
@@ -239,6 +262,7 @@ class VentaController extends Controller
         // Se actualiza el estado de la venta y se resta el saldo al cliente
         $estado_venta = EstadoVenta::whereCodigo('AN')->first();
         $venta->estado_venta_id = $estado_venta->id;
+        $venta->fecha_anulado = Carbon::now();
         $venta->save();
         $cliente = Cliente::find($venta->orden_pedido->cliente_id);
         $cliente->saldo = $cliente->saldo - $venta->saldo;

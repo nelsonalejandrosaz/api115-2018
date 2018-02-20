@@ -37,6 +37,7 @@
                             <th>Código</th>
                             <th>Producto asociado</th>
                             <th>Unidad de medida</th>
+                            <th>Versión</th>
                             <th>Acción</th>
                         </tr>
                         </thead>
@@ -47,6 +48,7 @@
                                 <td>{{$formula->producto->codigo}}</td>
                                 <td>{{$formula->producto->nombre}}</td>
                                 <td>{{$formula->producto->unidad_medida->nombre}}</td>
+                                <td>{{$formula->version}}</td>
                                 <td align="center">
                                     <a href="{{route('formulaVer', ['id' => $formula->id])}}" class="btn btn-info"><span
                                                 class="fa fa-eye"></span></a>

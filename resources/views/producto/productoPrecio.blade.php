@@ -105,11 +105,13 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width: 7%">#</th>
-                            <th style="width: 25%">Presentación</th>
+                            <th style="width: 5%">#</th>
+                            <th style="width: 20%">Presentación</th>
+                            <th style="width: 15%">Descripcion en factura</th>
                             <th style="width: 15%">Unidad Medida</th>
-                            <th style="width: 15%">Precio</th>
-                            <th style="width: 15%">Factor</th>
+                            <th style="width: 15%">Precio sin IVA</th>
+                            <th style="width: 15%">Precio con IVA</th>
+                            <th style="width: 10%">Equivalente en Kg</th>
                             <th style="width: 5%">
                                 @if(Auth::user()->rol->nombre == 'Administrador')
                                 <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
@@ -124,10 +126,13 @@
                         @foreach($producto->precios as $precio)
                         <tr>
                             <td style="vertical-align: middle">
-                                Precio {{$i}}
+                                {{$i}}
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="presentacion[]" value="{{$precio->presentacion}}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="descripcion[]" placeholder="ej. Tarro de 250g" value="{{$precio->nombre_factura}}">
                             </td>
                             <td>
                                 <select style="width: 100%" class="form-control select2" name="unidad_medida_id[]">
@@ -146,8 +151,17 @@
                             <td>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input required type="number" min="0.00" step="any" class="form-control cant" name="precio[]"
-                                           value="{{$precio->precio}}">
+                                    <input required type="number" min="0.00" step="any" class="form-control cantidadCls" name="precio[]"
+                                           id="precio-id" value="{{$precio->precio}}">
+                                </div>
+                            </td>
+                            <td>
+                                @php($iva = \App\Configuracion::find(1)->iva)
+                                @php($precio_iva = $precio->precio * $iva )
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input readonly type="number" min="0.00" step="any" class="form-control cant" name="precio_iva[]"
+                                           id="precio-iva-id" value="{{ number_format($precio_iva,4) }}">
                                 </div>
                             </td>
                             <td>
@@ -177,7 +191,7 @@
             <div class="box-footer">
                 <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
                 @if(Auth::user()->rol->nombre == 'Administrador')
-                <button type="button" onclick="verificarSuma()" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
                 </button>
                 @endif
             </div>
@@ -192,9 +206,9 @@
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
-//            $("body").on("click", ".btn-danger", funcionEliminarProducto);
+            $("body").on("click", ".btn-eliminar", funcionEliminarProducto);
             selecionarValor();
-            calcularTotal();
+            agregarFuncion();
 
             $('#modalEliminar').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
@@ -238,7 +252,7 @@
                             $('<td>').attr('style','vertical-align: middle')
                                 .append
                                 (
-                                    'Precio ' + numero
+                                    numero
                                 )
                         )
                         .append
@@ -247,6 +261,14 @@
                                 .append
                                 (
                                     '<input type="text" class="form-control" name="presentacion[]" placeholder="ej. Tarro de 1/2 Kg">'
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>')
+                                .append
+                                (
+                                    '<input type="text" class="form-control" name="descripcion[]" placeholder="ej. Tarro de 1/2 Kg">'
                                 )
                         )
                         .append
@@ -264,8 +286,8 @@
                                 (
                                     '<div class="input-group">\n' +
                                     '<span class="input-group-addon">$</span>\n' +
-                                    '<input required type="number" min="0.00" step="0.01" class="form-control cant" placeholder="0.00" name="precio[]"\n' +
-                                    '   value="">\n' +
+                                    '<input required type="number" min="0.00" step="any" class="form-control cantidadCls" placeholder="0.00" name="precio[]"\n' +
+                                    '   id="precio-id" value="">\n' +
                                     '</div>'
                                 )
                         )
@@ -274,7 +296,19 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<input required type="number" min="0.00" step="0.001" class="form-control cant" placeholder="0.00" name="factor[]"\n' +
+                                    '<div class="input-group">\n' +
+                                    '<span class="input-group-addon">$</span>\n' +
+                                    '<input readonly type="number" min="0.00" step="any" class="form-control cant" name="precio_iva[]"\n' +
+                                    'id="precio-iva-id" value="">\n' +
+                                    '</div>'
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>')
+                                .append
+                                (
+                                    '<input required type="number" min="0.00" step="any" class="form-control" placeholder="0.00" name="factor[]"\n' +
                                     'value="">'
                                 )
                         )
@@ -283,7 +317,7 @@
                             $('<td>').attr('align', 'center')
                                 .append
                                 (
-                                    '<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
+                                    '<button type="button" class="btn btn-danger btn-eliminar" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
                                 )
                         )
                 );
@@ -291,8 +325,7 @@
             $(".select2").select2();
             $(".select2").select2();
             numero++;
-            calcularTotal();
-            selecionarValor();
+            agregarFuncion();
         }
 
         function funcionEliminarProducto() {
@@ -300,25 +333,30 @@
             calcularTotal();
         }
 
-        function verificarSuma() {
-                $('#formDatos').submit();
+        /**
+         * Estado: Verificada
+         */
+        function agregarFuncion() {
+            $('.cantidadCls').each(
+                function (index, value) {
+                    console.log('fx agregarFuncion');
+                    $(this).change(cambioPrecio);
+                    $(this).keyup(cambioPrecio);
+                });
         }
 
-        function calcularTotal() {
-            var totalPorcentaje = 0;
-            var porcentajes = $('.cant');
-            for (var i = 0; i < porcentajes.length; i++) {
-                porcentaje = parseFloat(porcentajes[i].value);
-                totalPorcentaje = totalPorcentaje + porcentaje;
-            }
-            $('#totalPorcentajeInput').val(totalPorcentaje.toFixed(3));
-            // console.log(totalPorcentaje);
-        }
-
-        function cambioProducto() {
-            var productoId = $('#productoID').val();
-            var unidadMedida = $('#productoID').find('option[value="' + productoId + '"]').data('unidadmedida');
-            $('#unidadMedidalbl').val(unidadMedida);
+        /**
+         * Estado: Verificada y funcionando
+         */
+        function cambioPrecio() {
+            let precio_input = $(this);
+            let precio = precio_input.val();
+            let iva = 1.13;
+            let precio_iva_input = precio_input.parent().parent().parent().find('#precio-iva-id');
+//            console.log(precio_iva_input);
+            let precio_iva = precio * iva;
+            precio_iva = parseFloat(precio_iva);
+            precio_iva_input.val(precio_iva.toFixed(4));
         }
 
     </script>

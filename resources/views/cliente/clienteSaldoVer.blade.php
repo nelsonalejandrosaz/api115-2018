@@ -25,188 +25,83 @@
 
     @include('partials.alertas')
 
-    <!-- Form de nuevo proveedor -->
-    <div class="box box-default">
-        {{--<div class="box-header with-border">--}}
-            {{--<h3 class="box-title">Detalle de formula</h3>--}}
-        {{--</div><!-- /.box-header -->--}}
-        <!-- form start -->
-        <form id="formDatos" class="form-horizontal">
-            {{ csrf_field() }}
-            <div class="box-body">
+    <section class="invoice">
+        <div class="row">
+            {{--Encabezado--}}
+            <div class="col-xs-12">
+                <h2 class="page-header">
+                    <i class="fa fa-globe"></i> LGL S.A. de C.V.
+                    <small class="pull-right">Generado: {{\Carbon\Carbon::now()->format('d/m/Y -- h:m:s A')}}</small>
+                </h2>
+                <p class="lead">Informe de ventas por cliente realizadas al dia: {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
+                Cliente: {{ $cliente->nombre }}<br>
+                Contacto: {{ ($cliente->contacto == null) ? 'Sin nombre de contacto' : $cliente->contacto }} <br>
+                Teléfono: {{ ($cliente->telefono_1 == null) ? 'Sin teléfono de contacto' : $cliente->telefono_1 }}
+            </div>
 
-                {{-- Fila  --}}
-                <div class="col-md-6">
-
-                    <h4>Datos cliente</h4>
-                    <br>
-
-                    {{-- Cliente --}}
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Cliente</label>
-                        <div class="col-md-9">
-                            <input readonly type="text" class="form-control"
-                                   value="{{ $cliente->nombre }}"
-                                   name="producto_id">
-                        </div>
-                    </div>
-
-                    {{-- Contacto --}}
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Nombre contacto</label>
-                        <div class="col-md-9">
-                            <input readonly type="text" class="form-control"
-                                   value="{{ $cliente->nombre_contacto }}"
-                                   name="producto_id">
-                        </div>
-                    </div>
-
-                    {{-- Numero 1 --}}
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Teléfono 1</label>
-                        <div class="col-md-9">
-                            <input readonly type="text" class="form-control"
-                                   value="{{ $cliente->telefono_1 }}"
-                                   name="producto_id">
-                        </div>
-                    </div>
-
-                    {{-- Unidad de medida formula--}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label">Unidad de medida</label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<input readonly type="text" class="form-control"--}}
-                                   {{--value="{{ $formula->producto->unidad_medida->nombre }}" id="unidadMedidalbl">--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-
-                    {{-- Descripcion --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label">Descripción</label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<textarea readonly class="form-control"--}}
-                                      {{--name="descripcion">{{$formula->descripcion}}</textarea>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <h4>Datos saldos</h4>
-                    <br>
-
-                    {{--Version --}}
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Saldo total</label>
-                        <div class="col-md-9">
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input readonly type="number" class="form-control cant"
-                                       value="{{ number_format($cliente->saldo,2) }}" name="">
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Fecha --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label"><b>Fecha ingreso</b></label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<input readonly type="date" class="form-control" name="fecha"--}}
-                                       {{--value="{{$formula->fecha->format('Y-m-d')}}">--}}
-                                {{--<div class="input-group-addon">--}}
-                                    {{--<i class="fa fa-calendar"></i>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-
-                    {{-- Estado --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label">Estado</label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--@if($formula->activa)--}}
-                                {{--<input readonly type="text" class="form-control"--}}
-                                       {{--value="Activa"--}}
-                                       {{--name="version">--}}
-                            {{--@else--}}
-                                {{--<input readonly type="text" class="form-control"--}}
-                                       {{--value="No activa"--}}
-                                       {{--name="version">--}}
-                            {{--@endif--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-
-                    {{-- Ingresado por --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label">Ingresado por</label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<input readonly type="text" class="form-control"--}}
-                                   {{--value="{{$formula->ingresado->nombre}} {{$formula->ingresado->apellido}}"--}}
-                                   {{--name="ingresadoPor">--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                </div>
-                {{-- Fin fila --}}
-
-                {{-- Fila --}}
-                <div class="col-md-12">
-                    <h4>Lista de documentos pendientes</h4>
-                    {{-- Tabla de productos --}}
-                    <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover" id="tblProductos">
+            {{-- Tabla de productos --}}
+            <div class="col-xs-12" style="padding-top: 20px">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover" id="tblProductos">
+                        <thead>
                             <tr>
-                                <th style="width: 20%">N° documento</th>
+                                <th style="width: 10%">Fecha</th>
+                                <th style="width: 10%">N° doc</th>
                                 <th style="width: 20%">Tipo documento</th>
-                                <th style="width: 20%">Condición de pago</th>
-                                <th style="width: 20%">Total documento</th>
-                                <th style="width: 20%">Saldo pendiente</th>
+                                <th style="width: 15%">Condición de pago</th>
+                                <th style="width: 15%">Total documento</th>
+                                <th style="width: 15%">Saldo pendiente</th>
+                                <th style="width: 15%">Estado</th>
                                 </th>
                             </tr>
-                            @php( $i = 1 )
-                            @foreach($cliente->ordenes_pedidos as $orden_pedido)
-                                <tr>
-                                    <td>
-                                        @if($orden_pedido->venta->tipo_documento_id == 1)
-                                            <a href="{{ route('ventaVerFactura',['id' => $orden_pedido->venta->id]) }}">{{$orden_pedido->venta->numero}}</a>
-                                        @else
-                                            <a href="{{ route('ventaVerFactura',['id' => $orden_pedido->venta->id]) }}">{{$orden_pedido->venta->numero}}</a>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{$orden_pedido->venta->tipo_documento->nombre}}
-                                    </td>
-                                    <td>
-                                        {{$orden_pedido->condicion_pago->nombre}}
-                                    </td>
-                                    <td>
-                                        $ {{number_format($orden_pedido->venta->venta_total_con_impuestos,2)}}
-                                    </td>
-                                    <td>
-                                        $ {{number_format($orden_pedido->venta->saldo,2)}}
-                                    </td>
-                                </tr>
-                                @php( $i++ )
-                            @endforeach
-                        </table>
-                    </div>
+                        </thead>
+                        <tbody>
+                        @php( $i = 1 )
+                        @foreach($cliente->ventas as $venta)
+                            <tr>
+                                <td>{{ $venta->fecha->format('d/m/Y') }}</td>
+                                <td>
+                                    @if($venta->tipo_documento_id == 1)
+                                        <a href="{{ route('ventaVerFactura',['id' => $venta->id]) }}">{{$venta->numero}}</a>
+                                    @else
+                                        <a href="{{ route('ventaVerFactura',['id' => $venta->id]) }}">{{$venta->numero}}</a>
+                                    @endif
+                                </td>
+                                <td>
+                                    {{$venta->tipo_documento->nombre}}
+                                </td>
+                                <td>
+                                    {{$venta->orden_pedido->condicion_pago->nombre}}
+                                </td>
+                                <td>
+                                    $ {{number_format($venta->venta_total_con_impuestos,2)}}
+                                </td>
+                                <td>
+                                    $ {{number_format($venta->saldo,2)}}
+                                </td>
+                                <td>
+                                    @if($venta->estado_venta->codigo == 'PP')
+                                        <span class="label label-warning">{{ $venta->estado_venta->nombre }}</span>
+                                    @elseif($venta->estado_venta->codigo == 'PG')
+                                        <span class="label label-success">{{ $venta->estado_venta->nombre }}</span>
+                                    @elseif($venta->estado_venta->codigo == 'AN')
+                                        <span class="label label-danger">{{ $venta->estado_venta->nombre }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @php( $i++ )
+                        @endforeach
+                        </tbody>
+                        <tfoot>
 
+                        </tfoot>
+                    </table>
                 </div>
-                {{-- Fin fila --}}
 
-            </div><!-- /.box-body -->
-
-            <div class="box-footer">
-                <a href="{{ route('clienteSaldoLista') }}" class="btn btn-lg btn-default"><span
-                            class="fa fa-mail-reply"></span> Regresar a lista</a>
-                {{--@if(!$formula->activa)--}}
-                    {{--<a href="{{ route('formulaLista') }}" class="btn btn-lg btn-warning pull-right"><span--}}
-                                {{--class="fa fa-linux"></span> Activar formula</a>--}}
-                {{--@endif--}}
             </div>
-        </form>
-    </div><!-- /.box -->
+        </div>
+
+    </section>
 
 @endsection
 

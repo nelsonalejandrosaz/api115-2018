@@ -45,14 +45,17 @@
 
     @include('partials.alertas')
 
-    <div class="row">
+    <div class="row no-print">
         <div class="col-xs-12">
 
+            {{--Cuadro de herramientas--}}
             <div class="box box-default">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Productos</h3>
-                    <a href="{{ route('inventarioLista') }}" class="btn btn-lg btn-default pull-right"><span
-                                class="fa fa-mail-reply"></span> Regresar</a>
+                    <h3 class="box-title">Fechas consultadas</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
                 </div><!-- /.box-header -->
 
                 <!-- form start -->
@@ -60,28 +63,30 @@
                     {{ csrf_field() }}
                     <div class="box-body">
                         <div class="col-md-6 col-sm-12">
-                            <h4>Fechas mostradas</h4>
-                            <br>
 
                             {{-- Fecha inicio --}}
                             <div class="form-group">
                                 <label class="col-md-4 control-label"><b>Fecha inicio</b></label>
                                 <div class="col-md-8">
                                     <div class="input-group">
-                                        <input readonly type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $mes['inicio'] }}">
+                                        <input type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $mes['inicio'] }}">
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                        </div>
+
+                        <div class="col-md-6 col-sm-12">
 
                             {{-- Fecha fin --}}
                             <div class="form-group">
                                 <label class="col-md-4 control-label"><b>Fecha fin</b></label>
                                 <div class="col-md-8">
                                     <div class="input-group">
-                                        <input readonly type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $mes['fin'] }}">
+                                        <input type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $mes['fin'] }}">
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
@@ -89,60 +94,40 @@
                                 </div>
                             </div>
 
-                            {{-- Fecha --}}
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label"><b>Seleccionar fechas</b></label>
-                                    <div class="col-md-8">
-                                        <div class="input-group">
-                                            <button type="button" class="btn btn-default pull-right" id="daterange-btn">
-                                        <span>
-                                          <i class="fa fa-calendar"></i> Seleccionar fechas
-                                        </span>
-                                                <i class="fa fa-caret-down"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
                         </div>
-                        <div class="col-md-6 col-sm-12">
-                            <h4>Datos producto</h4>
-                            <br>
 
-                            {{-- Unidad de medida prederteminada --}}
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label"><b>Unidad medida </b></label>
-                                <div class="col-sm-8">
-                                    <input readonly type="text" class="form-control" name="unidad_medida_id"
-                                           value="{{ $producto->unidad_medida->nombre }}">
-                                </div>
-                            </div>
-                        </div>
                     </div><!-- /.box-body -->
 
                     <div class="box-footer">
-                        <a href="{{ route('productoLista') }}" class="btn btn-lg btn-default"><span
-                                    class="fa fa-close"></span> Cancelar</a>
+                        <a href="{{ route('inventarioLista') }}" class="btn btn-lg btn-default"><span
+                                    class="fa fa-mail-reply"></span> Regresar</a>
                         <button type="submit" class="btn btn-lg btn-success pull-right"><span
-                                    class="fa fa-floppy-o"></span> Guardar
+                                    class="fa fa-search"></span> Consultar
                         </button>
                     </div>
                 </form>
-            </div><!-- /.box -->
+            </div>
+            {{--Fin cuadro de herramientas--}}
 
-            <div class="box box-default">
-                <div class="box-header with-border">
-                    <div class="row">
+        </div>
+    </div>
 
-                    </div>
-                </div><!-- /.box-header -->
+    <section class="invoice">
+        <div class="row">
+            {{--Encabezado--}}
+            <div class="col-xs-12">
+                <h2 class="page-header">
+                    <i class="fa fa-globe"></i> LGL S.A. de C.V.
+                    <small class="pull-right">Generado: {{\Carbon\Carbon::now()->format('d/m/Y -- h:m:s A')}}</small>
+                </h2>
+                <p class="lead">{{ $producto->nombre }}</p>
+                Unidad de medida: {{ $producto->unidad_medida->nombre }} <br>
+                Metodo: Promedio Ponderado
+            </div>
 
-                <div class="row">
-                    <div class="col-sm-6">
-                    </div>
-                </div>
-
-                <div class="box-body table-responsive">
+            {{-- Tabla de productos --}}
+            <div class="col-xs-12" style="padding-top: 20px">
+                <div class="box-body">
                     <table id="tablaKardex" class="table table-hover">
                         <thead>
                         <tr>
@@ -191,15 +176,6 @@
                                 @endif
 
 
-                                {{--@if($movimiento->tipoMovimiento->codigo == "ENTRADA")--}}
-                                {{--<td><a href="{{route('compraVer',['id' => $movimiento->entrada->compra->id])}}">{{$movimiento->detalle}}</a></td>--}}
-                                {{--@elseif($movimiento->tipoMovimiento->codigo == "SALIDA")--}}
-                                {{--<td><a href="{{route('ordenPedidoVer',['id' => $movimiento->salida->ordenPedido->id])}}">{{$movimiento->detalle}}</a></td>--}}
-                                {{--@elseif($movimiento->tipoMovimiento->codigo == "AJSTENT" || $movimiento->tipoMovimiento->codigo == "AJSTSAL")--}}
-                                {{--<td><a href="{{route('ajusteVer',['id' => $movimiento->ajuste->id])}}">{{$movimiento->detalle}}</a></td>--}}
-                                {{--@else--}}
-                                {{--<td><a href="">{{$movimiento->detalle}}</a></td>--}}
-                                {{--@endif--}}
                                 @if($movimiento->tipo_movimiento->codigo == "ENTC" || $movimiento->tipo_movimiento->codigo == "ENTP")
                                     <td class="entradaCSS">{{$movimiento->cantidad}}</td>
                                     <td class="entradaCSS">${{ number_format($movimiento->costo_unitario,3) }}</td>
@@ -248,9 +224,11 @@
                         </tfoot>
                     </table>
                 </div><!-- /.box-body -->
-            </div><!-- /.box -->
+
+            </div>
         </div>
-    </div>
+
+    </section>
 
 @endsection
 
@@ -264,20 +242,9 @@
 
             $('#daterange-btn').daterangepicker(
                 {
-                    ranges   : {
-                        'Hoy'       : [moment(), moment()],
-                        'Ayer'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Últimos 7 Días' : [moment().subtract(6, 'days'), moment()],
-                        'Últimos 30 Días': [moment().subtract(29, 'days'), moment()],
-                        'Este mes'  : [moment().startOf('month'), moment().endOf('month')],
-                        'Mes pasado'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                    },
-                    startDate: moment().subtract(29, 'days'),
-                    endDate  : moment(),
-                    "opens": "center"
+                    "opens": "left"
                 },
                 function (start, end) {
-//                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
                     $('#fecha-inicio').val(start.format('YYYY-MM-DD'));
                     $('#fecha-fin').val(end.format('YYYY-MM-DD'));
                 }

@@ -35,11 +35,11 @@
                     <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
-                            <th style="width:30%">Nombre empresa</th>
+                            <th style="width:35%">Nombre empresa</th>
                             <th style="width:20%">Contacto</th>
                             <th style="width:15%">Teléfono principal</th>
-                            <th style="width:15%">Saldo</th>
-                            <th style="width:20%">Acción</th>
+                            <th style="width:15%">Teléfono secundario</th>
+                            <th style="width:15%">Acción</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -48,7 +48,7 @@
                                 <td>{{$cliente->nombre}}</td>
                                 <td>{{$cliente->nombre_contacto}}</td>
                                 <td>{{$cliente->telefono_1}}</td>
-                                <td>$ {{number_format($cliente->saldo,2)}}</td>
+                                <td>{{$cliente->telefono_2}}</td>
                                 {{-- <td>{{$proveedor->direccion}}</td> --}}
                                 <td align="center">
                                     <a href="{{ route('clienteVer', ['id' => $cliente->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>

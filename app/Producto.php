@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Producto extends Model
 {
+    use SoftDeletes;
+
     public function unidad_medida()
     {
         return $this->belongsTo('App\UnidadMedida');
@@ -26,9 +29,9 @@ class Producto extends Model
         return $this->hasMany('App\Movimiento');
     }
 
-    public function formula()
+    public function formulas()
     {
-        return $this->hasOne('App\Formula');
+        return $this->hasMany('App\Formula');
     }
 
     public function precios()

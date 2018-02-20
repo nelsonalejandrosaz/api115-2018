@@ -86,10 +86,9 @@
                         <label class="col-sm-4 control-label"><b>Fabricado por</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="fabricado_id[]" multiple>
-                                <option value="">Nombre bodeguero 1</option>
-                                <option value="">Nombre bodeguero 2</option>
-                                <option value="">Nombre bodeguero 3</option>
-                                <option value="">Nombre bodeguero 4</option>
+                                @foreach($bodegueros as $bodeguero)
+                                    <option value="{{ $bodeguero->id }}">{{ $bodeguero->nombre }} {{ $bodeguero->apellido }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>

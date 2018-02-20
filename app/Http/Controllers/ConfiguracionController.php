@@ -31,7 +31,7 @@ class ConfiguracionController extends Controller
 
     public function ImportarDatosPost(Request $request)
     {
-        dd($request);
+//        dd($request);
         $this->validate($request, [
             'archivoXLSX' => 'required',
         ]);
@@ -272,25 +272,26 @@ class ConfiguracionController extends Controller
             /**
              * Crear nuevas ordenes pedido
              */
+//            dd($results);
             foreach ($results as $orden_pedido_x)
             {
                 $orden_pedido = OrdenPedido::create([
                     'cliente_id' => $orden_pedido_x->id,
                     'numero' => $orden_pedido_x->doc,
-                    'detalle' => "Orden de pedido con saldo pendiente 2017",
-                    'fecha' => Carbon::createFromDate(2017,12,31),
+                    'detalle' => "Orden de pedido con saldo pendiente",
+                    'fecha' => $orden_pedido_x->fecha,
                     'condicion_pago_id' => 4,
                     'vendedor_id' => 1,
                     'ventas_exentas' => 0,
                     'ventas_gravadas' => round(($orden_pedido_x->saldo_inicial / 1.13),4),
                     'venta_total' => round(($orden_pedido_x->saldo_inicial / 1.13),4),
-                    'estado_id' => 2,
+                    'estado_id' => 3,
                 ]);
                 $venta = Venta::create([
                     'numero' => $orden_pedido_x->doc,
                     'orden_pedido_id' => $orden_pedido->id,
                     'tipo_documento_id' => 1,
-                    'fecha' => Carbon::createFromDate(2017,12,31),
+                    'fecha' => $orden_pedido_x->fecha,
                     'vendedor_id' => 1,
                     'estado_venta_id' => 1,
                     'saldo' => $orden_pedido_x->saldo_inicial,

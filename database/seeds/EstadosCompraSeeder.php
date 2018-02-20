@@ -14,11 +14,11 @@ class EstadosCompraSeeder extends Seeder
     {
         EstadoCompra::create([
             'codigo' => 'INGRE',
-            'nombre' => 'Ingresada',
+            'nombre' => 'En verificación',
         ]);
         EstadoCompra::create([
             'codigo' => 'PROCE',
-            'nombre' => 'Procesada',
+            'nombre' => 'Ingresada',
         ]);
         EstadoCompra::create([
             'codigo' => 'PAGAD',

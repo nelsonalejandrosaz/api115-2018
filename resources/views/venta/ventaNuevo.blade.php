@@ -40,7 +40,7 @@
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
                             <input type="date" class="form-control" name="fecha"
-                                   value="{{ $orden_pedido->fecha_entrega }}">
+                                   value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                         </div>
                     </div>
 
@@ -48,7 +48,8 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="cliente_id" value="{{$orden_pedido->cliente->nombre}}">
+                            <input readonly type="text" class="form-control" name="cliente_id"
+                                   value="{{$orden_pedido->cliente->nombre}}">
                         </div>
                     </div>
 
@@ -56,7 +57,8 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>NRC</b></label>
                         <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="nrc" value="{{$orden_pedido->cliente->nrc}}">
+                            <input readonly type="text" class="form-control" name="nrc"
+                                   value="{{$orden_pedido->cliente->nrc}}">
                         </div>
                     </div>
 
@@ -73,7 +75,8 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="municipio" id="municipioID" value="{{$orden_pedido->cliente->municipio->nombre}}">
+                            <input readonly type="text" class="form-control" name="municipio" id="municipioID"
+                                   value="{{$orden_pedido->cliente->municipio->nombre}}">
                         </div>
                     </div>
 
@@ -81,7 +84,8 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
-                            <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion" id="direccionID">{{$orden_pedido->cliente->direccion}}</textarea>
+                            <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion"
+                                      id="direccionID">{{$orden_pedido->cliente->direccion}}</textarea>
                         </div>
                     </div>
 
@@ -91,9 +95,10 @@
 
                     {{-- Numero documento venta --}}
                     <div class="form-group">
-                        <label class="col-md-4  control-label">N° Documento:</label>
+                        <label class="col-md-4  control-label"><b>N° Documento</b></label>
                         <div class="col-md-8 ">
-                            <input type="text" class="form-control" name="numero" placeholder="Numero factura o Crédito Fiscal">
+                            <input type="text" class="form-control" name="numero"
+                                   placeholder="Numero factura o Crédito Fiscal" value="{{ old('numero') }}">
                         </div>
                     </div>
 
@@ -102,9 +107,13 @@
                         <label class="col-sm-4 control-label"><b>Tipo de documento</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="tipo_documento_id">
-                                <option value="" selected disabled>Seleccione una opción</option>
+                                <option selected disabled>Seleccione una opción</option>
                                 @foreach($tipoDocumentos as $tipoDocumento)
-                                <option value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                    @if($tipoDocumento->id == $orden_pedido->tipo_documento_id)
+                                        <option selected value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                    @else
+                                        <option value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -114,7 +123,8 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Orden pedido n°:</label>
                         <div class="col-md-8 ">
-                            <input readonly type="text" class="form-control" name="orden" value="{{$orden_pedido->numero}}">
+                            <input readonly type="text" class="form-control" name="orden"
+                                   value="{{$orden_pedido->numero}}">
                         </div>
                     </div>
 
@@ -122,9 +132,9 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            @if($orden_pedido->fechaEntrega != null)
+                            @if($orden_pedido->fecha_entrega != null)
                                 <input readonly type="date" class="form-control" name="fechaEntrega"
-                                       value="{{$orden_pedido->fecha->format('Y-m-d')}}">
+                                       value="{{$orden_pedido->fecha_entrega->format('Y-m-d')}}">
                             @else
                                 <input readonly type="text" class="form-control" name="fechaEntrega"
                                        value="Sin fecha definida">
@@ -144,10 +154,10 @@
 
                     {{-- Ruta archivo --}}
                     {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label">Copia documento</label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<input type="file" class="form-control" name="archivo">--}}
-                        {{--</div>--}}
+                    {{--<label class="col-md-4 control-label">Copia documento</label>--}}
+                    {{--<div class="col-md-8">--}}
+                    {{--<input type="file" class="form-control" name="archivo">--}}
+                    {{--</div>--}}
                     {{--</div>--}}
 
                 </div>
@@ -168,11 +178,13 @@
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto->nombre}} ({{ $salida->precio->presentacion }})">
+                                    <input readonly type="text" class="form-control" name="productos_id[]"
+                                           value="{{$salida->movimiento->producto->nombre}}">
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
-                                    <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidad_medida->abreviatura}}">
+                                    <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida"
+                                           value="{{$salida->unidad_medida->abreviatura}}">
                                 </td>
                                 {{--Cantidad--}}
                                 <td>
@@ -186,7 +198,8 @@
                                         <span class="input-group-addon">$</span>
                                         <input readonly type="text" class="form-control puCls"
                                                pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,5)}}">
+                                               name="preciosUnitarios[]" id="precioUnitario"
+                                               value="{{number_format($salida->precio_unitario,5)}}">
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}
@@ -216,7 +229,8 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control" value="{{number_format($orden_pedido->venta_total,2)}}" name="compraTotal"
+                                    <input readonly type="number" class="form-control"
+                                           value="{{number_format($orden_pedido->venta_total,2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
                             </th>
@@ -227,8 +241,11 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-money"></span> Generar venta</button>
+                <a href="{{ route('ventaOrdenesLista') }}" class="btn btn-lg btn-default"><span
+                            class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-money"></span>
+                    Generar venta
+                </button>
             </div>
         </form>
     </div><!-- /.box -->

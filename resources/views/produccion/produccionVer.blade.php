@@ -36,11 +36,10 @@
 
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
+                        <label class="col-md-4 control-label"><b>Fecha producción</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha" value="{{$produccion->fecha}}"
-                                       disabled>
+                                <input readonly type="date" class="form-control" name="fecha" value="{{ $produccion->fecha }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -52,26 +51,33 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Producto</b></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="formula_id" disabled>
-                                @foreach($formulas as $formula)
-                                    @if($formula->id == $produccion->formula_id)
-                                        <option selected
-                                                value="{{ $formula->id }}">{{ $formula->producto->nombre }}</option>
-                                    @else
-                                        <option value="{{ $formula->id }}">{{ $formula->producto->nombre }}</option>
-                                    @endif
-                                @endforeach
+                            <select disabled class="form-control select2" name="formula_id" onchange="cambioProducto()"
+                                    id="productoID">
+                                <option selected value="{{ $produccion->producto->id }}"
+                                        data-unidadmedida="{{$produccion->producto->unidad_medida->nombre}}"
+                                        data-factor="{{$produccion->producto->factor_volumen}}">{{ $produccion->producto->nombre }}</option>
                             </select>
                         </div>
                     </div>
 
-                    {{-- Nombre del producto --}}
+                    {{-- Registrado por --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Realizado por</b></label>
+                        <label class="col-sm-4 control-label"><b>Registrado por</b></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
-                                   value="{{$produccion->bodeguero->nombre}} {{$produccion->bodeguero->apellido}}"
-                                   disabled>
+                            <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="{{ $produccion->bodeguero->nombre }} {{ $produccion->bodeguero->apellido }}">
+                        </div>
+                    </div>
+
+                    {{-- Fabricado por --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><b>Fabricado por</b></label>
+                        <div class="col-sm-8">
+                            <select disabled class="form-control select2" name="fabricado_id[]" multiple>
+                                @foreach($produccion->detalle_producciones as $detalle)
+                                    <option selected value="{{ $detalle->bodega->id }}">{{ $detalle->bodega->nombre }} {{ $detalle->bodega->apellido }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -83,19 +89,37 @@
 
                     {{-- Cantidad produccion --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Cantidad producida</label>
+                        <label class="col-sm-4 control-label"><b>Cantidad a producir</b></label>
                         <div class="col-sm-8">
-                            <input disabled type="number" min="0.00" class="form-control" placeholder="0" name="cantidad"
-                                   value="{{$produccion->cantidad}}">
+                            <div class="input-group">
+                                <input readonly type="number" min="0.00" step="any" class="form-control" placeholder="0"
+                                       name="cantidad"
+                                       value="{{ number_format($produccion->cantidad,2) }}">
+                                <span class="input-group-addon">Kgs</span>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Unidad de medida --}}
+                    {{-- Lote --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label">Unidad de medida</label>
+                        <label class="col-sm-4 control-label">Lote</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" placeholder="Producto" name="nombre"
-                                   value="{{$produccion->formula->producto->unidad_medida->nombre}}" disabled id="unidadMedidalbl">
+                            <input readonly type="number" class="form-control" placeholder="ej. 12345" name="lote"
+                                   value="{{ $produccion->lote }}">
+                        </div>
+                    </div>
+
+                    {{-- Fecha vencimiento --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Fecha vencimiento</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input readonly type="date" class="form-control" name="fecha_vencimiento"
+                                       value="{{ $produccion->fecha_vencimiento }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -103,7 +127,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Detalle</label>
                         <div class="col-sm-8">
-                            <textarea disabled name="detalle" class="form-control" rows="5">{{$produccion->detalle}}</textarea>
+                            <textarea readonly name="detalle" class="form-control" rows="5">{{ $produccion->detalle }}</textarea>
                         </div>
                     </div>
 
@@ -129,10 +153,6 @@
                                                         data-cu="{{ $producto->precio }}"
                                                         data-um="{{$producto->unidad_medida->abreviatura}}">{{$producto->codigo}} -- {{ $producto->nombre }}
                                                 </option>
-                                            @else
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}"
-                                                        data-um="{{$producto->unidad_medida->abreviatura}}">{{$producto->codigo}} -- {{ $producto->nombre }}
-                                                </option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -151,39 +171,39 @@
                 </div>
 
             </div><!-- /.box-body -->
-
-            <div class="box-footer">
-                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a producciones</a>
-                <a href="" class="btn btn-lg btn-success pull-right"><span class="fa fa-print"></span> Imprimir producción</a>
-            </div>
         </form>
+        <div class="box-footer">
+            <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a producciones</a>
+            <a href="" style="margin-left: 10px" class="btn btn-lg btn-success pull-right"><span class="fa fa-print"></span> Imprimir producción</a>
+            @if($produccion->trashed() == false)
+                <button type="button" class="btn btn-lg btn-danger pull-right" id="eliminar-buttom-id"><span class="fa fa-print"></span> Revertir producción</button>
+            @endif
+        </div>
     </div><!-- /.box -->
+
+    <div hidden>
+        <form action="{{ route('produccionRevertir',['id' => $produccion->id]) }}" method="post" id="eliminar-frm-id">
+            {{ csrf_field() }}
+            {{method_field('DELETE')}}
+        </form>
+    </div>
 
 @endsection
 
 @section('JSExtras')
     <script>
-        function cambioPrecio() {
-            var costo = $('#costo').val();
-            var precio = $('#precio').val();
-            if ($('#costo').val().length <= 0) {
-                alert("Debe rellenar el campo costo antes de asignar precios");
-                $('#precio').val('');
-            }
-            margen = ((precio - costo) / costo) * 100;
-            $('#margenGanancia').val(margen.toFixed(2));
+
+        $(document).on('ready', Principal());
+
+        function Principal() {
+            $('#eliminar-buttom-id').click(SubmitEliminar)
         }
 
-        function cambioMargen() {
-            var costo = $('#costo').val();
-            var margen = $('#margenGanancia').val();
-            if ($('#costo').val().length <= 0) {
-                alert("Debe rellenar el campo costo antes de asignar precios");
-                $('#margenGanancia').val('');
-            }
-            precio = costo * (1 + (margen / 100));
-            $('#precio').val(precio.toFixed(2));
+        function SubmitEliminar() {
+            $('#eliminar-frm-id').submit();
+
         }
+
     </script>
     @include('comun.select2Jses')
 @endsection

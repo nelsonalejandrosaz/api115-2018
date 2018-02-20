@@ -42,6 +42,15 @@
                         </div>
                     </div>
 
+                    {{-- Nombre alternativo del cliente --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Nombre alternativo</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="ej. Panadería de José por la quita"
+                                   name="nombre_alternativo" value="{{ old('nombre_alternativo ')}}">
+                        </div>
+                    </div>
+
                     {{-- Contacto del cliente --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Contacto</label>
@@ -89,6 +98,7 @@
                 <div class="col-xs-6">
                     <h4>Telefonos</h4>
                     <br>
+
                     {{-- Telefono principal del cliente --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Principal</label>
@@ -96,11 +106,21 @@
                             <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_1" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ old('telefono_1') }}" >
                         </div>
                     </div>
+
                     {{-- Telefono secundario del cliente --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Secundario</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" placeholder="(503) 9999-9999" name="telefono_2" data-inputmask='"mask": "(999) 9999-9999"' data-mask value="{{ old('telefono_2') }}" >
+                        </div>
+                    </div>
+
+                    {{-- Email cliente --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Email</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" placeholder="ej. cliente@algo.com"
+                                   name="correo" value="{{ old('correo') }}">
                         </div>
                     </div>
 
@@ -126,7 +146,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Vendedor</label>
                         <div class="col-sm-9">
-                            <select class="form-control select2" name="unidad_medida_id">
+                            <select class="form-control select2" name="vendedor_id">
                                 <option value="" selected disabled>Sin vendedor especificado</option>
                                 @foreach($vendedores as $vendedor)
                                     @if($vendedor->id == old('vendedor_id'))

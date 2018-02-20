@@ -21,6 +21,35 @@
 
     @include('partials.alertas')
 
+    {{--Barra herramientas--}}
+    <div class="box box-default box-solid">
+        <div class="box-header with-border">
+            <h3 class="box-title">Herramientas</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div><!-- /.box-header -->
+
+        <!-- form start -->
+        <form class="form-horizontal" action="{{ route('ingresoVentasPost') }}" method="POST" id="fechas-form-id">
+            {{ csrf_field() }}
+            <div class="box-body">
+                <div class="col-md-6 col-sm-12">
+
+                </div>
+
+            </div><!-- /.box-body -->
+
+            <div class="box-footer">
+                <a href="{{ route('abonoLista') }}" class="btn btn-lg btn-default"><span
+                            class="fa fa-mail-reply"></span> Regresar a lista abonos</a>
+                <a href="{{ route('abonoNuevoSinVenta') }}" class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-plus"></span> Nuevo abono</a>
+                {{--<a href='javascript:window.print(); void 0;'  style="margin-left: 10px"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>--}}
+            </div>
+        </form>
+    </div><!-- /.box -->
+
     <!-- Form de nuevo producto -->
     <div class="box box-default">
         <div class="box-header with-border">

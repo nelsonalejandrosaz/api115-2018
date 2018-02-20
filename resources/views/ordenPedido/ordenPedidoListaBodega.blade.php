@@ -34,7 +34,7 @@
                             <th style="width:10%">Número</th>
                             <th style="width:10%">Fecha ingreso</th>
                             <th style="width:10%">Fecha entrega</th>
-                            <th style="width:25%">Cliente</th>
+                            {{--<th style="width:25%">Cliente</th>--}}
                             <th style="width:20%">Vendedor</th>
                             <th style="width:10%">Estado</th>
                             <th style="width:15%">Acción</th>
@@ -50,13 +50,15 @@
                                 @else
                                     <td>Sin fecha definida</td>
                                 @endif
-                                <td>{{$ordenPedido->cliente->nombre}}</td>
+                                {{--<td>{{$ordenPedido->cliente->nombre}}</td>--}}
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
                                 <td>
-                                    @if($ordenPedido->procesado)
-                                        Procesado
-                                    @else
-                                        En proceso
+                                    @if($ordenPedido->estado_orden->codigo == 'SP')
+                                        <span class="label label-warning">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'PR')
+                                        <span class="label label-info">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'FC')
+                                        <span class="label label-success">{{ $ordenPedido->estado_orden->nombre }}</span>
                                     @endif
                                 </td>
                                 <td align="center">
@@ -80,12 +82,15 @@
     <!-- DataTables -->
     <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('/plugins/moment.min.js') }}"></script>
+    <script src="{{ asset('/plugins/datetime-moment.js') }}"></script>
     <script>
         $(function () {
+            $.fn.dataTable.moment( 'd/M/YYYY' );
             $("#tablaDT").DataTable(
 
                 {
-                    order: [[2, "asc"]],
+                    order: [[2, "desc"]],
                     language: {
                         processing:     "Procesando...",
                         search:         "Buscar:",

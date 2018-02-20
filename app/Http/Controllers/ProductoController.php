@@ -15,22 +15,35 @@ class ProductoController extends Controller
 {
     public function ProductoLista()
     {
-        $productos = Producto::whereProductoActivo(true)->get();
+        if (\Auth::user()->rol->nombre == 'Vendedor')
+        {
+            $productos = Producto::where('codigo','like','PT%')
+                ->orWhere('codigo','like','RV%')
+                ->orWhere('codigo','like','MR%')
+                ->orWhere('codigo','like','PM%')->get();
+            foreach ($productos as $producto) {
+                $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
+                $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
+            }
+            return view('producto.productoListaV')->with(['productos' => $productos]);
+        }
+        $productos = Producto::all();
         return view('producto.productoLista')->with(['productos' => $productos]);
     }
 
     public function ProductoDesactivadoLista()
     {
-        $productos = Producto::whereProductoActivo(false)->get();
+        $productos = Producto::onlyTrashed()->get();
         return view('producto.productoDesactivadoLista')->with(['productos' => $productos]);
     }
 
     public function ProductoVer(Request $request)
     {
+//        abort(503);
         $tipo_productos = TipoProducto::all();
         $unidad_medidas = UnidadMedida::all();
         $categorias = Categoria::all();
-        $producto = Producto::find($request->id);
+        $producto = Producto::findOrFail($request->id);
         return view('producto.productoVer')
             ->with(['tipo_productos' => $tipo_productos])
             ->with(['unidad_medidas' => $unidad_medidas])
@@ -159,8 +172,16 @@ class ProductoController extends Controller
     public function ProductoEliminar(Request $request)
     {
         $producto = Producto::find($request->id);
-        $producto->producto_activo = false;
-        $producto->save();
+        try {
+            $producto->delete();
+        } catch (\Exception $e) {
+            // Mensaje de exito al eliminar
+            session()->flash('mensaje.tipo', 'danger');
+            session()->flash('mensaje.icono', 'fa-close');
+            session()->flash('mensaje.titulo', 'Upssssss!');
+            session()->flash('mensaje.contenido', 'Error al eliminar!');
+            return redirect()->route('productoLista');
+        }
 //        Mensaje de exito al eliminar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
@@ -192,6 +213,12 @@ class ProductoController extends Controller
     {
         $producto = Producto::find($id);
         $unidad_medidas = UnidadMedida::all();
+        if (\Auth::user()->rol->nombre == 'Vendedor')
+        {
+            return view('producto.productoPrecioV')
+                ->with(['producto' => $producto])
+                ->with(['unidad_medidas' => $unidad_medidas]);
+        }
         return view('producto.productoPrecio')
             ->with(['producto' => $producto])
             ->with(['unidad_medidas' => $unidad_medidas]);
@@ -206,6 +233,7 @@ class ProductoController extends Controller
         $unidades_medidas_id = $request->input('unidad_medida_id');
         $precios = $request->input('precio');
         $factores = $request->input('factor');
+        $nombre_factura = $request->input('descripcion');
         // Se calcula el tamaño del array
         $max = sizeof($presentaciones);
         // Se recorre el array
@@ -219,6 +247,7 @@ class ProductoController extends Controller
                 'unidad_medida_id' => $unidades_medidas_id[$i],
                 'precio' => $precios[$i],
                 'factor' => $factores[$i],
+                'nombre_factura' => $nombre_factura[$i]
             ]);
         }
         // Mensaje de exito

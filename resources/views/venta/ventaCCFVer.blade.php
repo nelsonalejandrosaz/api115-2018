@@ -163,16 +163,7 @@
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <select class="form-control select2 selProd" style="width:100%" name="productos_id[]"
-                                            id="selectProductos" disabled>
-                                        @foreach($productos as $producto)
-                                            @if($producto->id == $salida->movimiento->producto_id)
-                                                <option selected value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }} </option>
-                                            @else
-                                                <option value="{{ $producto->id }}" data-cu="{{ $producto->precio }}" data-um="{{$producto->unidad_medida->abreviatura}}">{{ $producto->nombre }}) </option>
-                                            @endif
-                                        @endforeach
-                                    </select>
+                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto->nombre}} {{$salida->descripcion_presentacion}}">
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>

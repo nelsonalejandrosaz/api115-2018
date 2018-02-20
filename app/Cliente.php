@@ -26,6 +26,11 @@ class Cliente extends Model
         return $this->hasMany('App\Abono');
     }
 
+    public function ventas()
+    {
+        return $this->hasMany('App\Venta');
+    }
+
     protected $fillable = [
         'municipio_id',
         'nombre',
@@ -40,6 +45,7 @@ class Cliente extends Model
         'nombre_contacto',
         'numero_registro',
         'saldo',
+        'correo',
     ];
 
 }

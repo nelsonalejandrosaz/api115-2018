@@ -16,12 +16,14 @@ class CreateFormulasTable extends Migration
         Schema::create('formulas', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('producto_id');
+            $table->float('cantidad_formula')->nullable();
             $table->date('fecha');
             $table->string('ingresado_id');
             $table->string('descripcion')->nullable();
             $table->float('version')->default(1.00);
             $table->boolean('activa')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

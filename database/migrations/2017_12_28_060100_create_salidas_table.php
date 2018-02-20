@@ -19,6 +19,7 @@ class CreateSalidasTable extends Migration
             $table->integer('produccion_id')->unsigned()->nullable();
             $table->integer('unidad_medida_id')->unsigned();
             $table->integer('precio_id')->unsigned()->nullable();
+            $table->string('descripcion_presentacion',50)->nullable();
             $table->float('cantidad',12,4);
             $table->float('precio_unitario',12,4);
             $table->float('venta_exenta',12,4);

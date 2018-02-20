@@ -14,15 +14,19 @@ class EstadosOrdenSeeder extends Seeder
     {
         EstadoOrdenPedido::create([
             'codigo' => 'SP',
-            'nombre' => 'Sin procesar',
+            'nombre' => 'Sin despachar',
         ]);
         EstadoOrdenPedido::create([
             'codigo' => 'PR',
-            'nombre' => 'Procesada',
+            'nombre' => 'Despachada',
         ]);
         EstadoOrdenPedido::create([
             'codigo' => 'FC',
             'nombre' => 'Facturada',
+        ]);
+        EstadoOrdenPedido::create([
+            'codigo' => 'AN',
+            'nombre' => 'Anulada',
         ]);
     }
 }

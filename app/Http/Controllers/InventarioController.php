@@ -12,19 +12,34 @@ class InventarioController extends Controller
 {
     public function InventarioLista()
     {
-        if (Auth::user()->rol->nombre == 'Administrador' || Auth::user()->rol->nombre == 'Bodeguero')
+        if (Auth::user()->rol->nombre == 'Administrador')
         {
             $productos = Producto::all();
+            foreach ($productos as $producto) {
+                $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
+                $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
+            }
+            return view('inventario.inventarioLista')->with(['productos' => $productos]);
+        } elseif(Auth::user()->rol->nombre == 'Bodeguero')
+        {
+            $productos = Producto::all();
+            foreach ($productos as $producto) {
+                $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
+                $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
+            }
+            return view('inventario.inventarioListaBodega')->with(['productos' => $productos]);
         } else
         {
-            $productos = Producto::where('codigo','like','PT%')->orWhere('codigo','like','RV%')->get();
-//            dd($productos);
+            $productos = Producto::where('codigo','like','PT%')
+                ->orWhere('codigo','like','RV%')
+                ->orWhere('codigo','like','MR%')
+                ->orWhere('codigo','like','PM%')->get();
+            foreach ($productos as $producto) {
+                $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
+                $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
+            }
+            return view('inventario.inventarioListaVB')->with(['productos' => $productos]);
         }
-        foreach ($productos as $producto) {
-            $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
-            $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
-        }
-        return view('inventario.inventarioLista')->with(['productos' => $productos]);
     }
 
     public function InventarioKardex(Request $request)
@@ -39,6 +54,13 @@ class InventarioController extends Controller
             ->whereMonth('fecha','=',$mes_actual)
             ->where('procesado','=',true)
             ->orderBy('fecha_procesado','asc')->get();
+        if (Auth::user()->rol->nombre == 'Bodeguero')
+        {
+            return view('inventario.kardexBodega')
+                ->with(['movimientos' => $movimientos])
+                ->with(['producto' => $producto])
+                ->with(['mes' => $mes]);
+        }
         return view('inventario.kardex')
             ->with(['movimientos' => $movimientos])
             ->with(['producto' => $producto])
@@ -65,6 +87,13 @@ class InventarioController extends Controller
         foreach ($movimientos as $movimiento)
         {
             $movimiento->costo_total_existencia = $movimiento->cantidad_existencia * $movimiento->costo_unitario_existencia;
+        }
+        if (Auth::user()->rol->nombre == 'Bodeguero')
+        {
+            return view('inventario.kardexBodega')
+                ->with(['movimientos' => $movimientos])
+                ->with(['producto' => $producto])
+                ->with(['mes' => $mes]);
         }
         return view('inventario.kardex')
             ->with(['movimientos' => $movimientos])

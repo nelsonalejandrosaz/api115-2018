@@ -122,7 +122,7 @@
                         <div class="col-md-8 col-sm-10">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input type="number" step="0.01" min="0" class="form-control" placeholder="0.00" name="costo_ajuste">
+                                <input type="number" step="any" min="0" class="form-control" placeholder="0.00" name="costo_ajuste">
                             </div>
                         </div>
                     </div>

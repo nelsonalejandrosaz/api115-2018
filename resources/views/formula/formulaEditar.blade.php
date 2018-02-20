@@ -7,8 +7,9 @@
 @section('CSSExtras')
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
-    {{-- DataPicker --}}
-    <link rel="stylesheet" href="{{asset('/css/datapicker/bootstrap-datepicker3.css')}}">
+    {{--Alertify--}}
+    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.core.css')}}" />
+    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.default.css')}}" />
 @endsection
 
 @section('contentheader_title')
@@ -16,7 +17,7 @@
 @endsection
 
 @section('contentheader_description')
-    -- Modificar fórmula
+    -- Realizar cambios a la fórmula
 @endsection
 
 @section('main-content')
@@ -30,47 +31,59 @@
         La suma debe sumar 100%
     </div>
 
+    <div class="hidden">
+
+        {{--Productos select--}}
+        <select required class="form-control select2" style="width:100%" name="productos[]" id="productos-select-id">
+            <option selected disabled value="">Seleccione un producto</option>
+            @foreach($productos as $producto)
+                <option value="{{ $producto->id }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
+            @endforeach
+        </select>
+
+        {{--Cantidad input--}}
+        <div class="input-group" id="cantidad-input-id">
+            <input required type="number" class="form-control cant" min="0.001" step="any"
+                   name="cantidades[]">
+            <span class="input-group-addon">g</span>
+        </div>
+
+        {{--Eliminar boton--}}
+        <button type="button" class="btn btn-danger btn-eliminar-class" id="eliminar-button"><span class="fa fa-remove"></span></button>
+    </div>
+
     <!-- Form de nuevo proveedor -->
     <div class="box box-default">
         <div class="box-header with-border">
             <h3 class="box-title">Detalle de formula</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form id="formDatos" class="form-horizontal" action="{{ route('formulaEditarPut',['id' => $formula->id]) }}"
-              method="POST">
+        <form id="formDatos" class="form-horizontal" action="{{ route('formulaEditarPut', ['id' => $formula->id] ) }}" method="POST">
             {{ csrf_field() }}
             {{ method_field('PUT') }}
             <div class="box-body">
-
                 {{-- Fila  --}}
                 <div class="col-md-6">
 
-                    <div class="hidden">
-                        <select class="form-control select2 selProd" style="width:100%" name="productos[]"
-                                id="selectProductos">
-                            @foreach($productos as $producto)
-                                <option value="{{ $producto->id }}"
-                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <h4>Información del producto</h4>
 
                     {{-- Producto --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Producto asociado</label>
+                        <label class="col-md-4 control-label"><b>Producto asociado:</b></label>
                         <div class="col-md-8">
-                            <input readonly type="text" class="form-control"
-                                   value="{{ $formula->producto->nombre }}"
-                                   name="producto_id">
+                            <input readonly type="text" class="form-control" value="{{ $formula->producto->nombre }}">
                         </div>
                     </div>
 
-                    {{-- Unidad de medida formula--}}
+                    {{-- Cantidad formula --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Unidad de medida</label>
+                        <label class="col-md-4 control-label"><b>Cantidad fórmula</b></label>
                         <div class="col-md-8">
-                            <input readonly type="text" class="form-control"
-                                   value="{{ $formula->producto->unidad_medida->nombre }}" id="unidadMedidalbl">
+                            <div class="input-group">
+                                <input type="number" class="form-control" step="any"
+                                       placeholder="ej. 1" name="cantidad_formula" value="{{ $formula->cantidad_formula }}">
+                                <span class="input-group-addon">Kgs</span>
+                            </div>
                         </div>
                     </div>
 
@@ -78,7 +91,7 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">Descripción:</label>
                         <div class="col-md-8">
-                            <textarea class="form-control" name="descripcion">{{$formula->descripcion}}</textarea>
+                            <textarea class="form-control" name="descripcion"></textarea>
                         </div>
                     </div>
 
@@ -86,27 +99,14 @@
 
                 <div class="col-md-6">
 
-                    {{-- Fecha ingreso --}}
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">Fecha ingreso</label>
-                        <div class="col-md-8">
-                            <div class="input-group">
-                                <input readonly type="date" class="form-control" name="fecha_ingreso"
-                                       value="{{$formula->fecha->format('Y-m-d')}}">
-                                <div class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h4>Otra información</h4>
 
-                    {{-- Fecha modificacion --}}
+                    {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Fecha modificación</b></label>
+                        <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha_modificacion"
-                                       value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                <input readonly type="date" class="form-control" name="fecha" value="{{ $formula->fecha->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -119,8 +119,8 @@
                         <label class="col-md-4 control-label">Version</label>
                         <div class="col-md-8">
                             <input readonly type="text" class="form-control"
-                                   value="{{ $formula->version}}"
-                                   name="version">
+                                   value="{{ $formula->version }}"
+                                   name="version" id="version-input-id">
                         </div>
                     </div>
 
@@ -129,41 +129,38 @@
                         <label class="col-md-4 control-label">Ingresado por:</label>
                         <div class="col-md-8">
                             <input readonly type="text" class="form-control"
-                                   value="{{ $formula->ingresado->nombre }} {{ Auth::user()->apellido }}"
-                                   name="ingresado_id">
+                                   value="{{ $formula->ingresado->nombre }} {{ $formula->ingresado->apellido }}" name="ingresado_id">
                         </div>
                     </div>
 
                 </div>
                 {{-- Fin fila --}}
 
-
                 {{-- Fila --}}
                 <div class="col-md-12">
                     {{-- Tabla de productos --}}
-                    <table class="table table-bordered" id="tblProductos">
+                    <table class="table table-bordered" id="tbl-componentes-id">
+                        <thead>
                         <tr>
-                            <th style="width: 65%">Código -- Producto</th>
-                            <th style="width: 30%">Porcentaje</th>
-                            <th style="width: 5%">
-                                <button class="btn btn-success" id="btnNuevoProducto" onclick="funcionNuevoProducto()"
+                            <th style="width: 55%">Código -- Producto</th>
+                            <th style="width: 35%">Cantidad</th>
+                            <th style="width: 10%; text-align: center">
+                                <button class="btn btn-success" id="btn-nueva-fila-id"
                                         type="button">
                                     <span class="fa fa-plus"></span>
                                 </button>
                             </th>
                         </tr>
+                        </thead>
+                        <tbody>
                         @foreach($formula->componentes as $componente)
                             <tr>
                                 <td>
-                                    <select class="form-control select2 selProd" style="width:100%" name="productos[]"
-                                            >
+                                    {{--Productos select--}}
+                                    <select class="form-control select2" style="width:100%" name="productos[]" id="productos-select-id">
                                         @foreach($productos as $producto)
-                                            @if($componente->producto_id == $producto->id)
-                                                <option selected value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
-                                            @else
-                                                <option value="{{ $producto->id }}"
-                                                        data-um="{{ $producto->unidad_medida->abreviatura }}">{{ $producto->nombre }}</option>
+                                            @if($producto->id == $componente->producto_id)
+                                                <option selected value="{{ $producto->id }}">{{$producto->codigo}} -- {{ $producto->nombre }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -171,40 +168,26 @@
                                 <td>
                                     <div class="input-group">
                                         <input type="number" class="form-control cant"
-                                               value="{{number_format($componente->porcentaje,2)}}"
-                                               name="porcentajes[]">
-                                        <span class="input-group-addon">%</span>
+                                               value="{{$componente->cantidad}}" name="cantidades[]">
+                                        <span class="input-group-addon">g</span>
                                     </div>
                                 </td>
-                                <td align="center">
-                                    <button type="button" class="btn btn-danger" click="funcionEliminarProducto()"
-                                            type="button"><span class="fa fa-remove"></span></button>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-danger eliminar-db-button" data-id="{{ $componente->id }}" data-token="{{ csrf_token() }}"><span class="fa fa-remove"></span></button>
                                 </td>
                             </tr>
                         @endforeach
+                        </tbody>
                     </table>
-                    <table class="table table-bordered">
-                        <th style="width: 65%; text-align: right; vertical-align: middle;">Total:</th>
-                        <th style="width: 30%">
-                            <div class="input-group">
-                                <input readonly type="number" class="form-control" placeholder="0"
-                                       id="totalPorcentajeInput"
-                                       min="100" max="100" value="0">
-                                <span class="input-group-addon">%</span>
-                            </div>
-                        </th>
-                        <th style="width: 5%"></th>
-                    </table>
+
                 </div>
                 {{-- Fin fila --}}
 
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span>
-                    Cancelar</a>
-                <button type="button" onclick="verificarSuma()" class="btn btn-lg btn-success pull-right"><span
-                            class="fa fa-floppy-o"></span> Guardar nueva version
+                <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
                 </button>
             </div>
         </form>
@@ -213,29 +196,47 @@
 @endsection
 
 @section('JSExtras')
+    <!-- Select2 -->
+    <script src="{{asset('/plugins/select2.full.min.js')}}"></script>
+    {{--Alertify--}}
+    <script type="text/javascript" src="{{'/plugins/alertify/lib/alertify.js'}}"></script>
     {{-- Funcion para cargar mas filas de productos --}}
     <script>
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
-            $("body").on("click", ".btn-danger", funcionEliminarProducto);
-            calcularTotal();
+            $("body").on("click", ".btn-eliminar-class", funcionEliminarProducto);
+            $('#btn-nueva-fila-id').click(nuevaFila);
+            $('#producto-aso-select-id').change(cambioProducto);
+            $('.eliminar-db-button').click(eliminarComponenteDB);
+            selecionarValor();
+            $('.select2').select2();
         }
 
-        var numero = 2;
+        function selecionarValor() {
+            $(":input").click(function () {
+                $(this).select();
+            });
+            $(".cant").focusout(function () {
+                var numeroDato = ($(this).val().length === 0) ? 0 : parseFloat($(this).val());
+                $(this).val(numeroDato.toFixed(2));
+            });
+        }
 
-        function funcionNuevoProducto() {
-            copia = $('#selectProductos').clone(false);
-            $('#tblProductos')
+        function nuevaFila() {
+            let productos_select = $('#productos-select-id').clone(false);
+            let cantidad_input = $('#cantidad-input-id').clone(false);
+            let eliminar_button = $('#eliminar-button').clone(false);
+            $('#tbl-componentes-id')
                 .append
                 (
-                    $('<tr>').attr('id', 'rowProducto' + numero)
+                    $('<tr>')
                         .append
                         (
                             $('<td>')
                                 .append
                                 (
-                                    copia
+                                    productos_select
                                 )
                         )
                         .append
@@ -243,7 +244,7 @@
                             $('<td>')
                                 .append
                                 (
-                                    '<div class="input-group"><input type="number" class="form-control cant" value="1" min="1" max="100" name="porcentajes[]" onkeyup="calcularTotal()" onchange="calcularTotal()"><span class="input-group-addon">%</span></div>'
+                                    cantidad_input
                                 )
                         )
                         .append
@@ -251,23 +252,16 @@
                             $('<td>').attr('align', 'center')
                                 .append
                                 (
-                                    '<button type="button" class="btn btn-danger" click="funcionEliminarProducto()" type="button"><span class="fa fa-remove"></span></button>'
+                                    eliminar_button
                                 )
                         )
                 );
-            //Initialize Select2 Elements
-            $(".select2").select2();
-            $(".select2").select2();
-            numero++;
-            calcularTotal();
+            $('.select2').select2();
+            selecionarValor();
         }
 
         function funcionEliminarProducto() {
-            // $(this).remove().end();
-            // $(this).closest('tr').remove();
-            // console.log($(this).parent().parent());
             $(this).parent().parent().remove();
-            calcularTotal();
         }
 
         function verificarSuma() {
@@ -282,23 +276,37 @@
             }
         }
 
-        function calcularTotal() {
-            var totalPorcentaje = 0;
-            var porcentajes = $('.cant');
-            for (var i = 0; i < porcentajes.length; i++) {
-                porcentaje = parseFloat(porcentajes[i].value);
-                totalPorcentaje = totalPorcentaje + porcentaje;
-            }
-            $('#totalPorcentajeInput').val(totalPorcentaje);
-            // console.log(totalPorcentaje);
+        function cambioProducto() {
+            let producto_asc_select = $('#producto-aso-select-id');
+            $.ajax({
+                url: '/api/formula/version/' + producto_asc_select.val(),
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (dato) {
+                    cambioVersion(dato);
+                },
+            });
+        }
+
+        function cambioVersion(version) {
+            $('#version-input-id').val(version);
+        }
+        
+        function eliminarComponenteDB() {
+            let token = $(this).data('token');
+            let producto_id = $(this).data('id');
+            let fila = $(this);
+            $.ajax({
+                url: '/componente/' + producto_id,
+                type: 'post',
+                data: {_method: 'delete', _token :token},
+                success: function (msg) {
+                    fila.parent().parent().remove();
+                    alertify.success('Éxito!! El componente fue eliminado');
+                },
+            });
         }
 
     </script>
-    {{-- Fin de funcion para cargar mas filas de productos --}}
-
-    <!-- Select2 -->
-    <script src="{{asset('/plugins/select2.full.min.js')}}"></script>
-    {{-- Data Picker --}}
-    <script src="{{asset('/js/datapicker/bootstrap-datepicker.js')}}"></script>
 @endsection
 

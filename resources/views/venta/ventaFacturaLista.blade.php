@@ -37,7 +37,7 @@
                             <th style="width:25%">Cliente</th>
                             <th style="width:15%">Vendedor</th>
                             <th style="width:15%">Condición de pago</th>
-                            <th style="width:10%">Saldo</th>
+                            <th style="width:10%">Estado</th>
                             <th style="width:15%">Acción</th>
                         </tr>
                         </thead>
@@ -48,28 +48,34 @@
                                 <td>{{$venta->fecha->format('d/m/Y')}}</td>
                                 <td>{{$venta->orden_pedido->cliente->nombre}}</td>
                                 <td>{{$venta->orden_pedido->vendedor->nombre}}</td>
-                                <td>{{$venta->orden_pedido->condicion_pago->nombre}}</td>
-                                <td>$ {{number_format($venta->saldo,2)}}</td>
+                                <td>
+                                    <span class="label label-default">{{$venta->orden_pedido->condicion_pago->nombre}}</span>
+                                </td>
+                                <td>
+                                    @if($venta->estado_venta->codigo == 'PP')
+                                            <span class="label label-warning">{{ $venta->estado_venta->nombre }}</span>
+                                    @elseif($venta->estado_venta->codigo == 'PG')
+                                            <span class="label label-success">{{ $venta->estado_venta->nombre }}</span>
+                                    @elseif($venta->estado_venta->codigo == 'AN')
+                                            <span class="label label-danger">{{ $venta->estado_venta->nombre }}</span>
+                                    @endif
+                                </td>
                                 <td align="center">
-                                    @if($venta->estado_venta_id != 3)
-                                        @if(Auth::user()->rol->nombre == 'Administrador')
-                                        <a href="{{ route('abonoNuevo', ['id' => $venta->id]) }}"
-                                           class="btn btn-success"><span class="fa fa-credit-card"></span></a>
+                                    {{--<a href="{{ route('abonoNuevo', ['id' => $venta->id]) }}"--}}
+                                       {{--class="btn btn-success"><span class="fa fa-credit-card"></span></a>--}}
+                                    @if($venta->tipo_documento->codigo == 'FAC')
                                         <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
                                            class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    @else
+                                        <a href="{{ route('ventaVerCFF', ['id' => $venta->id]) }}"
+                                           class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    @endif
+                                    @if(Auth::user()->rol->nombre == 'Administrador')
                                         <button type="button" class="btn btn-danger" data-toggle="modal"
                                                 data-target="#modalEliminar" data-numero="{{ $venta->numero }}"
                                                 data-id="{{ $venta->id }}">
                                             <span class="fa fa-minus-square"></span>
                                         </button>
-                                        @endif
-                                        @if(Auth::user()->rol->nombre == 'Vendedor')
-                                                <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
-                                                   class="btn btn-info"><span class="fa fa-eye"></span></a>
-                                        @endif
-                                    @else
-                                        <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
-                                           class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     @endif
                                 </td>
                             </tr>
@@ -108,24 +114,24 @@
                 {
                     order: [[1, "asc"]],
                     language: {
-                        processing:     "Procesando...",
-                        search:         "Buscar:",
-                        lengthMenu:     "Mostrar _MENU_ registros",
-                        info:           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                        infoEmpty:      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                        infoFiltered:   "(filtrado de un total de _MAX_ registros)",
-                        infoPostFix:    "",
+                        processing: "Procesando...",
+                        search: "Buscar:",
+                        lengthMenu: "Mostrar _MENU_ registros",
+                        info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        infoFiltered: "(filtrado de un total de _MAX_ registros)",
+                        infoPostFix: "",
                         loadingRecords: "Cargando...",
-                        zeroRecords:    "No se encontraron resultados",
-                        emptyTable:     "Ningún dato disponible en esta tabla",
+                        zeroRecords: "No se encontraron resultados",
+                        emptyTable: "Ningún dato disponible en esta tabla",
                         paginate: {
-                            first:      "Primero",
-                            previous:   "Anterior",
-                            next:       "Siguiente",
-                            last:       "Último"
+                            first: "Primero",
+                            previous: "Anterior",
+                            next: "Siguiente",
+                            last: "Último"
                         },
                         aria: {
-                            sortAscending:  ": Activar para ordenar la columna de manera ascendente",
+                            sortAscending: ": Activar para ordenar la columna de manera ascendente",
                             sortDescending: ": Activar para ordenar la columna de manera descendente"
                         }
                     }

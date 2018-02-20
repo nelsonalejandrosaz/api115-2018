@@ -14,7 +14,7 @@ class Venta extends Model
 
     public function vendedor()
     {
-        return $this->belongsTo('App\User','id','vendedor_id');
+        return $this->belongsTo('App\User','vendedor_id');
     }
 
     public function tipo_documento()
@@ -32,15 +32,27 @@ class Venta extends Model
         return $this->hasMany('App\DetalleServicio');
     }
 
+    public function cliente()
+    {
+        return $this->belongsTo('App\Cliente');
+    }
+
+    public function abonos()
+    {
+        return $this->hasMany('App\Abono');
+    }
+
     protected $fillable = [
         'tipo_documento_id',
         'numero',
         'orden_pedido_id',
-        'fecha',
+        'cliente_id',
         'vendedor_id',
+        'fecha',
         'ruta_archivo',
         'estado_venta_id',
         'saldo',
+        'venta_total',
         'venta_total_con_impuestos',
     ];
 

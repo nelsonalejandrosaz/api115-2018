@@ -8,6 +8,7 @@ use App\Municipio;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Monolog\Handler\IFTTTHandler;
 
 class ClienteController extends Controller
 {
@@ -20,21 +21,21 @@ class ClienteController extends Controller
     public function ClienteVer(Request $request)
     {
         $cliente = Cliente::find($request->id);
-        $vendedores = User::whereRolId(3)->get();
+        $vendedores = User::whereRolId(2)->get();
         $municipios = Municipio::all();
         return view('cliente.clienteVer')
             ->with(['cliente' => $cliente])
             ->with(['vendedores' => $vendedores])
-            ->with(['municipios'=> $municipios]);
+            ->with(['municipios' => $municipios]);
     }
 
     public function ClienteNuevo(Request $request)
     {
-        $vendedores = User::whereRolId(3)->get();
+        $vendedores = User::whereRolId(2)->get();
         $municipios = Municipio::all();
         return view('cliente.clienteNuevo')
             ->with(['vendedores' => $vendedores])
-            ->with(['municipios'=> $municipios]);
+            ->with(['municipios' => $municipios]);
     }
 
     public function ClienteNuevoPost(Request $request)
@@ -46,31 +47,34 @@ class ClienteController extends Controller
         ]);
         $cliente = Cliente::create($request->only(
             'nombre',
+            'nombre_alternativo',
             'nombre_contacto',
             'direccion',
             'telefono_1',
             'telefono_2',
+            'correo',
             'nit',
             'nrc',
             'vendedor_id',
-            'giro'
+            'giro',
+            'municipio_id'
         ));
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El cliente fue agregado correctamente!');
-        return redirect()->route('clienteVer',['id' => $cliente->id]);
+        return redirect()->route('clienteVer', ['id' => $cliente->id]);
     }
 
     public function ClienteEditar(Request $request)
     {
         $cliente = Cliente::find($request->id);
-        $vendedores = User::whereRolId(3)->get();
+        $vendedores = User::whereRolId(2)->get();
         $municipios = Municipio::all();
         return view('cliente.clienteEditar')
             ->with(['cliente' => $cliente])
             ->with(['vendedores' => $vendedores])
-            ->with(['municipios'=> $municipios]);
+            ->with(['municipios' => $municipios]);
     }
 
     public function ClienteEditarPut(Request $request, $id)
@@ -87,10 +91,12 @@ class ClienteController extends Controller
 
         $cliente->update($request->only(
             'nombre',
+            'nombre_alternativo',
             'nombre_contacto',
             'direccion',
             'telefono_1',
             'telefono_2',
+            'correo',
             'nrc',
             'nit',
             'giro',
@@ -101,7 +107,7 @@ class ClienteController extends Controller
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El cliente fue modificado correctamente!');
-        return redirect()->route('clienteVer',['id' => $cliente->id]);
+        return redirect()->route('clienteVer', ['id' => $cliente->id]);
     }
 
     public function ClienteEliminar(Request $request)
@@ -117,17 +123,18 @@ class ClienteController extends Controller
 
     public function ClienteSaldoLista()
     {
-        $clientes = Cliente::where('saldo','>',0)->get();
-        $estado_venta = EstadoVenta::whereCodigo('PG')->first();
+        $clientes = Cliente::where('saldo', '>', 0)->get();
+        $estado_venta = EstadoVenta::whereCodigo('PP')->first();
         $documentos_pendientes = 0;
-        foreach ($clientes as $cliente)
-        {
+        foreach ($clientes as $cliente) {
             $ordenes = $cliente->ordenes_pedidos;
-            foreach ($ordenes as $orden)
-            {
-                if ($orden->venta->estado_venta_id = $estado_venta->id)
-                {
-                    $documentos_pendientes++;
+//            dd(isset($ordenes[0]->venta));
+            foreach ($ordenes as $orden) {
+                $isset = isset($orden->venta);
+                if ($isset) {
+                    if ($orden->venta->estado_venta->id == $estado_venta->id) {
+                        $documentos_pendientes++;
+                    }
                 }
             }
             $cliente->documentos_pendientes = $documentos_pendientes;
@@ -140,5 +147,26 @@ class ClienteController extends Controller
     {
         $cliente = Cliente::find($id);
         return view('cliente.clienteSaldoVer')->with(['cliente' => $cliente]);
+    }
+
+    public function ClienteVentaLista()
+    {
+        $clientes = Cliente::all();
+        foreach ($clientes as $cliente)
+        {
+            $ventas = $cliente->ventas;
+            $numero_ventas = $ventas->count();
+            $numero_ventas_pendientes = 0;
+            foreach ($ventas as $venta)
+            {
+                if ($venta->estado_venta_id == 1)
+                {
+                    $numero_ventas_pendientes ++;
+                }
+            }
+            $cliente->numero_ventas = $numero_ventas;
+            $cliente->numero_ventas_pendientes = $numero_ventas_pendientes;
+        }
+        return view('cliente.clienteVentaLista')->with(['clientes' => $clientes]);
     }
 }

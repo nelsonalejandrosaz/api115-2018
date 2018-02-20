@@ -53,10 +53,12 @@
                                     <td>{{$ordenPedido->cliente->nombre}}</td>
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
                                 <td>
-                                    @if($ordenPedido->estado_id == 2)
-                                        No facturado
-                                    @else
-                                        Facturado
+                                    @if($ordenPedido->estado_orden->codigo == 'SP')
+                                        <span class="label label-warning">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'PR')
+                                        <span class="label label-info">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'FC')
+                                        <span class="label label-success">{{ $ordenPedido->estado_orden->nombre }}</span>
                                     @endif
                                 </td>
                                 <td align="center">

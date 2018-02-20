@@ -36,6 +36,16 @@ class OrdenPedido extends Model
         return $this->belongsTo('App\CondicionPago');
     }
 
+    public function estado_orden()
+    {
+        return $this->belongsTo('App\EstadoOrdenPedido','estado_id');
+    }
+
+    public function tipo_documento()
+    {
+        return $this->belongsTo('App\TipoDocumento');
+    }
+
     protected $fillable = [
         'cliente_id',
         'numero',
@@ -51,6 +61,7 @@ class OrdenPedido extends Model
         'venta_total',
         'ruta_archivo',
         'estado_id',
+        'tipo_documento_id',
     ];
 
     protected $dates = [

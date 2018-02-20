@@ -25,18 +25,19 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header">
+                <div class="box-header with-border">
                     <h3 class="box-title">Lista de facturas</h3>
-                    <a href="{{route('compraNueva')}}" class="btn btn-lg btn-primary pull-right"><span class="fa fa-plus"></span> Nuevo</a>
+                    <a href="{{route('compraNueva')}}" class="btn btn-lg btn-primary pull-right"><span class="fa fa-plus"></span> Nueva</a>
                 </div><!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
                         <tr>
-                            <th style="width:15%">Numero factura</th>
+                            <th style="width:10%">Numero factura</th>
                             <th style="width:15%">Fecha ingreso</th>
                             <th style="width:40%">Proveedor</th>
-                            <th style="width:15%">Estado</th>
+                            <th style="width:10%">Saldo</th>
+                            <th style="width:10%">Estado</th>
                             <th style="width:15%">Acción</th>
                         </tr>
                         </thead>
@@ -44,9 +45,18 @@
                         @foreach($compras as $compra)
                             <tr>
                                 <td>{{$compra->numero}}</td>
-                                <td>{{ \Carbon\Carbon::parse($compra->fechaIngreso)->format('d/m/Y')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($compra->fecha)->format('d/m/Y')}}</td>
                                 <td>{{$compra->proveedor->nombre}}</td>
-                                <td>{{$compra->estado_compra->nombre}}</td>
+                                <td>$ {{ number_format($compra->saldo,2) }}</td>
+                                <td>
+                                    @if($compra->estado_compra->codigo == 'INGRE')
+                                        <span class="label label-info">{{$compra->estado_compra->nombre}}</span>
+                                    @elseif($compra->estado_compra->codigo == 'PROCE')
+                                        <span class="label label-default">{{$compra->estado_compra->nombre}}</span>
+                                    @else
+                                        <span class="label label-success">{{$compra->estado_compra->nombre}}</span>
+                                    @endif
+                                </td>
                                 <td align="center">
                                     <a href="{{route('compraVer', ['id' => $compra->id])}}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     @if($compra->estado_compra_id == \App\EstadoCompra::whereCodigo('INGRE')->first()->id)

@@ -28,7 +28,7 @@ class ProveedorController extends Controller
     public function ProveedorNuevoPost(Request $request)
     {
         $this->validate($request, [
-            'nombre' => 'required|unique:proveedores',
+            'nombre' => 'required|unique:proveedores|max:140',
             'telefono_1' => 'min:8|nullable',
             'telefono_2' => 'min:8|nullable',
         ]);

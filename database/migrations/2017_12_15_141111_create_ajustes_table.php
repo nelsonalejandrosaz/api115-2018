@@ -16,7 +16,7 @@ class CreateAjustesTable extends Migration
         Schema::create('ajustes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('tipo_ajuste_id')->unsigned();
-            $table->string('detalle',140);
+            $table->string('detalle',280);
             $table->date('fecha');
             $table->integer('realizado_id')->unsigned();
             $table->float('cantidad_anterior');

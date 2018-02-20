@@ -27,7 +27,7 @@
             <h3 class="box-title">Datos del producto</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('abonoNuevoSinVentaPost') }}" method="POST">
+        <form class="form-horizontal" action="{{ route('abonoNuevoSinVentaPost') }}" method="POST" id="abono-form-id">
             {{ csrf_field() }}
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
@@ -118,13 +118,13 @@
 
                     {{-- Forma de pago --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Cliente</label>
+                        <label class="col-sm-3 control-label"><b>Forma pago</b></label>
                         <div class="col-sm-9">
                             <select class="form-control select2" style="width: 100%" name="forma_pago_id" id="clienteID">
                                 <option value="" selected disabled>Selecciona modo pago</option>
-                                <option value="1">Efectivo</option>
-                                <option value="2">Cheque</option>
-                                <option value="3">Depósito banco</option>
+                                @foreach($tipo_abonos as $tipo_abono)
+                                    <option value="{{ $tipo_abono->id }}">{{ $tipo_abono->nombre }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-credit-card"></span> Abonar</button>
+                <button type="button" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-credit-card"></span> Abonar</button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -151,6 +151,18 @@
 
 @section('JSExtras')
     <script>
+
+        $(document).on('ready', Principal());
+
+        function Principal() {
+            $('#enviar-buttom-id').click(EnviarAbono);
+        }
+
+        function EnviarAbono() {
+            $('#enviar-buttom-id').attr('disabled','true');
+            $('#abono-form-id').submit();
+        }
+
         function cambioCliente() {
             let cliente_input = $('#clienteID');
             let ventas_select = $('#ventaID');

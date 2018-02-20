@@ -38,8 +38,13 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
-                            <input disabled type="date" class="form-control" name="fechaIngreso"
-                                   value="{{$compra->fecha}}">
+                            <div class="input-group">
+                                <input disabled type="date" class="form-control" name="fechaIngreso"
+                                       value="{{$compra->fecha}}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -163,6 +168,7 @@
                         @endforeach
                     </table>
 
+                    @php($compra_iva = $compra->compra_total * \App\Configuracion::find(1)->iva)
                     <table class="table table-bordered">
                         <tr>
                             <th style="width:70%"></th>
@@ -171,6 +177,17 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control" value="{{number_format($compra->compra_total,2)}}" name="compraTotal" id="compraTotal" disabled>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="width:65%"></th>
+                            <th style="width:15%">Compra Total + IVA</th>
+                            <th style="width:15%">
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input readonly type="number" class="form-control" value="{{number_format($compra_iva,2)}}" name="compra-total-iva"
+                                           id="compra-total-iva-id">
                                 </div>
                             </th>
                         </tr>

@@ -64,11 +64,14 @@
         text-align: center;
         vertical-align: top
     }
+    .page-break {
+        page-break-after: always;
+    }
 </style>
-<table class="tg">
+<table class="tg" style="width: 100%">
     <tr>
         <th class="tg-0vnf" colspan="2">LGL S.A. DE C.V.</th>
-        <th class="tg-huh2" colspan="3">ORDEN DE PEDIDO</th>
+        <th class="tg-huh2" colspan="3">ORDEN DE PEDIDO VENDEDOR</th>
         <th class="tg-kr94"></th>
         <th class="tg-kr94">N°</th>
         <th class="tg-rg0h">{{str_pad($ordenPedido->id, 5, '0', STR_PAD_LEFT)}}</th>
@@ -97,10 +100,101 @@
     </tr>
     <tr>
         <td class="tg-rg0h">DIRECCIÓN</td>
-        <td class="tg-rg0h" colspan="4">{{$ordenPedido->direccion}}</td>
+        <td class="tg-rg0h" colspan="4">{{$ordenPedido->cliente->direccion}}</td>
         <td class="tg-rg0h"></td>
-        <td class="tg-rg0h"></td>
-        <td class="tg-rg0h"></td>
+        <td class="tg-rg0h">TIPO DOCUMENTO</td>
+        <td class="tg-rg0h">{{$ordenPedido->tipo_documento->codigo}}</td>
+    </tr>
+    <tr>
+        <td class="tg-rg0h" colspan="8"></td>
+    </tr>
+    <tr>
+        <td class="tg-rg0h">CÓDIGO</td>
+        <td class="tg-rg0h">UNIDAD <br>MEDIDA</td>
+        <td class="tg-rg0h" colspan="3">DESCRIPCION</td>
+        <td class="tg-rg0h">PRECIO <br>UNITARIO</td>
+        <td class="tg-rg0h">VENTAS <br>EXENTAS</td>
+        <td class="tg-rg0h">VENTAS<br>GRAVADAS</td>
+    </tr>
+    @foreach($ordenPedido->salidas as $salida)
+        <tr>
+            <td class="tg-rg0h">{{$salida->movimiento->producto->codigo}}</td>
+            <td class="tg-rg0h">{{$salida->cantidad}} {{$salida->unidad_medida->abreviatura}}</td>
+            @if($salida->descripcion_presentacion != null)
+                <td class="tg-rg0h" colspan="3">{{$salida->movimiento->producto->nombre}} ({{$salida->descripcion_presentacion}})</td>
+            @else
+                <td class="tg-rg0h" colspan="3">{{$salida->movimiento->producto->nombre}}</td>
+            @endif
+            <td class="tg-rg0h">{{number_format($salida->precio_unitario,4)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->venta_exenta,2)}}</td>
+            <td class="tg-rg0h">{{number_format($salida->venta_gravada,2)}}</td>
+        </tr>
+    @endforeach
+
+    @if($ordenPedido->tipo_documento->codigo == 'CCF')
+        {{--<tr>--}}
+            {{--<td class="tg-rg0h" colspan="6" rowspan="2"></td>--}}
+            {{--<td class="tg-rg0h">V. EXENTAS</td>--}}
+            {{--<td class="tg-rg0h">{{number_format($ordenPedido->ventas_exentas,2)}}</td>--}}
+        {{--</tr>--}}
+        <tr>
+            <td class="tg-rg0h">SON</td>
+            <td class="tg-rg0h" colspan="5">{{$ordenPedido->ventaTotalLetras}}</td>
+            <td class="tg-rg0h">SUBTOTAL</td>
+            <td class="tg-rg0h">{{number_format($ordenPedido->venta_total,2)}}</td>
+        </tr>
+        <tr>
+            <td class="tg-rg0h" colspan="6" rowspan="2"></td>
+            <td class="tg-rg0h">13% IVA</td>
+            <td class="tg-rg0h">{{number_format(($ordenPedido->iva),2)}}</td>
+        </tr>
+        <tr>
+            {{--<td class="tg-rg0h" colspan="6" rowspan="2"></td>--}}
+            <td class="tg-rg0h">VENTAS TOTAL</td>
+            <td class="tg-rg0h">{{number_format(($ordenPedido->venta_total_con_iva),2)}}</td>
+        </tr>
+    @else
+        <tr>
+            <td class="tg-rg0h">SON</td>
+            <td class="tg-rg0h" colspan="5">{{$ordenPedido->ventaTotalLetras}}</td>
+            <td class="tg-rg0h">SUBTOTAL</td>
+            <td class="tg-rg0h">{{number_format($ordenPedido->venta_total_con_iva,2)}}</td>
+        </tr>
+        <tr>
+            <td class="tg-rg0h" colspan="6" rowspan="2"></td>
+            <td class="tg-rg0h">VENTAS TOTAL</td>
+            <td class="tg-rg0h">{{number_format(($ordenPedido->venta_total_con_iva),2)}}</td>
+        </tr>
+    @endif
+</table>
+
+{{--<div class="page-break"></div>--}}
+<br>
+<br>
+
+<table class="tg" style="width: 100%">
+    <tr>
+        <th class="tg-0vnf" colspan="2">LGL S.A. DE C.V.</th>
+        <th class="tg-huh2" colspan="3">ORDEN DE PEDIDO BODEGA</th>
+        <th class="tg-kr94"></th>
+        <th class="tg-kr94">N°</th>
+        <th class="tg-rg0h">{{str_pad($ordenPedido->id, 5, '0', STR_PAD_LEFT)}}</th>
+    </tr>
+    <tr>
+        <td class="tg-kr94">FECHA</td>
+        <td class="tg-kr94" colspan="3">{{$ordenPedido->fecha->format('d/m/Y')}}</td>
+        <td class="tg-kr94">FECHA ENTREGA</td>
+        @if($ordenPedido->fecha_entrega != null)
+            <td class="tg-kr94" colspan="3">{{$ordenPedido->fecha_entrega->format('d/m/Y')}}</td>
+        @else
+            <td class="tg-kr94" colspan="3">Sin fecha entrega</td>
+        @endif
+    </tr>
+    <tr>
+        <td class="tg-kr94">VENDEDOR</td>
+        <td class="tg-kr94" colspan="3">{{$ordenPedido->vendedor->nombre}} {{$ordenPedido->vendedor->apellido}}</td>
+        <td class="tg-kr94">HORA ENVIADO</td>
+        <td class="tg-kr94" colspan="3">{{ \Carbon\Carbon::now()->format('d/m/Y h:i:s A') }}</td>
     </tr>
     <tr>
         <td class="tg-rg0h" colspan="8"></td>
@@ -109,37 +203,22 @@
         <td class="tg-rg0h">CÓDIGO</td>
         <td class="tg-rg0h">UNIDAD <br>MEDIDA</td>
         <td class="tg-rg0h">CANTIDAD</td>
-        <td class="tg-rg0h" colspan="2">DESCRIPCION</td>
-        <td class="tg-rg0h">PRECIO <br>UNITARIO</td>
-        <td class="tg-rg0h">VENTAS <br>EXENTAS</td>
-        <td class="tg-rg0h">VENTAS<br>GRAVADAS</td>
+        <td class="tg-rg0h" colspan="4">DESCRIPCION</td>
+        <td class="tg-rg0h">CANTIDAD <br>DESPACHAR</td>
     </tr>
     @foreach($ordenPedido->salidas as $salida)
         <tr>
             <td class="tg-rg0h">{{$salida->movimiento->producto->codigo}}</td>
             <td class="tg-rg0h">{{$salida->unidad_medida->abreviatura}}</td>
             <td class="tg-rg0h">{{$salida->cantidad}}</td>
-            <td class="tg-rg0h" colspan="2">{{$salida->movimiento->producto->nombre}}</td>
-            <td class="tg-rg0h">{{number_format($salida->precio_unitario,4)}}</td>
-            <td class="tg-rg0h">{{number_format($salida->venta_exenta,2)}}</td>
-            <td class="tg-rg0h">{{number_format($salida->venta_gravada,2)}}</td>
+            @if($salida->descripcion_presentacion != null)
+                <td class="tg-rg0h" colspan="4">{{$salida->movimiento->producto->nombre}} ({{$salida->descripcion_presentacion}})</td>
+            @else
+                <td class="tg-rg0h" colspan="4">{{$salida->movimiento->producto->nombre}}</td>
+            @endif
+            <td class="tg-rg0h">{{number_format($salida->movimiento->cantidad,3)}}</td>
         </tr>
     @endforeach
-    <tr>
-        <td class="tg-rg0h">SON</td>
-        <td class="tg-rg0h" colspan="5">{{$ordenPedido->ventaTotalLetras}}</td>
-        <td class="tg-rg0h">SUBTOTAL</td>
-        <td class="tg-rg0h">{{number_format($ordenPedido->ventas_gravadas,2)}}</td>
-    </tr>
-    <tr>
-        <td class="tg-rg0h" colspan="6" rowspan="2"></td>
-        <td class="tg-rg0h">V. EXENTAS</td>
-        <td class="tg-rg0h">{{number_format($ordenPedido->ventas_exentas,2)}}</td>
-    </tr>
-    <tr>
-        <td class="tg-rg0h">VENTAS TOTAL</td>
-        <td class="tg-rg0h">{{number_format($ordenPedido->venta_total,2)}}</td>
-    </tr>
 </table>
 </body>
 </html>

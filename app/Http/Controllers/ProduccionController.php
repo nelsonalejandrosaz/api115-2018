@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Ajuste;
 use App\ConversionUnidadMedida;
+use App\DetalleProduccion;
 use App\Entrada;
 use App\Formula;
 use App\Movimiento;
 use App\Produccion;
 use App\Producto;
+use App\Rol;
 use App\Salida;
+use App\TipoAjuste;
 use App\TipoMovimiento;
 use App\UnidadMedida;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,24 +28,37 @@ class ProduccionController extends Controller
         return view('produccion.produccionLista')->with(['producciones' => $producciones]);
     }
 
+    public function ProduccionRevLista()
+    {
+        $producciones = Produccion::onlyTrashed()->get();
+        return view('produccion.produccionLista')->with(['producciones' => $producciones]);
+    }
+
     public function ProduccionVer($id)
     {
-        $produccion = Produccion::find($id);
+        $produccion = Produccion::withTrashed()->find($id);
         $productos = Producto::all();
-        $formulas = Formula::all();
+        $formula = Formula::find($produccion->formula_id);
+        $rol_bodega = Rol::whereNombre('Bodeguero')->first();
+        $bodegueros = User::whereRolId($rol_bodega->id)->get();
         return view('produccion.produccionVer')
             ->with(['produccion' => $produccion])
-            ->with(['formulas' => $formulas])
-            ->with(['productos' => $productos]);
+            ->with(['formula' => $formula])
+            ->with(['productos' => $productos])
+            ->with(['bodegueros' => $bodegueros]);
     }
 
     public function ProduccionNuevo()
     {
-        $formulas = Formula::all();
-        return view('produccion.produccionNuevo')->with(['formulas' => $formulas]);
+        $formulas = Formula::whereActiva(true)->get();
+        $rol_bodega = Rol::whereNombre('Bodeguero')->first();
+        $bodegueros = User::whereRolId($rol_bodega->id)->get();
+        return view('produccion.produccionNuevo2')
+            ->with(['formulas' => $formulas])
+            ->with(['bodegueros' => $bodegueros]);
     }
 
-    public function ProduccionNuevoPost(Request $request)
+    public function ProduccionNuevaPost(Request $request)
     {
         // Validacion
         $this->validate($request, [
@@ -49,60 +67,107 @@ class ProduccionController extends Controller
             'fecha' => 'required',
         ]);
 
-//        Crear la produccion
+        // Se carga la producion
+        $formula = Formula::find($request->input('formula_id'));
+        $cantidad_produccion = $request->input('cantidad');
+
+        //        Crear la produccion
         $produccion = Produccion::create([
             'formula_id' => $request->input('formula_id'),
             'bodega_id' => Auth::user()->id,
-            'cantidad' => $request->input('cantidad'),
+            'producto_id' => $formula->producto_id,
+            'cantidad' => $cantidad_produccion,
             'fecha' => $request->input('fecha'),
             'detalle' => $request->input('detalle'),
             'lote' => $request->input('lote'),
             'fecha_vencimiento' => $request->input('fecha_vencimiento'),
-        ]); // Falta el detalle de los lotes y fecha vencimiento
+        ]);
 
-//        Se guardan en variales los componentes
+        // Se realiza el detalle de la produccion
+        $bodegueros = $request->input('fabricado_id');
+        $max = sizeof($bodegueros);
+        for ($i = 0; $i < $max; $i ++)
+        {
+            $detalle_controller = DetalleProduccion::create([
+                'bodega_id' => $bodegueros[$i],
+                'produccion_id' => $produccion->id,
+            ]);
+        }
+
+        return redirect()->route('produccionPrevia',['id' => $produccion->id]);
+    }
+
+    public function ProduccionPrevia($id)
+    {
+        // Se carga la producion
+        $productos = Producto::all();
+        $produccion = Produccion::find($id);
         $formula = Formula::find($produccion->formula_id);
+        $cantidad_produccion = $produccion->cantidad;
+        $rol_bodega = Rol::whereNombre('Bodeguero')->first();
+        $bodegueros = User::whereRolId($rol_bodega->id)->get();
+
+        // Calculando cantidades
+        foreach ($formula->componentes as $componente)
+        {
+            $componente->cantidad = ($cantidad_produccion * $componente->cantidad) / $formula->cantidad_formula;
+        }
+
+//        dd($formula);
+
+        return view('produccion.produccionPrevia')
+            ->with(['produccion' => $produccion])
+            ->with(['formula' => $formula])
+            ->with(['productos' => $productos])
+            ->with(['bodegueros' => $bodegueros]);
+
+    }
+
+    public function ProduccionConfirmarPost(Request $request, $id)
+    {
+//        dd($request);
+        $produccion = Produccion::find($id);
+        $formula = Formula::find($produccion->formula_id);
+        $componentes = $request->input('productos');
+        $cantidades = $request->input('cantidades');
+        $max = sizeof($cantidades);
         $unidad_medida_formula = UnidadMedida::whereAbreviatura('gr')->first();
-        $factor_gramos = 1000;
-        $costo_total_produccion = 0.00;
-        $cantidad_produccion = floatval($request->input('cantidad'));
-        $cantidad_produccion = $cantidad_produccion * $factor_gramos;
+
+//        dd($componentes);
 
         /**
          * Validación de existencias
          */
-        foreach ($formula->componentes as $componente)
+        for ($i = 0; $i < $max; $i++)
         {
-//            dd($cantidad_produccion);
-            $producto = Producto::find($componente->producto_id);
-            $cantidad = ($componente->porcentaje / 100) * $cantidad_produccion;
+            $producto = Producto::find($componentes[$i]);
+            $cantidad = $cantidades[$i];
             $cantidad = round($cantidad,4);
-            $cantidad_real = $cantidad / $factor_gramos;
+            $cantidad_real = $cantidad / 1000;
             $cantidad_real = round($cantidad_real,4);
             $cantidad_producto = round($producto->cantidad_existencia,4);
             if ($cantidad_producto < $cantidad_real){
-                // No alcanza la existencia para produccion
-                $produccion->delete();
                 // Mensaje de error al guardar
                 session()->flash('mensaje.tipo', 'danger');
                 session()->flash('mensaje.icono', 'fa-close');
                 session()->flash('mensaje.titulo', 'Error!');
                 session()->flash('mensaje.contenido', 'No hay suficiente ' . $producto->nombre . ' necesaria para generar la producción!');
-                return redirect()->route('produccionNuevo');
+                return redirect()->route('produccionPrevia',['id' => $produccion->id]);
             }
         }
         /**
          * Fin validación existencias
          */
 
+        $costo_total_produccion = 0.00;
         // Se registran las salidas
-        foreach ($formula->componentes as $componente)
+        for ($i = 0; $i < $max; $i++)
         {
             // Se carga el producto
-            $producto = Producto::find($componente->producto_id);
-            $cantidad = ($componente->porcentaje / 100) * $cantidad_produccion;
+            $producto = Producto::find($componentes[$i]);
+            $cantidad = $cantidades[$i];
             $cantidad = round($cantidad,4);
-            $cantidad_real = $cantidad / $factor_gramos;
+            $cantidad_real = $cantidad / 1000;
             $cantidad_real = round($cantidad_real,4);
             $cantidad_salida = $cantidad;
             // Se calcula la cantidad y costo
@@ -110,7 +175,6 @@ class ProduccionController extends Controller
             $costo_unitario_salida = $producto->costo;
             $costo_total_salida = $cantidad_real * $costo_unitario_salida;
             $costo_total_salida = round($costo_total_salida,4);
-//            $costo_total_salida = round($ct_salida,3);
             // Calculo de cantidad y costos existencias
             $cantidad_existencia = $producto->cantidad_existencia - $cantidad_real;
             $costo_unitario_existencia = $producto->costo;
@@ -176,7 +240,7 @@ class ProduccionController extends Controller
         // Se crea la entrada
         $entrada = Entrada::create([
             'produccion_id' => $produccion->id,
-            'unidad_medida_id' => $produccion->formula->producto->unidad_medida_id,
+            'unidad_medida_id' => $producto->unidad_medida_id,
             'cantidad' => $cantidad,
             'costo_unitario' => $costo_unitario_entrada,
             'costo_total' => $costo_total_entrada,
@@ -202,10 +266,106 @@ class ProduccionController extends Controller
         $producto->cantidad_existencia = $cantidad_existencia;
         $producto->costo = $costo_unitario_existencia;
         $producto->save();
+        $produccion->procesado = true;
+        $produccion->save();
         // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'La producción fue agregada correctamente!');
         return redirect()->route('produccionVer', ['id' => $produccion->id]);
+
+    }
+
+    public function ProduccionRevertir($id)
+    {
+//        dd('Voy en eliminar');
+        $produccion = Produccion::find($id);
+        // Retiramos por ajuste el producto ingresado en produccion
+        $producto_producido = Producto::find($produccion->producto_id);
+        // Variables para ajuste
+        $tipo_ajuste = TipoAjuste::whereCodigo('SALERP')->first();
+        $cantidad_ajuste = $producto_producido->cantidad_existencia - $produccion->cantidad;
+        $diferencia_ajuste = $produccion->cantidad;
+        // Se crea el ajuste
+        $ajuste = Ajuste::create([
+            'tipo_ajuste_id' => $tipo_ajuste->id,
+            'detalle' => 'Ajuste de salida por error en producción',
+            'fecha' => Carbon::now(),
+            'cantidad_ajuste' => $cantidad_ajuste,
+            'valor_unitario_ajuste' => $producto_producido->costo,
+            'realizado_id' => Auth::user()->id,
+            'cantidad_anterior' => $producto_producido->cantidad_existencia,
+            'valor_unitario_anterior' => $producto_producido->costo,
+            'diferencia_ajuste' => $diferencia_ajuste,
+        ]);
+        $tipo_movimiento = TipoMovimiento::whereCodigo('AJSS')->first();
+        // Se crea el movimiento
+        $movimiento = Movimiento::create([
+            'producto_id' => $producto_producido->id,
+            'tipo_movimiento_id' => $tipo_movimiento->id,
+            'ajuste_id' => $ajuste->id,
+            'fecha' => Carbon::now(),
+            'detalle' => 'Salida por reversión en produccion n° ' . $produccion->id,
+            'cantidad' => $diferencia_ajuste,
+            'costo_unitario' => $producto_producido->costo,
+            'costo_total' => $cantidad_ajuste * $producto_producido->costo,
+            'cantidad_existencia' => $cantidad_ajuste,
+            'costo_unitario_existencia' => $producto_producido->costo,
+            'costo_total_existencia' => $cantidad_ajuste * $producto_producido->costo,
+            'fecha_procesado' => Carbon::now(),
+            'procesado' => true,
+        ]);
+        // Se actualiza la cantidad de producto despues de la entrada
+        $producto_producido->cantidad_existencia = $movimiento->cantidad_existencia;
+        $producto_producido->save();
+
+        // Se reingresan los componentes de las formulas
+        $tipo_ajuste = TipoAjuste::whereCodigo('ENTERP')->first();
+        foreach ($produccion->salidas as $salida)
+        {
+            // Retiramos por ajuste el producto ingresado en produccion
+            $producto_componente = Producto::find($salida->movimiento->producto_id);
+            // Variables para ajuste
+            $cantidad_ajuste = $producto_componente->cantidad_existencia + $salida->movimiento->cantidad;
+            $diferencia_ajuste = $salida->movimiento->cantidad;
+            // Se crea el ajuste
+            $ajuste = Ajuste::create([
+                'tipo_ajuste_id' => $tipo_ajuste->id,
+                'detalle' => 'Ajuste de entrada por error en producción',
+                'fecha' => Carbon::now(),
+                'cantidad_ajuste' => $cantidad_ajuste,
+                'valor_unitario_ajuste' => $producto_componente->costo,
+                'realizado_id' => Auth::user()->id,
+                'cantidad_anterior' => $producto_componente->cantidad_existencia,
+                'valor_unitario_anterior' => $producto_componente->costo,
+                'diferencia_ajuste' => $diferencia_ajuste,
+            ]);
+            $tipo_movimiento = TipoMovimiento::whereCodigo('AJSE')->first();
+            // Se crea el movimiento
+            $movimiento = Movimiento::create([
+                'producto_id' => $producto_componente->id,
+                'tipo_movimiento_id' => $tipo_movimiento->id,
+                'ajuste_id' => $ajuste->id,
+                'fecha' => Carbon::now(),
+                'detalle' => 'Entrada por reversión de producción n°' . $produccion->id,
+                'cantidad' => $diferencia_ajuste,
+                'costo_unitario' => $producto_componente->costo,
+                'costo_total' => $diferencia_ajuste * $producto_componente->costo,
+                'cantidad_existencia' => $cantidad_ajuste,
+                'costo_unitario_existencia' => $producto_componente->costo,
+                'costo_total_existencia' => $cantidad_ajuste * $producto_componente->costo,
+                'fecha_procesado' => Carbon::now(),
+                'procesado' => true,
+            ]);
+            // Se actualiza la cantidad de producto despues de la entrada
+            $producto_componente->cantidad_existencia = $movimiento->cantidad_existencia;
+            $producto_componente->save();
+        }
+        $produccion->delete();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La producción fue revertida correctamente!');
+        return redirect()->route('produccionLista');
     }
 }

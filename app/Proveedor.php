@@ -19,6 +19,7 @@ class Proveedor extends Model
         'nit',
         'nrc',
         'nombre_contacto',
+        'saldo',
     ];
 
     protected $table = 'proveedores';

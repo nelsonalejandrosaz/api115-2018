@@ -7,6 +7,9 @@
 @section('CSSExtras')
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
+    {{--Alertify--}}
+    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.core.css')}}" />
+    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.default.css')}}" />
 @endsection
 
 @section('contentheader_title')
@@ -28,7 +31,7 @@
         </div><!-- /.box-header -->
         <!-- form start -->
         <form class="form-horizontal" action="{{ route('ordenPedidoNuevaPost') }}" method="POST"
-              enctype="multipart/form-data">
+              enctype="multipart/form-data" id="orden-pedido-frm-id">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -38,7 +41,12 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
-                            <input type="date" class="form-control" name="fecha">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -50,9 +58,15 @@
                                     onchange="cambioCliente()">
                                 <option value="" selected disabled>Seleciona un cliente</option>
                                 @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}"
-                                            data-direccion="{{$cliente->direccion}}"
-                                            data-municipio="{{$cliente->municipio->nombre}}">{{ $cliente->nombre }}</option>
+                                    @if($cliente->id == old('cliente_id'))
+                                        <option selected value="{{ $cliente->id }}"
+                                                data-direccion="{{$cliente->direccion}}"
+                                                data-municipio="{{$cliente->municipio->nombre}}">{{ $cliente->nombre }}</option>
+                                    @else
+                                        <option value="{{ $cliente->id }}"
+                                                data-direccion="{{$cliente->direccion}}"
+                                                data-municipio="{{$cliente->municipio->nombre}}">{{ $cliente->nombre }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -62,8 +76,8 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
-                            <input disabled type="text" class="form-control" placeholder="Seleccione el cliente"
-                                   name="municipio" id="municipioID">
+                            <input readonly type="text" class="form-control" placeholder="Seleccione el cliente"
+                                   name="municipio" id="municipioID" value="{{ old('municipio') }}">
                         </div>
                     </div>
 
@@ -71,18 +85,35 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
-                            <textarea disabled class="form-control" placeholder="Seleccione el cliente" name="direccion"
-                                      id="direccionID"></textarea>
+                            <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion"
+                                      id="direccionID">{{ old('direccion') }}</textarea>
                         </div>
                     </div>
 
                     {{-- Con impuestos --}}
+                    {{--<div class="form-group">--}}
+                    {{--<label class="col-md-3  control-label">Precio</label>--}}
+                    {{--<div class="col-md-9 ">--}}
+                    {{--<select class="form-control select2" style="width: 100%" id="IVAid" onchange="cambioIVA()">--}}
+                    {{--<option value="0" selected>Precio sin IVA</option>--}}
+                    {{--<option value="1">Precio con IVA</option>--}}
+                    {{--</select>--}}
+                    {{--</div>--}}
+                    {{--</div>--}}
+
+                    {{-- Tipo Documento --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label">Precio</label>
-                        <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" id="IVAid" onchange="cambioIVA()">
-                                <option value="0" selected>Precio sin IVA</option>
-                                <option value="1">Precio con IVA</option>
+                        <label class="col-sm-3 control-label"><b>Tipo documento</b></label>
+                        <div class="col-sm-9">
+                            <select class="form-control select2" style="width:100%" name="tipo_documento_id" id="IVAid" onchange="cambioIVA()">
+                                <option selected disabled>Seleccione una opción</option>
+                                @foreach($tipoDocumentos as $tipoDocumento)
+                                    @if($tipoDocumento->id == old('tipo_documento_id'))
+                                        <option selected value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                    @else
+                                        <option value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                    @endif
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -93,9 +124,10 @@
 
                     {{-- Numero Orden Pedido --}}
                     <div class="form-group">
-                        <label for="numeroID" class="col-md-4  control-label"><b>Orden venta n°</b></label>
+                        <label for="numeroID" class="col-md-4  control-label"><b>Orden pedido n°</b></label>
                         <div class="col-md-8 ">
-                            <input type="text" class="form-control" name="numero" id="numeroID">
+                            <input type="number" class="form-control" name="numero" id="numeroID"
+                                   value="{{ old('numero') }}" placeholder="{{ \App\OrdenPedido::latest()->first()->id + 1 }}">
                         </div>
                     </div>
 
@@ -103,7 +135,13 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Fecha entrega</label>
                         <div class="col-md-8 ">
-                            <input type="date" class="form-control" name="fecha_entrega">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha_entrega"
+                                       value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -117,15 +155,19 @@
                         </div>
                     </div>
 
-
+                    {{--Tipo de documento--}}
                     <div class="form-group">
                         <label for="condicionPagoID" class="col-md-4  control-label"><b>Condición pago</b></label>
                         <div class="col-md-8 ">
                             <select class="form-control select2" style="width: 100%" name="condicion_pago_id"
                                     id="condicionPagoID">
-                                <option value="" selected disabled>Selecciona una condición de pago</option>
+                                <option selected disabled>Selecciona una condición de pago</option>
                                 @foreach($condiciones_pago as $condicion_pago)
-                                    <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @if($condicion_pago->id == old('condicion_pago_id'))
+                                        <option selected value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @else
+                                        <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -172,7 +214,8 @@
                                                 <option value="{{ $producto->id }}"
                                                         data-preciounitario="{{ $producto->precio }}"
                                                         data-preciounitarioiva="{{$producto->precio_impuestos}}"
-                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->codigo }} -- {{ $producto->nombre }}
+                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->codigo }}
+                                                    -- {{ $producto->nombre }}
                                                 </option>
                                             @endif
                                         @endforeach
@@ -183,10 +226,8 @@
                                                 <option value="{{ $producto->id }}"
                                                         data-preciounitario="{{ $producto->precio }}"
                                                         data-preciounitarioiva="{{$producto->precio_impuestos}}"
-                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->codigo }} -- {{ $producto->nombre }}
-                                                    --
-                                                    ({{$producto->cantidad_existencia}} {{$producto->unidad_medida->abreviatura}}
-                                                    )
+                                                        data-unidad="{{$producto->unidad_medida->id}}">{{ $producto->codigo }}
+                                                    -- {{ $producto->nombre }}
                                                 </option>
                                             @endif
                                         @endforeach
@@ -212,9 +253,8 @@
                             {{--Precio unitario--}}
                             <td>
                                 <div class="input-group">
-                                    <input disabled type="text" class="form-control puCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                           name="preciosUnitarios[]" id="precioUnitario" required>
+                                    <input readonly type="number" class="form-control puCls" step="any"
+                                           name="precios_unitario[]" id="precioUnitario" required>
                                 </div>
                             </td>
 
@@ -269,7 +309,7 @@
             <div class="box-footer">
                 <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span>
+                <button type="button" class="btn btn-lg btn-success pull-right" id="btn-enviar-id"><span class="fa fa-floppy-o"></span>
                     Guardar
                 </button>
             </div>
@@ -279,6 +319,8 @@
 @endsection
 
 @section('JSExtras')
+    {{--Alertify--}}
+    <script type="text/javascript" src="{{'/plugins/alertify/lib/alertify.js'}}"></script>
     {{-- Funcion para cargar mas filas de productos --}}
     <script>
         $(document).on('ready', funcionPrincipal());
@@ -288,8 +330,39 @@
             $(":input").click(function () {
                 $(this).select();
             });
+            $('#btn-enviar-id').click(enviarForm);
             selecionarValor();
             agregarFuncion();
+        }
+
+        function enviarForm() {
+            $(this).prop('disabled',true);
+            // Valido los campos obligatorios
+            let cliente_input = $('#clienteID');
+            let tipo_documento_input = $('#IVAid');
+            let condicion_pago_input = $('#condicionPagoID');
+            let productos_input = $('.selProd');
+            let presentaciones_input = $('.presentacionCls');
+            let cantidades_input = $('.cantidadCls');
+            let validacion = true;
+            if (cliente_input.val() != null && tipo_documento_input.val() != null && condicion_pago_input.val() != null)
+            {
+                for (i=0; i < productos_input.length; i++) {
+                    if (productos_input[i].value !== "" && presentaciones_input[i].value !== "" && cantidades_input[i].value > 0) {
+                        // validacion = false;
+                    } else {
+                        validacion = false;
+                    }
+                }
+            } else {
+                validacion = false;
+            }
+            if (validacion === true) {
+                $('#orden-pedido-frm-id').submit();
+            } else {
+                alertify.error('Ups!! Por favor complete todos los campos obligatorios');
+                $(this).prop('disabled',false);
+            }
         }
 
         function selecionarValor() {
@@ -307,6 +380,7 @@
         }
 
         function funcionNuevoProducto() {
+
             copia = $('#selectProductos').clone(false);
             umCopia = $('#umSelect').clone(false);
             $('#tblProductos')
@@ -345,7 +419,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<input disabled type="text" class="form-control puCls" pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\\.[0-9]{2})?$" name="preciosUnitarios[]" id="precioUnitario" required>\n' +
+                                    '<input readonly type="number" step="any" class="form-control puCls" name="precios_unitario[]" id="precioUnitario" required>\n' +
                                     '</div>'
                                 )
                         )
@@ -536,7 +610,7 @@
             let precio_unitario_input = cantidad_input.parent().parent().find('#precioUnitario');
             let precio_unitario = parseFloat(cantidad_input.parent().parent().find('#umSelect').find(':selected').data('precio'));
             // Verificar si es con o sin IVA
-            if (iva === 0) {
+            if (iva === 2) {
                 // Sin IVA
                 precio_unitario_input.val(precio_unitario);
                 precio_total = cantidad * precio_unitario;

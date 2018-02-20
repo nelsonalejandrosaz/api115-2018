@@ -164,7 +164,7 @@
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto->nombre}} ({{ $salida->precio->presentacion }})">
+                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto()->withTrashed()->first()->nombre}} {{$salida->descripcion_presentacion}}">
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
@@ -224,7 +224,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('ventaLista',['filtro' => 'todo']) }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
-                <a href="{{ route('facturaPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-info pull-right"><span class="fa fa-print"></span> Imprimir factura</a>
+                <a href="{{ route('facturaPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-info pull-right" target="_blank"><span class="fa fa-print"></span> Imprimir factura</a>
             </div>
         </form>
     </div><!-- /.box -->

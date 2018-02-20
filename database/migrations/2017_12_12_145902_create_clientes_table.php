@@ -21,6 +21,7 @@ class CreateClientesTable extends Migration
             $table->string('telefono_1',25)->nullable();
             $table->string('telefono_2',25)->nullable();
             $table->string('direccion',255)->nullable();
+            $table->string('correo',100)->nullable();
             $table->integer('vendedor_id')->unsigned()->nullable();
             $table->string('nit')->nullable();
             $table->string('nrc')->nullable();

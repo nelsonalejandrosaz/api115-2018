@@ -36,6 +36,7 @@ class Salida extends Model
         'produccion_id',
         'unidad_medida_id',
         'precio_id',
+        'descripcion_presentacion',
         'cantidad',
         'precio_unitario',
         'venta_exenta',

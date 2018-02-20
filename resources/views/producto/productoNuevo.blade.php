@@ -128,7 +128,7 @@
                         </div>
                     </div>
 
-                    <h4>Peso de volumen</h4>
+                    <h4>Referencia peso de volumen</h4>
                     <br>
 
                     {{-- Unidad de medida prederteminada --}}
