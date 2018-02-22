@@ -54,9 +54,14 @@ class Venta extends Model
         'saldo',
         'venta_total',
         'venta_total_con_impuestos',
+        'fecha_anulado',
+        'fecha_liquidado',
+        'comision',
     ];
 
     protected $dates = [
         'fecha',
+        'fecha_anulado',
+        'fecha_liquidado',
     ];
 }

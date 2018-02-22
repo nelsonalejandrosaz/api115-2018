@@ -83,7 +83,7 @@
                         <div class="col-md-8">
                             <div class="input-group">
                                 <input type="number" class="form-control" step="any"
-                                       placeholder="ej. 1" name="cantidad_formula">
+                                       placeholder="ej. 1" name="cantidad_formula" id="cantidad-total-id">
                                 <span class="input-group-addon">Kgs</span>
                             </div>
                         </div>
@@ -166,21 +166,18 @@
                 <div class="col-md-12">
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tbl-componentes-id">
-                        <thead>
+                        <tbody>
                         <tr>
-                            <th style="width: 55%">Total</th>
-                            <th style="width: 35%">
+                            <td style="width: 55%">Total</td>
+                            <td style="width: 35%">
                                 <div class="input-group">
-                                    <input type="number" class="form-control" step="any"
+                                    <input readonly type="number" class="form-control" step="any"
                                            value="0" id="total-formula-id">
                                     <span class="input-group-addon">g</span>
                                 </div>
-                            </th>
-                            <th style="width: 10%; text-align: center"></th>
+                            </td>
+                            <td style="width: 10%; text-align: center"></td>
                         </tr>
-                        </thead>
-                        <tbody>
-
                         </tbody>
                     </table>
 
@@ -228,6 +225,8 @@
                 total += parseFloat($(this).val());
             });
             $('#total-formula-id').val(total);
+            let total_kg = total / 1000;
+            $('#cantidad-total-id').val(total_kg.toFixed(4));
         }
 
         function selecionarValor() {

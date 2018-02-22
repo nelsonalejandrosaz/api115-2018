@@ -34,8 +34,9 @@
                         <thead>
                         <tr>
                             <th style="width:15%">Fecha ingreso</th>
-                            <th style="width:35%">Detalle</th>
-                            <th style="width:20%">Tipo ajuste</th>
+                            <th style="width:15%">Producto</th>
+                            <th style="width:25%">Detalle</th>
+                            <th style="width:15%">Tipo ajuste</th>
                             <th style="width:15%">Realizado por</th>
                             <th style="width:15%">Acción</th>
                         </tr>
@@ -44,6 +45,7 @@
                         @foreach($ajustes as $ajuste)
                             <tr>
                                 <td>{{ $ajuste->fecha->format('d-m-Y')  }}</td>
+                                <td>{{ $ajuste->movimiento->producto->nombre }}</td>
                                 <td>{{$ajuste->detalle}}</td>
                                 <td>{{$ajuste->tipo_ajuste->nombre}}</td>
                                 <td>{{$ajuste->realizado->nombre}}</td>

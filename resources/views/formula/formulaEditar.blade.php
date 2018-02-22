@@ -153,7 +153,10 @@
                         </tr>
                         </thead>
                         <tbody>
+                        @php($total_gr = 0.00)
+
                         @foreach($formula->componentes as $componente)
+                            @php($total_gr += $componente->cantidad)
                             <tr>
                                 <td>
                                     {{--Productos select--}}
@@ -180,6 +183,27 @@
                         </tbody>
                     </table>
 
+                </div>
+                {{-- Fin fila --}}
+
+                {{-- Fila --}}
+                <div class="col-md-12">
+                    {{-- Tabla de productos --}}
+                    <table class="table table-bordered" id="tbl-componentes-id">
+                        <tbody>
+                        <tr>
+                            <td style="width: 55%">Total</td>
+                            <td style="width: 35%">
+                                <div class="input-group">
+                                    <input readonly type="number" class="form-control" step="any"
+                                           value="{{ $total_gr }}" id="total-formula-id">
+                                    <span class="input-group-addon">g</span>
+                                </div>
+                            </td>
+                            <td style="width: 10%"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 {{-- Fin fila --}}
 

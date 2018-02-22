@@ -113,6 +113,16 @@ class AbonoController extends Controller
         $cliente = Cliente::find($request->input('cliente_id'));
         $venta = Venta::find($request->input('venta_id'));
         $cantidad = round($request->input('cantidad'),2);
+        if ($cantidad > round($venta->saldo,2))
+        {
+            // Mensaje de exito
+            session()->flash('mensaje.tipo', 'error');
+            session()->flash('mensaje.icono', 'fa-close');
+            session()->flash('mensaje.titulo', 'Ups!!');
+            session()->flash('mensaje.contenido', 'El abono es mayor al saldo de la venta!');
+            return redirect()->route('abonoNuevoSinVenta');
+        }
+        $saldo_anterior = $venta->saldo;
         $venta->saldo = round($venta->saldo,2) - $cantidad;
         $cliente->saldo = round($cliente->saldo,2) - $cantidad;
         // Se crea el abono
@@ -122,36 +132,15 @@ class AbonoController extends Controller
             'detalle' => $request->input('detalle'),
             'venta_id' => $venta->id,
             'cliente_id' => $cliente->id,
-            'forma_pago_id' => $request->input('forma_pago_id'),
         ]);
-        if ($venta->saldo >= 0.00)
+
+        if ($venta->saldo == 0.00)
         {
             $venta->estado_venta_id = 2;
-            $venta->save();
-        } else
-        {
-            $abono->delete();
-            // Mensaje de error
-            session()->flash('mensaje.tipo', 'warning');
-            session()->flash('mensaje.icono', 'fa-close');
-            session()->flash('mensaje.titulo','Upssss');
-            session()->flash('mensaje.contenido', 'El abono es mayor al saldo de la factura!');
-            return redirect()->route('abonoNuevo',['id' => $venta->id]);
+            $venta->fecha_liquidado = Carbon::now();
         }
-        if ($cliente->saldo >= 0.00)
-        {
-            $venta->estado_venta_id = 2;
-            $cliente->save();
-        } else
-        {
-            $abono->delete();
-            // Mensaje de error
-            session()->flash('mensaje.tipo', 'warning');
-            session()->flash('mensaje.icono', 'fa-close');
-            session()->flash('mensaje.titulo','Upssss');
-            session()->flash('mensaje.contenido', 'El abono es mayor al saldo de la factura!');
-            return redirect()->route('abonoNuevo',['id' => $venta->id]);
-        }
+        $venta->save();
+        $cliente->save();
         // Mensaje de exito
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

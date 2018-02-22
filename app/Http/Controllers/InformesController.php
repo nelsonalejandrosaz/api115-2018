@@ -424,7 +424,10 @@ class InformesController extends Controller
     {
         $extra['dia'] = Carbon::now();
         $estado_venta = EstadoVenta::whereCodigo('PP')->first();
-        $ventas = Venta::whereEstadoVentaId($estado_venta->id)->orderBy('fecha','desc')->get();
+        $ventas = Venta::where([
+            ['estado_venta_id','=',$estado_venta->id],
+            ['fecha','!=',$extra['dia']->format('Y-m-d')]
+        ])->orderBy('fecha','desc')->get();
         foreach ($ventas as $venta)
         {
             $venta->antiguedad = $venta->fecha->diffInDays(Carbon::now());
@@ -483,7 +486,7 @@ class InformesController extends Controller
         {
             if (true)
             {
-                if ($venta->abonos->isEmpty())
+                if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3)
                 {
                     $ventaCreditoArray[] = $venta;
                     $documento_total += $venta->saldo;
@@ -560,7 +563,7 @@ class InformesController extends Controller
         $ventaCreditoArray = [];
         foreach ($ventaCredito as $venta)
         {
-            if ($venta->abonos->isEmpty())
+            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3)
             {
                 $ventaCreditoArray[] = $venta;
                 $documento_total += $venta->saldo;

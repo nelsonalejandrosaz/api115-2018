@@ -199,13 +199,10 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas de pruebas
      */
-    Route::get('dev/p/{id}','DevController@select2');
-//    Route::get('dev/p/{id}','DevController@pruebaPost')->name('pruebaPost');
-//    Route::get('dev/produccion/{id}','DevController@ProduccionPrevia')->name('produccionPrevia');
-//    Route::post('dev/produccion/{id}','DevController@ProduccionConfirmarPost')->name('produccionConfirmarPost');
-    Route::get('dev/unidadesMedidaJSON','DevController@UnidadesMedidaJSON')->name('unidadesMedidaJSON');
-    Route::get('dev/unidadesConversionJSON','DevController@UnidadesConversionJSON')->name('unidadesMedidaJSON');
-    Route::get('dev/factorJSON','DevController@FactorJSON')->name('factorJSON');
+    Route::get('dev/venta-sin-orden','DevController@VentaSinOrden');
+    Route::get('dev/venta-anulada-sin-orden','DevController@VentaAnuladaSinOrden');
+    Route::get('dev/c/{id}','DevController@Corregir');
+
 
     /**
      * Rutas API del SIFLGL

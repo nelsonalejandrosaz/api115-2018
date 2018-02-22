@@ -118,6 +118,7 @@ class FormulaController extends Controller
         $producto = Producto::find($formula->producto_id);
         // Se crea y guarda la instancia de formula
         $formula->cantidad_formula = $request->input('cantidad_formula');
+        $formula->descripcion = $request->input('descripcion');
         $formula->save();
         // Se guardan las variables del request
         $productos = $request->input('productos');
@@ -130,7 +131,7 @@ class FormulaController extends Controller
             Componente::updateOrCreate([
                 'formula_id' => $formula->id,
                 'producto_id' => $productos[$i]],
-                ['cantidad' => $cantidades[$i]
+                ['cantidad' => $cantidades[$i],
             ]);
         }
 

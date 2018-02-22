@@ -155,7 +155,7 @@
                         </div>
                     </div>
 
-                    {{--Tipo de documento--}}
+                    {{--Condicion de pago--}}
                     <div class="form-group">
                         <label for="condicionPagoID" class="col-md-4  control-label"><b>Condición pago</b></label>
                         <div class="col-md-8 ">

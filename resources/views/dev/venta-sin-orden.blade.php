@@ -1,27 +1,51 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Nueva venta
+    Venta
 @endsection
 
 @section('CSSExtras')
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
-    {{-- DataPicker --}}
-    <link rel="stylesheet" href="{{asset('/css/datepicker.css')}}">
 @endsection
 
 @section('contentheader_title')
-    Nueva venta
+    Venta
 @endsection
 
 @section('contentheader_description')
-    -- Factura de consumidor final de orden n°: {{$orden_pedido->numero}}
+    -- Venta sin orden de pedido
 @endsection
 
 @section('main-content')
 
     @include('partials.alertas')
+
+    <div class="hidden">
+        {{--Detalle producto--}}
+        <input type="text" class="form-control" name="detalle[]" id="detalle-input-id">
+        {{--Unidad de medida--}}
+        <input type="text" class="form-control unidadCls" name="unidad_medida[]" id="unidad-medida-input-id">
+        {{--Cantidad--}}
+        <input type="number" class="form-control cantidadCls" name="cantidad[]" id="cantidad-input-id">
+        {{--Precio unitario--}}
+        <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" class="form-control puCls" name="precio_unitario[]" id="precio-unitario-input-id">
+        </div>
+        {{--Venta exenta--}}
+        <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="text" class="form-control veCls" name="venta_exenta[]" id="venta-exenta-id">
+        </div>
+        {{--Venta gravada--}}
+        <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="text" class="form-control vaCls" name="venta_gravada[]" id="venta-gravada-id">
+        </div>
+        {{--Eliminar boton--}}
+        <button type="button" class="btn btn-danger" id="eliminar-fila-id"><span class="fa fa-remove"></span></button>
+    </div>
 
     <!-- Form de nuevo proveedor -->
     <div class="box box-default">
@@ -29,11 +53,14 @@
             <h3 class="box-title">Detalle de venta</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $orden_pedido->id]) }}" method="POST" id="venta-form-id">
+        <form class="form-horizontal" action="" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
                 <div class="col-md-6 col-sm-12">
+
+                    <h4>Información de venta</h4>
+                    <br>
 
                     {{-- Fecha ingreso --}}
                     <div class="form-group">
@@ -48,8 +75,21 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="cliente_id"
-                                   value="{{$orden_pedido->cliente->nombre}}">
+                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID"
+                                    onchange="cambioCliente()">
+                                <option value="" selected disabled>Seleciona un cliente</option>
+                                @foreach($clientes as $cliente)
+                                    @if($cliente->id == old('cliente_id'))
+                                        <option selected value="{{ $cliente->id }}"
+                                                data-direccion="{{$cliente->direccion}}"
+                                                data-municipio="{{$cliente->municipio->nombre}}">{{ $cliente->nombre }}</option>
+                                    @else
+                                        <option value="{{ $cliente->id }}"
+                                                data-direccion="{{$cliente->direccion}}"
+                                                data-municipio="{{$cliente->municipio->nombre}}">{{ $cliente->nombre }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -58,16 +98,7 @@
                         <label class="col-md-3  control-label"><b>NRC</b></label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="nrc"
-                                   value="{{$orden_pedido->cliente->nrc}}">
-                        </div>
-                    </div>
-
-                    {{-- Condicion pago --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label">Condición pago</label>
-                        <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="condicion_pago_id"
-                                   value="{{$orden_pedido->condicion_pago->nombre}}">
+                                   value="">
                         </div>
                     </div>
 
@@ -76,7 +107,7 @@
                         <label class="col-md-3  control-label">Municipio</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="municipio" id="municipioID"
-                                   value="{{$orden_pedido->cliente->municipio->nombre}}">
+                                   value="">
                         </div>
                     </div>
 
@@ -85,7 +116,26 @@
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
                             <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion"
-                                      id="direccionID">{{$orden_pedido->cliente->direccion}}</textarea>
+                                      id="direccionID"></textarea>
+                        </div>
+                    </div>
+
+                    {{-- Condicion pago --}}
+                    <div class="form-group">
+                        <label class="col-md-3  control-label">Condición pago</label>
+                        <div class="col-md-9 ">
+                            <select class="form-control select2" style="width: 100%" name="condicion_pago_id"
+                                    id="condicionPagoID">
+                                <option selected disabled>Selecciona una condición de pago</option>
+                                @foreach($condiciones_pago as $condicion_pago)
+                                    @if($condicion_pago->id == old('condicion_pago_id'))
+                                        <option selected
+                                                value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @else
+                                        <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -93,12 +143,15 @@
 
                 <div class="col-md-6 col-sm-12">
 
+                    <h4><br></h4>
+                    <br>
+
                     {{-- Numero documento venta --}}
                     <div class="form-group">
                         <label class="col-md-4  control-label"><b>N° Documento</b></label>
                         <div class="col-md-8 ">
                             <input type="text" class="form-control" name="numero"
-                                   placeholder="Numero factura o Crédito Fiscal" value="{{ old('numero') }}">
+                                   placeholder="Numero factura o Crédito Fiscal" value="">
                         </div>
                     </div>
 
@@ -109,34 +162,9 @@
                             <select class="form-control select2" name="tipo_documento_id">
                                 <option selected disabled>Seleccione una opción</option>
                                 @foreach($tipoDocumentos as $tipoDocumento)
-                                    @if($tipoDocumento->id == $orden_pedido->tipo_documento_id)
-                                        <option selected value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
-                                    @endif
+                                    <option value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-
-                    {{-- Numero Orden Pedido --}}
-                    <div class="form-group">
-                        <label class="col-md-4  control-label">Orden pedido n°:</label>
-                        <div class="col-md-8 ">
-                            <input readonly type="text" class="form-control" name="orden"
-                                   value="{{$orden_pedido->numero}}">
-                        </div>
-                    </div>
-
-                    {{-- Fecha entrega --}}
-                    <div class="form-group">
-                        <label class="col-md-4  control-label">Fecha entrega</label>
-                        <div class="col-md-8 ">
-                            @if($orden_pedido->fecha_entrega != null)
-                                <input readonly type="date" class="form-control" name="fechaEntrega"
-                                       value="{{$orden_pedido->fecha_entrega->format('Y-m-d')}}">
-                            @else
-                                <input readonly type="text" class="form-control" name="fechaEntrega"
-                                       value="Sin fecha definida">
-                            @endif
                         </div>
                     </div>
 
@@ -145,99 +173,94 @@
                         <label class="col-md-4  control-label"><b>Vendedor</b></label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
-                                   value="{{$orden_pedido->vendedor->nombre}} {{$orden_pedido->vendedor->apellido}}"
+                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}"
                                    name="despachadoPor">
                         </div>
                     </div>
-
-                    {{-- Ruta archivo --}}
-                    {{--<div class="form-group">--}}
-                    {{--<label class="col-md-4 control-label">Copia documento</label>--}}
-                    {{--<div class="col-md-8">--}}
-                    {{--<input type="file" class="form-control" name="archivo">--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
 
                 </div>
 
                 {{-- Fila --}}
                 <div class="col-md-12">
+
+                    <br>
+                    <h4>Detalle de venta</h4>
+
                     {{-- Tabla de productos --}}
-                    <table class="table table-bordered" id="tblProductos">
+                    <table class="table table-bordered" id="venta-table-id">
+                        <thead>
                         <tr>
-                            <th style="width:40%">Producto</th>
-                            <th style="width:5%">Unidad medida</th>
-                            <th style="width:5%">Cantidad</th>
-                            <th style="width:12.5%">Precio unitario</th>
+                            <th style="width:35%">Producto</th>
+                            <th style="width:10%">Unidad medida</th>
+                            <th style="width:10%">Cantidad</th>
+                            <th style="width:10%">Precio unitario</th>
                             <th style="width:15%">Ventas exentas</th>
                             <th style="width:15%">Ventas gravadas</th>
+                            <th style="width:5%; text-align: center">
+                                <button class="btn btn-success" id="btn-nueva-fila-id"
+                                        type="button">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </th>
                         </tr>
-                        @php( $iva = \App\Configuracion::find(1)->iva)
-                        @foreach($orden_pedido->salidas as $salida)
-                            <tr>
-                                {{--Productos--}}
-                                <td>
-                                    @if( $salida->descripcion_presentacion != null)
-                                        <input readonly type="text" class="form-control" name="productos_id[]"
-                                               value="{{$salida->movimiento->producto->nombre}} ({{$salida->descripcion_presentacion}})">
-                                    @else
-                                        <input readonly type="text" class="form-control" name="productos_id[]"
-                                               value="{{$salida->movimiento->producto->nombre}}">
-                                    @endif
-                                </td>
-                                {{--Unidad de medida--}}
-                                <td>
-                                    <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida"
-                                           value="{{$salida->unidad_medida->abreviatura}}">
-                                </td>
-                                {{--Cantidad--}}
-                                <td>
-                                    <input readonly type="text" class="form-control cantidadCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}">
-                                </td>
-                                {{--Precio unitario--}}
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control puCls"
-                                               pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario"
-                                               value="{{number_format(($salida->precio_unitario * $iva),4)}}">
-                                    </div>
-                                </td>
-                                {{--Ventas exentas--}}
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control veCls" name="ventasExentas[]"
-                                               id="ventasExentas" value="{{number_format(($salida->venta_exenta * $iva),2)}}">
-                                    </div>
-                                </td>
-                                {{--Ventas afectas--}}
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control vaCls" name="ventasGravadas[]"
-                                               id="ventasGravadas" value="{{number_format(($salida->venta_gravada * $iva),2)}}">
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
+                        </thead>
+                        <tbody>
+
+                        </tbody>
                     </table>
 
                     <table class="table table-bordered">
                         <tr>
-                            <th style="width:65%"></th>
-                            <th style="width:15%">Venta Total</th>
-                            <th style="width:15%">
+                            <td style="width:65%"></td>
+                            <td style="width:15%">Suma</td>
+                            <td style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control"
-                                           value="{{number_format(($orden_pedido->venta_total * $iva),2)}}" name="compraTotal"
+                                    <input type="number" class="form-control"
+                                           value="" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
-                            </th>
+                            </td>
+                            <td style="width:5%"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>- Flete</td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control"
+                                           value="" name="compraTotal"
+                                           id="ventaTotal">
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Total</td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control"
+                                           value="" name="compraTotal"
+                                           id="ventaTotal">
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Comisión</td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="number" class="form-control"
+                                           value="" name="compraTotal"
+                                           id="ventaTotal">
+                                </div>
+                            </td>
+                            <td></td>
                         </tr>
                     </table>
 
@@ -247,7 +270,7 @@
             <div class="box-footer">
                 <a href="{{ route('ventaOrdenesLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-money"></span>
+                <button type="button" class="btn btn-lg btn-success pull-right"><span class="fa fa-money"></span>
                     Generar venta
                 </button>
             </div>
@@ -259,16 +282,88 @@
 @section('JSExtras')
     @include('comun.select2Jses')
     <script>
-        $(document).on('ready', Principal());
+        $(document).ready(Principal);
 
         function Principal() {
-            $('#enviar-buttom-id').click(EnviarForm);
+            $('#btn-nueva-fila-id').click(AgregarFila);
+            // $('#eliminar-fila-id').click(EliminarFila);
+            $("body").on("click", ".btn-danger", EliminarFila);
         }
 
-        function EnviarForm() {
-            $('#enviar-buttom-id').attr('disabled', 'true');
-            $('#venta-form-id').submit();
+        function AgregarFila() {
+            let detalle = $('#detalle-input-id').clone();
+            let unidad_medida = $('#unidad-medida-input-id').clone();
+            let cantidad = $('#cantidad-input-id').clone();
+            let precio_unitario = $('#precio-unitario-input-id').clone();
+            let venta_exenta = $('#venta-exenta-id').clone();
+            let venta_grabada = $('#venta-gravada-id').clone();
+            let eliminar = $('#eliminar-fila-id').clone();
+            $('#venta-table-id > tbody')
+                .append(
+                    $('<tr>')
+                        .append
+                        (
+                            $('<td>')
+                                .append
+                                (
+                                    detalle
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>')
+                                .append
+                                (
+                                    unidad_medida
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>').attr('align', 'center')
+                                .append
+                                (
+                                    cantidad
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>').attr('align', 'center')
+                                .append
+                                (
+                                    precio_unitario
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>').attr('align', 'center')
+                                .append
+                                (
+                                    venta_exenta
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>').attr('align', 'center')
+                                .append
+                                (
+                                    venta_grabada
+                                )
+                        )
+                        .append
+                        (
+                            $('<td>').attr('align', 'center')
+                                .append
+                                (
+                                    eliminar
+                                )
+                        )
+                );
         }
+
+        function EliminarFila() {
+            $(this).parent().parent().remove();
+        }
+
     </script>
 @endsection
 

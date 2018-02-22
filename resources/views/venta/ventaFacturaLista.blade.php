@@ -22,6 +22,67 @@
     @include('partials.alertas')
     @include('partials.modalEliminar')
 
+    {{--Cuadro de herramientas--}}
+    {{--<div class="box box-default collapsed-box box-solid">--}}
+        {{--<div class="box-header with-border">--}}
+            {{--<h3 class="box-title">Opciones</h3>--}}
+            {{--<div class="box-tools pull-right">--}}
+                {{--<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>--}}
+                {{--<button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--}}
+            {{--</div>--}}
+        {{--</div><!-- /.box-header -->--}}
+
+        {{--<!-- form start -->--}}
+        {{--<form class="form-horizontal" action="{{ route('ordenPedidoListaPost') }}" method="POST">--}}
+            {{--{{ csrf_field() }}--}}
+            {{--<div class="box-body">--}}
+                {{--<div class="col-md-6 col-sm-12">--}}
+                    {{--<h4>Fechas mostradas</h4>--}}
+                    {{-- Fecha inicio --}}
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-md-4 control-label"><b>Fecha inicio</b></label>--}}
+                        {{--<div class="col-md-8">--}}
+                            {{--<div class="input-group">--}}
+                                {{--<input type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $extra['fecha_inicio']->format('Y-m-d') }}">--}}
+                                {{--<div class="input-group-addon">--}}
+                                    {{--<i class="fa fa-calendar"></i>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+
+                {{--</div>--}}
+
+                {{--<div class="col-md-6 col-sm-12">--}}
+                    {{--<h4><br></h4>--}}
+                    {{-- Fecha fin --}}
+                    {{--<div class="form-group">--}}
+                        {{--<label class="col-md-4 control-label"><b>Fecha fin</b></label>--}}
+                        {{--<div class="col-md-8">--}}
+                            {{--<div class="input-group">--}}
+                                {{--<input type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $extra['fecha_fin']->format('Y-m-d') }}">--}}
+                                {{--<div class="input-group-addon">--}}
+                                    {{--<i class="fa fa-calendar"></i>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+
+                {{--</div>--}}
+
+            {{--</div><!-- /.box-body -->--}}
+
+            {{--<div class="box-footer">--}}
+                {{--<button type="submit" class="btn btn-lg btn-success pull-right"><span--}}
+                            {{--class="fa fa-search"></span> Consultar--}}
+                {{--</button>--}}
+                {{--<a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary" style="margin-right: 5px"><span--}}
+                            {{--class="fa fa-plus"></span> Nueva orden pedido</a>--}}
+            {{--</div>--}}
+        {{--</form>--}}
+    {{--</div>--}}
+    {{--Fin cuadro de herramientas--}}
+
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">

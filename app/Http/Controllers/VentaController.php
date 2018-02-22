@@ -61,6 +61,11 @@ class VentaController extends Controller
         return view('venta.ventaFacturaLista')->with(['ventas' => $ventas]);
     }
 
+    public function VentasTodoLista(Request $request)
+    {
+
+    }
+
     public function VentaCCFLista()
     {
         $ventas = Venta::whereTipoDocumentoId(2)->get();
@@ -74,6 +79,13 @@ class VentaController extends Controller
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         $tipoDocumentos = TipoDocumento::all();
+        $dia_hoy = Carbon::now();
+        $cierre = Carbon::parse($dia_hoy->format('Y-m-d'));
+        $cierre = $cierre->addHours(15)->addMinutes(30);
+        if ($dia_hoy > $cierre)
+        {
+            $dia_hoy = $dia_hoy->addDay();
+        }
         if ($orden_pedido->tipo_documento->codigo == 'FAC')
         {
             return view('venta.ventaFCFNuevo')
@@ -81,7 +93,8 @@ class VentaController extends Controller
                 ->with(['productos' => $productos])
                 ->with(['clientes' => $clientes])
                 ->with(['municipios' => $municipios])
-                ->with(['tipoDocumentos' => $tipoDocumentos]);
+                ->with(['tipoDocumentos' => $tipoDocumentos])
+                ->with(['dia' => $dia_hoy]);
         } else
         {
             return view('venta.ventaCCFNuevo')
@@ -89,7 +102,8 @@ class VentaController extends Controller
                 ->with(['productos' => $productos])
                 ->with(['clientes' => $clientes])
                 ->with(['municipios' => $municipios])
-                ->with(['tipoDocumentos' => $tipoDocumentos]);
+                ->with(['tipoDocumentos' => $tipoDocumentos])
+                ->with(['dia' => $dia_hoy]);
         }
     }
 
@@ -260,13 +274,19 @@ class VentaController extends Controller
             $producto->save();
         }
         // Se actualiza el estado de la venta y se resta el saldo al cliente
-        $estado_venta = EstadoVenta::whereCodigo('AN')->first();
-        $venta->estado_venta_id = $estado_venta->id;
-        $venta->fecha_anulado = Carbon::now();
-        $venta->save();
         $cliente = Cliente::find($venta->orden_pedido->cliente_id);
         $cliente->saldo = $cliente->saldo - $venta->saldo;
         $cliente->save();
+        $estado_venta = EstadoVenta::whereCodigo('AN')->first();
+        $venta->estado_venta_id = $estado_venta->id;
+        $venta->fecha_anulado = Carbon::now();
+        $venta->orden_pedido->venta_total = 0;
+        $venta->orden_pedido->save();
+        $venta->saldo = 0;
+        $venta->venta_total_con_impuestos = 0;
+        $venta->venta_total = 0;
+        $venta->fecha_anulado = Carbon::now();
+        $venta->save();
         // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

@@ -38,7 +38,7 @@
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
                             <input type="date" class="form-control" name="fecha"
-                                   value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                   value="{{ $dia->format('Y-m-d') }}">
                         </div>
                     </div>
 

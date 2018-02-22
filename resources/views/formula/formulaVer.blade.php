@@ -132,18 +132,20 @@
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
                             <th style="width: 60%">Producto</th>
-                            <th style="width: 35%">Cantidad</th>
+                            <th style="width: 40%">Cantidad</th>
                             </th>
                         </tr>
+                        @php($total_gr = 0.00)
                         @foreach($formula->componentes as $componente)
+                            @php($total_gr += $componente->cantidad)
                             <tr>
                                 <td>
                                     <input readonly type="text" class="form-control" value="{{ $componente->producto->nombre }}">
                                 </td>
                                 <td>
                                     <div class="input-group">
-                                        <input type="number" class="form-control cant"
-                                               value="{{$componente->cantidad}}" name="porcentajes[]" disabled>
+                                        <input readonly type="number" class="form-control cant"
+                                               value="{{$componente->cantidad}}" name="porcentajes[]">
                                         <span class="input-group-addon">g</span>
                                     </div>
                                 </td>
@@ -151,6 +153,26 @@
                         @endforeach
                     </table>
 
+                </div>
+                {{-- Fin fila --}}
+
+                {{-- Fila --}}
+                <div class="col-md-12">
+                    {{-- Tabla de productos --}}
+                    <table class="table table-bordered" id="tbl-componentes-id">
+                        <tbody>
+                        <tr>
+                            <td style="width: 60%">Total</td>
+                            <td style="width: 40%">
+                                <div class="input-group">
+                                    <input readonly type="number" class="form-control" step="any"
+                                           value="{{ $total_gr }}" id="total-formula-id">
+                                    <span class="input-group-addon">g</span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 {{-- Fin fila --}}
 

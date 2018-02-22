@@ -96,7 +96,7 @@
                         <label class="col-sm-3 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-sm-9">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha">
+                                <input readonly type="date" class="form-control" name="fecha" id="fecha-input" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -154,8 +154,14 @@
 
         $(document).on('ready', Principal());
 
+
         function Principal() {
             $('#enviar-buttom-id').click(EnviarAbono);
+            $('#fecha-input').dblclick(FechaModificar);
+        }
+
+        function FechaModificar() {
+            $('#fecha-input').removeAttr('readonly');
         }
 
         function EnviarAbono() {

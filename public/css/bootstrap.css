@@ -191,7 +191,8 @@ th {
     text-decoration: underline;
   }
   a[href]:after {
-    content: " (" attr(href) ")";
+    /*content: " (" attr(href) ")";*/
+    content: none !important;
   }
   abbr[title]:after {
     content: " (" attr(title) ")";

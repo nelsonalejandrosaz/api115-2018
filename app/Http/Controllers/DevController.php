@@ -30,6 +30,59 @@ use Response;
 
 class DevController extends Controller
 {
+    public function VentaSinOrden()
+    {
+        $tipo_documentos = TipoDocumento::all();
+        $clientes = Cliente::all();
+        $condiciones_pago = CondicionPago::all();
+        return view('dev.venta-sin-orden')
+            ->with(['tipoDocumentos' => $tipo_documentos])
+            ->with(['clientes' => $clientes])
+            ->with(['condiciones_pago' => $condiciones_pago]);
+    }
+
+    public function VentaAnuladaSinOrden()
+    {
+        $tipo_documentos = TipoDocumento::all();
+        $clientes = Cliente::all();
+        return view('dev.venta-anulada-sin-orden')
+            ->with(['tipoDocumentos' => $tipo_documentos])
+            ->with(['clientes' => $clientes]);
+    }
+
+    public function VentaAnuladaSinOrdenPost(Request $request)
+    {
+        $venta = Venta::create([
+            'tipo_documento_id' => $request->input(''),
+            'numero' => $request->input(''),
+            'cliente_id' => $request->input(''),
+            'vendedor_id' => Auth::user()->id,
+            'fecha' => Carbon::now(),
+            'estado_venta_id' => 3,
+            'saldo' => 0.00,
+            'venta_total' => 0.00,
+            'venta_total_con_impuestos' => 0.00,
+            'fecha_anulado' => Carbon::now(),
+        ]);
+        return view('dev.venta-anulada-sin-orden');
+    }
+
+    public function Corregir($id)
+    {
+        $producto = Producto::find($id);
+        $unidad_medidas = UnidadMedida::all();
+        if (\Auth::user()->rol->nombre == 'Vendedor')
+        {
+            return view('producto.productoPrecioV')
+                ->with(['producto' => $producto])
+                ->with(['unidad_medidas' => $unidad_medidas]);
+        }
+        return view('dev.productoPrecio')
+            ->with(['producto' => $producto])
+            ->with(['unidad_medidas' => $unidad_medidas]);
+    }
+
+
     public function select2($id)
     {
         $orden_pedido = OrdenPedido::find($id);
@@ -37,7 +90,7 @@ class DevController extends Controller
         $clientes = Cliente::all();
         $municipios = Municipio::all();
         $tipoDocumentos = TipoDocumento::all();
-        return view('dev.prueba')
+        return view('dev.venta-sin-orden')
             ->with(['orden_pedido' => $orden_pedido])
             ->with(['productos' => $productos])
             ->with(['clientes' => $clientes])
