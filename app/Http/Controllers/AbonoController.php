@@ -132,6 +132,7 @@ class AbonoController extends Controller
             'detalle' => $request->input('detalle'),
             'venta_id' => $venta->id,
             'cliente_id' => $cliente->id,
+            'forma_pago_id' => $request->input('forma_pago_id'),
         ]);
 
         if ($venta->saldo == 0.00)
