@@ -27,7 +27,7 @@
             <h3 class="box-title">Detalle de venta</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $orden_pedido->id]) }}" method="POST" id="venta-form-id">
+        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $orden_pedido->id]) }}" method="POST" id="venta-form">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -35,16 +35,16 @@
 
                     {{-- Fecha ingreso --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Fecha venta</b></label>
+                        <label class="col-md-3  control-label">Fecha venta</label>
                         <div class="col-md-9 ">
-                            <input type="date" class="form-control" name="fecha"
+                            <input readonly type="date" class="form-control" name="fecha"
                                    value="{{ $dia->format('Y-m-d') }}">
                         </div>
                     </div>
 
                     {{-- Cliente --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Cliente</b></label>
+                        <label class="col-md-3  control-label">Cliente</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="cliente_id"
                                    value="{{$orden_pedido->cliente->nombre}}">
@@ -53,10 +53,18 @@
 
                     {{-- NRC --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>NRC</b></label>
+                        <label class="col-md-3  control-label">NRC</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="nrc"
                                    value="{{$orden_pedido->cliente->nrc}}">
+                        </div>
+                    </div>
+
+                    {{-- NRC --}}
+                    <div class="form-group">
+                        <label class="col-md-3  control-label">NIT</label>
+                        <div class="col-md-9 ">
+                            <input readonly type="text" class="form-control" name="nrc" value="{{$orden_pedido->cliente->nit}}">
                         </div>
                     </div>
 
@@ -104,14 +112,8 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label"><b>Tipo de documento</b></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="tipo_documento_id">
-                                <option selected disabled>Seleccione una opción</option>
-                                @foreach($tipoDocumentos as $tipoDocumento)
-                                    @if($tipoDocumento->id == $orden_pedido->tipo_documento_id)
-                                        <option selected value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <input readonly type="text" class="form-control" name="tipo_documento_id"
+                                   value="{{ $orden_pedido->tipo_documento->nombre }}">
                         </div>
                     </div>
 
@@ -148,14 +150,6 @@
                         </div>
                     </div>
 
-                    {{-- Ruta archivo --}}
-                    {{--<div class="form-group">--}}
-                    {{--<label class="col-md-4 control-label">Copia documento</label>--}}
-                    {{--<div class="col-md-8">--}}
-                    {{--<input type="file" class="form-control" name="archivo">--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-
                 </div>
 
                 {{-- Fila --}}
@@ -164,9 +158,9 @@
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
                             <th style="width:40%">Producto</th>
-                            <th style="width:5%">Unidad medida</th>
-                            <th style="width:5%">Cantidad</th>
-                            <th style="width:12.5%">Precio unitario</th>
+                            <th style="width:7.5%">Unidad medida</th>
+                            <th style="width:7.5%">Cantidad</th>
+                            <th style="width:15%">Precio unitario</th>
                             <th style="width:15%">Ventas exentas</th>
                             <th style="width:15%">Ventas gravadas</th>
                         </tr>
@@ -198,8 +192,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control puCls"
-                                               pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
+                                        <input readonly type="number" class="form-control puCls"
                                                name="preciosUnitarios[]" id="precioUnitario"
                                                value="{{number_format(($salida->precio_unitario),4)}}">
                                     </div>
@@ -208,7 +201,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control veCls" name="ventasExentas[]"
+                                        <input readonly type="number" class="form-control veCls" name="ventasExentas[]"
                                                id="ventasExentas" value="{{number_format(($salida->venta_exenta),2)}}">
                                     </div>
                                 </td>
@@ -216,7 +209,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control vaCls" name="ventasGravadas[]"
+                                        <input readonly type="number" class="form-control vaCls" name="ventasGravadas[]"
                                                id="ventasGravadas" value="{{number_format(($salida->venta_gravada),2)}}">
                                     </div>
                                 </td>
@@ -226,36 +219,36 @@
 
                     <table class="table table-bordered">
                         <tr>
-                            <th style="width:65%"></th>
+                            <th style="width:70%"></th>
                             <th style="width:15%">Subtotal</th>
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control"
+                                    <input readonly type="number" class="form-control" step="any"
                                            value="{{number_format(($orden_pedido->venta_total),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
                             </th>
                         </tr>
                         <tr>
-                            <th style="width:65%"></th>
-                            <th style="width:15%">IVA</th>
-                            <th style="width:15%">
+                            <th></th>
+                            <th>IVA</th>
+                            <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control"
+                                    <input readonly type="number" class="form-control" step="any"
                                            value="{{number_format(($orden_pedido->venta_total * ($iva - 1)),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
                             </th>
                         </tr>
                         <tr>
-                            <th style="width:65%"></th>
-                            <th style="width:15%">Total</th>
-                            <th style="width:15%">
+                            <th></th>
+                            <th>Total</th>
+                            <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control"
+                                    <input readonly type="number" class="form-control" step="any"
                                            value="{{number_format(($orden_pedido->venta_total * $iva),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
@@ -269,8 +262,8 @@
             <div class="box-footer">
                 <a href="{{ route('ventaOrdenesLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-money"></span>
-                    Generar venta
+                <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-shopping-bag"></span>
+                    Generar CCF
                 </button>
             </div>
         </form>
@@ -279,18 +272,42 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     @include('comun.select2Jses')
     <script>
         $(document).on('ready', Principal());
 
         function Principal() {
-            $('#enviar-buttom-id').click(EnviarForm);
+            Validacion();
         }
 
-        function EnviarForm() {
-            $('#enviar-buttom-id').attr('disabled', 'true');
-            $('#venta-form-id').submit();
+        function Validacion() {
+            $('#venta-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "numero" : {
+                        required: true,
+                    }
+                },
+                messages: {
+                    "numero" : {
+                        required: function () {
+                            toastr.error('Por favor ingrese el numero de documento', 'Ups!');
+                        },
+                    }
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom-id').attr('disabled', 'true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
         }
+
     </script>
 @endsection
 

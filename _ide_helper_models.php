@@ -65,6 +65,7 @@ namespace App{
  *
  * @property int $id
  * @property int $cliente_id
+ * @property int|null $tipo_documento_id
  * @property int $numero
  * @property string|null $detalle
  * @property \Carbon\Carbon $fecha
@@ -78,7 +79,6 @@ namespace App{
  * @property float|null $venta_total
  * @property string $ruta_archivo
  * @property int $estado_id
- * @property int|null $tipo_documento_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\User|null $bodeguero
@@ -307,7 +307,7 @@ namespace App{
  * @property int $id
  * @property int $formula_id
  * @property int $producto_id
- * @property float $porcentaje
+ * @property float|null $porcentaje
  * @property float|null $cantidad
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -338,12 +338,17 @@ namespace App{
  * @property int $activa
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Componente[] $componentes
  * @property-read \App\User $ingresado
  * @property-read \App\Producto $producto
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Formula onlyTrashed()
+ * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereActiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereCantidadFormula($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereDescripcion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereFecha($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereId($value)
@@ -351,6 +356,8 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereProductoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Formula whereVersion($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Formula withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Formula withoutTrashed()
  */
 	class Formula extends \Eloquent {}
 }
@@ -429,7 +436,7 @@ namespace App{
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\Categoria $categoria
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Formula[] $formula
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Formula[] $formulas
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Movimiento[] $movimientos
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Precio[] $precios
  * @property-read \App\TipoProducto $tipo_producto
@@ -533,17 +540,20 @@ namespace App{
  * @property int $id
  * @property int $bodega_id
  * @property int $formula_id
+ * @property int|null $producto_id
  * @property float $cantidad
  * @property string $fecha
  * @property int|null $lote
  * @property string|null $fecha_vencimiento
  * @property string|null $detalle
+ * @property int|null $procesado
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\User $bodeguero
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\DetalleProduccion[] $detalle_producciones
  * @property-read \App\Formula $formula
+ * @property-read \App\Producto|null $producto
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Salida[] $salidas
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Produccion onlyTrashed()
@@ -558,6 +568,8 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereFormulaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereLote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereProcesado($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereProductoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Produccion whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Produccion withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Produccion withoutTrashed()
@@ -677,18 +689,25 @@ namespace App{
  * @property float|null $venta_total_con_impuestos
  * @property string $ruta_archivo
  * @property float $saldo
+ * @property \Carbon\Carbon|null $fecha_anulado
+ * @property \Carbon\Carbon|null $fecha_liquidado
+ * @property int $comision
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Abono[] $abonos
  * @property-read \App\Cliente|null $cliente
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\DetalleServicio[] $detalle_servicios
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\DetalleOtrasVentas[] $detalle_otras_ventas
  * @property-read \App\EstadoVenta $estado_venta
  * @property-read \App\OrdenPedido $orden_pedido
  * @property-read \App\TipoDocumento $tipo_documento
  * @property-read \App\User|null $vendedor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereClienteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereComision($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereEstadoVentaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFecha($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFechaAnulado($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFechaLiquidado($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereOrdenPedidoId($value)
@@ -863,6 +882,35 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUsername($value)
  */
 	class User extends \Eloquent {}
+}
+
+namespace App{
+/**
+ * App\DetalleOtrasVentas
+ *
+ * @property int $id
+ * @property int $venta_id
+ * @property string $detalle
+ * @property float $cantidad
+ * @property float $precio_unitario
+ * @property float $venta_exenta
+ * @property float $venta_gravada
+ * @property float $venta_total
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\Venta $Venta
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereCantidad($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereDetalle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas wherePrecioUnitario($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereVentaExenta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereVentaGravada($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereVentaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleOtrasVentas whereVentaTotal($value)
+ */
+	class DetalleOtrasVentas extends \Eloquent {}
 }
 
 namespace App{

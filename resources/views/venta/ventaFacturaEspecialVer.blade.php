@@ -49,15 +49,7 @@
                         <label class="col-md-3  control-label">Cliente</label>
                         <div class="col-md-9 ">
                             <input readonly class="form-control" name="cliente"
-                                   value="{{$venta->orden_pedido->cliente->nombre}}">
-                        </div>
-                    </div>
-
-                    {{-- Municipio --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label">Municipio</label>
-                        <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="municipio" id="municipioID" value="{{$venta->orden_pedido->cliente->municipio->nombre}}">
+                                   value="{{$venta->cliente->nombre}}">
                         </div>
                     </div>
 
@@ -65,7 +57,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
-                            <textarea readonly class="form-control" name="direccion">{{$venta->orden_pedido->cliente->direccion}}</textarea>
+                            <textarea readonly class="form-control" name="direccion">{{$venta->cliente->direccion}}</textarea>
                         </div>
                     </div>
 
@@ -74,7 +66,7 @@
                         <label class="col-md-3  control-label">Condición pago</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="condicionPago"
-                                   value="{{$venta->orden_pedido->condicion_pago->nombre}}">
+                                   value="{{$venta->condicion_pago->nombre}}">
                         </div>
                     </div>
 

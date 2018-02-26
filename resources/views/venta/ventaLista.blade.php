@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Ventas
+    Ordenes de pedido sin facturar
 @endsection
 
 @section('CSSExtras')
@@ -10,11 +10,11 @@
 @endsection
 
 @section('contentheader_title')
-    Ventas
+    Ordenes de pedido sin facturar
 @endsection
 
 @section('contentheader_description')
-    -- Lista de ventas
+    -- Lista de ordenes de pedido sin facturar
 @endsection
 
 @section('main-content')
@@ -24,9 +24,9 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header">
-                    <h3 class="box-title">Lista de ordenes de pedido por facturar</h3>
-                </div><!-- /.box-header -->
+                {{--<div class="box-header">--}}
+                    {{--<h3 class="box-title">Lista de ordenes de pedido por facturar</h3>--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
@@ -34,10 +34,10 @@
                             <th style="width:10%">Número</th>
                             <th style="width:10%">Fecha ingreso</th>
                             <th style="width:10%">Fecha entrega</th>
-                            <th style="width:25%">Cliente</th>
+                            <th style="width:30%">Cliente</th>
                             <th style="width:20%">Vendedor</th>
                             <th style="width:10%">Estado</th>
-                            <th style="width:15%">Acción</th>
+                            <th style="width:10%">Acción</th>
                         </tr>
                         </thead>
                         <tbody>

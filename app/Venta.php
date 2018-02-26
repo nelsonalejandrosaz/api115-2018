@@ -27,9 +27,9 @@ class Venta extends Model
         return $this->belongsTo('App\EstadoVenta');
     }
 
-    public function detalle_servicios()
+    public function detalle_otras_ventas()
     {
-        return $this->hasMany('App\DetalleServicio');
+        return $this->hasMany('App\DetalleOtrasVentas');
     }
 
     public function cliente()
@@ -57,6 +57,7 @@ class Venta extends Model
         'fecha_anulado',
         'fecha_liquidado',
         'comision',
+        'condicion_pago_id',
     ];
 
     protected $dates = [

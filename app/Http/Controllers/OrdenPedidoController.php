@@ -263,6 +263,10 @@ class OrdenPedidoController extends Controller
         return redirect()->route('ordenPedidoVer', ['id' => $orden_pedido->id]);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function OrdenPedidoPDF($id)
     {
 //        dd(Carbon::now());
@@ -292,18 +296,21 @@ class OrdenPedidoController extends Controller
      * Estado: Revisada y funcionando
      * Fecha rev: 25/01/2018
      */
-    public function OrdenPedidoBodegaPost($id)
+    public function OrdenPedidoBodegaPost(Request $request, $id)
     {
         $orden_pedido = OrdenPedido::find($id);
         $salidas = $orden_pedido->salidas;
+        $cantidad = $request->input('cantidades');
+        $max = sizeof($cantidad);
+//        dd($cantidad);
         // Comprobacion si existencias alcanzan para procesar orden
-        foreach ($salidas as $salida)
+        for ($i=0; $i<$max; $i++)
         {
-            $producto = Producto::find($salida->movimiento->producto_id);
-            $cantidad_existencia = $producto->cantidad_existencia;
-            $cantidad_existencia = round($cantidad_existencia,4);
-            $cantidad_salida = round($salida->movimiento->cantidad,4);
-//            dd($cantidad_existencia < $cantidad_salida);
+            $producto = Producto::find($salidas[$i]->movimiento->producto_id);
+            $cantidad_existencia = round($producto->cantidad_existencia,4);
+            $cantidad_salida = round($cantidad[$i],4);
+            $salidas[$i]->movimiento->cantidad = $cantidad_salida;
+//            $salidas[$i]->save();
             if ($cantidad_existencia < $cantidad_salida)
             {
                 // Mensaje de exito al guardar
@@ -314,24 +321,27 @@ class OrdenPedidoController extends Controller
                 return redirect()->route('ordenPedidoVerBodega',['id' => $orden_pedido->id]);
             }
         }
-        foreach ($salidas as $salida)
+
+        for ($i=0; $i<$max; $i++)
         {
-            $producto = Producto::find($salida->movimiento->producto_id);
-            $cantidad_existencia = $producto->cantidad_existencia - $salida->movimiento->cantidad;
-            $costo_total = $salida->movimiento->cantidad * $producto->costo;
+            $producto = Producto::find($salidas[$i]->movimiento->producto_id);
+            $cantidad_existencia = $producto->cantidad_existencia - $salidas[$i]->movimiento->cantidad;
+            $costo_total = $salidas[$i]->movimiento->cantidad * $producto->costo;
             $costo_total_existencia = $cantidad_existencia * $producto->costo;
             // Actualizar movimiento
-            $salida->movimiento->costo_unitario = round($producto->costo,4);
-            $salida->movimiento->costo_total = round($costo_total,4);
-            $salida->movimiento->cantidad_existencia = round($cantidad_existencia,4);
-            $salida->movimiento->costo_unitario_existencia = round($producto->costo,4);
-            $salida->movimiento->costo_total_existencia = round($costo_total_existencia,4);
-            $salida->movimiento->fecha_procesado = Carbon::now();
-            $salida->movimiento->procesado = true;
-            $salida->movimiento->save();
-            $producto->cantidad_existencia = $salida->movimiento->cantidad_existencia;
+            $salidas[$i]->movimiento->costo_unitario = round($producto->costo,4);
+            $salidas[$i]->movimiento->costo_total = round($costo_total,4);
+            $salidas[$i]->movimiento->cantidad_existencia = round($cantidad_existencia,4);
+            $salidas[$i]->movimiento->costo_unitario_existencia = round($producto->costo,4);
+            $salidas[$i]->movimiento->costo_total_existencia = round($costo_total_existencia,4);
+            $salidas[$i]->movimiento->fecha_procesado = Carbon::now();
+            $salidas[$i]->movimiento->procesado = true;
+            $salidas[$i]->movimiento->save();
+            $salidas[$i]->save();
+            $producto->cantidad_existencia = $salidas[$i]->movimiento->cantidad_existencia;
             $producto->save();
         }
+
         $estado_orden = EstadoOrdenPedido::whereCodigo('PR')->first();
         $orden_pedido->estado_id = $estado_orden->id;
         $orden_pedido->update();

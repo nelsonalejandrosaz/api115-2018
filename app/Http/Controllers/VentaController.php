@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Ajuste;
 use App\Cliente;
+use App\CondicionPago;
 use App\Configuracion;
+use App\DetalleOtrasVentas;
 use App\EstadoOrdenPedido;
 use App\EstadoVenta;
 use App\Movimiento;
@@ -25,6 +27,7 @@ class VentaController extends Controller
 {
     public function VentaOrdenesLista()
     {
+        // id = 2 - Despachada
         $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2)->get();
         if (Auth::user()->rol->nombre == 'Vendedor')
         {
@@ -34,51 +37,9 @@ class VentaController extends Controller
         return view('venta.ventaLista')->with(['ordenesPedidos' => $ordenesPedidoProcesadas]);
     }
 
-    public function VentaLista($filtro)
-    {
-        switch ($filtro)
-        {
-            case 'todo':
-                $ventas = Venta::where('tipo_documento_id','>','0');
-                break;
-            case 'factura':
-                $ventas = Venta::where('tipo_documento_id', '=', '1');
-                break;
-            case 'ccf':
-                $ventas = Venta::where('tipo_documento_id', '=', '2');
-                break;
-            case 'anulada':
-                $ventas = Venta::where('estado_venta_id', '=', '3');
-                break;
-        }
-        if (Auth::user()->rol->nombre == 'Vendedor')
-        {
-            $ventas = $ventas->where('vendedor_id','=',Auth::user()->id)->get();
-        } else
-        {
-            $ventas = $ventas->get();
-        }
-        return view('venta.ventaFacturaLista')->with(['ventas' => $ventas]);
-    }
-
-    public function VentasTodoLista(Request $request)
-    {
-
-    }
-
-    public function VentaCCFLista()
-    {
-        $ventas = Venta::whereTipoDocumentoId(2)->get();
-        return view('venta.ventaCCFLista')->with(['ventas' => $ventas]);
-    }
-
     public function VentaNueva($id)
     {
         $orden_pedido = OrdenPedido::find($id);
-        $productos = Producto::all();
-        $clientes = Cliente::all();
-        $municipios = Municipio::all();
-        $tipoDocumentos = TipoDocumento::all();
         $dia_hoy = Carbon::now();
         $cierre = Carbon::parse($dia_hoy->format('Y-m-d'));
         $cierre = $cierre->addHours(15)->addMinutes(30);
@@ -90,19 +51,11 @@ class VentaController extends Controller
         {
             return view('venta.ventaFCFNuevo')
                 ->with(['orden_pedido' => $orden_pedido])
-                ->with(['productos' => $productos])
-                ->with(['clientes' => $clientes])
-                ->with(['municipios' => $municipios])
-                ->with(['tipoDocumentos' => $tipoDocumentos])
                 ->with(['dia' => $dia_hoy]);
         } else
         {
             return view('venta.ventaCCFNuevo')
                 ->with(['orden_pedido' => $orden_pedido])
-                ->with(['productos' => $productos])
-                ->with(['clientes' => $clientes])
-                ->with(['municipios' => $municipios])
-                ->with(['tipoDocumentos' => $tipoDocumentos])
                 ->with(['dia' => $dia_hoy]);
         }
     }
@@ -111,37 +64,41 @@ class VentaController extends Controller
     {
         // Validacion
         $this->validate($request, [
-            'fecha' => 'required',
             'numero' => 'required',
-            'tipo_documento_id' => 'required',
         ]);
 
+        // Se verifica la fecha
+        $fecha = Carbon::now();
+        $cierre = Carbon::parse($fecha->format('Y-m-d'));
+        $cierre = $cierre->addHours(15)->addMinutes(30);
+        if ($fecha > $cierre)
+        {
+            $fecha = $fecha->addDay();
+        }
         // Se carga la orden de pedido
         $orden_pedido = OrdenPedido::find($id);
-        // Se busca el estado de la orden de pedido y de factura
-        $estado_orden_pedido = EstadoOrdenPedido::whereCodigo('FC')->first();
-        $estado_venta = EstadoVenta::whereCodigo('PP')->first();
+        // Orden procesada = 3 ---- Venta pendiente de pago = 1
         $iva = Configuracion::find(1)->iva;
-        $venta_total_con_impuestos = $orden_pedido->venta_total * 1.13;
+        $venta_total_con_impuestos = $orden_pedido->venta_total * $iva;
         // Se crea la venta
         $venta = Venta::create([
-            'tipo_documento_id' => $request->input('tipo_documento_id'),
+            'tipo_documento_id' => $orden_pedido->tipo_documento_id,
             'orden_pedido_id' => $orden_pedido->id,
             'numero' => $request->input('numero'),
-            'fecha' => $request->input('fecha'),
+            'fecha' => $fecha,
             'cliente_id' => $orden_pedido->cliente_id,
-            'estado_venta_id' => $estado_venta->id,
+            'estado_venta_id' => 1,
             'vendedor_id' => $orden_pedido->vendedor_id,
             'saldo' => $venta_total_con_impuestos,
             'venta_total' => $orden_pedido->venta_total,
             'venta_total_con_impuestos' => $venta_total_con_impuestos,
         ]);
-        // Se agrega el saldo al cliente  agregar el iva
-        $cliente = Cliente::find($orden_pedido->cliente_id);
+        // Se agrega el saldo al cliente
+        $cliente = Cliente::find($venta->cliente_id);
         $cliente->saldo = $cliente->saldo + $venta_total_con_impuestos;
         $cliente->save();
-        //
-        $orden_pedido->estado_id = $estado_orden_pedido->id;
+        // Se cambia el estado de la orden de pedido
+        $orden_pedido->estado_id = 3;
         $orden_pedido->save();
         if ($venta->tipo_documento->codigo == 'FAC') {
             // Mensaje de exito al guardar
@@ -160,36 +117,78 @@ class VentaController extends Controller
 
     public function VentaVerFactura($id)
     {
-        // Se carga la venta
+        // Se carga la venta y el IVA
         $venta = Venta::find($id);
-        $productos = Producto::all();
-        $salidas = $venta->orden_pedido->salidas;
-        foreach ($salidas as $salida) {
-            $salida->precio_unitario = $salida->precio_unitario * 1.13;
-            $salida->venta_gravada = $salida->venta_gravada * 1.13;
-            $salida->venta_exenta = $salida->venta_exenta * 1.13;
+        $iva = Configuracion::find(1)->iva;
+        // Se verifica que la venta sea factura
+        if ($venta->tipo_documento->codigo != 'FAC')
+        {
+            abort(404);
         }
-        $venta->orden_pedido->ventas_exentas = $venta->orden_pedido->ventas_exentas * 1.13;
-        $venta->orden_pedido->ventas_gravadas = $venta->orden_pedido->ventas_gravadas * 1.13;
-        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
+//        dd($venta);
+        if ($venta->detalle_otras_ventas->isNotEmpty())
+        {
+            return view('venta.ventaFacturaEspecialVer')
+                ->with(['venta' => $venta]);
+        }
+        foreach ($venta->orden_pedido->salidas as $salida) {
+            $salida->precio_unitario = $salida->precio_unitario * $iva;
+            $salida->venta_gravada = $salida->venta_gravada * $iva;
+            $salida->venta_exenta = $salida->venta_exenta * $iva;
+        }
+        $venta->orden_pedido->ventas_exentas = $venta->orden_pedido->ventas_exentas * $iva;
+        $venta->orden_pedido->ventas_gravadas = $venta->orden_pedido->ventas_gravadas * $iva;
+        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * $iva;
         return view('venta.ventaFacturaVer')
-            ->with(['venta' => $venta])
-            ->with(['productos' => $productos])
-            ->with(['salidas' => $salidas]);
+            ->with(['venta' => $venta]);
     }
 
     public function VentaVerCCF($id)
     {
-        // Se carga la venta
+        // Se carga la venta y el IVA
         $venta = Venta::find($id);
-        $productos = Producto::all();
-        $salidas = $venta->orden_pedido->salidas;
-        $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * 0.13;
-        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * 1.13;
+        $iva = Configuracion::find(1)->iva;
+        if ($venta->tipo_documento->codigo != 'CCF')
+        {
+            abort(404);
+        }
+        $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * ($iva -1);
+        $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * $iva;
         return view('venta.ventaCCFVer')
-            ->with(['venta' => $venta])
-            ->with(['productos' => $productos])
-            ->with(['salidas' => $salidas]);
+            ->with(['venta' => $venta]);
+    }
+
+    public function VentaLista($tipo)
+    {
+        if (Auth::user()->rol->nombre == 'Vendedor')
+        {
+            $ventas = Venta::where('vendedora_id','=',Auth::user()->id)->get();
+        } else
+        {
+            $ventas = Venta::all();
+        }
+        switch ($tipo)
+        {
+            case 'todo':
+                return view('venta.ventaFacturadasLista')
+                    ->with(['ventas' => $ventas])
+                    ->with(['titulo' => "Ventas"]);
+            case 'factura':
+                $ventas = $ventas->where('tipo_documento_id','=',1);
+                return view('venta.ventaFacturadasLista')
+                    ->with(['ventas' => $ventas])
+                    ->with(['titulo' => "Facturas Consumidor Final"]);
+            case 'ccf':
+                $ventas = $ventas->where('tipo_documento_id','=',2);
+                return view('venta.ventaFacturadasLista')
+                    ->with(['ventas' => $ventas])
+                    ->with(['titulo' => "Comprobantes de crédito fiscal"]);
+            case 'anulada':
+                $ventas = $ventas->where('estado_venta_id','=',3);
+                return view('venta.ventaFacturadasLista')
+                    ->with(['ventas' => $ventas])
+                    ->with(['titulo' => "Documentos anulados"]);
+        }
     }
 
     public function VentaFacturaPDF($id)
@@ -293,4 +292,100 @@ class VentaController extends Controller
         session()->flash('mensaje.contenido', 'El documento de la venta fue anulada correctamente!');
         return redirect()->route('ventaLista',['filtro' => 'todo']);
     }
+
+    public function VentaAnuladaSinOrdenNueva()
+    {
+        $tipo_documentos = TipoDocumento::all();
+        $clientes = Cliente::all();
+        return view('venta.venta-anulada-sin-orden')
+            ->with(['tipoDocumentos' => $tipo_documentos])
+            ->with(['clientes' => $clientes]);
+    }
+
+    public function VentaAnuladaSinOrdenNuevaPost()
+    {
+
+    }
+
+    public function VentaSinOrdenNueva()
+    {
+        $tipo_documentos = TipoDocumento::all();
+        $clientes = Cliente::all();
+        $condiciones_pago = CondicionPago::all();
+        return view('venta.venta-sin-orden')
+            ->with(['tipoDocumentos' => $tipo_documentos])
+            ->with(['clientes' => $clientes])
+            ->with(['condiciones_pago' => $condiciones_pago]);
+    }
+
+    public function VentaSinOrdenPost(Request $request)
+    {
+        // Validacion
+        $this->validate($request, [
+            'cliente_id' => 'required',
+            'numero' => 'required',
+            'tipo_documento_id' => 'required',
+            'condicion_pago_id' => 'required',
+            'comision' => 'required',
+        ]);
+//        dd($request);
+        // Se verifica la fecha
+        $fecha = Carbon::now();
+        $cierre = Carbon::parse($fecha->format('Y-m-d'));
+        $cierre = $cierre->addHours(15)->addMinutes(30);
+        if ($fecha > $cierre)
+        {
+            $fecha = $fecha->addDay();
+        }
+        // Venta pendiente de pago = 1
+        $iva = Configuracion::find(1)->iva;
+        $venta_total_con_impuestos = $request->input('comision');
+        // Se crea la venta
+        $venta = Venta::create([
+            'tipo_documento_id' => 1,
+            'orden_pedido_id' => 0,
+            'numero' => $request->input('numero'),
+            'fecha' => $fecha,
+            'cliente_id' => $request->input('cliente_id'),
+            'estado_venta_id' => 1,
+            'vendedor_id' => Auth::user()->id,
+            'saldo' => $venta_total_con_impuestos,
+            'venta_total' => $venta_total_con_impuestos,
+            'venta_total_con_impuestos' => $venta_total_con_impuestos,
+        ]);
+        // Se agrega el detalle de la venta
+        $detalle = $request->input('detalle');
+        $venta_gravada = $request->input('venta_gravada');
+        $max = sizeof($detalle);
+        for ($i = 0; $i < $max; $i++)
+        {
+            $detalle_venta = DetalleOtrasVentas::create([
+                'venta_id' => $venta->id,
+                'detalle' => $detalle[$i],
+                'cantidad' => 1,
+                'precio_unitario' => $venta_gravada[$i],
+                'venta_exenta' => 0,
+                'venta_gravada' => $venta_gravada[$i],
+                'venta_total' => $venta_gravada[$i],
+            ]);
+        }
+        // Se agrega el saldo al cliente
+        $cliente = Cliente::find($venta->cliente_id);
+        $cliente->saldo = $cliente->saldo + $venta_total_con_impuestos;
+        $cliente->save();
+        if ($venta->tipo_documento->codigo == 'FAC') {
+            // Mensaje de exito al guardar
+            session()->flash('mensaje.tipo', 'success');
+            session()->flash('mensaje.icono', 'fa-check');
+            session()->flash('mensaje.contenido', 'La factura fue procesada correctamente!');
+            return redirect()->route('ventaVerFactura', ['id' => $venta->id]);
+        } else {
+            // Mensaje de exito al guardar
+            session()->flash('mensaje.tipo', 'success');
+            session()->flash('mensaje.icono', 'fa-check');
+            session()->flash('mensaje.contenido', 'El crédito fiscal fue procesada correctamente!');
+            return redirect()->route('ventaVerCFF', ['id' => $venta->id]);
+        }
+    }
+
 }

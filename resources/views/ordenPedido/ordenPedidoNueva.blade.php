@@ -8,8 +8,8 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
     {{--Alertify--}}
-    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.core.css')}}" />
-    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.default.css')}}" />
+    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.core.css')}}"/>
+    <link rel="stylesheet" href="{{asset('/plugins/alertify/themes/alertify.default.css')}}"/>
 @endsection
 
 @section('contentheader_title')
@@ -31,7 +31,7 @@
         </div><!-- /.box-header -->
         <!-- form start -->
         <form class="form-horizontal" action="{{ route('ordenPedidoNuevaPost') }}" method="POST"
-              enctype="multipart/form-data" id="orden-pedido-frm-id">
+              enctype="multipart/form-data" id="orden-form">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -42,7 +42,8 @@
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                <input type="date" class="form-control" name="fecha"
+                                       value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -90,26 +91,17 @@
                         </div>
                     </div>
 
-                    {{-- Con impuestos --}}
-                    {{--<div class="form-group">--}}
-                    {{--<label class="col-md-3  control-label">Precio</label>--}}
-                    {{--<div class="col-md-9 ">--}}
-                    {{--<select class="form-control select2" style="width: 100%" id="IVAid" onchange="cambioIVA()">--}}
-                    {{--<option value="0" selected>Precio sin IVA</option>--}}
-                    {{--<option value="1">Precio con IVA</option>--}}
-                    {{--</select>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-
                     {{-- Tipo Documento --}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label"><b>Tipo documento</b></label>
                         <div class="col-sm-9">
-                            <select class="form-control select2" style="width:100%" name="tipo_documento_id" id="IVAid" onchange="cambioIVA()">
+                            <select class="form-control select2" style="width:100%" name="tipo_documento_id" id="IVAid"
+                                    onchange="cambioIVA()">
                                 <option selected disabled>Seleccione una opción</option>
                                 @foreach($tipoDocumentos as $tipoDocumento)
                                     @if($tipoDocumento->id == old('tipo_documento_id'))
-                                        <option selected value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                        <option selected
+                                                value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
                                     @else
                                         <option value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
                                     @endif
@@ -127,7 +119,8 @@
                         <label for="numeroID" class="col-md-4  control-label"><b>Orden pedido n°</b></label>
                         <div class="col-md-8 ">
                             <input type="number" class="form-control" name="numero" id="numeroID"
-                                   value="{{ old('numero') }}" placeholder="{{ \App\OrdenPedido::latest()->first()->id + 1 }}">
+                                   value="{{ old('numero') }}"
+                                   placeholder="{{ \App\OrdenPedido::latest()->first()->id + 1 }}">
                         </div>
                     </div>
 
@@ -164,7 +157,8 @@
                                 <option selected disabled>Selecciona una condición de pago</option>
                                 @foreach($condiciones_pago as $condicion_pago)
                                     @if($condicion_pago->id == old('condicion_pago_id'))
-                                        <option selected value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                        <option selected
+                                                value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
                                     @else
                                         <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
                                     @endif
@@ -245,8 +239,7 @@
 
                             {{--Cantidad--}}
                             <td>
-                                <input type="number" class="form-control cantidadCls"
-                                       step="0.001" min="0.001" name="cantidad[]"
+                                <input type="number" class="form-control cantidadCls" name="cantidad[]"
                                        id="cantidadID" value="0" required>
                             </td>
 
@@ -254,7 +247,7 @@
                             <td>
                                 <div class="input-group">
                                     <input readonly type="number" class="form-control puCls" step="any"
-                                           name="precios_unitario[]" id="precioUnitario" required>
+                                           name="precios_unitario[]" id="precioUnitario">
                                 </div>
                             </td>
 
@@ -309,7 +302,8 @@
             <div class="box-footer">
                 <a href="{{ route('ordenPedidoLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-success pull-right" id="btn-enviar-id"><span class="fa fa-floppy-o"></span>
+                <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom"><span
+                            class="fa fa-floppy-o"></span>
                     Guardar
                 </button>
             </div>
@@ -321,6 +315,9 @@
 @section('JSExtras')
     {{--Alertify--}}
     <script type="text/javascript" src="{{'/plugins/alertify/lib/alertify.js'}}"></script>
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     {{-- Funcion para cargar mas filas de productos --}}
     <script>
         $(document).on('ready', funcionPrincipal());
@@ -330,39 +327,94 @@
             $(":input").click(function () {
                 $(this).select();
             });
-            $('#btn-enviar-id').click(enviarForm);
             selecionarValor();
             agregarFuncion();
+            Validacion();
         }
 
-        function enviarForm() {
-            $(this).prop('disabled',true);
-            // Valido los campos obligatorios
-            let cliente_input = $('#clienteID');
-            let tipo_documento_input = $('#IVAid');
-            let condicion_pago_input = $('#condicionPagoID');
-            let productos_input = $('.selProd');
-            let presentaciones_input = $('.presentacionCls');
-            let cantidades_input = $('.cantidadCls');
-            let validacion = true;
-            if (cliente_input.val() != null && tipo_documento_input.val() != null && condicion_pago_input.val() != null)
-            {
-                for (i=0; i < productos_input.length; i++) {
-                    if (productos_input[i].value !== "" && presentaciones_input[i].value !== "" && cantidades_input[i].value > 0) {
-                        // validacion = false;
-                    } else {
-                        validacion = false;
-                    }
+        function Validacion() {
+            $('#orden-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "fecha": {
+                        required: true,
+                    },
+                    "cliente_id": {
+                        required: true,
+                    },
+                    "tipo_documento_id": {
+                        required: true,
+                    },
+                    "fecha_entrega": {
+                        required: true,
+                    },
+                    "condicion_pago_id": {
+                        required: true,
+                    },
+                    "producto_id[]": {
+                        required: true,
+                    },
+                    "presentacion_id[]": {
+                        required: true,
+                    },
+                    "cantidad[]": {
+                        required: true,
+                        min: 0.001,
+                    },
+                },
+                messages: {
+                    "fecha": {
+                        required: function () {
+                            toastr.error('Por favor digite la fecha', 'Ups!');
+                        },
+                    },
+                    "cliente_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione el cliente', 'Ups!');
+                        },
+                    },
+                    "tipo_documento_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione el tipo de documento', 'Ups!');
+                        },
+                    },
+                    "fecha_entrega": {
+                        required: function () {
+                            toastr.error('Por favor complete la fecha de entrega', 'Ups!');
+                        },
+                    },
+                    "condicion_pago_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione la condicion de pago', 'Ups!');
+                        },
+                    },
+                    "producto_id[]": {
+                        required: function () {
+                            toastr.error('Por favor seleccione el producto', 'Ups!');
+                        },
+                    },
+                    "presentacion_id[]": {
+                        required: function () {
+                            toastr.error('Por favor seleccione la presentación', 'Ups!');
+                        },
+                    },
+                    "cantidad[]": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled', 'true');
+                    toastr.success('Por favor espere a que se procese', 'Excelente');
+                    form.submit();
                 }
-            } else {
-                validacion = false;
-            }
-            if (validacion === true) {
-                $('#orden-pedido-frm-id').submit();
-            } else {
-                alertify.error('Ups!! Por favor complete todos los campos obligatorios');
-                $(this).prop('disabled',false);
-            }
+            });
         }
 
         function selecionarValor() {
@@ -409,8 +461,8 @@
                                 .append
                                 (
                                     '<input type="number" class="form-control cantidadCls"\n' +
-                                    'step="0.001" min="0.001" name="cantidad[]"\n' +
-                                    'id="cantidadID" value="0" required>'
+                                    'name="cantidad[]"\n' +
+                                    'id="cantidadID" value="0">'
                                 )
                         )
                         .append
@@ -419,7 +471,7 @@
                                 .append
                                 (
                                     '<div class="input-group">\n' +
-                                    '<input readonly type="number" step="any" class="form-control puCls" name="precios_unitario[]" id="precioUnitario" required>\n' +
+                                    '<input readonly type="number" step="any" class="form-control puCls" name="precios_unitario[]" id="precioUnitario">\n' +
                                     '</div>'
                                 )
                         )

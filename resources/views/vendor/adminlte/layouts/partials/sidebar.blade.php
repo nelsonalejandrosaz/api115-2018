@@ -81,14 +81,16 @@
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{route('ventaOrdenesLista')}}"><i class="fa fa-bars"></i>Ordenes sin facturar</a></li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'todo'])}}"><i class="fa fa-bars"></i>Ventas
+                        <li><a href="{{route('ventaLista',['tipo' => 'todo'])}}"><i class="fa fa-bars"></i>Ventas
                                 facturadas</a></li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'factura'])}}"><i class="fa fa-bars"></i>Facturas</a>
+                        <li><a href="{{route('ventaLista',['tipo' => 'factura'])}}"><i class="fa fa-bars"></i>Facturas</a>
                         </li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'ccf'])}}"><i class="fa fa-bars"></i>Créditos
+                        <li><a href="{{route('ventaLista',['tipo' => 'ccf'])}}"><i class="fa fa-bars"></i>Créditos
                                 fiscales</a></li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'anulada'])}}"><i class="fa fa-window-close"></i>Ventas
+                        <li><a href="{{route('ventaLista',['tipo' => 'anulada'])}}"><i class="fa fa-window-close"></i>Ventas
                                 anuladas</a></li>
+                        <li><a href="{{route('ventaSinOrdenNueva')}}"><i class="fa fa-plus"></i>Nueva venta sin orden</a>
+                        <li><a href="{{route('ventaSinOrdenAnuladaNueva')}}"><i class="fa fa-plus"></i>Nuevo documento anulado</a>
                     </ul>
                 </li>
 
@@ -269,13 +271,13 @@
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{route('ventaOrdenesLista')}}"><i class="fa fa-bars"></i>Ordenes sin facturar</a></li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'todo'])}}"><i class="fa fa-bars"></i>Ventas
+                        <li><a href="{{route('ventaLista',['tipo' => 'todo'])}}"><i class="fa fa-bars"></i>Ventas
                                 facturadas</a></li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'factura'])}}"><i class="fa fa-bars"></i>Facturas</a>
+                        <li><a href="{{route('ventaLista',['tipo' => 'factura'])}}"><i class="fa fa-bars"></i>Facturas</a>
                         </li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'ccf'])}}"><i class="fa fa-bars"></i>Créditos
+                        <li><a href="{{route('ventaLista',['tipo' => 'ccf'])}}"><i class="fa fa-bars"></i>Créditos
                                 fiscales</a></li>
-                        <li><a href="{{route('ventaLista',['filtro' => 'anulada'])}}"><i class="fa fa-window-close"></i>Ventas
+                        <li><a href="{{route('ventaLista',['tipo' => 'anulada'])}}"><i class="fa fa-window-close"></i>Ventas
                                 anuladas</a></li>
                     </ul>
                 </li>

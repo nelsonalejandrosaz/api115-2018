@@ -253,7 +253,6 @@
         }
 
         function EnviarForm() {
-            console.log('Voy aqui');
             $('#precios-form-id').validate({
                 ignore: [],
                 onfocusout: false,

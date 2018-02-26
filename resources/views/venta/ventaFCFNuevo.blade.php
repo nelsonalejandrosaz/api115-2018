@@ -29,7 +29,7 @@
             <h3 class="box-title">Detalle de venta</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $orden_pedido->id]) }}" method="POST" id="venta-form-id">
+        <form class="form-horizontal" action="{{ route('ventaNuevaPost', ['id' => $orden_pedido->id]) }}" method="POST" id="venta-form">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -37,7 +37,7 @@
 
                     {{-- Fecha ingreso --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Fecha venta</b></label>
+                        <label class="col-md-3  control-label">Fecha venta</label>
                         <div class="col-md-9 ">
                             <input readonly type="date" class="form-control" name="fecha"
                                    value="{{ $dia->format('Y-m-d') }}">
@@ -46,28 +46,10 @@
 
                     {{-- Cliente --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Cliente</b></label>
+                        <label class="col-md-3  control-label">Cliente</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="cliente_id"
                                    value="{{$orden_pedido->cliente->nombre}}">
-                        </div>
-                    </div>
-
-                    {{-- NRC --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label"><b>NRC</b></label>
-                        <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="nrc"
-                                   value="{{$orden_pedido->cliente->nrc}}">
-                        </div>
-                    </div>
-
-                    {{-- Condicion pago --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label">Condición pago</label>
-                        <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="condicion_pago_id"
-                                   value="{{$orden_pedido->condicion_pago->nombre}}">
                         </div>
                     </div>
 
@@ -89,6 +71,15 @@
                         </div>
                     </div>
 
+                    {{-- Condicion pago --}}
+                    <div class="form-group">
+                        <label class="col-md-3  control-label">Condición pago</label>
+                        <div class="col-md-9 ">
+                            <input readonly type="text" class="form-control" name="condicion_pago_id"
+                                   value="{{$orden_pedido->condicion_pago->nombre}}">
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="col-md-6 col-sm-12">
@@ -98,22 +89,15 @@
                         <label class="col-md-4  control-label"><b>N° Documento</b></label>
                         <div class="col-md-8 ">
                             <input type="text" class="form-control" name="numero"
-                                   placeholder="Numero factura o Crédito Fiscal" value="{{ old('numero') }}">
+                                   placeholder="Numero factura o Crédito Fiscal" value="">
                         </div>
                     </div>
 
                     {{-- Tipo Documento --}}
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><b>Tipo de documento</b></label>
+                        <label class="col-sm-4 control-label">Tipo de documento</label>
                         <div class="col-sm-8">
-                            <select class="form-control select2" name="tipo_documento_id">
-                                <option selected disabled>Seleccione una opción</option>
-                                @foreach($tipoDocumentos as $tipoDocumento)
-                                    @if($tipoDocumento->id == $orden_pedido->tipo_documento_id)
-                                        <option selected value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <input readonly type="text" class="form-control" name="tipo_documento" value="{{ $orden_pedido->tipo_documento->nombre }}">
                         </div>
                     </div>
 
@@ -121,8 +105,7 @@
                     <div class="form-group">
                         <label class="col-md-4  control-label">Orden pedido n°:</label>
                         <div class="col-md-8 ">
-                            <input readonly type="text" class="form-control" name="orden"
-                                   value="{{$orden_pedido->numero}}">
+                            <input readonly type="text" class="form-control" name="orden" value="{{$orden_pedido->numero}}">
                         </div>
                     </div>
 
@@ -142,21 +125,13 @@
 
                     {{-- Despachado por --}}
                     <div class="form-group">
-                        <label class="col-md-4  control-label"><b>Vendedor</b></label>
+                        <label class="col-md-4  control-label">Vendedor</label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
                                    value="{{$orden_pedido->vendedor->nombre}} {{$orden_pedido->vendedor->apellido}}"
                                    name="despachadoPor">
                         </div>
                     </div>
-
-                    {{-- Ruta archivo --}}
-                    {{--<div class="form-group">--}}
-                    {{--<label class="col-md-4 control-label">Copia documento</label>--}}
-                    {{--<div class="col-md-8">--}}
-                    {{--<input type="file" class="form-control" name="archivo">--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
 
                 </div>
 
@@ -166,9 +141,9 @@
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
                             <th style="width:40%">Producto</th>
-                            <th style="width:5%">Unidad medida</th>
-                            <th style="width:5%">Cantidad</th>
-                            <th style="width:12.5%">Precio unitario</th>
+                            <th style="width:7.5%">Unidad medida</th>
+                            <th style="width:7.5%">Cantidad</th>
+                            <th style="width:15%">Precio unitario</th>
                             <th style="width:15%">Ventas exentas</th>
                             <th style="width:15%">Ventas gravadas</th>
                         </tr>
@@ -201,7 +176,6 @@
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
                                         <input readonly type="text" class="form-control puCls"
-                                               pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
                                                name="preciosUnitarios[]" id="precioUnitario"
                                                value="{{number_format(($salida->precio_unitario * $iva),4)}}">
                                     </div>
@@ -228,7 +202,7 @@
 
                     <table class="table table-bordered">
                         <tr>
-                            <th style="width:65%"></th>
+                            <th style="width:70%"></th>
                             <th style="width:15%">Venta Total</th>
                             <th style="width:15%">
                                 <div class="input-group">
@@ -247,8 +221,8 @@
             <div class="box-footer">
                 <a href="{{ route('ventaOrdenesLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-money"></span>
-                    Generar venta
+                <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-shopping-bag"></span>
+                    Generar Factura
                 </button>
             </div>
         </form>
@@ -257,17 +231,40 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     @include('comun.select2Jses')
     <script>
         $(document).on('ready', Principal());
 
         function Principal() {
-            $('#enviar-buttom-id').click(EnviarForm);
+            Validacion();
         }
 
-        function EnviarForm() {
-            $('#enviar-buttom-id').attr('disabled', 'true');
-            $('#venta-form-id').submit();
+        function Validacion() {
+            $('#venta-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "numero" : {
+                        required: true,
+                    }
+                },
+                messages: {
+                    "numero" : {
+                        required: function () {
+                            toastr.error('Por favor ingrese el numero de documento', 'Ups!');
+                        },
+                    }
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom-id').attr('disabled', 'true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
         }
     </script>
 @endsection

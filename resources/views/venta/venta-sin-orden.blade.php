@@ -36,12 +36,12 @@
         {{--Venta exenta--}}
         <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="text" class="form-control veCls" name="venta_exenta[]" id="venta-exenta-id">
+            <input type="number" class="form-control veCls" name="venta_exenta[]" id="venta-exenta-id">
         </div>
         {{--Venta gravada--}}
         <div class="input-group">
             <span class="input-group-addon">$</span>
-            <input type="text" class="form-control vaCls" name="venta_gravada[]" id="venta-gravada-id">
+            <input type="number" class="form-control vaCls" name="venta_gravada[]" id="venta-gravada-id">
         </div>
         {{--Eliminar boton--}}
         <button type="button" class="btn btn-danger" id="eliminar-fila-id"><span class="fa fa-remove"></span></button>
@@ -53,7 +53,7 @@
             <h3 class="box-title">Detalle de venta</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="" method="POST">
+        <form class="form-horizontal" action="{{ route('ventaSinOrdenPost') }}" method="POST" id="venta-form">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -66,7 +66,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Fecha venta</b></label>
                         <div class="col-md-9 ">
-                            <input type="date" class="form-control" name="fecha"
+                            <input readonly type="date" class="form-control" name="fecha"
                                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                         </div>
                     </div>
@@ -75,8 +75,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID"
-                                    onchange="cambioCliente()">
+                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID">
                                 <option value="" selected disabled>Seleciona un cliente</option>
                                 @foreach($clientes as $cliente)
                                     @if($cliente->id == old('cliente_id'))
@@ -93,49 +92,12 @@
                         </div>
                     </div>
 
-                    {{-- NRC --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label"><b>NRC</b></label>
-                        <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="nrc"
-                                   value="">
-                        </div>
-                    </div>
-
-                    {{-- Municipio --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label">Municipio</label>
-                        <div class="col-md-9 ">
-                            <input readonly type="text" class="form-control" name="municipio" id="municipioID"
-                                   value="">
-                        </div>
-                    </div>
-
                     {{-- Direccion --}}
                     <div class="form-group">
                         <label class="col-md-3  control-label">Dirección</label>
                         <div class="col-md-9 ">
                             <textarea readonly class="form-control" placeholder="Seleccione el cliente" name="direccion"
                                       id="direccionID"></textarea>
-                        </div>
-                    </div>
-
-                    {{-- Condicion pago --}}
-                    <div class="form-group">
-                        <label class="col-md-3  control-label">Condición pago</label>
-                        <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="condicion_pago_id"
-                                    id="condicionPagoID">
-                                <option selected disabled>Selecciona una condición de pago</option>
-                                @foreach($condiciones_pago as $condicion_pago)
-                                    @if($condicion_pago->id == old('condicion_pago_id'))
-                                        <option selected
-                                                value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
-                                    @else
-                                        <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
                         </div>
                     </div>
 
@@ -160,9 +122,25 @@
                         <label class="col-sm-4 control-label"><b>Tipo de documento</b></label>
                         <div class="col-sm-8">
                             <select class="form-control select2" name="tipo_documento_id">
-                                <option selected disabled>Seleccione una opción</option>
-                                @foreach($tipoDocumentos as $tipoDocumento)
-                                    <option value="{{ $tipoDocumento->id }}">{{ $tipoDocumento->nombre }}</option>
+                                <option value="1" selected>Factura</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Condicion pago --}}
+                    <div class="form-group">
+                        <label class="col-md-4  control-label"><b>Condición pago</b></label>
+                        <div class="col-md-8 ">
+                            <select class="form-control select2" style="width: 100%" name="condicion_pago_id"
+                                    id="condicionPagoID">
+                                <option selected disabled>Selecciona una condición de pago</option>
+                                @foreach($condiciones_pago as $condicion_pago)
+                                    @if($condicion_pago->id == old('condicion_pago_id'))
+                                        <option selected
+                                                value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @else
+                                        <option value="{{ $condicion_pago->id }}">{{ $condicion_pago->nombre }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -170,7 +148,7 @@
 
                     {{-- Despachado por --}}
                     <div class="form-group">
-                        <label class="col-md-4  control-label"><b>Vendedor</b></label>
+                        <label class="col-md-4  control-label">Vendedor</label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
                                    value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}"
@@ -190,13 +168,9 @@
                     <table class="table table-bordered" id="venta-table-id">
                         <thead>
                         <tr>
-                            <th style="width:35%">Producto</th>
-                            <th style="width:10%">Unidad medida</th>
-                            <th style="width:10%">Cantidad</th>
-                            <th style="width:10%">Precio unitario</th>
-                            <th style="width:15%">Ventas exentas</th>
-                            <th style="width:15%">Ventas gravadas</th>
-                            <th style="width:5%; text-align: center">
+                            <th style="width:60%">Producto</th>
+                            <th style="width:30%">Ventas gravadas</th>
+                            <th style="width:10%; text-align: center">
                                 <button class="btn btn-success" id="btn-nueva-fila-id"
                                         type="button">
                                     <span class="fa fa-plus"></span>
@@ -217,7 +191,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
-                                           value="" name="compraTotal"
+                                           value="" name="suma"
                                            id="ventaTotal">
                                 </div>
                             </td>
@@ -230,7 +204,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
-                                           value="" name="compraTotal"
+                                           value="" name="flete"
                                            id="ventaTotal">
                                 </div>
                             </td>
@@ -243,7 +217,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
-                                           value="" name="compraTotal"
+                                           value="" name="total"
                                            id="ventaTotal">
                                 </div>
                             </td>
@@ -256,7 +230,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
-                                           value="" name="compraTotal"
+                                           value="" name="comision"
                                            id="ventaTotal">
                                 </div>
                             </td>
@@ -270,7 +244,7 @@
             <div class="box-footer">
                 <a href="{{ route('ventaOrdenesLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-success pull-right"><span class="fa fa-money"></span>
+                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-shopping-bag"></span>
                     Generar venta
                 </button>
             </div>
@@ -280,25 +254,121 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     @include('comun.select2Jses')
     <script>
         $(document).ready(Principal);
 
         function Principal() {
             $('#btn-nueva-fila-id').click(AgregarFila);
-            // $('#eliminar-fila-id').click(EliminarFila);
             $("body").on("click", ".btn-danger", EliminarFila);
+            Validacion();
+        }
+
+        function Validacion() {
+            $('#venta-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "cliente_id": {
+                        required: true,
+                    },
+                    "numero": {
+                        required: true,
+                    },
+                    "tipo_documento_id": {
+                        required: true,
+                    },
+                    "condicion_pago_id": {
+                        required: true,
+                    },
+                    "detalle[]": {
+                        required: true,
+                    },
+                    "unidad_medida[]": {
+                        required: false,
+                    },
+                    "cantidad[]": {
+                        required: false,
+                    },
+                    "precio_unitario[]": {
+                        required: true,
+                    },
+                    "venta_exenta[]": {
+                        required: false,
+                    },
+                    "venta_gravada[]": {
+                        required: false,
+                    },
+                },
+                messages: {
+                    "cliente_id": {
+                        required: function () {
+                            toastr.error('Por favor un cliente', 'Ups!');
+                        },
+                    },
+                    "numero": {
+                        required: function () {
+                            toastr.error('Por favor ingrese el numero del documento', 'Ups!');
+                        },
+                    },
+                    "tipo_documento_id": {
+                        required: function () {
+                            toastr.error('Por favor elija un tipo de documento', 'Ups!');
+                        },
+                    },
+                    "condicion_pago_id": {
+                        required: function () {
+                            toastr.error('Por favor elija una condición de pago', 'Ups!');
+                        },
+                    },
+                    "detalle[]": {
+                        required: function () {
+                            toastr.error('Por favor ingrese el detalle','Ups!')
+                        }
+                    },
+                    "unidad_medida[]": {
+                        required: function () {
+                            toastr.error('Por favor ingrese la unidad de medida','Ups!')
+                        }
+                    },
+                    "cantidad[]": {
+                        required: function () {
+                            toastr.error('Por favor ingrese la cantidad','Ups!')
+                        }
+                    },
+                    "precio_unitario[]": {
+                        required: function () {
+                            toastr.error('Por favor ingrese el precio unitario','Ups!')
+                        }
+                    },
+                    "venta_exenta[]": {
+                        required: function () {
+                            toastr.error('Por favor ingrese la venta exenta','Ups!')
+                        }
+                    },
+                    "venta_gravada[]": {
+                        required: function () {
+                            toastr.error('Por favor ingrese la venta gravada','Ups!')
+                        }
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled','true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
         }
 
         function AgregarFila() {
             let detalle = $('#detalle-input-id').clone();
-            let unidad_medida = $('#unidad-medida-input-id').clone();
-            let cantidad = $('#cantidad-input-id').clone();
-            let precio_unitario = $('#precio-unitario-input-id').clone();
-            let venta_exenta = $('#venta-exenta-id').clone();
-            let venta_grabada = $('#venta-gravada-id').clone();
+            let venta_gravada = $('#venta-gravada-id').clone();
             let eliminar = $('#eliminar-fila-id').clone();
-            $('#venta-table-id > tbody')
+            $('#venta-table-id').find('> tbody')
                 .append(
                     $('<tr>')
                         .append
@@ -311,42 +381,10 @@
                         )
                         .append
                         (
-                            $('<td>')
-                                .append
-                                (
-                                    unidad_medida
-                                )
-                        )
-                        .append
-                        (
                             $('<td>').attr('align', 'center')
                                 .append
                                 (
-                                    cantidad
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>').attr('align', 'center')
-                                .append
-                                (
-                                    precio_unitario
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>').attr('align', 'center')
-                                .append
-                                (
-                                    venta_exenta
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>').attr('align', 'center')
-                                .append
-                                (
-                                    venta_grabada
+                                    venta_gravada
                                 )
                         )
                         .append

@@ -35,16 +35,16 @@
 
                     {{-- Fecha ingreso --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Fecha venta</b></label>
+                        <label class="col-md-3  control-label">Fecha venta</label>
                         <div class="col-md-9 ">
-                            <input disabled type="date" class="form-control" name="fecha"
+                            <input readonly type="date" class="form-control" name="fecha"
                                    value="{{$venta->fecha->format('Y-m-d')}}">
                         </div>
                     </div>
 
                     {{-- Cliente --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>Cliente</b></label>
+                        <label class="col-md-3  control-label">Cliente</label>
                         <div class="col-md-9 ">
                             <input readonly class="form-control" name="cliente"
                                    value="{{$venta->orden_pedido->cliente->nombre}}">
@@ -53,9 +53,17 @@
 
                     {{-- NRC --}}
                     <div class="form-group">
-                        <label class="col-md-3  control-label"><b>NRC</b></label>
+                        <label class="col-md-3  control-label">NRC</label>
                         <div class="col-md-9 ">
                             <input readonly type="text" class="form-control" name="nrc" value="{{$venta->orden_pedido->cliente->nrc}}">
+                        </div>
+                    </div>
+
+                    {{-- NRC --}}
+                    <div class="form-group">
+                        <label class="col-md-3  control-label">NIT</label>
+                        <div class="col-md-9 ">
+                            <input readonly type="text" class="form-control" name="nrc" value="{{$venta->orden_pedido->cliente->nit}}">
                         </div>
                     </div>
 
@@ -120,7 +128,7 @@
 
                     {{-- Despachado por --}}
                     <div class="form-group">
-                        <label class="col-md-4  control-label"><b>Vendedor</b></label>
+                        <label class="col-md-4  control-label">Vendedor</label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
                                    value="{{$venta->orden_pedido->vendedor->nombre}} {{$venta->orden_pedido->vendedor->apellido}}" name="despachadoPor">
@@ -159,11 +167,17 @@
                             <th style="width:15%">Ventas exentas</th>
                             <th style="width:15%">Ventas gravadas</th>
                         </tr>
-                        @foreach($salidas as $salida)
+                        @foreach($venta->orden_pedido->salidas as $salida)
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <input readonly type="text" class="form-control" name="productos_id[]" value="{{$salida->movimiento->producto->nombre}} {{$salida->descripcion_presentacion}}">
+                                    @if( $salida->descripcion_presentacion != null)
+                                        <input readonly type="text" class="form-control" name="productos_id[]"
+                                               value="{{$salida->movimiento->producto->nombre}} ({{$salida->descripcion_presentacion}})">
+                                    @else
+                                        <input readonly type="text" class="form-control" name="productos_id[]"
+                                               value="{{$salida->movimiento->producto->nombre}}">
+                                    @endif
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
@@ -171,8 +185,7 @@
                                 </td>
                                 {{--Cantidad--}}
                                 <td>
-                                    <input type="text" class="form-control cantidadCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
+                                    <input type="text" class="form-control cantidadCls" name="cantidades[]"
                                            id="cantidad" value="{{$salida->cantidad}}" disabled>
                                 </td>
                                 {{--Precio unitario--}}
@@ -180,8 +193,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
                                         <input type="text" class="form-control puCls"
-                                               pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,5)}}" disabled>
+                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,4)}}" disabled>
                                     </div>
                                 </td>
                                 {{--Ventas exentas--}}

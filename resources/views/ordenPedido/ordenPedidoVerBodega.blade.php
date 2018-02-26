@@ -29,7 +29,7 @@
             <h3 class="box-title">Detalle</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ordenPedidoBodegaPost',['id' => $ordenPedido->id]) }}" method="POST" id="venta-form-id">
+        <form class="form-horizontal" action="{{ route('ordenPedidoBodegaPost',['id' => $ordenPedido->id]) }}" method="POST" id="orden-form">
             {{ csrf_field() }}
             {{ method_field('PUT') }}
             <div class="box-body">
@@ -127,14 +127,14 @@
                                 {{--Cantidad--}}
                                 <td>
                                     <input readonly type="text" class="form-control cantidadCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}">
+                                           value="{{$salida->cantidad}}">
                                 </td>
                                 {{--Cantidad a sacar--}}
                                 <td>
-                                    <input readonly type="text" class="form-control cantidadCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->movimiento->cantidad}} {{ $salida->movimiento->producto()->withTrashed()->first()->unidad_medida->abreviatura }}">
+                                    <div class="input-group">
+                                        <input readonly type="number" class="form-control cantidad" name="cantidades[]" value="{{$salida->movimiento->cantidad}}">
+                                        <span class="input-group-addon">Kg</span>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -147,7 +147,8 @@
                 <a href="{{ route('ordenPedidoListaBodega') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
                 {{--<a href="{{ route('ordenPedidoPDF',['id' => $ordenPedido->id]) }}" class="btn btn-lg btn-success pull-right">Procesar orden pedido</a>--}}
                 @if($ordenPedido->estado_orden->codigo == 'SP')
-                    <button type="button" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-check-square-o"></span> Despachar orden pedido</button>
+                    <button type="submit" class="btn btn-lg btn-success pull-right" style="margin-left: 5px" id="enviar-buttom"><span class="fa fa-check-square-o"></span> Despachar orden pedido</button>
+                    <button type="button" class="btn btn-lg btn-warning pull-right" id="editar-buttom"><span class="fa fa-edit"></span> Editar cantidades</button>
                 @endif
             </div>
         </form>
@@ -156,12 +157,50 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     {{-- Funcion para cargar mas filas de productos --}}
     <script>
         $(document).on('ready', funcionPrincipal());
 
         function funcionPrincipal() {
-            $('#enviar-buttom-id').click(EnviarOrdenPedido);
+            Validacion();
+            $('#editar-buttom').click(EditarCantidades);
+        }
+        
+        function Validacion() {
+            $('#orden-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "cantidades[]": {
+                        required: true,
+                        min: 0.001,
+                    },
+                },
+                messages: {
+                    "cantidades[]": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad a descargar', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad a descargar debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled','true');
+                    toastr.success('Por favor espere a que se procese','Excelente!!');
+                    form.submit();
+                }
+            });
+        }
+        
+        function EditarCantidades() {
+            $('.cantidad').removeAttr('readonly');
+            toastr.info('Ahora puede editar las cantidades a despachar','Perfecto!!');
         }
 
         function EnviarOrdenPedido() {
