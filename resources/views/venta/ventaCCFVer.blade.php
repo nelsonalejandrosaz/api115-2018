@@ -223,7 +223,7 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{number_format($venta->orden_pedido->ventas_gravadas,2)}}" name="compraTotal"
+                                    <input type="text" class="form-control" value="{{number_format($venta->orden_pedido->ventas_gravadas,2)}}" name="compraTotal"
                                            id="ventaTotal" disabled>
                                 </div>
                             </th>
@@ -235,7 +235,7 @@
                             <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{number_format($venta->orden_pedido->porcentaje_IVA,2)}}" name="compraTotal"
+                                    <input type="text" class="form-control" value="{{number_format($venta->orden_pedido->porcentaje_IVA,2)}}" name="compraTotal"
                                            id="ventaTotal" disabled>
                                 </div>
                             </th>
@@ -247,7 +247,7 @@
                             <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input type="number" class="form-control" value="{{number_format($venta->orden_pedido->venta_total,2)}}" name="compraTotal"
+                                    <input type="text" class="form-control" value="{{number_format($venta->orden_pedido->venta_total,2)}}" name="compraTotal"
                                            id="ventaTotal" disabled>
                                 </div>
                             </th>

@@ -94,7 +94,7 @@
                         @endforeach
                             <tr>
                                 <td colspan="5"><b>Total saldo pendiente</b></td>
-                                <td><b>$ {{ $total_saldo_pendiente }}</b></td>
+                                <td><b>$ {{ number_format($total_saldo_pendiente,2) }}</b></td>
                                 <td></td>
                             </tr>
                         </tbody>

@@ -192,7 +192,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input readonly type="number" class="form-control puCls"
+                                        <input readonly type="text" class="form-control puCls"
                                                name="preciosUnitarios[]" id="precioUnitario"
                                                value="{{number_format(($salida->precio_unitario),4)}}">
                                     </div>
@@ -201,7 +201,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input readonly type="number" class="form-control veCls" name="ventasExentas[]"
+                                        <input readonly type="text" class="form-control veCls" name="ventasExentas[]"
                                                id="ventasExentas" value="{{number_format(($salida->venta_exenta),2)}}">
                                     </div>
                                 </td>
@@ -209,7 +209,7 @@
                                 <td>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input readonly type="number" class="form-control vaCls" name="ventasGravadas[]"
+                                        <input readonly type="text" class="form-control vaCls" name="ventasGravadas[]"
                                                id="ventasGravadas" value="{{number_format(($salida->venta_gravada),2)}}">
                                     </div>
                                 </td>
@@ -224,7 +224,7 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control" step="any"
+                                    <input readonly type="text" class="form-control" step="any"
                                            value="{{number_format(($orden_pedido->venta_total),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
@@ -236,7 +236,7 @@
                             <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control" step="any"
+                                    <input readonly type="text" class="form-control" step="any"
                                            value="{{number_format(($orden_pedido->venta_total * ($iva - 1)),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>
@@ -248,7 +248,7 @@
                             <th>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control" step="any"
+                                    <input readonly type="text" class="form-control" step="any"
                                            value="{{number_format(($orden_pedido->venta_total * $iva),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>

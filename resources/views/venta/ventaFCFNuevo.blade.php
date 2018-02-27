@@ -161,7 +161,7 @@
                                     @endif
                                 </td>
                                 {{--Unidad de medida--}}
-                                <td>
+                                <td>text
                                     <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida"
                                            value="{{$salida->unidad_medida->abreviatura}}">
                                 </td>
@@ -207,7 +207,7 @@
                             <th style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control"
+                                    <input readonly type="text" class="form-control"
                                            value="{{number_format(($orden_pedido->venta_total * $iva),2)}}" name="compraTotal"
                                            id="ventaTotal">
                                 </div>

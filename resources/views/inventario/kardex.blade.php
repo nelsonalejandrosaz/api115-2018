@@ -128,7 +128,7 @@
             {{-- Tabla de productos --}}
             <div class="col-xs-12" style="padding-top: 20px">
                 <div class="box-body">
-                    <table id="tablaKardex" class="table table-hover">
+                    <table id="tablaKardex" class="table table-condensed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10%" rowspan="2">Fecha</th>

@@ -161,7 +161,11 @@
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <input readonly type="text" class="form-control" name="producto_id" id="" value="{{ $salida->movimiento->producto()->withTrashed()->first()->nombre }} {{ $salida->descripcion_presentacion}}">
+                                    @if($salida->descripcion_presentacion == null)
+                                        <input readonly type="text" class="form-control" name="producto_id" id="" value="{{ $salida->movimiento->producto()->withTrashed()->first()->nombre }}">
+                                    @else
+                                        <input readonly type="text" class="form-control" name="producto_id" id="" value="{{ $salida->movimiento->producto()->withTrashed()->first()->nombre }} ({{ $salida->descripcion_presentacion}})">
+                                    @endif
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
@@ -221,13 +225,14 @@
                                 </th>
                             </tr>
                             <tr>
+                                @php( $iva = \App\Configuracion::find(1)->iva)
                                 <th style="width:70%"></th>
                                 <th style="width:15%">13% IVA</th>
                                 <th style="width:15%">
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
                                         <input type="number" class="form-control"
-                                               value="{{number_format(($ordenPedido->venta_total * 0.13),2)}}" name="iva"
+                                               value="{{number_format(($ordenPedido->venta_total * ($iva - 1)),2)}}" name="iva"
                                                id="ventaTotal" disabled>
                                     </div>
                                 </th>
@@ -240,7 +245,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
-                                           value="{{number_format(($ordenPedido->venta_total * 1.13),2)}}" name="compraTotal"
+                                           value="{{number_format(($ordenPedido->venta_total * $iva),2)}}" name="compraTotal"
                                            id="ventaTotal" disabled>
                                 </div>
                             </th>

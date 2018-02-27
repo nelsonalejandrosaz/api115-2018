@@ -62,21 +62,25 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas de cliente
      */
-    Route::get('/cliente','ClienteController@ClienteLista')->name('clienteLista');
-    Route::get('/cliente/nuevo','ClienteController@ClienteNuevo')->name('clienteNuevo');
-    Route::post('/cliente/nuevo','ClienteController@ClienteNuevoPost')->name('clienteNuevoPost');
-    Route::get('/cliente/{id}','ClienteController@ClienteVer')->name('clienteVer');
-    Route::get('/cliente/{id}/editar','ClienteController@ClienteEditar')->name('clienteEditar');
-    Route::put('/cliente/{id}','ClienteController@ClienteEditarPut')->name('clienteEditarPut');
-    Route::delete('/cliente/{id}','ClienteController@ClienteEliminar')->name('clienteEliminar');
+    Route::group(['middleware' => ['vendedor']], function () {
+        Route::get('/cliente','ClienteController@ClienteLista')->name('clienteLista');
+        Route::get('/cliente/nuevo','ClienteController@ClienteNuevo')->name('clienteNuevo');
+        Route::post('/cliente/nuevo','ClienteController@ClienteNuevoPost')->name('clienteNuevoPost');
+        Route::get('/cliente/{id}','ClienteController@ClienteVer')->name('clienteVer');
+        Route::get('/cliente/{id}/editar','ClienteController@ClienteEditar')->name('clienteEditar');
+        Route::put('/cliente/{id}','ClienteController@ClienteEditarPut')->name('clienteEditarPut');
+        Route::delete('/cliente/{id}','ClienteController@ClienteEliminar')->name('clienteEliminar');
+    });
 
     /**
      * Cuentas por cobrar
      */
-    Route::get('/cxc/ventas','ClienteController@ClienteVentaLista')->name('clienteVentaLista');
-    Route::get('/cxc/ventas/{id}','ClienteController@VentasPorClienteVer')->name('ventasPorClienteVer');
-    Route::get('/cxc/saldo','ClienteController@CuentasPorCobrar')->name('cuentasPorCobrar');
-    Route::get('/cxc/saldo/{id}','ClienteController@CuentasPorCobrarVer')->name('cuentasPorCobrarVer');
+    Route::group(['middleware' => ['vendedor']], function () {
+        Route::get('/cxc/ventas','ClienteController@ClienteVentaLista')->name('clienteVentaLista');
+        Route::get('/cxc/ventas/{id}','ClienteController@VentasPorClienteVer')->name('ventasPorClienteVer');
+        Route::get('/cxc/saldo','ClienteController@CuentasPorCobrar')->name('cuentasPorCobrar');
+        Route::get('/cxc/saldo/{id}','ClienteController@CuentasPorCobrarVer')->name('cuentasPorCobrarVer');
+    });
 
     /**
      * Rutas Compras

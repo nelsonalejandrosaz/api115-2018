@@ -85,6 +85,7 @@ class VentaController extends Controller
         $venta = Venta::create([
             'tipo_documento_id' => $orden_pedido->tipo_documento_id,
             'orden_pedido_id' => $orden_pedido->id,
+            'condicion_pago_id' => $orden_pedido->condicion_pago_id,
             'numero' => $request->input('numero'),
             'fecha' => $fecha,
             'cliente_id' => $orden_pedido->cliente_id,
