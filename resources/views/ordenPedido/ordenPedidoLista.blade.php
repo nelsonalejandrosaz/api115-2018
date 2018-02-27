@@ -36,8 +36,7 @@
                 </div><!-- /.box-header -->
 
                 <!-- form start -->
-                <form class="form-horizontal" action="{{ route('ordenPedidoListaPost') }}" method="POST">
-                    {{ csrf_field() }}
+                <form class="form-horizontal" method="GET" id="fecha-form">
                     <div class="box-body">
                         <div class="col-md-6 col-sm-12">
                             <h4>Fechas mostradas</h4>
@@ -76,7 +75,7 @@
                     </div><!-- /.box-body -->
 
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-lg btn-success pull-right"><span
+                        <button type="button" class="btn btn-lg btn-success pull-right" id="fecha-buttom"><span
                                     class="fa fa-search"></span> Consultar
                         </button>
                         <a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary" style="margin-right: 5px"><span
@@ -87,9 +86,9 @@
             {{--Fin cuadro de herramientas--}}
 
             <div class="box box-default">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Lista de ordenes de pedido</h3>
-                </div><!-- /.box-header -->
+                {{--<div class="box-header with-border">--}}
+                    {{--<h3 class="box-title">Lista de ordenes de pedido</h3>--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
@@ -157,7 +156,10 @@
     <script src="{{ asset('/plugins/moment.min.js') }}"></script>
     <script src="{{ asset('/plugins/datetime-moment.js') }}"></script>
     <script !src="">
-        $(function () {
+        $(document).on('ready', Principal())
+        
+        function Principal() {
+            $('#fecha-buttom').click(FechaFormPost);
             $.fn.dataTable.moment( 'dd/MM/YYYY' );
             $("#tablaDT").DataTable(
                 {
@@ -199,6 +201,14 @@
                 modal.find('#mensaje02').text('Realmente desea desactivar: ' + numero_orden);
                 modal.find('#myform').attr("action", ruta);
             });
-        })
+        }
+        
+        function FechaFormPost() {
+            let fecha_form = $('#fecha-form');
+            let fechas_str = fecha_form.serialize();
+            let uri = "/orden-pedido?" + fechas_str;
+            toastr.info("Filtrando por fechas seleccionadas","Excelente!!");
+            window.location.href = uri;
+        }
     </script>
 @endsection

@@ -107,10 +107,10 @@
                             <tr>
                                 <td>{{$venta->numero}}</td>
                                 <td>{{$venta->fecha->format('d/m/Y')}}</td>
-                                <td>{{$venta->orden_pedido->cliente->nombre}}</td>
-                                <td>{{$venta->orden_pedido->vendedor->nombre}}</td>
+                                <td>{{$venta->cliente->nombre}}</td>
+                                <td>{{$venta->vendedor->nombre}}</td>
                                 <td>
-                                    <span class="label label-default">{{$venta->orden_pedido->condicion_pago->nombre}}</span>
+                                    <span class="label label-default">{{$venta->condicion_pago->nombre}}</span>
                                 </td>
                                 <td>
                                     @if($venta->estado_venta->codigo == 'PP')
@@ -122,8 +122,6 @@
                                     @endif
                                 </td>
                                 <td align="center">
-                                    {{--<a href="{{ route('abonoNuevo', ['id' => $venta->id]) }}"--}}
-                                       {{--class="btn btn-success"><span class="fa fa-credit-card"></span></a>--}}
                                     @if($venta->tipo_documento->codigo == 'FAC')
                                         <a href="{{ route('ventaVerFactura', ['id' => $venta->id]) }}"
                                            class="btn btn-info"><span class="fa fa-eye"></span></a>
@@ -131,7 +129,7 @@
                                         <a href="{{ route('ventaVerCFF', ['id' => $venta->id]) }}"
                                            class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     @endif
-                                    @if(Auth::user()->rol->nombre == 'Administrador')
+                                    @if(Auth::user()->rol->nombre == 'Administrador' && $venta->estado_venta->id != 3)
                                         <button type="button" class="btn btn-danger" data-toggle="modal"
                                                 data-target="#modalEliminar" data-numero="{{ $venta->numero }}"
                                                 data-id="{{ $venta->id }}">

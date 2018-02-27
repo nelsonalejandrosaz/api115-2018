@@ -135,19 +135,7 @@ namespace App{
 /**
  * App\Servicio
  *
- * @property int $id
- * @property string $codigo
- * @property string $nombre
- * @property float $costo
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\DetalleServicio[] $detalle_servicios
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Servicio whereCodigo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Servicio whereCosto($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Servicio whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Servicio whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Servicio whereNombre($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Servicio whereUpdatedAt($value)
  */
 	class Servicio extends \Eloquent {}
 }
@@ -307,7 +295,7 @@ namespace App{
  * @property int $id
  * @property int $formula_id
  * @property int $producto_id
- * @property float|null $porcentaje
+ * @property float $porcentaje
  * @property float|null $cantidad
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -546,7 +534,7 @@ namespace App{
  * @property int|null $lote
  * @property string|null $fecha_vencimiento
  * @property string|null $detalle
- * @property int|null $procesado
+ * @property int $procesado
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -642,6 +630,8 @@ namespace App{
  * @property float $iva
  * @property float $comisiones
  * @property string $color_tema
+ * @property int|null $numero_factura
+ * @property int|null $numero_credito
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereColorTema($value)
@@ -649,6 +639,8 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereIva($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereNumeroCredito($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereNumeroFactura($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Configuracion whereUpdatedAt($value)
  */
 	class Configuracion extends \Eloquent {}
@@ -679,14 +671,17 @@ namespace App{
  *
  * @property int $id
  * @property int $tipo_documento_id
- * @property int $orden_pedido_id
+ * @property int|null $orden_pedido_id
  * @property int $estado_venta_id
  * @property int|null $cliente_id
  * @property int|null $vendedor_id
+ * @property int|null $condicion_pago_id
  * @property string|null $numero
  * @property \Carbon\Carbon $fecha
  * @property float|null $venta_total
  * @property float|null $venta_total_con_impuestos
+ * @property float|null $suma
+ * @property float|null $flete
  * @property string $ruta_archivo
  * @property float $saldo
  * @property \Carbon\Carbon|null $fecha_anulado
@@ -696,23 +691,27 @@ namespace App{
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Abono[] $abonos
  * @property-read \App\Cliente|null $cliente
+ * @property-read \App\CondicionPago|null $condicion_pago
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\DetalleOtrasVentas[] $detalle_otras_ventas
  * @property-read \App\EstadoVenta $estado_venta
- * @property-read \App\OrdenPedido $orden_pedido
+ * @property-read \App\OrdenPedido|null $orden_pedido
  * @property-read \App\TipoDocumento $tipo_documento
  * @property-read \App\User|null $vendedor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereClienteId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereComision($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereCondicionPagoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereEstadoVentaId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFecha($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFechaAnulado($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFechaLiquidado($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereFlete($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereOrdenPedidoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereRutaArchivo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereSaldo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereSuma($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereTipoDocumentoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Venta whereVendedorId($value)
@@ -726,30 +725,8 @@ namespace App{
 /**
  * App\DetalleServicio
  *
- * @property int $id
- * @property int $servicio_id
- * @property int $venta_id
- * @property float $cantidad
- * @property float $precio_unitario
- * @property float $venta_exenta
- * @property float $venta_gravada
- * @property string|null $fecha_procesado
- * @property int $procesado
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Servicio $servicio
  * @property-read \App\Venta $venta
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereCantidad($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereFechaProcesado($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio wherePrecioUnitario($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereProcesado($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereServicioId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereVentaExenta($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereVentaGravada($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\DetalleServicio whereVentaId($value)
  */
 	class DetalleServicio extends \Eloquent {}
 }

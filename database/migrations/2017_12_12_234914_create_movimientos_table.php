@@ -21,7 +21,7 @@ class CreateMovimientosTable extends Migration
             $table->integer('salida_id')->unsigned()->nullable();
             $table->integer('ajuste_id')->unsigned()->nullable();
             $table->date('fecha');
-            $table->string('detalle',140)->nullable();
+            $table->string('detalle')->nullable();
             $table->float('cantidad',12,4);
             $table->float('costo_unitario',12,4);
             $table->float('costo_total',12,4);

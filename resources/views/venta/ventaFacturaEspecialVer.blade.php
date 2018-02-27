@@ -82,34 +82,12 @@
                         </div>
                     </div>
 
-                    {{-- Numero Orden Pedido --}}
-                    <div class="form-group">
-                        <label class="col-md-4  control-label">Orden pedido n°:</label>
-                        <div class="col-md-8 ">
-                            <input readonly type="text" class="form-control" name="numero" value="{{$venta->orden_pedido->numero}}">
-                        </div>
-                    </div>
-
-                    {{-- Fecha entrega --}}
-                    <div class="form-group">
-                        <label class="col-md-4  control-label">Fecha entrega</label>
-                        <div class="col-md-8 ">
-                            @if($venta->orden_pedido->fecha_entrega != null)
-                                <input readonly type="date" class="form-control" name="fechaEntrega"
-                                       value="{{$venta->orden_pedido->fecha_entrega->format('Y-m-d')}}">
-                            @else
-                                <input readonly type="text" class="form-control" name="fechaEntrega"
-                                       value="Sin fecha definida">
-                            @endif
-                        </div>
-                    </div>
-
                     {{-- Despachado por --}}
                     <div class="form-group">
                         <label class="col-md-4  control-label">Vendedor</label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
-                                   value="{{$venta->orden_pedido->vendedor->nombre}} {{$venta->orden_pedido->vendedor->apellido}}" name="despachadoPor">
+                                   value="{{$venta->vendedor->nombre}} {{$venta->vendedor->apellido}}" name="despachadoPor">
                         </div>
                     </div>
 
@@ -138,48 +116,13 @@
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
                             <th style="width:40%">Producto</th>
-                            <th style="width:5%">Unidad medida</th>
-                            <th style="width:5%">Cantidad</th>
-                            <th style="width:12.5%">Precio unitario</th>
-                            <th style="width:15%">Ventas exentas</th>
                             <th style="width:15%">Ventas gravadas</th>
                         </tr>
-                        @foreach($venta->orden_pedido->salidas as $salida)
+                        @foreach($venta->detalle_otras_ventas as $salida)
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    @if( $salida->descripcion_presentacion != null)
-                                        <input readonly type="text" class="form-control" name="productos_id[]"
-                                               value="{{$salida->movimiento->producto->nombre}} ({{$salida->descripcion_presentacion}})">
-                                    @else
-                                        <input readonly type="text" class="form-control" name="productos_id[]"
-                                               value="{{$salida->movimiento->producto->nombre}}">
-                                    @endif
-                                </td>
-                                {{--Unidad de medida--}}
-                                <td>
-                                    <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida" value="{{$salida->unidad_medida->abreviatura}}">
-                                </td>
-                                {{--Cantidad--}}
-                                <td>
-                                    <input readonly type="text" class="form-control cantidadCls" name="cantidades[]"
-                                           id="cantidad" value="{{$salida->cantidad}}">
-                                </td>
-                                {{--Precio unitario--}}
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control puCls"
-                                               name="preciosUnitarios[]" id="precioUnitario" value="{{number_format($salida->precio_unitario,4)}}">
-                                    </div>
-                                </td>
-                                {{--Ventas exentas--}}
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input readonly type="text" class="form-control veCls" name="ventasExentas[]"
-                                               id="ventasExentas" value="{{number_format($salida->venta_exenta,2)}}">
-                                    </div>
+                                        <textarea readonly type="text" rows="5" class="form-control" name="productos_id[]">{{$salida->detalle}}</textarea>
                                 </td>
                                 {{--Ventas afectas--}}
                                 <td>
@@ -195,15 +138,55 @@
 
                     <table class="table table-bordered">
                         <tr>
-                            <th style="width:65%"></th>
-                            <th style="width:15%">Venta Total</th>
-                            <th style="width:15%">
+                            <td style="width:65%"></td>
+                            <td style="width:15%">Suma</td>
+                            <td style="width:15%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input readonly type="number" class="form-control" value="{{number_format($venta->orden_pedido->venta_total,2)}}" name="compraTotal"
+                                    <input readonly type="text" class="form-control"
+                                           value="{{ number_format($venta->suma,2) }}" name="suma">
+                                </div>
+                            </td>
+                            <td style="width:5%"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>- Flete</td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input readonly type="text" class="form-control"
+                                           value="{{ number_format($venta->flete ,2) }}" name="flete"
                                            id="ventaTotal">
                                 </div>
-                            </th>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Total</td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input readonly type="text" class="form-control"
+                                           value="{{ number_format(($venta->suma - $venta->flete),2) }}" name="total"
+                                           id="ventaTotal">
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>Comisión</td>
+                            <td>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input readonly type="number" class="form-control"
+                                           value="{{ number_format($venta->venta_total,2) }}" name="comision"
+                                           id="ventaTotal">
+                                </div>
+                            </td>
+                            <td></td>
                         </tr>
                     </table>
 
@@ -212,7 +195,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('ventaLista',['filtro' => 'todo']) }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
-                <a href="{{ route('facturaPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-info pull-right" target="_blank"><span class="fa fa-print"></span> Imprimir factura</a>
+                <a href="{{ route('facturaEspecialPDF',['id' => $venta->id]) }}" class="btn btn-lg btn-info pull-right" target="_blank"><span class="fa fa-print"></span> Imprimir factura</a>
             </div>
         </form>
     </div><!-- /.box -->

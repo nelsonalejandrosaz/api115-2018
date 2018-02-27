@@ -19,7 +19,7 @@ class CreateConversionUnidadesMedidasTable extends Migration
             $table->string('nombre');
             $table->integer('unidad_medida_origen_id')->unsigned();
             $table->integer('unidad_medida_destino_id')->unsigned();
-            $table->float('factor',8,3);
+            $table->float('factor',12,4);
             $table->timestamps();
         });
     }

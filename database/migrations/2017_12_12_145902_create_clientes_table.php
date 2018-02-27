@@ -16,8 +16,8 @@ class CreateClientesTable extends Migration
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('municipio_id')->default(1);
-            $table->string('nombre',140)->unique();
-            $table->string('nombre_alternativo',140)->nullable();
+            $table->string('nombre')->unique();
+            $table->string('nombre_alternativo')->nullable();
             $table->string('telefono_1',25)->nullable();
             $table->string('telefono_2',25)->nullable();
             $table->string('direccion',255)->nullable();
@@ -27,7 +27,7 @@ class CreateClientesTable extends Migration
             $table->string('nrc')->nullable();
             $table->string('giro')->nullable();
             $table->string('nombre_contacto')->nullable();
-            $table->float('saldo',8,4)->default(0.00);
+            $table->float('saldo',12,4)->default(0.00);
             $table->timestamps();
         });
     }

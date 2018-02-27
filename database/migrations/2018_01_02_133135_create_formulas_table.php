@@ -19,7 +19,7 @@ class CreateFormulasTable extends Migration
             $table->float('cantidad_formula')->nullable();
             $table->date('fecha');
             $table->string('ingresado_id');
-            $table->string('descripcion')->nullable();
+            $table->mediumText('descripcion')->nullable();
             $table->float('version')->default(1.00);
             $table->boolean('activa')->default(false);
             $table->timestamps();

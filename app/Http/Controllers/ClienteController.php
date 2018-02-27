@@ -121,32 +121,29 @@ class ClienteController extends Controller
         return redirect()->route('clienteLista');
     }
 
-    public function ClienteSaldoLista()
+    public function CuentasPorCobrar()
     {
         $clientes = Cliente::where('saldo', '>', 0)->get();
-        $estado_venta = EstadoVenta::whereCodigo('PP')->first();
         $documentos_pendientes = 0;
-        foreach ($clientes as $cliente) {
-            $ordenes = $cliente->ordenes_pedidos;
-//            dd(isset($ordenes[0]->venta));
-            foreach ($ordenes as $orden) {
-                $isset = isset($orden->venta);
-                if ($isset) {
-                    if ($orden->venta->estado_venta->id == $estado_venta->id) {
-                        $documentos_pendientes++;
-                    }
-                }
-            }
+        foreach ($clientes as $cliente)
+        {
+            $ventas = $cliente->ventas->where('estado_venta_id','=',1);
+            $documentos_pendientes = $ventas->count();
             $cliente->documentos_pendientes = $documentos_pendientes;
             $documentos_pendientes = 0;
         }
         return view('cliente.clienteSaldoLista')->with(['clientes' => $clientes]);
     }
 
-    public function ClienteSaldoVer($id)
+    public function CuentasPorCobrarVer($id)
     {
         $cliente = Cliente::find($id);
-        return view('cliente.clienteSaldoVer')->with(['cliente' => $cliente]);
+        $cxc = $cliente->ventas->where('estado_venta_id','=',1);
+        $total_saldo_pendiente = $cxc->sum('saldo');
+        return view('cliente.cuentasPorCobrarVer')
+            ->with(['cliente' => $cliente])
+            ->with(['cxc' => $cxc])
+            ->with(['total_saldo_pendiente' => $total_saldo_pendiente]);
     }
 
     public function ClienteVentaLista()

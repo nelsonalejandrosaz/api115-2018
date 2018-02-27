@@ -18,6 +18,8 @@ class CreateConfiguracionesTable extends Migration
             $table->float('iva');
             $table->float('comisiones');
             $table->string('color_tema');
+            $table->integer('numero_factura')->nullable();
+            $table->integer('numero_credito')->nullable();
             $table->timestamps();
         });
     }

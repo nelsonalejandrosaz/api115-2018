@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Clientes con saldo pendientes
+    Cuentas por cobrar
 @endsection
 
 @section('CSSExtras')
@@ -10,11 +10,11 @@
 @endsection
 
 @section('contentheader_title')
-    Clientes con saldo pendientes
+    Cuentas por cobrar
 @endsection
 
 @section('contentheader_description')
-    -- Lista de clientes con saldos pendientes de pago
+    -- Lista de clientes con cuentas pendientes de pago
 @endsection
 
 @section('main-content')
@@ -26,8 +26,8 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header">
-                </div><!-- /.box-header -->
+                {{--<div class="box-header">--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
@@ -45,7 +45,7 @@
                                 <td>$ {{number_format($cliente->saldo,2)}}</td>
                                  <td>{{$cliente->documentos_pendientes}}</td>
                                 <td align="center">
-                                    <a href="{{ route('clienteSaldoVer', ['id' => $cliente->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    <a href="{{ route('cuentasPorCobrarVer', ['id' => $cliente->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     {{--<a href="{{ route('clienteEditar', ['id' => $cliente->id]) }}"--}}
                                        {{--class="btn btn-warning"><span class="fa fa-edit"></span></a>--}}
                                     {{--<button type="button" class="btn btn-danger" data-toggle="modal"--}}

@@ -18,11 +18,11 @@ class CreateProduccionesTable extends Migration
             $table->integer('bodega_id')->unsigned();
             $table->integer('formula_id')->unsigned();
             $table->integer('producto_id')->unsigned()->nullable();
-            $table->float('cantidad');
+            $table->float('cantidad',12,4);
             $table->date('fecha');
             $table->integer('lote')->nullable();
             $table->date('fecha_vencimiento')->nullable();
-            $table->string('detalle')->nullable();
+            $table->mediumText('detalle')->nullable();
             $table->boolean('procesado')->default(false);
             $table->timestamps();
             $table->softDeletes();

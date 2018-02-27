@@ -18,11 +18,11 @@ class CreateProductosTable extends Migration
             $table->integer('unidad_medida_id')->unsigned();
             $table->integer('tipo_producto_id')->unsigned();
             $table->integer('categoria_id')->unsigned();
-            $table->string('nombre',140)->unique()->index();
-            $table->string('nombre_alternativo',140)->nullable();
+            $table->string('nombre')->unique()->index();
+            $table->string('nombre_alternativo')->nullable();
             $table->string('codigo',50)->unique()->nullable();
-            $table->float('existencia_min',10,3)->nullable()->default(0.00);
-            $table->float('existencia_max',10,3)->nullable()->default(500.00);
+            $table->float('existencia_min',12,4)->nullable()->default(0.00);
+            $table->float('existencia_max',12,4)->nullable()->default(100.00);
             $table->float('cantidad_existencia',12,4)->default(0.000);
             $table->float('cantidad_reserva',12,4)->default(0.000);
             $table->float('costo')->default(0.00);

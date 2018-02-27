@@ -25,6 +25,8 @@ class CreateVentasTable extends Migration
             $table->date('fecha');
             $table->float('venta_total', 12, 4)->nullable();
             $table->float('venta_total_con_impuestos', 12, 4)->nullable();
+            $table->float('suma', 12, 4)->nullable();
+            $table->float('flete', 12, 4)->nullable();
             $table->string('ruta_archivo')->default('sindocumento.jpg');
             $table->float('saldo', 12, 4)->default(0.00);
             $table->date('fecha_anulado')->nullable();

@@ -48,7 +48,7 @@
                                 <td>$ {{number_format($cliente->saldo,2)}}</td>
                                 {{-- <td>{{$proveedor->direccion}}</td> --}}
                                 <td align="center">
-                                    <a href="{{ route('clienteSaldoVer', ['id' => $cliente->id]) }}" class="btn bg-gray"><span class="fa fa-list"></span></a>
+                                    <a href="{{ route('cuentasPorCobrar', ['id' => $cliente->id]) }}" class="btn bg-gray"><span class="fa fa-list"></span></a>
                                 </td>
                             </tr>
                         @endforeach

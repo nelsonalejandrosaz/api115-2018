@@ -23,32 +23,17 @@ use NumeroALetras;
 
 class OrdenPedidoController extends Controller
 {
-    public function OrdenPedidoLista()
+    public function OrdenPedidoLista(Request $request)
     {
-        $fecha_inicio = Carbon::now()->startOfMonth();
-        $fecha_fin = Carbon::now()->endOfMonth();
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->startOfMonth();
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->endOfMonth();
         $extra['fecha_inicio'] = $fecha_inicio;
         $extra['fecha_fin'] = $fecha_fin;
+        $ordenesPedidos = OrdenPedido::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
         if (\Auth::user()->rol->nombre == 'Vendedor')
         {
-            $ordenesPedidos = OrdenPedido::whereVendedorId(\Auth::user()->id)->get();
-            return view('ordenPedido.ordenPedidoLista')
-                ->with(['ordenesPedidos' => $ordenesPedidos])
-                ->with(['extra' => $extra]);
+            $ordenesPedidos = $ordenesPedidos->where('vendedor_id','=',\Auth::user()->id); //whereVendedorId()->get();
         }
-        $ordenesPedidos = OrdenPedido::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
-        return view('ordenPedido.ordenPedidoLista')
-            ->with(['ordenesPedidos' => $ordenesPedidos])
-            ->with(['extra' => $extra]);
-    }
-
-    public function OrdenPedidoListaPost(Request $request)
-    {
-        $fecha_inicio = Carbon::parse($request->input('fecha_inicio'));
-        $fecha_fin = Carbon::parse($request->input('fecha_fin'));
-        $extra['fecha_inicio'] = $fecha_inicio;
-        $extra['fecha_fin'] = $fecha_fin;
-        $ordenesPedidos = OrdenPedido::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
         return view('ordenPedido.ordenPedidoLista')
             ->with(['ordenesPedidos' => $ordenesPedidos])
             ->with(['extra' => $extra]);
@@ -63,10 +48,7 @@ class OrdenPedidoController extends Controller
 
     public function OrdenPedidoListaProcesadoBodega()
     {
-        $estado_orden_1 = EstadoOrdenPedido::whereCodigo('PR')->first();
-        $estado_orden_2 = EstadoOrdenPedido::whereCodigo('FC')->first();
-        $ordenesPedidos = OrdenPedido::where('estado_id','=',$estado_orden_1->id)
-            ->orWhere('estado_id','=',$estado_orden_2->id)->get();
+        $ordenesPedidos = OrdenPedido::whereBetween('estado_id',[2,3,4])->get();
         return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
     }
 

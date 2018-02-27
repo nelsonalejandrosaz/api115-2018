@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('username');
             $table->string('apellido')->nullable();
-            $table->string('telefono',10)->nullable();
+            $table->string('telefono',20)->nullable();
             $table->string('ruta_imagen')->default('default.png');
             $table->integer('rol_id');
             $table->rememberToken();

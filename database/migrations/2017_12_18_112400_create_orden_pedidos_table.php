@@ -18,7 +18,7 @@ class CreateOrdenPedidosTable extends Migration
             $table->integer('cliente_id')->unsigned();
             $table->integer('tipo_documento_id')->unsigned()->nullable();
             $table->integer('numero');
-            $table->string('detalle',140)->nullable();
+            $table->string('detalle')->nullable();
             $table->date('fecha');
             $table->dateTime('fecha_procesado')->nullable();
             $table->date('fecha_entrega')->nullable();

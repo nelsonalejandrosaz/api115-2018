@@ -17,7 +17,7 @@ class CreateComprasTable extends Migration
             $table->increments('id');
             $table->integer('proveedor_id')->unsigned();
             $table->integer('numero')->unsigned();
-            $table->string('detalle',140)->nullable();
+            $table->mediumText('detalle')->nullable();
             $table->date('fecha');
             $table->float('compra_total',12,4)->nullable();
             $table->float('compra_total_con_impuestos',12,4)->nullable();

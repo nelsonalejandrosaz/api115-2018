@@ -25,6 +25,7 @@ use NumeroALetras;
 
 class VentaController extends Controller
 {
+
     public function VentaOrdenesLista()
     {
         // id = 2 - Despachada
@@ -162,7 +163,7 @@ class VentaController extends Controller
     {
         if (Auth::user()->rol->nombre == 'Vendedor')
         {
-            $ventas = Venta::where('vendedora_id','=',Auth::user()->id)->get();
+            $ventas = Venta::where('vendedor_id','=',Auth::user()->id)->get();
         } else
         {
             $ventas = Venta::all();
@@ -206,9 +207,18 @@ class VentaController extends Controller
         $venta_total = number_format($venta->orden_pedido->venta_total, 2);
         $venta->orden_pedido->venta_total_letras = NumeroALetras::convertir($venta_total, 'dolares', 'centavos');
         return view('pdf.facturaPDF')->with(['venta' => $venta]);
-        $pdf = PDF::loadView('pdf.facturaPDF', compact('venta'));
-        $nombre_factura = "Factura numero " . $venta->numero . ".pdf";
-        return $pdf->stream($nombre_factura);
+//        $pdf = PDF::loadView('pdf.facturaPDF', compact('venta'));
+//        $nombre_factura = "Factura numero " . $venta->numero . ".pdf";
+//        return $pdf->stream($nombre_factura);
+    }
+
+    public function VentaFacturaEspecialPDF($id)
+    {
+        $venta = Venta::find($id);
+        $venta->vendedor->nombreCompleto = $venta->vendedor->nombre . " " . $venta->vendedor->apellido;
+        $venta_total = number_format($venta->venta_total, 2);
+        $venta->venta_total_letras = NumeroALetras::convertir($venta_total, 'dolares', 'centavos');
+        return view('pdf.facturaPDFEspecial')->with(['venta' => $venta]);
     }
 
     public function VentaCCFPDF($id)
@@ -344,6 +354,7 @@ class VentaController extends Controller
         $venta = Venta::create([
             'tipo_documento_id' => 1,
             'orden_pedido_id' => 0,
+            'condicion_pago_id' => $request->input('condicion_pago_id'),
             'numero' => $request->input('numero'),
             'fecha' => $fecha,
             'cliente_id' => $request->input('cliente_id'),
@@ -351,6 +362,8 @@ class VentaController extends Controller
             'vendedor_id' => Auth::user()->id,
             'saldo' => $venta_total_con_impuestos,
             'venta_total' => $venta_total_con_impuestos,
+            'suma' => $request->input('suma'),
+            'flete' => $request->input('flete'),
             'venta_total_con_impuestos' => $venta_total_con_impuestos,
         ]);
         // Se agrega el detalle de la venta

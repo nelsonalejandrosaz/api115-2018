@@ -67,19 +67,19 @@ class DevController extends Controller
         return view('dev.venta-anulada-sin-orden');
     }
 
-    public function Corregir($id)
+    public function Corregir()
     {
-        $producto = Producto::find($id);
-        $unidad_medidas = UnidadMedida::all();
-        if (\Auth::user()->rol->nombre == 'Vendedor')
+        $ventas = Venta::all();
+        foreach ($ventas as $venta)
         {
-            return view('producto.productoPrecioV')
-                ->with(['producto' => $producto])
-                ->with(['unidad_medidas' => $unidad_medidas]);
+            if ($venta->orden_pedido == null)
+            {
+                dd($venta);
+            }
+            $venta->condicion_pago_id = $venta->orden_pedido->condicion_pago_id;
+            $venta->save();
         }
-        return view('dev.productoPrecio')
-            ->with(['producto' => $producto])
-            ->with(['unidad_medidas' => $unidad_medidas]);
+        dd("Exito");
     }
 
 

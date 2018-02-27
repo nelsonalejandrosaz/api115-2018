@@ -27,9 +27,9 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header">
-                    <h3 class="box-title">Lista de productos</h3>
-                </div><!-- /.box-header -->
+                {{--<div class="box-header">--}}
+                    {{--<h3 class="box-title">Lista de productos</h3>--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                         <table id="tablaDT" class="table table-hover">
                         <thead>

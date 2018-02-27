@@ -42,6 +42,11 @@ class Venta extends Model
         return $this->hasMany('App\Abono');
     }
 
+    public function condicion_pago()
+    {
+        return $this->belongsTo('App\CondicionPago');
+    }
+
     protected $fillable = [
         'tipo_documento_id',
         'numero',
@@ -54,6 +59,8 @@ class Venta extends Model
         'saldo',
         'venta_total',
         'venta_total_con_impuestos',
+        'suma',
+        'flete',
         'fecha_anulado',
         'fecha_liquidado',
         'comision',

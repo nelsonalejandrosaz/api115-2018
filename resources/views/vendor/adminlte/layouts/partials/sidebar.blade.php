@@ -89,7 +89,7 @@
                                 fiscales</a></li>
                         <li><a href="{{route('ventaLista',['tipo' => 'anulada'])}}"><i class="fa fa-window-close"></i>Ventas
                                 anuladas</a></li>
-                        <li><a href="{{route('ventaSinOrdenNueva')}}"><i class="fa fa-plus"></i>Nueva venta sin orden</a>
+                        <li><a href="{{route('ventaSinOrdenNueva')}}"><i class="fa fa-plus"></i>Nueva venta comisión</a>
                         <li><a href="{{route('ventaSinOrdenAnuladaNueva')}}"><i class="fa fa-plus"></i>Nuevo documento anulado</a>
                     </ul>
                 </li>
@@ -101,6 +101,26 @@
                     <ul class="treeview-menu">
                         <li><a href="{{route('abonoLista')}}"><i class="fa fa-bars"></i>Abonos</a></li>
                         <li><a href="{{route('abonoNuevoSinVenta')}}"><i class="fa fa-plus"></i>Nuevo abono</a></li>
+                    </ul>
+                </li>
+
+                {{--Cuentas por cobrar--}}
+                <li class="treeview">
+                    <a href="#"><i class='fa fa-money'></i> <span>Cuentas por cobrar</span> <i
+                                class="fa fa-angle-left pull-right"></i></a>
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('cuentasPorCobrar')}}"><i class="fa fa-money"></i>Cobros pendientes</a></li>
+                        <li><a href="{{route('clienteVentaLista')}}"><i class="fa fa-bars"></i>Ventas clientes</a></li>
+                    </ul>
+                </li>
+
+                {{--Cuentas por pagar--}}
+                <li class="treeview">
+                    <a href="#"><i class='fa fa-money'></i> <span>Cuentas por pagar</span> <i
+                                class="fa fa-angle-left pull-right"></i></a>
+                    <ul class="treeview-menu">
+                        {{--<li><a href="{{route('abonoLista')}}"><i class="fa fa-bars"></i>Abonos</a></li>--}}
+                        {{--<li><a href="{{route('abonoNuevoSinVenta')}}"><i class="fa fa-plus"></i>Nuevo abono</a></li>--}}
                     </ul>
                 </li>
 
@@ -123,7 +143,6 @@
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{route('proveedorLista')}}"><i class="fa fa-bars"></i>Proveedores</a></li>
-                        <li><a href="{{route('proveedorLista')}}"><i class="fa fa-money"></i>Saldo proveedores</a></li>
                         <li><a href="{{route('proveedorNuevo')}}"><i class="fa fa-plus"></i>Nuevo proveedor</a></li>
                     </ul>
                 </li>
@@ -134,8 +153,6 @@
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{route('clienteLista')}}"><i class="fa fa-bars"></i>Clientes</a></li>
-                        <li><a href="{{route('clienteVentaLista')}}"><i class="fa fa-bars"></i>Clientes Ventas</a></li>
-                        <li><a href="{{route('clienteSaldoLista')}}"><i class="fa fa-money"></i>Saldo clientes</a></li>
                         <li><a href="{{route('clienteNuevo')}}"><i class="fa fa-plus"></i>Nuevo cliente</a></li>
                     </ul>
                 </li>
@@ -289,7 +306,7 @@
                     <ul class="treeview-menu">
                         <li><a href="{{route('clienteLista')}}"><i class="fa fa-bars"></i>Clientes</a></li>
                         <li><a href="{{route('clienteVentaLista')}}"><i class="fa fa-bars"></i>Clientes Ventas</a></li>
-                        <li><a href="{{route('clienteSaldoLista')}}"><i class="fa fa-money"></i>Saldo clientes</a></li>
+                        <li><a href="{{route('cuentasPorCobrar')}}"><i class="fa fa-money"></i>Saldo clientes</a></li>
                         <li><a href="{{route('clienteNuevo')}}"><i class="fa fa-plus"></i>Nuevo cliente</a></li>
                     </ul>
                 </li>

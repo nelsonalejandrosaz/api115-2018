@@ -23,7 +23,7 @@
 
     <div class="hidden">
         {{--Detalle producto--}}
-        <input type="text" class="form-control" name="detalle[]" id="detalle-input-id">
+        <textarea type="text" rows="5" class="form-control" name="detalle[]" id="detalle-input-id"></textarea>
         {{--Unidad de medida--}}
         <input type="text" class="form-control unidadCls" name="unidad_medida[]" id="unidad-medida-input-id">
         {{--Cantidad--}}
@@ -39,9 +39,9 @@
             <input type="number" class="form-control veCls" name="venta_exenta[]" id="venta-exenta-id">
         </div>
         {{--Venta gravada--}}
-        <div class="input-group">
+        <div class="input-group" id="venta-gravada-id">
             <span class="input-group-addon">$</span>
-            <input type="number" class="form-control vaCls" name="venta_gravada[]" id="venta-gravada-id">
+            <input type="number" class="form-control vaCls" name="venta_gravada[]" >
         </div>
         {{--Eliminar boton--}}
         <button type="button" class="btn btn-danger" id="eliminar-fila-id"><span class="fa fa-remove"></span></button>
@@ -168,14 +168,8 @@
                     <table class="table table-bordered" id="venta-table-id">
                         <thead>
                         <tr>
-                            <th style="width:60%">Producto</th>
+                            <th style="width:70%">Producto</th>
                             <th style="width:30%">Ventas gravadas</th>
-                            <th style="width:10%; text-align: center">
-                                <button class="btn btn-success" id="btn-nueva-fila-id"
-                                        type="button">
-                                    <span class="fa fa-plus"></span>
-                                </button>
-                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -185,9 +179,9 @@
 
                     <table class="table table-bordered">
                         <tr>
-                            <td style="width:65%"></td>
-                            <td style="width:15%">Suma</td>
-                            <td style="width:15%">
+                            <td style="width:60%"></td>
+                            <td style="width:10%">Suma</td>
+                            <td style="width:30%">
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
@@ -195,7 +189,6 @@
                                            id="ventaTotal">
                                 </div>
                             </td>
-                            <td style="width:5%"></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -204,11 +197,9 @@
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <input type="number" class="form-control"
-                                           value="" name="flete"
-                                           id="ventaTotal">
+                                           value="" name="flete">
                                 </div>
                             </td>
-                            <td></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -221,7 +212,6 @@
                                            id="ventaTotal">
                                 </div>
                             </td>
-                            <td></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -234,7 +224,6 @@
                                            id="ventaTotal">
                                 </div>
                             </td>
-                            <td></td>
                         </tr>
                     </table>
 
@@ -262,9 +251,10 @@
         $(document).ready(Principal);
 
         function Principal() {
-            $('#btn-nueva-fila-id').click(AgregarFila);
-            $("body").on("click", ".btn-danger", EliminarFila);
+            // $('#btn-nueva-fila-id').click(AgregarFila);
+            // $("body").on("click", ".btn-danger", EliminarFila);
             Validacion();
+            AgregarFila();
         }
 
         function Validacion() {
@@ -288,20 +278,25 @@
                     "detalle[]": {
                         required: true,
                     },
-                    "unidad_medida[]": {
-                        required: false,
-                    },
-                    "cantidad[]": {
-                        required: false,
-                    },
-                    "precio_unitario[]": {
+                    "suma": {
                         required: true,
+                        min: 0,
                     },
-                    "venta_exenta[]": {
-                        required: false,
+                    "flete": {
+                        required: true,
+                        min: 0,
+                    },
+                    "total": {
+                        required: true,
+                        min: 0,
+                    },
+                    "comision": {
+                        required: true,
+                        min: 0,
                     },
                     "venta_gravada[]": {
-                        required: false,
+                        required: true,
+                        min: 0,
                     },
                 },
                 messages: {
@@ -330,29 +325,44 @@
                             toastr.error('Por favor ingrese el detalle','Ups!')
                         }
                     },
-                    "unidad_medida[]": {
+                    "suma": {
                         required: function () {
                             toastr.error('Por favor ingrese la unidad de medida','Ups!')
+                        },
+                        min: function () {
+                            toastr.error('El numero debe ser mayor a 0','Ups!')
                         }
                     },
-                    "cantidad[]": {
+                    "flete": {
                         required: function () {
                             toastr.error('Por favor ingrese la cantidad','Ups!')
+                        },
+                        min: function () {
+                            toastr.error('El numero debe ser mayor a 0','Ups!')
                         }
                     },
-                    "precio_unitario[]": {
+                    "total": {
                         required: function () {
                             toastr.error('Por favor ingrese el precio unitario','Ups!')
+                        },
+                        min: function () {
+                            toastr.error('El numero debe ser mayor a 0','Ups!')
                         }
                     },
-                    "venta_exenta[]": {
+                    "comision": {
                         required: function () {
                             toastr.error('Por favor ingrese la venta exenta','Ups!')
+                        },
+                        min: function () {
+                            toastr.error('El numero debe ser mayor a 0','Ups!')
                         }
                     },
                     "venta_gravada[]": {
                         required: function () {
                             toastr.error('Por favor ingrese la venta gravada','Ups!')
+                        },
+                        min: function () {
+                            toastr.error('El numero debe ser mayor a 0','Ups!')
                         }
                     },
                 },
@@ -385,14 +395,6 @@
                                 .append
                                 (
                                     venta_gravada
-                                )
-                        )
-                        .append
-                        (
-                            $('<td>').attr('align', 'center')
-                                .append
-                                (
-                                    eliminar
                                 )
                         )
                 );

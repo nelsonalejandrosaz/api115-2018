@@ -2,7 +2,7 @@
 
 @section('htmlheader_title')
     {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
-    Detalle de saldo de clientes
+    Detalle de cuentas pendientes
 @endsection
 
 @section('CSSx')
@@ -14,7 +14,7 @@
 
 @section('contentheader_title')
     {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
-    Detalle de saldo de clientes
+    Detalle de cuentas pendientes
 @endsection
 
 @section('contentheader_description')
@@ -33,10 +33,11 @@
                     <i class="fa fa-globe"></i> LGL S.A. de C.V.
                     <small class="pull-right">Generado: {{\Carbon\Carbon::now()->format('d/m/Y -- h:m:s A')}}</small>
                 </h2>
-                <p class="lead">Informe de ventas por cliente realizadas al dia: {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
+                <p class="lead">Informe de cuentas por cobrar por cliente realizadas al dia: {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
                 Cliente: {{ $cliente->nombre }}<br>
                 Contacto: {{ ($cliente->contacto == null) ? 'Sin nombre de contacto' : $cliente->contacto }} <br>
-                Teléfono: {{ ($cliente->telefono_1 == null) ? 'Sin teléfono de contacto' : $cliente->telefono_1 }}
+                Teléfono: {{ ($cliente->telefono_1 == null) ? 'Sin teléfono de contacto' : $cliente->telefono_1 }} <br><br>
+                Generado por: {{ Auth::user()->nombre }} {{ Auth::user()->apellido }}
             </div>
 
             {{-- Tabla de productos --}}
@@ -57,21 +58,21 @@
                         </thead>
                         <tbody>
                         @php( $i = 1 )
-                        @foreach($cliente->ventas as $venta)
+                        @foreach($cxc as $venta)
                             <tr>
                                 <td>{{ $venta->fecha->format('d/m/Y') }}</td>
                                 <td>
                                     @if($venta->tipo_documento_id == 1)
                                         <a href="{{ route('ventaVerFactura',['id' => $venta->id]) }}">{{$venta->numero}}</a>
                                     @else
-                                        <a href="{{ route('ventaVerFactura',['id' => $venta->id]) }}">{{$venta->numero}}</a>
+                                        <a href="{{ route('ventaVerCFF',['id' => $venta->id]) }}">{{$venta->numero}}</a>
                                     @endif
                                 </td>
                                 <td>
                                     {{$venta->tipo_documento->nombre}}
                                 </td>
                                 <td>
-                                    {{$venta->orden_pedido->condicion_pago->nombre}}
+                                    {{$venta->condicion_pago->nombre}}
                                 </td>
                                 <td>
                                     $ {{number_format($venta->venta_total_con_impuestos,2)}}
@@ -91,10 +92,12 @@
                             </tr>
                             @php( $i++ )
                         @endforeach
+                            <tr>
+                                <td colspan="5"><b>Total saldo pendiente</b></td>
+                                <td><b>$ {{ $total_saldo_pendiente }}</b></td>
+                                <td></td>
+                            </tr>
                         </tbody>
-                        <tfoot>
-
-                        </tfoot>
                     </table>
                 </div>
 

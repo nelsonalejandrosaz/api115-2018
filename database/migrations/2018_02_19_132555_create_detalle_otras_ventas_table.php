@@ -16,7 +16,7 @@ class CreateDetalleOtrasVentasTable extends Migration
         Schema::create('detalle_otras_ventas', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('venta_id')->unsigned();
-            $table->string('detalle',120);
+            $table->mediumText('detalle');
             $table->float('cantidad',12,4);
             $table->float('precio_unitario',12,4);
             $table->float('venta_exenta',12,4);

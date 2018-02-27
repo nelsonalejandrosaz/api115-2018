@@ -63,15 +63,19 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas de cliente
      */
     Route::get('/cliente','ClienteController@ClienteLista')->name('clienteLista');
-    Route::get('/cliente/ventas','ClienteController@ClienteVentaLista')->name('clienteVentaLista');
     Route::get('/cliente/nuevo','ClienteController@ClienteNuevo')->name('clienteNuevo');
     Route::post('/cliente/nuevo','ClienteController@ClienteNuevoPost')->name('clienteNuevoPost');
-    Route::get('/cliente/saldo','ClienteController@ClienteSaldoLista')->name('clienteSaldoLista');
-    Route::get('/cliente/saldo/{id}','ClienteController@ClienteSaldoVer')->name('clienteSaldoVer');
     Route::get('/cliente/{id}','ClienteController@ClienteVer')->name('clienteVer');
     Route::get('/cliente/{id}/editar','ClienteController@ClienteEditar')->name('clienteEditar');
     Route::put('/cliente/{id}','ClienteController@ClienteEditarPut')->name('clienteEditarPut');
     Route::delete('/cliente/{id}','ClienteController@ClienteEliminar')->name('clienteEliminar');
+
+    /**
+     * Cuentas por cobrar
+     */
+    Route::get('/cxc/ventas','ClienteController@ClienteVentaLista')->name('clienteVentaLista');
+    Route::get('/cxc/saldo','ClienteController@CuentasPorCobrar')->name('cuentasPorCobrar');
+    Route::get('/cxc/saldo/{id}','ClienteController@CuentasPorCobrarVer')->name('cuentasPorCobrarVer');
 
     /**
      * Rutas Compras
@@ -89,18 +93,39 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas Orden de pedido
      */
-    Route::get('/orden-pedido-bodega/procesada','OrdenPedidoController@OrdenPedidoListaProcesadoBodega')->name('ordenPedidoListaProcesadoBodega');
-    Route::get('/orden-pedido/bodega','OrdenPedidoController@OrdenPedidoListaBodega')->name('ordenPedidoListaBodega');
-    Route::get('/orden-pedido/{id}/bodega','OrdenPedidoController@OrdenPedidoVerBodega')->name('ordenPedidoVerBodega');
-    Route::put('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoBodegaPost')->name('ordenPedidoBodegaPost');
     Route::group(['middleware' => ['vendedor']], function () {
-        Route::get('/ordenPedido','OrdenPedidoController@OrdenPedidoLista')->name('ordenPedidoLista');
-        Route::post('/ordenPedido','OrdenPedidoController@OrdenPedidoListaPost')->name('ordenPedidoListaPost');
-        Route::get('/ordenPedido/nueva','OrdenPedidoController@OrdenPedidoNueva')->name('ordenPedidoNueva');
-        Route::post('/ordenPedido/nueva','OrdenPedidoController@OrdenPedidoNuevaPost')->name('ordenPedidoNuevaPost');
-        Route::get('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
-        Route::delete('/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoEliminar')->name('ordenPedidoEliminar');
+        Route::get('/orden-pedido','OrdenPedidoController@OrdenPedidoLista')->name('ordenPedidoLista');
+        Route::get('/orden-pedido/nueva','OrdenPedidoController@OrdenPedidoNueva')->name('ordenPedidoNueva');
+        Route::post('/orden-pedido/nueva','OrdenPedidoController@OrdenPedidoNuevaPost')->name('ordenPedidoNuevaPost');
+        Route::get('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
+        Route::delete('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoEliminar')->name('ordenPedidoEliminar');
     });
+    Route::group(['middleware' => ['bodeguero']], function () {
+        Route::get('/orden-pedido-bodega','OrdenPedidoController@OrdenPedidoListaBodega')->name('ordenPedidoListaBodega');
+        Route::get('/orden-pedido-bodega/procesada','OrdenPedidoController@OrdenPedidoListaProcesadoBodega')->name('ordenPedidoListaProcesadoBodega');
+        Route::get('/orden-pedido-bodega/{id}/bodega','OrdenPedidoController@OrdenPedidoVerBodega')->name('ordenPedidoVerBodega');
+        Route::put('/orden-pedido-bodega/{id}','OrdenPedidoController@OrdenPedidoBodegaPost')->name('ordenPedidoBodegaPost');
+    });
+
+
+    /**
+     * Rutas Ventas
+     */
+    Route::group(['middleware' => ['vendedor']], function () {
+        Route::get('/venta/ordenes','VentaController@VentaOrdenesLista')->name('ventaOrdenesLista');
+        Route::get('/venta/nueva/{id}','VentaController@VentaNueva')->name('ventaNueva');
+        Route::post('/venta/nueva/{id}','VentaController@VentaNuevaPost')->name('ventaNuevaPost');
+        Route::get('/venta/factura/{id}','VentaController@VentaVerFactura')->name('ventaVerFactura');
+        Route::get('/venta/ccf/{id}','VentaController@VentaVerCCF')->name('ventaVerCFF');
+        Route::get('/venta/tipo/{tipo}','VentaController@VentaLista')->name('ventaLista');
+    });
+    Route::group(['middleware' => ['administrador']], function () {
+        Route::delete('/venta/anular/{id}','VentaController@VentaAnular')->name('ventaAnular');
+        Route::get('/venta/sin-orden/nueva','VentaController@VentaSinOrdenNueva')->name('ventaSinOrdenNueva');
+        Route::post('/venta/sin-orden/nueva','VentaController@VentaSinOrdenPost')->name('ventaSinOrdenPost');
+        Route::get('/venta/sin-orden/anular','VentaController@VentaSinOrdenAnuladaNueva')->name('ventaSinOrdenAnuladaNueva');
+    });
+
 
 
     /**
@@ -113,19 +138,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/ajuste/costo/nuevo','AjusteController@AjusteCostoNuevoPost')->name('ajusteCostoNuevoPost');
     Route::get('/ajuste/{id}','AjusteController@AjusteVer')->name('ajusteVer');
 
-    /**
-     * Rutas Ventas
-     */
-    Route::get('/venta/ordenes','VentaController@VentaOrdenesLista')->name('ventaOrdenesLista');
-    Route::get('/venta/nueva/{id}','VentaController@VentaNueva')->name('ventaNueva');
-    Route::post('/venta/nueva/{id}','VentaController@VentaNuevaPost')->name('ventaNuevaPost');
-    Route::get('/venta/factura/{id}','VentaController@VentaVerFactura')->name('ventaVerFactura');
-    Route::get('/venta/ccf/{id}','VentaController@VentaVerCCF')->name('ventaVerCFF');
-    Route::get('/venta/tipo/{tipo}','VentaController@VentaLista')->name('ventaLista');
-    Route::delete('/venta/anular/{id}','VentaController@VentaAnular')->name('ventaAnular');
-    Route::get('/venta/sin-orden/nueva','VentaController@VentaSinOrdenNueva')->name('ventaSinOrdenNueva');
-    Route::post('/venta/sin-orden/nueva','VentaController@VentaSinOrdenPost')->name('ventaSinOrdenPost');
-    Route::get('/venta/sin-orden/anular','VentaController@VentaSinOrdenAnuladaNueva')->name('ventaSinOrdenAnuladaNueva');
 
 
     /**
@@ -184,6 +196,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('/pdf/ordenPedido/{id}','OrdenPedidoController@OrdenPedidoPDF')->name('ordenPedidoPDF');
     Route::get('/pdf/factura/{id}','VentaController@VentaFacturaPDF')->name('facturaPDF');
+    Route::get('/pdf/factura-especial/{id}','VentaController@VentaFacturaEspecialPDF')->name('facturaEspecialPDF');
     Route::get('/pdf/ccf/{id}','VentaController@VentaCCFPDF')->name('CCFPDF');
 
 
@@ -204,7 +217,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('dev/venta-sin-orden','DevController@VentaSinOrden');
     Route::get('dev/venta-anulada-sin-orden','DevController@VentaAnuladaSinOrden');
-    Route::get('dev/c/{id}','DevController@Corregir');
+    Route::get('dev/c','DevController@Corregir');
 
 
     /**

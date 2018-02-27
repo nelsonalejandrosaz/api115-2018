@@ -24,9 +24,9 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header">
-                    <h3 class="box-title">Lista de ordenes en proceso</h3>
-                </div><!-- /.box-header -->
+                {{--<div class="box-header">--}}
+                    {{--<h3 class="box-title">Lista de ordenes en proceso</h3>--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
@@ -34,7 +34,6 @@
                             <th style="width:10%">Número</th>
                             <th style="width:10%">Fecha ingreso</th>
                             <th style="width:10%">Fecha entrega</th>
-                            {{--<th style="width:25%">Cliente</th>--}}
                             <th style="width:20%">Vendedor</th>
                             <th style="width:10%">Estado</th>
                             <th style="width:15%">Acción</th>
@@ -50,7 +49,6 @@
                                 @else
                                     <td>Sin fecha definida</td>
                                 @endif
-                                {{--<td>{{$ordenPedido->cliente->nombre}}</td>--}}
                                 <td>{{$ordenPedido->vendedor->nombre}}</td>
                                 <td>
                                     @if($ordenPedido->estado_orden->codigo == 'SP')
@@ -62,8 +60,13 @@
                                     @endif
                                 </td>
                                 <td align="center">
-                                    <a href="{{ route('ordenPedidoVerBodega', ['id' => $ordenPedido->id]) }}"
-                                       class="btn btn-success"><span class="fa fa-check-square-o"></span></a>
+                                    @if( $ordenPedido->estado_id == 1 )
+                                        <a href="{{ route('ordenPedidoVerBodega', ['id' => $ordenPedido->id]) }}"
+                                           class="btn btn-success"><span class="fa fa-check-square-o"></span></a>
+                                    @else
+                                        <a href="{{ route('ordenPedidoVerBodega', ['id' => $ordenPedido->id]) }}"
+                                           class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
