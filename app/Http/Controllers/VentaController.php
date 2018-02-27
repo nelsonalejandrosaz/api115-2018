@@ -359,7 +359,7 @@ class VentaController extends Controller
             'fecha' => $fecha,
             'cliente_id' => $request->input('cliente_id'),
             'estado_venta_id' => 1,
-            'vendedor_id' => Auth::user()->id,
+            'vendedor_id' => 1,
             'saldo' => $venta_total_con_impuestos,
             'venta_total' => $venta_total_con_impuestos,
             'suma' => $request->input('suma'),

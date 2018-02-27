@@ -151,7 +151,7 @@
                         <label class="col-md-4  control-label">Vendedor</label>
                         <div class="col-md-8 ">
                             <input readonly type="text" class="form-control"
-                                   value="{{ Auth::user()->nombre }} {{ Auth::user()->apellido }}"
+                                   value="Oficina LGL"
                                    name="despachadoPor">
                         </div>
                     </div>

@@ -151,19 +151,24 @@ class ClienteController extends Controller
         $clientes = Cliente::all();
         foreach ($clientes as $cliente)
         {
-            $ventas = $cliente->ventas;
-            $numero_ventas = $ventas->count();
-            $numero_ventas_pendientes = 0;
-            foreach ($ventas as $venta)
-            {
-                if ($venta->estado_venta_id == 1)
-                {
-                    $numero_ventas_pendientes ++;
-                }
-            }
+            $numero_ventas = $cliente->ventas->count();
+            $numero_ventas_pendientes = $cliente->ventas->where('estado_venta_id','=',1)->count();
             $cliente->numero_ventas = $numero_ventas;
             $cliente->numero_ventas_pendientes = $numero_ventas_pendientes;
         }
-        return view('cliente.clienteVentaLista')->with(['clientes' => $clientes]);
+        return view('cliente.clienteVentaLista')
+            ->with(['clientes' => $clientes]);
+    }
+
+    public function VentasPorClienteVer($id)
+    {
+        $cliente = Cliente::find($id);
+        $total_saldo = $cliente->ventas->sum('venta_total_con_impuestos');
+        $cxc = $cliente->ventas->where('estado_venta_id','=',1);
+        $total_saldo_pendiente = $cxc->sum('saldo');
+        return view('cliente.ventasPorClienteVer')
+            ->with(['cliente' => $cliente])
+            ->with(['total_saldo' => $total_saldo])
+            ->with(['total_saldo_pendiente' => $total_saldo_pendiente]);
     }
 }

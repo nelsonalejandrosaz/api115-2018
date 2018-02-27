@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Clientes ventas
+    Ventas por cliente
 @endsection
 
 @section('CSSExtras')
@@ -10,7 +10,7 @@
 @endsection
 
 @section('contentheader_title')
-    Clientes ventas
+    Ventas por cliente
 @endsection
 
 @section('contentheader_description')
@@ -26,8 +26,8 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header with-border">
-                </div><!-- /.box-header -->
+                {{--<div class="box-header with-border">--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>
@@ -48,7 +48,7 @@
                                 <td>$ {{number_format($cliente->saldo,2)}}</td>
                                 {{-- <td>{{$proveedor->direccion}}</td> --}}
                                 <td align="center">
-                                    <a href="{{ route('cuentasPorCobrar', ['id' => $cliente->id]) }}" class="btn bg-gray"><span class="fa fa-list"></span></a>
+                                    <a href="{{ route('ventasPorClienteVer', ['id' => $cliente->id]) }}" class="btn bg-gray"><span class="fa fa-list"></span></a>
                                 </td>
                             </tr>
                         @endforeach

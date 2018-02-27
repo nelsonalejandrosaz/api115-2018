@@ -74,6 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
      * Cuentas por cobrar
      */
     Route::get('/cxc/ventas','ClienteController@ClienteVentaLista')->name('clienteVentaLista');
+    Route::get('/cxc/ventas/{id}','ClienteController@VentasPorClienteVer')->name('ventasPorClienteVer');
     Route::get('/cxc/saldo','ClienteController@CuentasPorCobrar')->name('cuentasPorCobrar');
     Route::get('/cxc/saldo/{id}','ClienteController@CuentasPorCobrarVer')->name('cuentasPorCobrarVer');
 
