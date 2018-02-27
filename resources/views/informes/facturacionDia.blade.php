@@ -132,7 +132,7 @@
                                     {{ $venta->numero }}
                                 </td>
                                 <td>
-                                    {{ $venta->orden_pedido->cliente->nombre }}
+                                    {{ $venta->cliente->nombre }}
                                 </td>
                                 <td>
                                     {{ $venta->vendedor->nombre }}
@@ -162,7 +162,7 @@
                                         {{ $venta->numero }}
                                     </td>
                                     <td>
-                                        {{ $venta->orden_pedido->cliente->nombre }}
+                                        {{ $venta->cliente->nombre }}
                                     </td>
                                     <td>
                                         {{ $venta->vendedor->nombre }}

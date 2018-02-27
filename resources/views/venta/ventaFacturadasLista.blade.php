@@ -160,7 +160,7 @@
                 let button = $(event.relatedTarget); // Button that triggered the modal
                 let numero_venta = button.data('numero'); // Extract info from data-* attributes
                 let id_venta = button.data('id');
-                let ruta = '/venta/' + id_venta;
+                let ruta = '/venta/anular/' + id_venta;
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
                 let modal = $(this);
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.

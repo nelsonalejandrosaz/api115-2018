@@ -186,14 +186,24 @@
                     <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-gears"></span>
                         Confirmar producción
                     </button>
+                    <button type="button" class="btn btn-lg btn-danger pull-right" style="margin-right: 5px" id="eliminar-previa-buttom"><span class="fa fa-trash"></span>
+                        Eliminar previa
+                    </button>
+                    <button type="button" class="btn btn-lg btn-warning pull-right" style="margin-right: 5px" id="ajustar-buttom-id"><span class="fa fa-edit"></span>
+                        Ajustar cantidades
+                    </button>
                 @endif
-                <button type="button" class="btn btn-lg btn-warning pull-right" style="margin-right: 5px" id="ajustar-buttom-id"><span class="fa fa-edit"></span>
-                    Ajustar cantidades
-                </button>
             </div>
 
         </form>
     </div><!-- /.box -->
+
+    <div class="hidden">
+        <form action="{{ route('produccionPreviaEliminar',['id' => $produccion->id]) }}" method="POST" id="eliminar-previa-form">
+            {{ csrf_field() }}
+            {{ method_field('DELETE') }}
+        </form>
+    </div>
 
 @endsection
 
@@ -205,10 +215,15 @@
         function Principal() {
             console.log('DOR');
             $('#ajustar-buttom-id').click(AjustarCantidades);
+            $('#eliminar-previa-buttom').click(EliminarPrevia);
         }
 
         function AjustarCantidades() {
             $('.cantidades-input').removeAttr('readonly');
+        }
+
+        function EliminarPrevia() {
+            $('#eliminar-previa-form').submit();
         }
 
         function cambioProducto() {

@@ -82,6 +82,17 @@ class DevController extends Controller
         dd("Exito");
     }
 
+    public function Corregir2()
+    {
+        $producciones = Produccion::where('id','<',221)->withTrashed()->get();
+        foreach ($producciones as $produccion)
+        {
+            $produccion->procesado = true;
+            $produccion->save();
+        }
+        dd("Exito");
+    }
+
 
     public function select2($id)
     {

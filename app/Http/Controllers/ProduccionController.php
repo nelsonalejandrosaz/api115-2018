@@ -368,4 +368,15 @@ class ProduccionController extends Controller
         session()->flash('mensaje.contenido', 'La producción fue revertida correctamente!');
         return redirect()->route('produccionLista');
     }
+
+    public function ProduccionPreviaEliminar($id)
+    {
+        $produccion = Produccion::find($id);
+        $produccion->forceDelete();
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La previa de la producción fue eliminada correctamente!');
+        return redirect()->route('produccionLista');
+    }
 }

@@ -181,6 +181,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/produccion/','ProduccionController@ProduccionNuevaPost')->name('produccionNuevaPost');
     Route::get('/produccion/previa/{id}','ProduccionController@ProduccionPrevia')->name('produccionPrevia');
+    Route::delete('/produccion/previa/{id}','ProduccionController@ProduccionPreviaEliminar')->name('produccionPreviaEliminar');
     Route::post('/produccion/{id}','ProduccionController@ProduccionConfirmarPost')->name('produccionConfirmarPost');
 
     /**
@@ -223,6 +224,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('dev/venta-sin-orden','DevController@VentaSinOrden');
     Route::get('dev/venta-anulada-sin-orden','DevController@VentaAnuladaSinOrden');
     Route::get('dev/c','DevController@Corregir');
+    Route::get('dev/c2','DevController@Corregir2');
 
 
     /**

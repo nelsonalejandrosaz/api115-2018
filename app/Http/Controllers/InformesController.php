@@ -61,7 +61,7 @@ class InformesController extends Controller
         $monto_total_dia = 0.00;
         foreach ($fcf_dia as $venta)
         {
-            $monto = $venta->orden_pedido->venta_total;
+            $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
             $monto_iva = $monto_total - $monto;

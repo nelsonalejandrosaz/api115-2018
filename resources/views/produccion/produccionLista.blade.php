@@ -47,11 +47,11 @@
                                 <td>{{$produccion->producto->nombre}}</td>
                                 <td>{{$produccion->bodeguero->nombre}}</td>
                                 <td align="center">
-                                    <a href="{{ route('produccionVer', ['id' => $produccion->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
-                                    {{--<a href="{{ route('ordenPedidoVer', ['id' => $produccion->id]) }}" class="btn btn-warning"><span class="fa fa-edit"></span></a>--}}
-                                    {{--<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar" data-ordenPedido="{{ $produccion->id }}" data-id="{{ $produccion->id }}">--}}
-                                        {{--<span class="fa fa-trash"></span>--0.00}}
-                                    {{--</button>--}}
+                                    @if($produccion->procesado == false)
+                                        <a href="{{ route('produccionPrevia', ['id' => $produccion->id]) }}" class="btn btn-warning"><span class="fa fa-check"></span></a>
+                                    @else
+                                        <a href="{{ route('produccionVer', ['id' => $produccion->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
