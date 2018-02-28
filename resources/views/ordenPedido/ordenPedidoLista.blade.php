@@ -193,7 +193,7 @@
                 var button = $(event.relatedTarget); // Button that triggered the modal
                 var numero_orden = button.data('numero'); // Extract info from data-* attributes
                 var id_orden = button.data('id');
-                var ruta = '/ordenPedido/' + id_orden;
+                var ruta = '/orden-pedido/' + id_orden;
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
                 var modal = $(this);
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.

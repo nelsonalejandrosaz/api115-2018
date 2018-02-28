@@ -211,6 +211,7 @@
                     </table>
 
                     <table class="table table-bordered">
+                        @php( $iva = \App\Configuracion::find(1)->iva)
                         @if($ordenPedido->tipo_documento->codigo == 'CCF')
                             <tr>
                                 <th style="width:70%"></th>
@@ -225,7 +226,6 @@
                                 </th>
                             </tr>
                             <tr>
-                                @php( $iva = \App\Configuracion::find(1)->iva)
                                 <th style="width:70%"></th>
                                 <th style="width:15%">13% IVA</th>
                                 <th style="width:15%">
