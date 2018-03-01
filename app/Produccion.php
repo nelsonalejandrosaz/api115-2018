@@ -46,6 +46,10 @@ class Produccion extends Model
         'procesado',
     ];
 
+    protected $dates = [
+        'fecha'
+    ];
+
     protected $table = 'producciones';
 
 }

@@ -55,7 +55,7 @@
             <h3 class="box-title">Detalle de formula</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form id="formDatos" class="form-horizontal" action="{{ route('formulaNuevoPost') }}" method="POST">
+        <form id="formula-form-id" class="form-horizontal" action="{{ route('formulaNuevoPost') }}" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Fila  --}}
@@ -108,7 +108,7 @@
                         <label class="col-md-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha">
+                                <input type="date" class="form-control" name="fecha" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -188,7 +188,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-floppy-o"></span> Guardar
+                <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom"><span class="fa fa-floppy-o"></span> Guardar
                 </button>
             </div>
         </form>
@@ -197,19 +197,88 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     <!-- Select2 -->
     <script src="{{asset('/plugins/select2.full.min.js')}}"></script>
     {{-- Funcion para cargar mas filas de productos --}}
     <script>
-        $(document).on('ready', funcionPrincipal());
+        $(document).on('ready', Principal());
 
-        function funcionPrincipal() {
+        function Principal() {
             $("body").on("click", ".btn-danger", funcionEliminarProducto);
             $('#btn-nueva-fila-id').click(nuevaFila);
             $('#producto-aso-select-id').change(cambioProducto);
             selecionarValor();
             $('.select2').select2();
             agregarFuncion();
+            Validacion();
+        }
+        
+        function Validacion() {
+            $('#formula-form-id').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "productos[]": {
+                        required: true,
+                    },
+                    "cantidades[]": {
+                        required: true,
+                        min: 0.001,
+                    },
+                    "producto_id": {
+                        required: true,
+                    },
+                    "cantidad_formula": {
+                        required: true,
+                        min: 0.001,
+                    },
+                    "fecha": {
+                        required: true,
+                    }
+                },
+                messages: {
+                    "productos[]": {
+                        required: function () {
+                            toastr.error('Por favor seleccione un producto en el componente', 'Ups!');
+                        },
+                    },
+                    "cantidades[]": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad del componente', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                    "producto_id": {
+                        required: function () {
+                            toastr.error('Por favor selección en producto a asociar en la formula', 'Ups!');
+                        },
+                    },
+                    "cantidad_formula": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad total de la fórmula', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                    "fecha": {
+                        required: function () {
+                            toastr.error('Por favor complete la fecha', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled','true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
         }
 
         function agregarFuncion() {

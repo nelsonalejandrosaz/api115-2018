@@ -22,16 +22,28 @@ use Illuminate\Support\Facades\Auth;
 
 class ProduccionController extends Controller
 {
-    public function ProduccionLista()
+    public function ProduccionLista(Request $request)
     {
-        $producciones = Produccion::all();
-        return view('produccion.produccionLista')->with(['producciones' => $producciones]);
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->subDays(15);
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->addDays(15);
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
+        $producciones = Produccion::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
+        return view('produccion.produccionLista')
+            ->with(['producciones' => $producciones])
+            ->with(['extra' => $extra]);
     }
 
-    public function ProduccionRevLista()
+    public function ProduccionRevLista(Request $request)
     {
-        $producciones = Produccion::onlyTrashed()->get();
-        return view('produccion.produccionLista')->with(['producciones' => $producciones]);
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->subDays(15);
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->addDays(15);
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
+        $producciones = Produccion::onlyTrashed()->whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
+        return view('produccion.produccionLista')
+            ->with(['producciones' => $producciones])
+            ->with(['extra' => $extra]);
     }
 
     public function ProduccionVer($id)

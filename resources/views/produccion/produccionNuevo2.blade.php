@@ -27,7 +27,7 @@
             <h3 class="box-title">Datos del producto</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('produccionNuevaPost') }}" method="POST">
+        <form class="form-horizontal" action="{{ route('produccionNuevaPost') }}" method="POST" id="produccion-form">
             {{ csrf_field() }}
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
@@ -39,7 +39,7 @@
                         <label class="col-md-4 control-label"><b>Fecha producción</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input type="date" class="form-control" name="fecha">
+                                <input type="date" class="form-control" name="fecha" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -62,7 +62,7 @@
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <a href="" target="_blank" class="btn btn-info" id="ver-f-id"><span class="fa fa-eye"></span></a>
+                            <a href="" disabled target="_blank" class="btn btn-info" id="ver-f-id"><span class="fa fa-eye"></span></a>
                         </div>
                     </div>
 
@@ -152,7 +152,7 @@
             <div class="box-footer">
                 <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-gears"></span>
+                <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom"><span class="fa fa-gears"></span>
                     Producir
                 </button>
             </div>
@@ -162,8 +162,69 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     <script>
 
+        $(document).ready(Principal);
+
+        function Principal() {
+            Validacion();
+        }
+
+        function Validacion() {
+            $('#produccion-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "fecha": {
+                        required: true,
+                    },
+                    "formula_id": {
+                        required: true,
+                    },
+                    "fabricado_id[]": {
+                        required: true,
+                    },
+                    "cantidad": {
+                        required: true,
+                        min: 0.001,
+                    }
+                },
+                messages: {
+                    "fecha": {
+                        required: function () {
+                            toastr.error('Por favor complete la fecha', 'Ups!');
+                        },
+                    },
+                    "formula_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione el producto a producir', 'Ups!');
+                        },
+                    },
+                    "fabricado_id[]": {
+                        required: function () {
+                            toastr.error('Por favor seleccion las personas que participaron en la producción', 'Ups!');
+                        },
+                    },
+                    "cantidad": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad a producir', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled','true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
+        }
 
         function cambioProducto() {
             let productoId = $('#productoID').val();
@@ -177,6 +238,7 @@
             }
             $('#factorVolumenID').val(factor_unidad);
             let link = "/formula/" + $('#productoID').find(':selected').val();
+            $('#ver-f-id').removeAttr('disabled');
             $('#ver-f-id').attr("href", link);
         }
     </script>

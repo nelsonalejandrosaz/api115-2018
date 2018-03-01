@@ -27,7 +27,7 @@
             <h3 class="box-title">Datos del producto</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('produccionConfirmarPost',['id' => $produccion->id]) }}" method="POST">
+        <form class="form-horizontal" action="{{ route('produccionConfirmarPost',['id' => $produccion->id]) }}" method="POST" id="produccion-form">
             {{ csrf_field() }}
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
@@ -39,7 +39,7 @@
                         <label class="col-md-4 control-label"><b>Fecha producción</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input readonly type="date" class="form-control" name="fecha" value="{{ $produccion->fecha }}">
+                                <input readonly type="date" class="form-control" name="fecha" value="{{ $produccion->fecha->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
@@ -165,8 +165,8 @@
                                 </td>
                                 <td>
                                     <div class="input-group">
-                                        <input readonly type="text" class="form-control cantidades-input"
-                                               value="{{ number_format($componente->cantidad) }}" name="cantidades[]">
+                                        <input readonly type="number" step="any" class="form-control cantidades-input"
+                                               value="{{ round($componente->cantidad) }}" name="cantidades[]">
                                         <span class="input-group-addon">g</span>
                                     </div>
                                 </td>
@@ -183,7 +183,7 @@
                 <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
                 @if($produccion->procesado == false)
-                    <button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-gears"></span>
+                    <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom"><span class="fa fa-gears"></span>
                         Confirmar producción
                     </button>
                     <button type="button" class="btn btn-lg btn-danger pull-right" style="margin-right: 5px" id="eliminar-previa-buttom"><span class="fa fa-trash"></span>
@@ -208,6 +208,9 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     <script>
 
         $(document).on('ready', Principal());
@@ -216,6 +219,36 @@
             console.log('DOR');
             $('#ajustar-buttom-id').click(AjustarCantidades);
             $('#eliminar-previa-buttom').click(EliminarPrevia);
+            Validacion();
+        }
+
+        function Validacion() {
+            $('#produccion-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "cantidades[]": {
+                        required: true,
+                        min: 0.001,
+                    }
+                },
+                messages: {
+                    "cantidades[]": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad a producir', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled','true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
         }
 
         function AjustarCantidades() {

@@ -1,7 +1,6 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
     Ver fórmula
 @endsection
 
@@ -13,7 +12,6 @@
 @endsection
 
 @section('contentheader_title')
-    {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
     Ver fórmula
 @endsection
 
@@ -181,6 +179,8 @@
             <div class="box-footer">
                 <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-mail-reply"></span> Regresar a lista</a>
+                <a href="{{ route('formulaEditar',['id' => $formula->id]) }}" class="btn btn-lg btn-warning pull-right"><span
+                            class="fa fa-edit"></span> Editar formula</a>
                 @if(!$formula->activa)
                     <button type="submit" class="btn btn-lg btn-warning pull-right"><span class="fa fa-linux"></span> Activar formula</button>
                 @endif
