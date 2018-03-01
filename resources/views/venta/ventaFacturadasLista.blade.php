@@ -7,6 +7,8 @@
 @section('CSSExtras')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('/plugins/dataTables.bootstrap.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{asset('/plugins/select2.min.css')}}">
 @endsection
 
 @section('contentheader_title')
@@ -22,65 +24,76 @@
     @include('partials.alertas')
     @include('partials.modalEliminar')
 
-    {{--Cuadro de herramientas--}}
-    {{--<div class="box box-default collapsed-box box-solid">--}}
-        {{--<div class="box-header with-border">--}}
-            {{--<h3 class="box-title">Opciones</h3>--}}
-            {{--<div class="box-tools pull-right">--}}
-                {{--<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>--}}
-                {{--<button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--}}
-            {{--</div>--}}
-        {{--</div><!-- /.box-header -->--}}
+    {{--Cuadro de herramientas // para colapsarlo --> collapsed-box --}}
+    <div class="box box-default box-solid">
+        <div class="box-header with-border">
+            <h3 class="box-title">Opciones</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div><!-- /.box-header -->
 
-        {{--<!-- form start -->--}}
-        {{--<form class="form-horizontal" action="{{ route('ordenPedidoListaPost') }}" method="POST">--}}
-            {{--{{ csrf_field() }}--}}
-            {{--<div class="box-body">--}}
-                {{--<div class="col-md-6 col-sm-12">--}}
-                    {{--<h4>Fechas mostradas</h4>--}}
+        <!-- form start -->
+        <form class="form-horizontal" method="GET" id="opciones-form">
+            <div class="box-body">
+                <div class="col-md-6 col-sm-12">
+                    <h4>Fechas mostradas</h4>
                     {{-- Fecha inicio --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label"><b>Fecha inicio</b></label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<input type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $extra['fecha_inicio']->format('Y-m-d') }}">--}}
-                                {{--<div class="input-group-addon">--}}
-                                    {{--<i class="fa fa-calendar"></i>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><b>Fecha inicio</b></label>
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $extra['fecha_inicio']->format('Y-m-d') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                {{--</div>--}}
+                    <h4>Tipo de documento</h4>
+                    {{-- Fecha inicio --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><b>Tipo documento</b></label>
+                        <div class="col-md-8">
+                            <select class="form-control select2" style="width:100%" name="tipo" id="tipo-select">
+                                <option value="todo">Todos</option>
+                                <option value="factura">Facturas</option>
+                                <option value="ccf">Créditos Fiscales</option>
+                                <option value="anulada">Anuladas</option>
+                            </select>
+                        </div>
+                    </div>
 
-                {{--<div class="col-md-6 col-sm-12">--}}
-                    {{--<h4><br></h4>--}}
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <h4><br></h4>
                     {{-- Fecha fin --}}
-                    {{--<div class="form-group">--}}
-                        {{--<label class="col-md-4 control-label"><b>Fecha fin</b></label>--}}
-                        {{--<div class="col-md-8">--}}
-                            {{--<div class="input-group">--}}
-                                {{--<input type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $extra['fecha_fin']->format('Y-m-d') }}">--}}
-                                {{--<div class="input-group-addon">--}}
-                                    {{--<i class="fa fa-calendar"></i>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><b>Fecha fin</b></label>
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $extra['fecha_fin']->format('Y-m-d') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                {{--</div>--}}
+                </div>
 
-            {{--</div><!-- /.box-body -->--}}
+            </div><!-- /.box-body -->
 
-            {{--<div class="box-footer">--}}
-                {{--<button type="submit" class="btn btn-lg btn-success pull-right"><span--}}
-                            {{--class="fa fa-search"></span> Consultar--}}
-                {{--</button>--}}
-                {{--<a href="{{ route('ordenPedidoNueva') }}" class="btn btn-lg btn-primary" style="margin-right: 5px"><span--}}
-                            {{--class="fa fa-plus"></span> Nueva orden pedido</a>--}}
-            {{--</div>--}}
-        {{--</form>--}}
-    {{--</div>--}}
+            <div class="box-footer">
+                <button type="button" class="btn btn-lg btn-success pull-right" id="consultar-buttom"><span
+                            class="fa fa-search"></span> Consultar
+                </button>
+            </div>
+        </form>
+    </div>
     {{--Fin cuadro de herramientas--}}
 
     <div class="row">
@@ -151,24 +164,15 @@
 @endsection
 
 @section('JSExtras')
+    @include('comun.select2Jses')
     <!-- DataTables -->
     <script src="{{ asset('/plugins/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/plugins/dataTables.bootstrap.min.js') }}"></script>
-    <script !src="">
-        $(function () {
-            $('#modalEliminar').on('show.bs.modal', function (event) {
-                let button = $(event.relatedTarget); // Button that triggered the modal
-                let numero_venta = button.data('numero'); // Extract info from data-* attributes
-                let id_venta = button.data('id');
-                let ruta = '/venta/anular/' + id_venta;
-                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                let modal = $(this);
-                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                modal.find('#mensaje01').text('Al anular venta se ingresara al inventario el producto y el saldo del cliente se saldará');
-                modal.find('#mensaje02').text('Realmente desea anular la venta numero: ' + numero_venta);
-                modal.find('#myform').attr("action", ruta);
-            });
+    <script>
+        $(document).ready(Principal);
 
+        function Principal() {
+            $('#consultar-buttom').click(OpcionesForm);
             $("#tablaDT").DataTable(
                 {
                     order: [[1, "asc"]],
@@ -196,6 +200,28 @@
                     }
                 }
             );
-        })
+            $('#modalEliminar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget); // Button that triggered the modal
+                let numero_venta = button.data('numero'); // Extract info from data-* attributes
+                let id_venta = button.data('id');
+                let ruta = '/venta/anular/' + id_venta;
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                let modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#mensaje01').text('Al anular venta se ingresara al inventario el producto y el saldo del cliente se saldará');
+                modal.find('#mensaje02').text('Realmente desea anular la venta numero: ' + numero_venta);
+                modal.find('#myform').attr("action", ruta);
+            });
+        }
+
+        function OpcionesForm() {
+            let fecha_form = $('#opciones-form');
+            let fechas_str = fecha_form.serialize();
+            let tipo = $('#tipo-select').val();
+            let uri = "/venta/tipo/" + tipo + "?" + fechas_str;
+            toastr.info("Filtrando por fechas seleccionadas","Excelente!!");
+            window.location.href = uri;
+        }
+
     </script>
 @endsection

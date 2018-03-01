@@ -161,7 +161,7 @@
                                     @endif
                                 </td>
                                 {{--Unidad de medida--}}
-                                <td>text
+                                <td>
                                     <input readonly type="text" class="form-control unidadCls" name="" id="unidadMedida"
                                            value="{{$salida->unidad_medida->abreviatura}}">
                                 </td>

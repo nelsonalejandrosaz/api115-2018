@@ -22,14 +22,31 @@
     @include('partials.modalEliminar')
     @include('partials.alertas')
 
+    {{--Cuadro de herramientas // para colapsarlo --> collapsed-box --}}
+    <div class="box box-default box-solid">
+        <div class="box-header with-border">
+            <h3 class="box-title">Opciones</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div><!-- /.box-header -->
+
+        <div class="box-footer">
+            <a href="{{ route('formulaNuevo') }}" class="btn btn-lg btn-primary"><span
+            class="fa fa-plus"></span> Nueva Formula</a>
+        </div>
+    </div>
+    {{--Fin cuadro de herramientas--}}
+
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
-                <div class="box-header">
-                    <h3 class="box-title">Lista de formulas</h3>
-                    <a href="{{ route('formulaNuevo') }}" class="btn btn-lg btn-primary pull-right"><span
-                                class="fa fa-plus"></span> Nueva Formula</a>
-                </div><!-- /.box-header -->
+                {{--<div class="box-header">--}}
+                    {{--<h3 class="box-title">Lista de formulas</h3>--}}
+                    {{--<a href="{{ route('formulaNuevo') }}" class="btn btn-lg btn-primary pull-right"><span--}}
+                                {{--class="fa fa-plus"></span> Nueva Formula</a>--}}
+                {{--</div><!-- /.box-header -->--}}
                 <div class="box-body table-responsive">
                     <table id="tablaDT" class="table table-hover">
                         <thead>

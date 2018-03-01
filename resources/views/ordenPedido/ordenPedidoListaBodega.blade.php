@@ -21,6 +21,64 @@
 
     @include('partials.alertas')
 
+    {{--Cuadro de herramientas // para colapsarlo --> collapsed-box --}}
+    <div class="box box-default box-solid">
+        <div class="box-header with-border">
+            <h3 class="box-title">Opciones</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div><!-- /.box-header -->
+
+        <!-- form start -->
+        <form class="form-horizontal" method="GET" id="opciones-form">
+            <div class="box-body">
+                <div class="col-md-6 col-sm-12">
+                    <h4>Fechas mostradas</h4>
+                    {{-- Fecha inicio --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><b>Fecha inicio</b></label>
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha_inicio" id="fecha-inicio" value="{{ $extra['fecha_inicio']->format('Y-m-d') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <h4><br></h4>
+                    {{-- Fecha fin --}}
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"><b>Fecha fin</b></label>
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="fecha_fin" id="fecha-fin" value="{{ $extra['fecha_fin']->format('Y-m-d') }}">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div><!-- /.box-body -->
+
+            <div class="box-footer">
+                <button type="button" class="btn btn-lg btn-success pull-right" id="consultar-buttom"><span
+                            class="fa fa-search"></span> Consultar
+                </button>
+            </div>
+        </form>
+    </div>
+    {{--Fin cuadro de herramientas--}}
+
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-default">
@@ -88,7 +146,11 @@
     <script src="{{ asset('/plugins/moment.min.js') }}"></script>
     <script src="{{ asset('/plugins/datetime-moment.js') }}"></script>
     <script>
-        $(function () {
+
+        $(document).ready(Principal);
+
+        function Principal() {
+            $('#consultar-buttom').click(OpcionesForm);
             $.fn.dataTable.moment( 'd/M/YYYY' );
             $("#tablaDT").DataTable(
 
@@ -118,6 +180,15 @@
                     }
                 }
             );
-        });
+        }
+
+        function OpcionesForm() {
+            let fecha_form = $('#opciones-form');
+            let fechas_str = fecha_form.serialize();
+            let uri = "/orden-pedido-bodega/procesada?" + fechas_str;
+            toastr.info("Filtrando por fechas seleccionadas","Excelente!!");
+            window.location.href = uri;
+        }
+
     </script>
 @endsection

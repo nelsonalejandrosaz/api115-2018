@@ -157,7 +157,7 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::group(['middleware' => ['administrador']], function () {
         Route::get('/formula','FormulaController@FormulaLista')->name('formulaLista');
-        Route::get('/formula/historico','FormulaController@FormulaDesactivadasLista')->name('formulaDesactivadasLista');
+        Route::get('/formula-historico','FormulaController@FormulaDesactivadasLista')->name('formulaDesactivadasLista');
         Route::get('/formula/nuevo','FormulaController@FormulaNuevo')->name('formulaNuevo');
         Route::post('/formula/nuevo','FormulaController@FormulaNuevoPost')->name('formulaNuevoPost');
         Route::get('/formula/{id}/editar','FormulaController@FormulaEditar')->name('formulaEditar');

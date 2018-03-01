@@ -25,12 +25,12 @@
     <div class="row">
         <div class="col-xs-12">
 
-            {{--Cuadro de herramientas--}}
-            <div class="box box-default collapsed-box box-solid">
+            {{--Cuadro de herramientas // para colapsarlo --> collapsed-box --}}
+            <div class="box box-default box-solid">
                 <div class="box-header with-border">
                     <h3 class="box-title">Opciones</h3>
                     <div class="box-tools pull-right">
-                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div><!-- /.box-header -->
@@ -156,7 +156,7 @@
     <script src="{{ asset('/plugins/moment.min.js') }}"></script>
     <script src="{{ asset('/plugins/datetime-moment.js') }}"></script>
     <script !src="">
-        $(document).on('ready', Principal())
+        $(document).on('ready', Principal());
         
         function Principal() {
             $('#fecha-buttom').click(FechaFormPost);

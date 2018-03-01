@@ -39,17 +39,30 @@ class OrdenPedidoController extends Controller
             ->with(['extra' => $extra]);
     }
 
-    public function OrdenPedidoListaBodega()
+    public function OrdenPedidoListaBodega(Request $request)
     {
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->startOfMonth();
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->endOfMonth();
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
         $estado_orden = EstadoOrdenPedido::whereCodigo('SP')->first();
         $ordenesPedidos = OrdenPedido::whereEstadoId($estado_orden->id)->get();
-        return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
+        return view('ordenPedido.ordenPedidoListaBodega')
+            ->with(['ordenesPedidos' => $ordenesPedidos])
+            ->with(['extra' => $extra]);
     }
 
-    public function OrdenPedidoListaProcesadoBodega()
+    public function OrdenPedidoListaProcesadoBodega(Request $request)
     {
-        $ordenesPedidos = OrdenPedido::whereBetween('estado_id',[2,3,4])->get();
-        return view('ordenPedido.ordenPedidoListaBodega')->with(['ordenesPedidos' => $ordenesPedidos]);
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->startOfMonth();
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->endOfMonth();
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
+        $ordenesPedidos = OrdenPedido::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
+        $ordenesPedidos = $ordenesPedidos->where('estado_id','>',1);
+        return view('ordenPedido.ordenPedidoListaBodega')
+            ->with(['ordenesPedidos' => $ordenesPedidos])
+            ->with(['extra' => $extra]);
     }
 
     public function OrdenPedidoVer($id)

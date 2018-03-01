@@ -30,10 +30,9 @@ class VentaController extends Controller
     {
         // id = 2 - Despachada
         $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2)->get();
-        if (Auth::user()->rol->nombre == 'Vendedor')
-        {
+        if (Auth::user()->rol->nombre == 'Vendedor') {
             $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2);
-            $ordenesPedidoProcesadas = $ordenesPedidoProcesadas->where('vendedor_id','=',Auth::user()->id)->get();
+            $ordenesPedidoProcesadas = $ordenesPedidoProcesadas->where('vendedor_id', '=', Auth::user()->id)->get();
         }
         return view('venta.ventaLista')->with(['ordenesPedidos' => $ordenesPedidoProcesadas]);
     }
@@ -44,17 +43,14 @@ class VentaController extends Controller
         $dia_hoy = Carbon::now();
         $cierre = Carbon::parse($dia_hoy->format('Y-m-d'));
         $cierre = $cierre->addHours(15)->addMinutes(30);
-        if ($dia_hoy > $cierre)
-        {
+        if ($dia_hoy > $cierre) {
             $dia_hoy = $dia_hoy->addDay();
         }
-        if ($orden_pedido->tipo_documento->codigo == 'FAC')
-        {
+        if ($orden_pedido->tipo_documento->codigo == 'FAC') {
             return view('venta.ventaFCFNuevo')
                 ->with(['orden_pedido' => $orden_pedido])
                 ->with(['dia' => $dia_hoy]);
-        } else
-        {
+        } else {
             return view('venta.ventaCCFNuevo')
                 ->with(['orden_pedido' => $orden_pedido])
                 ->with(['dia' => $dia_hoy]);
@@ -72,8 +68,7 @@ class VentaController extends Controller
         $fecha = Carbon::now();
         $cierre = Carbon::parse($fecha->format('Y-m-d'));
         $cierre = $cierre->addHours(15)->addMinutes(30);
-        if ($fecha > $cierre)
-        {
+        if ($fecha > $cierre) {
             $fecha = $fecha->addDay();
         }
         // Se carga la orden de pedido
@@ -123,13 +118,11 @@ class VentaController extends Controller
         $venta = Venta::find($id);
         $iva = Configuracion::find(1)->iva;
         // Se verifica que la venta sea factura
-        if ($venta->tipo_documento->codigo != 'FAC')
-        {
+        if ($venta->tipo_documento->codigo != 'FAC') {
             abort(404);
         }
 //        dd($venta);
-        if ($venta->detalle_otras_ventas->isNotEmpty())
-        {
+        if ($venta->detalle_otras_ventas->isNotEmpty()) {
             return view('venta.ventaFacturaEspecialVer')
                 ->with(['venta' => $venta]);
         }
@@ -150,46 +143,52 @@ class VentaController extends Controller
         // Se carga la venta y el IVA
         $venta = Venta::find($id);
         $iva = Configuracion::find(1)->iva;
-        if ($venta->tipo_documento->codigo != 'CCF')
-        {
+        if ($venta->tipo_documento->codigo != 'CCF') {
             abort(404);
         }
-        $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * ($iva -1);
+        $venta->orden_pedido->porcentaje_IVA = $venta->orden_pedido->ventas_gravadas * ($iva - 1);
         $venta->orden_pedido->venta_total = $venta->orden_pedido->venta_total * $iva;
         return view('venta.ventaCCFVer')
             ->with(['venta' => $venta]);
     }
 
-    public function VentaLista($tipo)
+    public function VentaLista(Request $request, $tipo)
     {
-        if (Auth::user()->rol->nombre == 'Vendedor')
-        {
-            $ventas = Venta::where('vendedor_id','=',Auth::user()->id)->get();
-        } else
-        {
-            $ventas = Venta::all();
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->startOfMonth();
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->endOfMonth();
+        $extra['fecha_inicio'] = $fecha_inicio;
+        $extra['fecha_fin'] = $fecha_fin;
+        if (Auth::user()->rol->nombre == 'Vendedor') {
+            $ventas = Venta::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
+            $ventas = $ventas->where('vendedor_id', '=', Auth::user()->id);
+//            $ventas = Venta::where('vendedor_id', '=', Auth::user()->id)->get();
+        } else {
+            $ventas = Venta::whereBetween('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')])->get();
         }
-        switch ($tipo)
-        {
+        switch ($tipo) {
             case 'todo':
                 return view('venta.ventaFacturadasLista')
                     ->with(['ventas' => $ventas])
-                    ->with(['titulo' => "Ventas"]);
+                    ->with(['titulo' => "Ventas"])
+                    ->with(['extra' => $extra]);
             case 'factura':
-                $ventas = $ventas->where('tipo_documento_id','=',1);
+                $ventas = $ventas->where('tipo_documento_id', '=', 1);
                 return view('venta.ventaFacturadasLista')
                     ->with(['ventas' => $ventas])
-                    ->with(['titulo' => "Facturas Consumidor Final"]);
+                    ->with(['titulo' => "Facturas Consumidor Final"])
+                    ->with(['extra' => $extra]);
             case 'ccf':
-                $ventas = $ventas->where('tipo_documento_id','=',2);
+                $ventas = $ventas->where('tipo_documento_id', '=', 2);
                 return view('venta.ventaFacturadasLista')
                     ->with(['ventas' => $ventas])
-                    ->with(['titulo' => "Comprobantes de crédito fiscal"]);
+                    ->with(['titulo' => "Comprobantes de crédito fiscal"])
+                    ->with(['extra' => $extra]);
             case 'anulada':
-                $ventas = $ventas->where('estado_venta_id','=',3);
+                $ventas = $ventas->where('estado_venta_id', '=', 3);
                 return view('venta.ventaFacturadasLista')
                     ->with(['ventas' => $ventas])
-                    ->with(['titulo' => "Documentos anulados"]);
+                    ->with(['titulo' => "Documentos anulados"])
+                    ->with(['extra' => $extra]);
         }
     }
 
@@ -240,8 +239,7 @@ class VentaController extends Controller
     {
         $venta = Venta::find($id);
         $salidas = $venta->orden_pedido->salidas;
-        foreach ($salidas as $salida)
-        {
+        foreach ($salidas as $salida) {
             // Variables
             // Se carga el producto
             $producto = Producto::find($salida->movimiento->producto_id);
@@ -301,7 +299,7 @@ class VentaController extends Controller
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El documento de la venta fue anulada correctamente!');
-        return redirect()->route('ventaLista',['filtro' => 'todo']);
+        return redirect()->route('ventaLista', ['filtro' => 'todo']);
     }
 
     public function VentaAnuladaSinOrdenNueva()
@@ -344,8 +342,7 @@ class VentaController extends Controller
         $fecha = Carbon::now();
         $cierre = Carbon::parse($fecha->format('Y-m-d'));
         $cierre = $cierre->addHours(15)->addMinutes(30);
-        if ($fecha > $cierre)
-        {
+        if ($fecha > $cierre) {
             $fecha = $fecha->addDay();
         }
         // Venta pendiente de pago = 1
@@ -371,8 +368,7 @@ class VentaController extends Controller
         $detalle = $request->input('detalle');
         $venta_gravada = $request->input('venta_gravada');
         $max = sizeof($detalle);
-        for ($i = 0; $i < $max; $i++)
-        {
+        for ($i = 0; $i < $max; $i++) {
             $detalle_venta = DetalleOtrasVentas::create([
                 'venta_id' => $venta->id,
                 'detalle' => $detalle[$i],
