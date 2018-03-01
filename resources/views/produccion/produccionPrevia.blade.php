@@ -165,8 +165,8 @@
                                 </td>
                                 <td>
                                     <div class="input-group">
-                                        <input readonly type="number" step="any" class="form-control cantidades-input"
-                                               value="{{$componente->cantidad}}" name="cantidades[]">
+                                        <input readonly type="text" class="form-control cantidades-input"
+                                               value="{{ number_format($componente->cantidad) }}" name="cantidades[]">
                                         <span class="input-group-addon">g</span>
                                     </div>
                                 </td>
