@@ -154,8 +154,8 @@ class VentaController extends Controller
 
     public function VentaLista(Request $request, $tipo)
     {
-        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->startOfMonth();
-        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->endOfMonth();
+        $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->subDays(15);
+        $fecha_fin = ($request->get('fecha_fin') != null) ? Carbon::parse($request->get('fecha_fin')) : Carbon::now()->addDays(15);
         $extra['fecha_inicio'] = $fecha_inicio;
         $extra['fecha_fin'] = $fecha_fin;
         if (Auth::user()->rol->nombre == 'Vendedor') {
