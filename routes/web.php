@@ -210,7 +210,7 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas de configuracion general del sistema LGL
      */
     Route::get('/configuracion/producto/cvs','ConfiguracionController@ImportarDatos')->name('importarDatos');
-    Route::post('/configuracion/producto/cvs','ConfiguracionController@ImportarDatosPost')->name('importarDatosPost');
+    Route::post('/configuracion/producto/cvs','ConfiguracionController@ActualizarInventario')->name('importarDatosPost');
     Route::get('/configuracion/ordenes/cvs','ConfiguracionController@ImportarOrdenes')->name('importarOrdenes');
     Route::post('/configuracion/ordenes/cvs','ConfiguracionController@ImportarOrdenesPost')->name('importarOrdenesPost');
     Route::get('/conversionUnidades','ConfiguracionController@ConversionUnidadesLista')->name('conversionUnidadesLista');

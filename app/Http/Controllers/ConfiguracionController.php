@@ -309,4 +309,83 @@ class ConfiguracionController extends Controller
         return redirect()->route('inventarioLista');
     }
 
+    public function ActualizarInventario(Request $request)
+    {
+        //        dd($request);
+        $this->validate($request, [
+            'archivoXLSX' => 'required',
+        ]);
+
+        Excel::load(Input::file('archivoXLSX'), function($reader) {
+            // Getting all results
+            $results = $reader->get();
+//            dd($results);
+
+            /**
+             * Código para guardar los productos con su inventario inicial
+             */
+            // Se selecciona la hoja correspondiente a productos
+            $productos = $results;
+//            dd($productos);
+            foreach ($productos as $producto_x)
+            {
+                $producto = Producto::find($producto_x->id);
+                if ($producto == null)
+                {
+                    dd($producto_x->id);
+                }
+                // Asignacion de inventario inicial
+                // Variables
+                $cantidad_ajuste = ($producto_x->ex_fisica == null) ? 0 : $producto_x->ex_fisica;
+//                dd($cantidad_ajuste);
+                $valor_unitario_ajuste = ($producto->costo == null) ? 0 : $producto->costo;
+                $valor_total_ajuste = $cantidad_ajuste * $valor_unitario_ajuste;
+                $diferencia_ajuste = abs($cantidad_ajuste - $producto->cantidad_existencia);
+                $tipo_movimiento = TipoMovimiento::whereCodigo('AJSE')->first();
+                $tipo_ajuste = TipoAjuste::whereCodigo('ENTINI')->first();
+                // Se crea el ajuste de entrada
+                $ajuste = Ajuste::create([
+                    'tipo_ajuste_id' => $tipo_ajuste->id,
+                    'detalle' => 'Ajuste de entrada para cuadrar con inventario físico',
+                    'fecha' => Carbon::now(),
+                    'cantidad_ajuste' => $cantidad_ajuste,
+                    'valor_unitario_ajuste' => $valor_unitario_ajuste,
+                    'realizado_id' => Auth::user()->id,
+                    'cantidad_anterior' => 0,
+                    'valor_unitario_anterior' => 0,
+                    'diferencia_ajuste' => $diferencia_ajuste,
+                ]);
+                // Se crea el movimiento
+                $movimiento = Movimiento::create([
+                    'producto_id' => $producto->id,
+                    'tipo_movimiento_id' => $tipo_movimiento->id,
+                    'ajuste_id' => $ajuste->id,
+                    'fecha' => Carbon::now(),
+                    'detalle' => 'Ajuste de entrada para cuadrar con inventario físico',
+                    'cantidad' => $cantidad_ajuste,
+                    'costo_unitario' => $valor_unitario_ajuste,
+                    'costo_total' => $valor_total_ajuste,
+                    'cantidad_existencia' => $cantidad_ajuste,
+                    'costo_unitario_existencia' => $valor_unitario_ajuste,
+                    'costo_total_existencia' => $valor_total_ajuste,
+                    'fecha_procesado' => Carbon::now(),
+                    'procesado' => true,
+                ]);
+                // Se actualiza la cantidad de producto después de la entrada
+                $producto->cantidad_existencia = $movimiento->cantidad_existencia;
+//                dd($producto->save());
+                $producto->save();
+            }
+            /**
+             * Fin código para guardar los productos con su inventario inicial
+             */
+        });
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La importación de la configuración inicial fue ejecutada correctamente!');
+        return redirect()->route('inventarioLista');
+
+    }
+
 }
