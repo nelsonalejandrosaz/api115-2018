@@ -50,8 +50,8 @@ class InventarioController extends Controller
         $mes['inicio'] = $inicio_mes = Carbon::parse('first day of this month')->format('Y-m-d');
         $mes['fin'] = $final_mes = Carbon::parse('last day of this month')->format('Y-m-d');
         $movimientos = $producto->movimientos()
-            ->whereYear('fecha','=',$anio_actual)
-            ->whereMonth('fecha','=',$mes_actual)
+            ->whereYear('fecha_procesado','=',$anio_actual)
+            ->whereMonth('fecha_procesado','=',$mes_actual)
             ->where('procesado','=',true)
             ->orderBy('fecha_procesado','asc')->get();
         if (Auth::user()->rol->nombre == 'Bodeguero')

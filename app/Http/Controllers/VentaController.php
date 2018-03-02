@@ -270,7 +270,7 @@ class VentaController extends Controller
                 'detalle' => 'Ajuste de entrada por anulación de documento venta n°: ' . $venta->numero,
                 'cantidad' => $diferencia_ajuste,
                 'costo_unitario' => $producto->costo,
-                'costo_total' => $cantidad_ajuste * $producto->costo,
+                'costo_total' => $diferencia_ajuste * $producto->costo,
                 'cantidad_existencia' => $cantidad_ajuste,
                 'costo_unitario_existencia' => $producto->costo,
                 'costo_total_existencia' => $cantidad_ajuste * $producto->costo,

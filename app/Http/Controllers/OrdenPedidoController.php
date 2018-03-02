@@ -330,6 +330,7 @@ class OrdenPedidoController extends Controller
             $salidas[$i]->movimiento->costo_unitario_existencia = round($producto->costo,4);
             $salidas[$i]->movimiento->costo_total_existencia = round($costo_total_existencia,4);
             $salidas[$i]->movimiento->fecha_procesado = Carbon::now();
+//            $salidas[$i]->movimiento->fecha = Carbon::now();
             $salidas[$i]->movimiento->procesado = true;
             $salidas[$i]->movimiento->save();
             $salidas[$i]->save();

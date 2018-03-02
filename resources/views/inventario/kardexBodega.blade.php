@@ -146,7 +146,7 @@
                         <tbody>
                         @foreach($movimientos as $movimiento)
                             <tr class="filasKardex">
-                                <td>{{ \Carbon\Carbon::parse($movimiento->fecha)->format('d/m/Y')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($movimiento->fecha_procesado)->format('d/m/Y')}}</td>
                                 @if($movimiento->tipo_movimiento->codigo == "ENTC")
                                     <td>
                                         <a href="{{ route('compraVer',['id' => $movimiento->entrada->compra_id]) }}">{{$movimiento->detalle}}</a>
