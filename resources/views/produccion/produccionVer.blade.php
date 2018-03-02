@@ -39,7 +39,7 @@
                         <label class="col-md-4 control-label"><b>Fecha producción</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
-                                <input readonly type="date" class="form-control" name="fecha" value="{{ $produccion->fecha }}">
+                                <input readonly type="date" class="form-control" name="fecha" value="{{ $produccion->fecha->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
