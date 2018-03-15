@@ -214,6 +214,7 @@
             $('.select2').select2();
             agregarFuncion();
             Validacion();
+            nuevaFila();
         }
         
         function Validacion() {

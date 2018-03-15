@@ -336,6 +336,7 @@
                     <a href="#"><i class='fa fa-industry'></i> <span>Produccion</span> <i
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
+                        <li><a href="{{route('formulaLista')}}"><i class="fa fa-bars"></i>Formulas</a></li>
                         <li><a href="{{route('produccionLista')}}"><i class="fa fa-bars"></i>Producciones</a></li>
                         <li><a href="{{route('produccionNuevo')}}"><i class="fa fa-plus"></i>Nueva producción</a></li>
                     </ul>

@@ -53,17 +53,27 @@
                         <div class="col-sm-6">
                             <select class="form-control select2" name="formula_id" onchange="cambioProducto()"
                                     id="productoID">
-                                <option value="" selected disabled>Seleccione el producto a producir</option>
-                                @foreach($formulas as $formula)
-                                    <option value="{{ $formula->id }}"
-                                            data-unidadmedida="{{$formula->producto->unidad_medida->nombre}}"
-                                            data-factor="{{$formula->producto->factor_volumen}}">{{ $formula->producto->nombre }} -- Formula {{$formula->version}}</option>
-                                @endforeach
+                                @if($formulas->count() > 1)
+                                    <option value="" selected disabled>Seleccione el producto a producir</option>
+                                    @foreach($formulas as $formula)
+                                        <option value="{{ $formula->id }}"
+                                                data-unidadmedida="{{$formula->producto->unidad_medida->nombre}}"
+                                                data-factor="{{$formula->producto->factor_volumen}}">{{ $formula->producto->nombre }} -- Formula {{$formula->version}}</option>
+                                    @endforeach
+                                @else
+                                    @foreach($formulas as $formula)
+                                        <option selected value="{{ $formula->id }}"
+                                                data-unidadmedida="{{$formula->producto->unidad_medida->nombre}}"
+                                                data-factor="{{$formula->producto->factor_volumen}}">{{ $formula->producto->nombre }} -- Formula {{$formula->version}}</option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
-                        <div class="col-sm-2">
-                            <a href="" disabled target="_blank" class="btn btn-info" id="ver-f-id"><span class="fa fa-eye"></span></a>
-                        </div>
+                        @if($formulas->count() > 1)
+                            <div class="col-sm-2">
+                                <a href="" disabled target="_blank" class="btn btn-info" id="ver-f-id"><span class="fa fa-eye"></span></a>
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Peso volumen --}}

@@ -82,20 +82,20 @@
                             </div>
                             <!-- ./col -->
 
-                            {{--<div class="col-lg-3 col-xs-6">--}}
-                                {{--<!-- small box -->--}}
-                                {{--<div class="small-box bg-red">--}}
-                                    {{--<div class="inner">--}}
-                                        {{--<h3 style="font-size: 25px">qwerty</h3>--}}
-                                        {{--<h3 style="font-size: 25px">qwerty</h3>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="icon">--}}
-                                        {{--<i class="fa fa-book"></i>--}}
-                                    {{--</div>--}}
-                                    {{--<a href="" class="small-box-footer">Ver informe <i class="fa fa-arrow-circle-right"></i></a>--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<!-- ./col -->--}}
+                            <div class="col-lg-3 col-xs-6">
+                                <!-- small box -->
+                                <div class="small-box bg-red">
+                                    <div class="inner">
+                                        <h3 style="font-size: 25px">Movimientos</h3>
+                                        <h3 style="font-size: 25px">producto</h3>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-book"></i>
+                                    </div>
+                                    <a href="{{ route('productoMovimiento') }}" class="small-box-footer">Ver informe <i class="fa fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            <!-- ./col -->
 
 
                         </div><!-- /.row -->

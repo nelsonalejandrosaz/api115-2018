@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class FormulaController extends Controller
 {
+    /**
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function FormulaLista()
     {
         $formulas = Formula::whereActiva(true)->get();
@@ -18,6 +23,11 @@ class FormulaController extends Controller
             ->with(['formulas' => $formulas]);
     }
 
+    /**
+     * @return $this
+     * Estado:
+     * Fecha rev:
+     */
     public function FormulaDesactivadasLista()
     {
         $formulas = Formula::whereActiva(false)->get();
@@ -36,6 +46,12 @@ class FormulaController extends Controller
             ->with(['productos' => $productos]);
     }
 
+    /**
+     * @return $this
+     * Estado: Revisado y funcionando
+     * Fecha rev: 13-03-18
+     * Observacion: Deja pasar sin componentes en la formula
+     */
     public function FormulaNuevo()
     {
         $unidad_medidas = UnidadMedida::all();
@@ -45,6 +61,13 @@ class FormulaController extends Controller
             ->with(['productos' => $productos]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Throwable
+     * Estado: Revisado y funcionado
+     * Fecha rev: 13-03-18
+     */
     public function FormulaNuevoPost(Request $request)
     {
         // Validación de datos
@@ -93,6 +116,13 @@ class FormulaController extends Controller
         return redirect()->route('formulaVer',$formula->id);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * Estado: Revisada y funcionando con bugs
+     * Fecha rev: 13-03-18
+     * Observaciones: La suma de la formula no la hace
+     */
     public function FormulaEditar($id)
     {
         $formula = Formula::find($id);
@@ -105,6 +135,13 @@ class FormulaController extends Controller
             ->with(['productos' => $productos]);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisada y funcionado
+     * Fecha rev: 13-03-18
+     */
     public function FormulaEditarPut(Request $request, $id)
     {
         // Validación de datos
@@ -143,6 +180,30 @@ class FormulaController extends Controller
 
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-03-18
+     */
+    public function FormulaEliminar($id)
+    {
+        $formula = Formula::find($id);
+        $formula->activa = false;
+        $formula->save();
+        // Mensaje de exito de ingreso
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'La fórmula fue desactivada correctamente!');
+        return redirect()->route('formulaDesactivadasLista');
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Sin revisar
+     * Fecha rev:
+     */
     public function FormulaActivarPost($id)
     {
         $formula = Formula::find($id);
@@ -159,6 +220,12 @@ class FormulaController extends Controller
         return redirect()->route('formulaVer',$formula->id);
     }
 
+    /**
+     * @param $id
+     * @throws \Exception
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function ComponenteEliminar($id)
     {
         $componente = Componente::find($id);

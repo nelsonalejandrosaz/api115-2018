@@ -185,7 +185,7 @@
                                 {{--Cantidad--}}
                                 <td>
                                     <input readonly type="text" class="form-control cantidadCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
+                                           name="cantidades[]"
                                            id="cantidad" value="{{$salida->cantidad}}">
                                 </td>
                                 {{--Precio unitario--}}

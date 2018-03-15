@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class AbonoController extends Controller
 {
+
     public function AbonoLista()
     {
         $abonos = Abono::all();

@@ -27,7 +27,7 @@
             <h3 class="box-title">Detalle del documento anulado</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="" method="POST">
+        <form class="form-horizontal" action="{{ route('ventaSinOrdenAnuladaNuevaPost') }}" method="POST" id="anular-form">
             {{ csrf_field() }}
             <div class="box-body">
                 {{-- Cabecera --}}
@@ -49,8 +49,7 @@
                     <div class="form-group">
                         <label class="col-md-3  control-label"><b>Cliente</b></label>
                         <div class="col-md-9 ">
-                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID"
-                                    onchange="cambioCliente()" title="Cliente documento">
+                            <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID" title="Cliente documento">
                                 <option value="" selected disabled>Seleciona un cliente</option>
                                 @foreach($clientes as $cliente)
                                     @if($cliente->id == old('cliente_id'))
@@ -113,7 +112,7 @@
             <div class="box-footer">
                 <a href="{{ route('ventaLista',['tipo' => 'todo']) }}" class="btn btn-lg btn-default"><span
                             class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-danger pull-right"><span class="fa fa-minus-square"></span> Anular documento
+                <button type="submit" class="btn btn-lg btn-danger pull-right"><span class="fa fa-minus-square"></span> Anular documento
                 </button>
             </div>
         </form>
@@ -122,14 +121,64 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     @include('comun.select2Jses')
     <script>
         $(document).ready(Principal);
 
         function Principal() {
-            $('#btn-nueva-fila-id').click(AgregarFila);
-            // $('#eliminar-fila-id').click(EliminarFila);
-            $("body").on("click", ".btn-danger", EliminarFila);
+            Validacion();
+        }
+
+        function Validacion() {
+            $('#anular-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "fecha": {
+                        required: true,
+                    },
+                    "cliente_id": {
+                        required: true,
+                    },
+                    "numero": {
+                        required: true,
+                    },
+                    "tipo_documento_id": {
+                        required: true,
+                    },
+                },
+                messages: {
+                    "fecha": {
+                        required: function () {
+                            toastr.error('Por favor digite la fecha', 'Ups!');
+                        },
+                    },
+                    "cliente_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione el cliente', 'Ups!');
+                        },
+                    },
+                    "numero": {
+                        required: function () {
+                            toastr.error('Por favor seleccione el tipo de documento', 'Ups!');
+                        },
+                    },
+                    "tipo_documento_id": {
+                        required: function () {
+                            toastr.error('Por favor complete la fecha de entrega', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled', 'true');
+                    toastr.success('Por favor espere a que se procese', 'Excelente');
+                    form.submit();
+                }
+            });
         }
 
     </script>

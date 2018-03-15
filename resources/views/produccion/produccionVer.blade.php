@@ -160,9 +160,8 @@
 
                                 {{--Cantidad--}}
                                 <td>
-                                    <input type="text" class="form-control cantidadCls"
-                                           pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" name="cantidades[]"
-                                           id="cantidad" value="{{number_format($salida->cantidad,2)}} {{$salida->unidad_medida->abreviatura}}" disabled>
+                                    <input readonly type="text" class="form-control cantidadCls" name="cantidades[]"
+                                           id="cantidad" value="{{number_format($salida->cantidad,4)}} {{$salida->unidad_medida->abreviatura}}">
                                 </td>
                             </tr>
                         @endforeach

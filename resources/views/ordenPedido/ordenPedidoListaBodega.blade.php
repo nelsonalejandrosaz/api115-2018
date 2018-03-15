@@ -98,7 +98,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($ordenesPedidos as $ordenPedido)
+                        @foreach($ordenesPedidos->sortBy('fecha_entrega') as $ordenPedido)
                             <tr>
                                 <td>{{$ordenPedido->numero}}</td>
                                 <td>{{$ordenPedido->fecha->format('d/m/Y')}}</td>
@@ -155,7 +155,8 @@
             $("#tablaDT").DataTable(
 
                 {
-                    order: [[2, "desc"]],
+                    ordering: false,
+                    order: [[0, "desc"]],
                     language: {
                         processing:     "Procesando...",
                         search:         "Buscar:",

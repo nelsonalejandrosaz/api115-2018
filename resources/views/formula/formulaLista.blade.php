@@ -22,6 +22,7 @@
     @include('partials.modalEliminar')
     @include('partials.alertas')
 
+    @if(Auth::user()->rol->nombre == 'Administrador')
     {{--Cuadro de herramientas // para colapsarlo --> collapsed-box --}}
     <div class="box box-default box-solid">
         <div class="box-header with-border">
@@ -38,6 +39,7 @@
         </div>
     </div>
     {{--Fin cuadro de herramientas--}}
+    @endif
 
     <div class="row">
         <div class="col-xs-12">
@@ -69,12 +71,14 @@
                                 <td align="center">
                                     <a href="{{route('formulaVer', ['id' => $formula->id])}}" class="btn btn-info"><span
                                                 class="fa fa-eye"></span></a>
-                                    <a href="{{route('formulaEditar', ['id' => $formula->id])}}"
-                                       class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal"
-                                            data-target="#modalEliminar" data-producto="Producto 1" data-id="1">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
+                                    @if(Auth::user()->rol->nombre == 'Administrador')
+                                        <a href="{{route('formulaEditar', ['id' => $formula->id])}}"
+                                           class="btn btn-warning"><span class="fa fa-edit"></span></a>
+                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                data-target="#modalEliminar" data-nombre="{{ $formula->producto->nombre }}" data-id="{{ $formula->id }}">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -91,4 +95,22 @@
 
 @section('JSExtras')
     @include('comun.dataTablesJSes')
+    <script !src="">
+        $(document).ready(Principal);
+
+        function Principal() {
+            $('#modalEliminar').on('show.bs.modal', function (event) {
+                let button = $(event.relatedTarget); // Button that triggered the modal
+                let formula_nombre = button.data('nombre'); // Extract info from data-* attributes
+                let formula_id = button.data('id');
+                let ruta = '/formula/' + formula_id;
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                let modal = $(this);
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                modal.find('#mensaje01').text('Esta punto de eliminar la formula');
+                modal.find('#mensaje02').text('Realmente desea eliminar la formula de: ' + formula_nombre);
+                modal.find('#myform').attr("action", ruta);
+            });
+        }
+    </script>
 @endsection

@@ -128,7 +128,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/venta/anular/{id}','VentaController@VentaAnular')->name('ventaAnular');
         Route::get('/venta/sin-orden/nueva','VentaController@VentaSinOrdenNueva')->name('ventaSinOrdenNueva');
         Route::post('/venta/sin-orden/nueva','VentaController@VentaSinOrdenPost')->name('ventaSinOrdenPost');
-        Route::get('/venta/sin-orden/anular','VentaController@VentaSinOrdenAnuladaNueva')->name('ventaSinOrdenAnuladaNueva');
+        Route::get('/venta/sin-orden/anular','VentaController@VentaAnuladaSinOrdenNueva')->name('ventaSinOrdenAnuladaNueva');
+        Route::post('/venta/sin-orden/anular','VentaController@VentaAnuladaSinOrdenNuevaPost')->name('ventaSinOrdenAnuladaNuevaPost');
     });
 
 
@@ -156,15 +157,16 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas de formulas
      */
     Route::group(['middleware' => ['administrador']], function () {
-        Route::get('/formula','FormulaController@FormulaLista')->name('formulaLista');
         Route::get('/formula-historico','FormulaController@FormulaDesactivadasLista')->name('formulaDesactivadasLista');
         Route::get('/formula/nuevo','FormulaController@FormulaNuevo')->name('formulaNuevo');
         Route::post('/formula/nuevo','FormulaController@FormulaNuevoPost')->name('formulaNuevoPost');
         Route::get('/formula/{id}/editar','FormulaController@FormulaEditar')->name('formulaEditar');
         Route::put('/formula/{id}','FormulaController@FormulaEditarPut')->name('formulaEditarPut');
         Route::post('/formula/{id}','FormulaController@FormulaActivarPost')->name('formulaActivarPost');
+        Route::delete('/formula/{id}','FormulaController@FormulaEliminar')->name('formulaEliminar');
         Route::delete('/componente/{id}','FormulaController@ComponenteEliminar')->name('componenteEliminar');
     });
+    Route::get('/formula','FormulaController@FormulaLista')->name('formulaLista')->middleware('bodeguero');
     Route::get('/formula/{id}','FormulaController@FormulaVer')->name('formulaVer')->middleware('bodeguero');
 
     /**
@@ -213,6 +215,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/configuracion/producto/cvs','ConfiguracionController@ActualizarInventario')->name('importarDatosPost');
     Route::get('/configuracion/ordenes/cvs','ConfiguracionController@ImportarOrdenes')->name('importarOrdenes');
     Route::post('/configuracion/ordenes/cvs','ConfiguracionController@ImportarOrdenesPost')->name('importarOrdenesPost');
+    Route::get('/configuracion/reajuste','ConfiguracionController@ReajustarDB')->name('reajusteDB');
     Route::get('/conversionUnidades','ConfiguracionController@ConversionUnidadesLista')->name('conversionUnidadesLista');
     Route::get('/conversionUnidades/nuevo','ConfiguracionController@ConversionUnidadesNuevo')->name('conversionUnidadesNuevo');
     Route::post('/conversionUnidades/nuevo','ConfiguracionController@ConversionUnidadesNuevoPost')->name('conversionUnidadesNuevoPost');
@@ -255,6 +258,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('informe/abonos','InformesController@AbonosFechaPost')->name('abonosFechaPost');
     Route::get('informe/abonosxls','InformesController@AbonosFechaExcelPost')->name('abonosFechaExcelPost');
     Route::get('informe/producto/existencias','InformesController@ProductosExistenciasInforme')->name('productoExistenciaInforme');
+    Route::get('informe/producto/movimientos','InformesController@ProductoMovimiento')->name('productoMovimiento');
     Route::get('informe/cxc/antiguedad','InformesController@CXCAntiguedad')->name('cxcAntiguedad');
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
     Route::get('informe/ingreso/ventas','InformesController@IngresoVentas')->name('ingresoVentas');

@@ -147,9 +147,9 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width: 60%">Producto</th>
-                            <th style="width: 35%">Cantidad</th>
-                            </th>
+                            <th style="width: 50%">Producto</th>
+                            <th style="width: 40%">Cantidad</th>
+                            <th style="width: 10%">Estado</th>
                         </tr>
                         @foreach($formula->componentes as $componente)
                             <tr>
@@ -166,9 +166,16 @@
                                 <td>
                                     <div class="input-group">
                                         <input readonly type="number" step="any" class="form-control cantidades-input"
-                                               value="{{ round($componente->cantidad) }}" name="cantidades[]">
-                                        <span class="input-group-addon">g</span>
+                                               value="{{ round($componente->cantidad,4) }}" name="cantidades[]">
+                                        <span class="input-group-addon">Kgs</span>
                                     </div>
+                                </td>
+                                <td>
+                                    @if(round($componente->cantidad,4) > round($componente->producto->cantidad_existencia,4))
+                                        <span class="label label-warning" title="Cantidad en inventario: {{number_format($componente->producto->cantidad_existencia,4)}} Kgs">Insuficiente</span>
+                                    @else
+                                        <span class="label label-success" title="Cantidad en inventario: {{number_format($componente->producto->cantidad_existencia,4)}} Kgs">Suficiente</span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

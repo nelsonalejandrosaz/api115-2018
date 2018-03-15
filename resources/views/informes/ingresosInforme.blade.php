@@ -130,7 +130,7 @@
                                                 {{ $abono->venta->fecha->format('d/m/Y') }}
                                             </td>
                                             <td>
-                                                {{ $abono->venta->orden_pedido->cliente->nombre }}
+                                                {{ $abono->venta->cliente->nombre }}
                                             </td>
                                             <td>
                                                 {{ $abono->venta->vendedor->nombre }}
@@ -212,7 +212,7 @@
                                                 {{ $abono->venta->fecha->format('d/m/Y') }}
                                             </td>
                                             <td>
-                                                {{ $abono->venta->orden_pedido->cliente->nombre }}
+                                                {{ $abono->venta->cliente->nombre }}
                                             </td>
                                             <td>
                                                 {{ $abono->venta->vendedor->nombre }}
@@ -257,7 +257,7 @@
                                                 {{ $venta->fecha->format('d/m/Y') }}
                                             </td>
                                             <td>
-                                                {{ $venta->orden_pedido->cliente->nombre }}
+                                                {{ $venta->cliente->nombre }}
                                             </td>
                                             <td>
                                                 {{ $venta->vendedor->nombre }}

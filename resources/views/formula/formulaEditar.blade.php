@@ -395,8 +395,11 @@
                 data: {_method: 'delete', _token :token},
                 success: function (msg) {
                     fila.parent().parent().remove();
-                    alertify.success('Éxito!! El componente fue eliminado');
+                    toastr.success('El componente fue eliminado','Éxito');
                 },
+                error: function () {
+                    toastr.error('Algo no ha salido bien','Ups');
+                }
             });
         }
 

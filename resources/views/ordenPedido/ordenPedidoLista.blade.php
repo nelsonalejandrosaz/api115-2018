@@ -163,7 +163,7 @@
             $.fn.dataTable.moment( 'dd/MM/YYYY' );
             $("#tablaDT").DataTable(
                 {
-                    order: [[1, "desc"]] ,
+                    order: [[0, "desc"]],
                     language: {
                         processing:     "Procesando...",
                         search:         "Buscar:",
@@ -197,8 +197,8 @@
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
                 var modal = $(this);
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                modal.find('#mensaje01').text('Realmente desea desactivar:');
-                modal.find('#mensaje02').text('Realmente desea desactivar: ' + numero_orden);
+                modal.find('#mensaje01').text('Esta punto de eliminar la orden de pedido');
+                modal.find('#mensaje02').text('Realmente desea eliminar la orden de pedido n°: ' + numero_orden);
                 modal.find('#myform').attr("action", ruta);
             });
         }

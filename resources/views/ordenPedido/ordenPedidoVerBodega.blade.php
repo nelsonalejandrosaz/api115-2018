@@ -109,16 +109,21 @@
                     {{-- Tabla de productos --}}
                     <table class="table table-bordered" id="tblProductos">
                         <tr>
-                            <th style="width:50%">Producto (Presentación)</th>
+                            <th style="width:40%">Producto (Presentación)</th>
                             <th style="width:15%">Unidad medida</th>
                             <th style="width:15%">Cantidad orden pedido</th>
                             <th style="width:20%">Cantidad a descargar</th>
+                            <th style="width:10%">Estado</th>
                         </tr>
                         @foreach($ordenPedido->salidas as $salida)
                             <tr>
                                 {{--Productos--}}
                                 <td>
-                                    <input readonly type="text" class="form-control" name="" value="{{ $salida->movimiento->producto()->withTrashed()->first()->nombre }} {{ $salida->descripcion_presentacion }}">
+                                    @if($salida->descripcion_presentacion != null)
+                                        <input readonly type="text" class="form-control" name="" value="{{ $salida->movimiento->producto()->withTrashed()->first()->nombre }} ({{ $salida->descripcion_presentacion }})">
+                                    @else
+                                        <input readonly type="text" class="form-control" name="" value="{{ $salida->movimiento->producto()->withTrashed()->first()->nombre }}">
+                                    @endif
                                 </td>
                                 {{--Unidad de medida--}}
                                 <td>
@@ -135,6 +140,14 @@
                                         <input readonly type="number" class="form-control cantidad" name="cantidades[]" value="{{$salida->movimiento->cantidad}}">
                                         <span class="input-group-addon">Kg</span>
                                     </div>
+                                </td>
+                                {{--Estado--}}
+                                <td>
+                                    @if(round($salida->movimiento->cantidad,4) > round($salida->movimiento->producto->cantidad_existencia,4))
+                                        <span class="label label-warning" title="Cantidad en inventario: {{number_format($salida->movimiento->producto->cantidad_existencia,4)}} Kgs">Insuficiente</span>
+                                    @else
+                                        <span class="label label-success" title="Cantidad en inventario: {{number_format($salida->movimiento->producto->cantidad_existencia,4)}} Kgs">Suficiente</span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

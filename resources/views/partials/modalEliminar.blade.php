@@ -15,7 +15,7 @@
                 <form id="myform" action="algo" method="POST">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
-                    <button type="submit" class="btn btn-outline">Eliminar</button>
+                    <button type="submit" class="btn btn-outline">Confirmar</button>
                 </form>
             </div>
         </div><!-- /.modal-content -->

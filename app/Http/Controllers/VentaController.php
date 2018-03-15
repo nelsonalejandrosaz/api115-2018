@@ -26,25 +26,43 @@ use NumeroALetras;
 class VentaController extends Controller
 {
 
+    /**
+     * @return $this
+     * Estado: Revisado y funcionando
+     * Fecha rev: 09-03-18
+     */
     public function VentaOrdenesLista()
     {
         // id = 2 - Despachada
         $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2)->get();
         if (Auth::user()->rol->nombre == 'Vendedor') {
-            $ordenesPedidoProcesadas = OrdenPedido::whereEstadoId(2);
-            $ordenesPedidoProcesadas = $ordenesPedidoProcesadas->where('vendedor_id', '=', Auth::user()->id)->get();
+            $ordenesPedidoProcesadas = $ordenesPedidoProcesadas->where('vendedor_id', '=', Auth::user()->id);
         }
         return view('venta.ventaLista')->with(['ordenesPedidos' => $ordenesPedidoProcesadas]);
     }
 
+    /**
+     * @param $id
+     * @return $this
+     * Estado: Revisado y funcionando
+     * Fecha rev: 09-03-18
+     */
     public function VentaNueva($id)
     {
         $orden_pedido = OrdenPedido::find($id);
         $dia_hoy = Carbon::now();
         $cierre = Carbon::parse($dia_hoy->format('Y-m-d'));
         $cierre = $cierre->addHours(15)->addMinutes(30);
-        if ($dia_hoy > $cierre) {
-            $dia_hoy = $dia_hoy->addDay();
+        if ($dia_hoy->isSaturday())
+        {
+            if ($dia_hoy > $cierre->subHours(5)) {
+                $dia_hoy = $dia_hoy->addDays(2);
+            }
+        } else
+        {
+            if ($dia_hoy > $cierre) {
+                $dia_hoy = $dia_hoy->addDay();
+            }
         }
         if ($orden_pedido->tipo_documento->codigo == 'FAC') {
             return view('venta.ventaFCFNuevo')
@@ -57,6 +75,13 @@ class VentaController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisada y funcionando
+     * Fecha rev: 12-03-18
+     */
     public function VentaNuevaPost(Request $request, $id)
     {
         // Validacion
@@ -68,24 +93,33 @@ class VentaController extends Controller
         $fecha = Carbon::now();
         $cierre = Carbon::parse($fecha->format('Y-m-d'));
         $cierre = $cierre->addHours(15)->addMinutes(30);
-        if ($fecha > $cierre) {
-            $fecha = $fecha->addDay();
+        if ($fecha->isSaturday())
+        {
+            if ($fecha > $cierre->subHours(5)) {
+                $fecha = $fecha->addDays(2);
+            }
+        } else
+        {
+            if ($fecha > $cierre) {
+                $fecha = $fecha->addDay();
+            }
         }
         // Se carga la orden de pedido
         $orden_pedido = OrdenPedido::find($id);
         // Orden procesada = 3 ---- Venta pendiente de pago = 1
         $iva = Configuracion::find(1)->iva;
         $venta_total_con_impuestos = $orden_pedido->venta_total * $iva;
+        $venta_total_con_impuestos = round($venta_total_con_impuestos,4);
         // Se crea la venta
         $venta = Venta::create([
             'tipo_documento_id' => $orden_pedido->tipo_documento_id,
             'orden_pedido_id' => $orden_pedido->id,
             'condicion_pago_id' => $orden_pedido->condicion_pago_id,
+            'cliente_id' => $orden_pedido->cliente_id,
+            'vendedor_id' => $orden_pedido->vendedor_id,
             'numero' => $request->input('numero'),
             'fecha' => $fecha,
-            'cliente_id' => $orden_pedido->cliente_id,
             'estado_venta_id' => 1,
-            'vendedor_id' => $orden_pedido->vendedor_id,
             'saldo' => $venta_total_con_impuestos,
             'venta_total' => $orden_pedido->venta_total,
             'venta_total_con_impuestos' => $venta_total_con_impuestos,
@@ -112,6 +146,12 @@ class VentaController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function VentaVerFactura($id)
     {
         // Se carga la venta y el IVA
@@ -138,6 +178,12 @@ class VentaController extends Controller
             ->with(['venta' => $venta]);
     }
 
+    /**
+     * @param $id
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-08-18
+     */
     public function VentaVerCCF($id)
     {
         // Se carga la venta y el IVA
@@ -152,6 +198,13 @@ class VentaController extends Controller
             ->with(['venta' => $venta]);
     }
 
+    /**
+     * @param Request $request
+     * @param $tipo
+     * @return mixed
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-08-18
+     */
     public function VentaLista(Request $request, $tipo)
     {
         $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->subDays(15);
@@ -192,6 +245,13 @@ class VentaController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 12-03-18
+     * Observaciones: Falta detalle de ventas exentas
+     */
     public function VentaFacturaPDF($id)
     {
         $venta = Venta::find($id);
@@ -212,15 +272,13 @@ class VentaController extends Controller
 //        return $pdf->stream($nombre_factura);
     }
 
-    public function VentaFacturaEspecialPDF($id)
-    {
-        $venta = Venta::find($id);
-        $venta->vendedor->nombreCompleto = $venta->vendedor->nombre . " " . $venta->vendedor->apellido;
-        $venta_total = number_format($venta->venta_total, 2);
-        $venta->venta_total_letras = NumeroALetras::convertir($venta_total, 'dolares', 'centavos');
-        return view('pdf.facturaPDFEspecial')->with(['venta' => $venta]);
-    }
-
+    /**
+     * @param $id
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 12-03-18
+     * Observaciones: Falta detalle de ventas exentas
+     */
     public function VentaCCFPDF($id)
     {
         $venta = Venta::find($id);
@@ -235,6 +293,21 @@ class VentaController extends Controller
         return $pdf->stream($nombre_factura);
     }
 
+    public function VentaFacturaEspecialPDF($id)
+    {
+        $venta = Venta::find($id);
+        $venta->vendedor->nombreCompleto = $venta->vendedor->nombre . " " . $venta->vendedor->apellido;
+        $venta_total = number_format($venta->venta_total, 2);
+        $venta->venta_total_letras = NumeroALetras::convertir($venta_total, 'dolares', 'centavos');
+        return view('pdf.facturaPDFEspecial')->with(['venta' => $venta]);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisado y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function VentaAnular($id)
     {
         $venta = Venta::find($id);
@@ -299,9 +372,14 @@ class VentaController extends Controller
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');
         session()->flash('mensaje.contenido', 'El documento de la venta fue anulada correctamente!');
-        return redirect()->route('ventaLista', ['filtro' => 'todo']);
+        return redirect()->route('ventaLista', ['filtro' => 'anulada']);
     }
 
+    /**
+     * @return $this
+     * Estado: Revisada
+     * Fecha rev: 13-03-18
+     */
     public function VentaAnuladaSinOrdenNueva()
     {
         $tipo_documentos = TipoDocumento::all();
@@ -311,11 +389,47 @@ class VentaController extends Controller
             ->with(['clientes' => $clientes]);
     }
 
-    public function VentaAnuladaSinOrdenNuevaPost()
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisado y funcionando
+     * Fecha rev: 13-03-18
+     */
+    public function VentaAnuladaSinOrdenNuevaPost(Request $request)
     {
-
+        $this->validate($request,[
+            'fecha' => 'required',
+            'cliente_id' => 'required',
+            'numero' => 'required',
+            'tipo_documento_id' => 'required',
+        ]);
+        // Crear la venta para anularla
+        Venta::create([
+            'tipo_documento_id' => $request->input('tipo_documento_id'),
+            'numero' => $request->input('numero'),
+            'orden_pedido_id' => 0,
+            'cliente_id' => $request->input('cliente_id'),
+            'vendedor_id' => Auth::user()->id,
+            'fecha' => $request->input('fecha'),
+            'estado_venta_id' => 3,
+            'saldo' => 0,
+            'venta_total' => 0,
+            'venta_total_con_impuestos' => 0,
+            'fecha_anulado' => Carbon::now(),
+            'condicion_pago_id' => 1,
+        ]);
+        // Mensaje de exito al guardar
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El documento de la venta fue anulada correctamente!');
+        return redirect()->route('ventaLista', ['filtro' => 'anulada']);
     }
 
+    /**
+     * @return mixed
+     * Estado:
+     * Fecha rev:
+     */
     public function VentaSinOrdenNueva()
     {
         $tipo_documentos = TipoDocumento::all();
@@ -327,6 +441,12 @@ class VentaController extends Controller
             ->with(['condiciones_pago' => $condiciones_pago]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado:
+     * Fecha rev:
+     */
     public function VentaSinOrdenPost(Request $request)
     {
         // Validacion

@@ -9,6 +9,7 @@ use App\ConversionUnidadMedida;
 use App\Movimiento;
 use App\OrdenPedido;
 use App\Precio;
+use App\Produccion;
 use App\Producto;
 use App\Proveedor;
 use App\TipoAjuste;
@@ -386,6 +387,26 @@ class ConfiguracionController extends Controller
         session()->flash('mensaje.contenido', 'La importación de la configuración inicial fue ejecutada correctamente!');
         return redirect()->route('inventarioLista');
 
+    }
+
+    public function ReajustarDB()
+    {
+        $ventas = Venta::all();
+        foreach ($ventas as $venta)
+        {
+            if ($venta->orden_pedido != null)
+            {
+                $venta->condicion_pago_id = $venta->orden_pedido->condicion_pago_id;
+                $venta->save();
+            }
+        }
+        $producciones = Produccion::where('id','<',230)->withTrashed()->get();
+        foreach ($producciones as $produccion)
+        {
+            $produccion->procesado = true;
+            $produccion->save();
+        }
+        dd('Reajuste a la DB realizado correctamente');
     }
 
 }

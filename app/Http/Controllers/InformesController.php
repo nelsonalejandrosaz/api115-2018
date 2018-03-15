@@ -73,7 +73,7 @@ class InformesController extends Controller
         }
         foreach ($ccf_dia as $venta)
         {
-            $monto = $venta->orden_pedido->venta_total;
+            $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
             $monto_iva = $monto_total - $monto;
@@ -585,5 +585,21 @@ class InformesController extends Controller
             ->with(['ventas_contado' => $ventas_contado])
             ->with(['ventas_anuladas' => $ventas_anuladas])
             ->with(['cobros' => $cobros]);
+    }
+
+    public function ProductoMovimiento(Request $request)
+    {
+        $dia_inicio = ($request->input('fecha_inicio') != null) ? Carbon::parse($request->input('fecha_inicio')) : Carbon::now()->subDays(30);
+        $dia_fin = ($request->input('fecha_fin') != null) ? Carbon::parse($request->input('fecha_fin')) : Carbon::now();
+        $extra['dia'] = null;
+        $extra['dia_inicio'] = $dia_inicio;
+        $extra['dia_fin'] = $dia_fin;
+        $productos = Producto::all();
+        $producto = ($request->input('producto_id') != null) ? Producto::find($request->input('producto_id')) : null;
+//        dd($producto);
+        return view('informes.productoMovimiento')
+            ->with(['productos' => $productos])
+            ->with(['producto_seleccion' => $producto])
+            ->with(['extra' => $extra]);
     }
 }

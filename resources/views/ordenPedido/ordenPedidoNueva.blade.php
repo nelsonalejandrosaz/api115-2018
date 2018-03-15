@@ -561,6 +561,14 @@
          * Estado: Verificada
          */
         function cambioIVA() {
+            let tipo = parseInt($('#IVAid').val());
+            if (tipo === 1)
+            {
+                toastr.info('Factura de consumidor final','Tipo de documento');
+            } else if (tipo === 2)
+            {
+                toastr.info('Comprobante de crédito fiscal','Tipo de documento');
+            }
             $(".cantidadCls").each(
                 function (index, value) {
 //                    console.log($(this));

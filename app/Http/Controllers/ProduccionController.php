@@ -17,11 +17,16 @@ use App\TipoMovimiento;
 use App\UnidadMedida;
 use App\User;
 use Carbon\Carbon;
+use FontLib\TrueType\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProduccionController extends Controller
 {
+    /*
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function ProduccionLista(Request $request)
     {
         $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->subDays(15);
@@ -34,6 +39,12 @@ class ProduccionController extends Controller
             ->with(['extra' => $extra]);
     }
 
+    /**
+     * @param Request $request
+     * @return $this
+     * Estado: Revisado y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function ProduccionRevLista(Request $request)
     {
         $fecha_inicio = ($request->get('fecha_inicio') != null) ? Carbon::parse($request->get('fecha_inicio')) : Carbon::now()->subDays(15);
@@ -46,23 +57,40 @@ class ProduccionController extends Controller
             ->with(['extra' => $extra]);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * Estado: Revisada y funcionando
+     * Fecha rev: 13-03-18
+     */
     public function ProduccionVer($id)
     {
         $produccion = Produccion::withTrashed()->find($id);
         $productos = Producto::all();
-        $formula = Formula::find($produccion->formula_id);
         $rol_bodega = Rol::whereNombre('Bodeguero')->first();
         $bodegueros = User::whereRolId($rol_bodega->id)->get();
         return view('produccion.produccionVer')
             ->with(['produccion' => $produccion])
-            ->with(['formula' => $formula])
             ->with(['productos' => $productos])
             ->with(['bodegueros' => $bodegueros]);
     }
 
-    public function ProduccionNuevo()
+    /**
+     * @param Request $request
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 15-03-18
+     */
+    public function ProduccionNuevo(Request $request)
     {
-        $formulas = Formula::whereActiva(true)->get();
+        if ($request->input('formula_id') != null)
+        {
+            $formulas = Formula::where('id','=',$request->input('formula_id'))->get();
+        }
+        else
+        {
+            $formulas = Formula::whereActiva(true)->get();
+        }
         $rol_bodega = Rol::whereNombre('Bodeguero')->first();
         $bodegueros = User::whereRolId($rol_bodega->id)->get();
         return view('produccion.produccionNuevo2')
@@ -70,6 +98,12 @@ class ProduccionController extends Controller
             ->with(['bodegueros' => $bodegueros]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisada y funcionando
+     * Fecha rev: 15-03-18
+     */
     public function ProduccionNuevaPost(Request $request)
     {
         // Validacion
@@ -109,6 +143,12 @@ class ProduccionController extends Controller
         return redirect()->route('produccionPrevia',['id' => $produccion->id]);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * Estado: Revisada y funcionando
+     * Fecha rev: 15-03-18
+     */
     public function ProduccionPrevia($id)
     {
         // Se carga la producion
@@ -123,10 +163,8 @@ class ProduccionController extends Controller
         foreach ($formula->componentes as $componente)
         {
             $componente->cantidad = ($cantidad_produccion * $componente->cantidad) / $formula->cantidad_formula;
+            $componente->cantidad = $componente->cantidad / 1000;
         }
-
-//        dd($formula);
-
         return view('produccion.produccionPrevia')
             ->with(['produccion' => $produccion])
             ->with(['formula' => $formula])
@@ -135,18 +173,21 @@ class ProduccionController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisado y funcionando
+     * Fecha rev: 15-03-18
+     */
     public function ProduccionConfirmarPost(Request $request, $id)
     {
-//        dd($request);
         $produccion = Produccion::find($id);
         $formula = Formula::find($produccion->formula_id);
         $componentes = $request->input('productos');
         $cantidades = $request->input('cantidades');
         $max = sizeof($cantidades);
-        $unidad_medida_formula = UnidadMedida::whereAbreviatura('gr')->first();
-
-//        dd($componentes);
-
+        $unidad_medida_formula = UnidadMedida::whereAbreviatura('Kg')->first();
         /**
          * Validación de existencias
          */
@@ -155,7 +196,7 @@ class ProduccionController extends Controller
             $producto = Producto::find($componentes[$i]);
             $cantidad = $cantidades[$i];
             $cantidad = round($cantidad,4);
-            $cantidad_real = $cantidad / 1000;
+            $cantidad_real = $cantidad;
             $cantidad_real = round($cantidad_real,4);
             $cantidad_producto = round($producto->cantidad_existencia,4);
             if ($cantidad_producto < $cantidad_real){
@@ -179,7 +220,7 @@ class ProduccionController extends Controller
             $producto = Producto::find($componentes[$i]);
             $cantidad = $cantidades[$i];
             $cantidad = round($cantidad,4);
-            $cantidad_real = $cantidad / 1000;
+            $cantidad_real = $cantidad;
             $cantidad_real = round($cantidad_real,4);
             $cantidad_salida = $cantidad;
             // Se calcula la cantidad y costo
@@ -288,9 +329,15 @@ class ProduccionController extends Controller
 
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     * Estado: Revisado y funcionando
+     * Fecha rev: 15-03-18
+     */
     public function ProduccionRevertir($id)
     {
-//        dd('Voy en eliminar');
         $produccion = Produccion::find($id);
         // Retiramos por ajuste el producto ingresado en produccion
         $producto_producido = Producto::find($produccion->producto_id);
@@ -381,6 +428,12 @@ class ProduccionController extends Controller
         return redirect()->route('produccionLista');
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     * Estado: Revisado y funcionando
+     * Fecha rev: 15-03-18
+     */
     public function ProduccionPreviaEliminar($id)
     {
         $produccion = Produccion::find($id);

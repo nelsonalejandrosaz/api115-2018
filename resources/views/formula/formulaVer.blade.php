@@ -179,10 +179,11 @@
             <div class="box-footer">
                 <a href="{{ route('formulaLista') }}" class="btn btn-lg btn-default"><span
                             class="fa fa-mail-reply"></span> Regresar a lista</a>
-                <a href="{{ route('formulaEditar',['id' => $formula->id]) }}" class="btn btn-lg btn-warning pull-right"><span
-                            class="fa fa-edit"></span> Editar formula</a>
-                @if(!$formula->activa)
-                    <button type="submit" class="btn btn-lg btn-warning pull-right"><span class="fa fa-linux"></span> Activar formula</button>
+                <a href="{{ route('produccionNuevo',['formula_id' => $formula->id]) }}" class="btn btn-lg btn-success pull-right"><span
+                            class="fa fa-gears"></span> Producir con esta formula</a>
+                @if(Auth::user()->rol->nombre == 'Administrador')
+                    <a href="{{ route('formulaEditar',['id' => $formula->id]) }}" class="btn btn-lg btn-warning pull-right" style="margin-right:5px"><span
+                                class="fa fa-edit"></span> Editar formula</a>
                 @endif
             </div>
         </form>
