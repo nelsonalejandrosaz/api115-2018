@@ -123,6 +123,8 @@
                                         <span class="label label-info">{{ $ordenPedido->estado_orden->nombre }}</span>
                                     @elseif($ordenPedido->estado_orden->codigo == 'FC')
                                         <span class="label label-success">{{ $ordenPedido->estado_orden->nombre }}</span>
+                                    @elseif($ordenPedido->estado_orden->codigo == 'AN')
+                                        <span class="label label-danger">{{ $ordenPedido->estado_orden->nombre }}</span>
                                     @endif
                                 </td>
                                 <td align="center">

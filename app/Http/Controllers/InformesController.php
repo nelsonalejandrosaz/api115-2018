@@ -437,11 +437,11 @@ class InformesController extends Controller
             ->with(['extra' => $extra]);
     }
 
-    public function IngresoVentas()
+    public function IngresoDiario(Request $request)
     {
-        $dia = Carbon::now();
-        $abonos = Abono::where('fecha','=',$dia->format('Y-m-d'))->get();
-        $ventaCredito = Venta::where('fecha','=',$dia->format('Y-m-d'))->get();
+        $dia = ($request->input('fecha') == null) ? Carbon::now()->format('Y-m-d') : $request->input('fecha');
+        $abonos = Abono::where('fecha','=',$dia)->get();
+        $ventaCredito = Venta::where('fecha','=',$dia)->get();
         $extra['dia'] = $dia;
         $abono_total = 0.00;
         $abono_efectivo = 0.00;
@@ -471,7 +471,7 @@ class InformesController extends Controller
         $cobrosArray = [];
         foreach ($abonos as $abono)
         {
-            if ($abono->venta->fecha->format('d/m/Y') == $dia->format('d/m/Y'))
+            if ($abono->venta->fecha->format('d/m/Y') == $dia)
             {
                 $ventasContadoArray[] = $abono;
             } else
@@ -494,7 +494,7 @@ class InformesController extends Controller
             }
         }
         $ventaCredito = collect($ventaCreditoArray);
-        $ventas_anuladas = Venta::where('fecha_anulado','=',$dia->format('Y-m-d'))->get();
+        $ventas_anuladas = Venta::where('fecha_anulado','=',$dia)->get();
 //        dd($ventas_anuladas->isEmpty());
         // Extra para informe
         $extra['abono_total'] = $abono_total;
@@ -502,13 +502,87 @@ class InformesController extends Controller
         $extra['abono_efectivo'] = $abono_efectivo;
         $extra['abono_cheque'] = $abono_cheque;
         $extra['abono_retencion'] = $abono_retencion;
-        return view('informes.ingresosInforme')
+        return view('informes.ingresosDiariosInforme')
             ->with(['abonos' => $abonos])
             ->with(['extra' => $extra])
             ->with(['ventas_credito' => $ventaCredito])
             ->with(['ventas_contado' => $ventas_contado])
             ->with(['ventas_anuladas' => $ventas_anuladas])
             ->with(['cobros' => $cobros]);
+    }
+
+    public function IngresoDiarioExcel(Request $request)
+    {
+        $datos = [];
+        $dia = ($request->input('fecha') == null) ? Carbon::now()->format('Y-m-d') : $request->input('fecha');
+        $abonos = Abono::where('fecha','=',$dia)->get();
+        $ventaCredito = Venta::where('fecha','=',$dia)->get();
+        $extra['dia'] = $dia;
+        $abono_total = 0.00;
+        $abono_efectivo = 0.00;
+        $abono_cheque = 0.00;
+        $abono_retencion = 0.00;
+        $documento_total = 0.00;
+        $credito_total = 0.00;
+        foreach ($abonos as $abono)
+        {
+            $abono_total += $abono->cantidad;
+            if ($abono->forma_pago->codigo == 'EFECT')
+            {
+                $abono_efectivo += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'CHEQU')
+            {
+                $abono_cheque += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'RETEN')
+            {
+                $abono_retencion += $abono->cantidad;
+            }
+            $dev[] = $abono->venta;
+            $documento_total += $abono->venta->saldo;
+        }
+
+        // Ventas contado
+        $ventasContadoArray = [];
+        $cobrosArray = [];
+        foreach ($abonos as $abono)
+        {
+            if ($abono->venta->fecha->format('d/m/Y') == $dia)
+            {
+                $ventasContadoArray[] = $abono;
+            } else
+            {
+                $cobrosArray[] = $abono;
+            }
+        }
+        $ventas_contado = collect($ventasContadoArray);
+        $cobros = collect($cobrosArray);
+
+        // Ventas al credito
+        $ventaCreditoArray = [];
+        foreach ($ventaCredito as $venta)
+        {
+            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3)
+            {
+                $ventaCreditoArray[] = $venta;
+                $documento_total += $venta->saldo;
+            }
+        }
+        $ventaCredito = collect($ventaCreditoArray);
+        $ventas_anuladas = Venta::where('fecha_anulado','=',$dia)->get();
+        // Extra para informe
+        $extra['abono_total'] = $abono_total;
+        $extra['documento_total'] = $documento_total;
+        $extra['abono_efectivo'] = $abono_efectivo;
+        $extra['abono_cheque'] = $abono_cheque;
+        $extra['abono_retencion'] = $abono_retencion;
+        $nombre_documento = 'ingresos-diarios-del-' . $dia;
+        Excel::create($nombre_documento, function($excel) use($datos) {
+            $excel->sheet('Abonos diarios', function($sheet) use($datos) {
+
+                $sheet->fromArray($datos);
+
+            });
+        })->download('xls');
     }
 
     public function IngresoVentasPost(Request $request)

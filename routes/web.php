@@ -252,6 +252,7 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas de informes
      */
     Route::get('informe/lista','InformesController@InformeLista')->name('informeLista');
+    Route::get('informe/ingresos-diario','InformesController@IngresoDiario')->name('ingresoVentas');
     Route::get('informe/facturacion/{rango}','InformesController@facturacionDia')->name('facturacion');
     Route::get('informe/facturacionxls','InformesController@FacturacionInformeExcelPost')->name('facturacionExcelPost');
     Route::post('informe/facturacion','InformesController@facturacionDiaInformeFechaPost')->name('facturacionInformeFechaPost');
@@ -263,8 +264,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/producto/movimientos','InformesController@ProductoMovimiento')->name('productoMovimiento');
     Route::get('informe/cxc/antiguedad','InformesController@CXCAntiguedad')->name('cxcAntiguedad');
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
-    Route::get('informe/ingreso/ventas','InformesController@IngresoVentas')->name('ingresoVentas');
-    Route::post('informe/ingreso/ventas','InformesController@IngresoVentasPost')->name('ingresoVentasPost');
 
     /**
      * Rutas de usuarios

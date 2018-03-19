@@ -202,39 +202,6 @@
                     <ul class="treeview-menu">
                         {{--Nivel 1--}}
                         <li><a href="{{ route('informeLista') }}"><i class="fa fa-circle-o"></i> Informes</a></li>
-                        {{--Nivel 1--}}
-                        <li class="treeview">
-                            <a href="#"><i class="fa fa-circle-o"></i> Abonos
-                                <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                {{--Nivel 2--}}
-                                <li><a href="{{ route('abonosInforme',['rango' => 'dia']) }}"><i class="fa fa-circle-o"></i>
-                                        Dia</a></li>
-                                <li><a href="{{ route('abonosInforme',['rango' => 'semana']) }}"><i class="fa fa-circle-o"></i>
-                                        Semana</a></li>
-                                <li><a href="{{ route('abonosInforme',['rango' => 'mes']) }}"><i class="fa fa-circle-o"></i>
-                                        Mes</a></li>
-                                {{--<li><a href="{{ route('abonosInformeFecha') }}"><i class="fa fa-circle-o"></i> Ingresar fecha</a>--}}
-                                </li>
-                            </ul>
-                        </li>
-                        {{--Nivel 1--}}
-                        <li class="treeview">
-                            <a href="#"><i class="fa fa-circle-o"></i> Facturación
-                                <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li><a href="{{ route('facturacion',['rango' => 'dia']) }}"><i class="fa fa-circle-o"></i> Dia</a></li>
-                                <li><a href="{{ route('facturacion',['rango' => 'semana']) }}"><i class="fa fa-circle-o"></i> Semana</a></li>
-                                <li><a href="{{ route('facturacion',['rango' => 'mes']) }}"><i class="fa fa-circle-o"></i> Mes</a></li>
-
-                            </ul>
-                        </li>
                     </ul>
                 </li>
 

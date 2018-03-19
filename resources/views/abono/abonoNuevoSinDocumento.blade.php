@@ -24,16 +24,15 @@
     <!-- Form de nuevo producto -->
     <div class="box box-default">
         <div class="box-header with-border">
-            <h3 class="box-title">Datos del producto</h3>
+            <h3 class="box-title">Datos del abono</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
         <form class="form-horizontal" action="{{ route('abonoNuevoSinVentaPost') }}" method="POST" id="abono-form-id">
             {{ csrf_field() }}
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
-                    <h4>Datos de cliente</h4>
+                    <h4>Detalle de cliente</h4>
                     <br>
-
 
                     {{-- Nombre del cliente --}}
                     <div class="form-group">

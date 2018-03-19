@@ -31,7 +31,7 @@
             {{--Barra herramientas--}}
             <div class="box box-default box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Herramientas</h3>
+                    <h3 class="box-title">Opciones</h3>
                     <div class="box-tools pull-right">
                         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -39,8 +39,7 @@
                 </div><!-- /.box-header -->
 
                 <!-- form start -->
-                <form class="form-horizontal" action="{{ route('ingresoVentasPost') }}" method="POST" id="fechas-form-id">
-                    {{ csrf_field() }}
+                <form class="form-horizontal" id="opciones-form">
                     <div class="box-body">
                         <div class="col-md-6 col-sm-12">
 
@@ -52,7 +51,7 @@
                                 <label class="col-md-4 control-label"><b>Fecha</b></label>
                                 <div class="col-md-8">
                                     <div class="input-group">
-                                        <input type="date" class="form-control" name="fecha" id="fecha-inicio" value="{{ $extra['dia']->format('Y-m-d') }}">
+                                        <input type="date" class="form-control" name="fecha" id="fecha-inicio" value="{{ $extra['dia']}}">
                                         <div class="input-group-addon">
                                             <i class="fa fa-calendar"></i>
                                         </div>
@@ -67,7 +66,7 @@
                     <div class="box-footer">
                         <a href="{{ route('informeLista') }}" class="btn btn-lg btn-default"><span
                                     class="fa fa-mail-reply"></span> Regresar</a>
-                        <button type="submit" class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-search" ></span> Consultar </button>
+                        <button type="button" class="btn btn-lg btn-success pull-right" style="margin-left: 10px" id="opciones-buttom"><span class="fa fa-search" ></span> Consultar </button>
                         <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-print"></span> Imprimir</a>
                         <button type="button" class="btn btn-lg btn-success pull-right" style="margin-left: 10px" id="exportar-excel-id"><span class="fa fa-file-excel-o" ></span> Exportar Excel </button>
                         {{--<a href='javascript:window.print(); void 0;'  style="margin-left: 10px"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>--}}
@@ -87,7 +86,8 @@
                     <i class="fa fa-globe"></i> LGL S.A. de C.V.
                     <small class="pull-right">Generado: {{\Carbon\Carbon::now()->format('d/m/Y -- h:m:s A')}}</small>
                 </h2>
-                <p class="lead">Informe de ingresos diarios por ventas del dia: {{ $extra['dia']->format('d/m/Y') }}</p>
+                @php($dia = \Carbon\Carbon::parse($extra['dia']))
+                <p class="lead">Informe de ingresos diarios por ventas del dia: {{ $dia->format('d/m/Y') }}</p>
                 Generado por: {{Auth::user()->nombre}} {{Auth::user()->apellido}} <br>
             </div>
 
@@ -312,22 +312,25 @@
     <script src="{{asset('plugins/moment.min.js')}}"></script>
     <script src="{{asset('plugins/daterangepicker.js')}}"></script>
     <script>
-
-        $(function () {
-
-            $('#daterange-btn').daterangepicker(
-                {
-                    "opens": "left"
-                },
-                function (start, end) {
-                    $('#fecha-inicio').val(start.format('YYYY-MM-DD'));
-                    $('#fecha-fin').val(end.format('YYYY-MM-DD'));
-                }
-            );
-        });
+        
+        $(document).ready(Principal);
+        
+        function Principal() {
+            $('#exportar-excel-id').click(exportarExcel);
+            $('#opciones-buttom').click(CambiarFecha);
+        }
+        
+        function CambiarFecha() {
+            let fecha_form = $('#opciones-form');
+            let fechas_str = fecha_form.serialize();
+            let path = window.location.pathname;
+            let uri = path + "?" + fechas_str;
+            toastr.info("Consultando fecha selecionada","Excelente!!");
+            window.location.href = uri;
+        }
 
         $(document).ready(function () {
-            $('#exportar-excel-id').click(exportarExcel);
+            
         });
 
         function exportarExcel() {
