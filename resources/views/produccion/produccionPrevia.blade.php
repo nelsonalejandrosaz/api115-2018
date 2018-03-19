@@ -237,7 +237,7 @@
                 rules: {
                     "cantidades[]": {
                         required: true,
-                        min: 0.001,
+                        min: 0.0001,
                     }
                 },
                 messages: {

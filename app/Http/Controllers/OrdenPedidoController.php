@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ajuste;
 use App\Cliente;
 use App\CondicionPago;
 use App\Configuracion;
@@ -12,9 +13,11 @@ use App\OrdenPedido;
 use App\Precio;
 use App\Producto;
 use App\Salida;
+use App\TipoAjuste;
 use App\TipoDocumento;
 use App\TipoMovimiento;
 use App\UnidadMedida;
+use Auth;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -405,7 +408,7 @@ class OrdenPedidoController extends Controller
             // Se crea el ajuste de entrada
             $ajuste = Ajuste::create([
                 'tipo_ajuste_id' => $tipo_ajuste->id,
-                'detalle' => 'Ajuste de entrada por anulación de documento de venta',
+                'detalle' => 'Ajuste de entrada por anulación de orden de pedido',
                 'fecha' => Carbon::now(),
                 'cantidad_ajuste' => $cantidad_ajuste,
                 'valor_unitario_ajuste' => $producto->costo,
@@ -422,7 +425,7 @@ class OrdenPedidoController extends Controller
                 'tipo_movimiento_id' => $tipo_movimiento->id,
                 'ajuste_id' => $ajuste->id,
                 'fecha' => Carbon::now(),
-                'detalle' => 'Ajuste de entrada por anulación de documento venta n°: ' . $venta->numero,
+                'detalle' => 'Ajuste de entrada por anulación de orden de pedido n°: ' . $orden_pedido->numero,
                 'cantidad' => $diferencia_ajuste,
                 'costo_unitario' => $producto->costo,
                 'costo_total' => $diferencia_ajuste * $producto->costo,
@@ -435,14 +438,9 @@ class OrdenPedidoController extends Controller
             // Se actualiza la cantidad de producto despues de la entrada
             $producto->cantidad_existencia = $movimiento->cantidad_existencia;
             $producto->save();
-
-
-
-
-            $salida->movimiento->delete();
-            $salida->delete();
         }
-        $orden_pedido->delete();
+        $orden_pedido->estado_id = 4;
+        $orden_pedido->save();
         // Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
         session()->flash('mensaje.icono', 'fa-check');

@@ -104,6 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/orden-pedido/nueva','OrdenPedidoController@OrdenPedidoNuevaPost')->name('ordenPedidoNuevaPost');
         Route::get('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
         Route::delete('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoEliminar')->name('ordenPedidoEliminar');
+        Route::delete('/orden-pedido-despachada/{id}','OrdenPedidoController@OrdenPedidoEliminarDespachada')->name('ordenPedidoEliminarDespachada');
     });
     Route::group(['middleware' => ['bodeguero']], function () {
         Route::get('/orden-pedido-bodega','OrdenPedidoController@OrdenPedidoListaBodega')->name('ordenPedidoListaBodega');
@@ -111,6 +112,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/orden-pedido-bodega/{id}/bodega','OrdenPedidoController@OrdenPedidoVerBodega')->name('ordenPedidoVerBodega');
         Route::put('/orden-pedido-bodega/{id}','OrdenPedidoController@OrdenPedidoBodegaPost')->name('ordenPedidoBodegaPost');
     });
+
 
 
     /**
@@ -263,4 +265,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
     Route::get('informe/ingreso/ventas','InformesController@IngresoVentas')->name('ingresoVentas');
     Route::post('informe/ingreso/ventas','InformesController@IngresoVentasPost')->name('ingresoVentasPost');
+
+    /**
+     * Rutas de usuarios
+     */
 });

@@ -131,8 +131,14 @@
                                     @if($ordenPedido->estado_id == 1)
                                         <button type="button" class="btn btn-danger" data-toggle="modal"
                                                 data-target="#modalEliminar" data-numero="{{ $ordenPedido->numero }}"
-                                                data-id="{{ $ordenPedido->id }}">
+                                                data-id="{{ $ordenPedido->id }}" data-estado="{{ $ordenPedido->estado_id }}">
                                             <span class="fa fa-trash"></span>
+                                        </button>
+                                    @elseif($ordenPedido->estado_id == 2)
+                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                data-target="#modalEliminar" data-numero="{{ $ordenPedido->numero }}"
+                                                data-id="{{ $ordenPedido->id }}" data-estado="{{ $ordenPedido->estado_id }}">
+                                            <span class="fa fa-minus-square"></span>
                                         </button>
                                     @endif
                                 </td>
@@ -190,16 +196,26 @@
             );
 
             $('#modalEliminar').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var numero_orden = button.data('numero'); // Extract info from data-* attributes
-                var id_orden = button.data('id');
-                var ruta = '/orden-pedido/' + id_orden;
+                let button = $(event.relatedTarget); // Button that triggered the modal
+                let numero_orden = button.data('numero'); // Extract info from data-* attributes
+                let id_orden = button.data('id');
+                let estado_id = button.data('estado');
+                estado_id = parseInt(estado_id);
+                console.log(estado_id);
+                let ruta = '/orden-pedido/' + id_orden;
+                let ruta_despachada = '/orden-pedido-despachada/' + id_orden;
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                var modal = $(this);
+                let modal = $(this);
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                modal.find('#mensaje01').text('Esta punto de eliminar la orden de pedido');
-                modal.find('#mensaje02').text('Realmente desea eliminar la orden de pedido n°: ' + numero_orden);
-                modal.find('#myform').attr("action", ruta);
+                if (estado_id === 1) {
+                    modal.find('#mensaje01').text('Esta punto de eliminar la orden de pedido');
+                    modal.find('#mensaje02').text('Realmente desea eliminar la orden de pedido n°: ' + numero_orden);
+                    modal.find('#myform').attr("action", ruta);
+                } else {
+                    modal.find('#mensaje01').text('Al eliminar esta orden de pedido despachada regresará el producto a bodega');
+                    modal.find('#mensaje02').text('Realmente desea eliminar la orden de pedido n°: ' + numero_orden);
+                    modal.find('#myform').attr("action", ruta_despachada);
+                }
             });
         }
         
