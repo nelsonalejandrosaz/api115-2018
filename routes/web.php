@@ -263,6 +263,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/producto/existencias','InformesController@ProductosExistenciasInforme')->name('productoExistenciaInforme');
     Route::get('informe/producto/movimientos','InformesController@ProductoMovimiento')->name('productoMovimiento');
     Route::get('informe/cxc/antiguedad','InformesController@CXCAntiguedad')->name('cxcAntiguedad');
+    Route::get('informe/cxc/antiguedad/excel','InformesController@CXCAntiguedadExcel')->name('cxcAntiguedadExcel');
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
 
     /**

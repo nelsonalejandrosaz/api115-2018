@@ -17,15 +17,14 @@ class InformesController extends Controller
 {
     public function facturacionDia($rango)
     {
-        switch ($rango)
-        {
+        switch ($rango) {
             case 'dia':
                 $dia_inicio = Carbon::now();
                 $dia_fin = Carbon::now();
-                $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-                $fcf_dia = $ventas->where('tipo_documento_id','=',1)->get();
-                $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-                $ccf_dia = $ventas->where('tipo_documento_id','=',2)->get();
+                $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+                $fcf_dia = $ventas->where('tipo_documento_id', '=', 1)->get();
+                $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+                $ccf_dia = $ventas->where('tipo_documento_id', '=', 2)->get();
                 $extra['dia'] = null;
                 $extra['dia_inicio'] = $dia_inicio;
                 $extra['dia_fin'] = $dia_fin;
@@ -33,10 +32,10 @@ class InformesController extends Controller
             case 'semana':
                 $dia_inicio = Carbon::now()->startOfWeek();
                 $dia_fin = Carbon::now()->endOfWeek();
-                $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-                $fcf_dia = $ventas->where('tipo_documento_id','=',1)->get();
-                $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-                $ccf_dia = $ventas->where('tipo_documento_id','=',2)->get();
+                $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+                $fcf_dia = $ventas->where('tipo_documento_id', '=', 1)->get();
+                $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+                $ccf_dia = $ventas->where('tipo_documento_id', '=', 2)->get();
                 $extra['dia'] = null;
                 $extra['dia_inicio'] = $dia_inicio;
                 $extra['dia_fin'] = $dia_fin;
@@ -45,10 +44,10 @@ class InformesController extends Controller
             case 'mes':
                 $dia_inicio = Carbon::now()->startOfMonth();
                 $dia_fin = Carbon::now()->endOfMonth();
-                $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-                $fcf_dia = $ventas->where('tipo_documento_id','=',1)->get();
-                $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-                $ccf_dia = $ventas->where('tipo_documento_id','=',2)->get();
+                $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+                $fcf_dia = $ventas->where('tipo_documento_id', '=', 1)->get();
+                $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+                $ccf_dia = $ventas->where('tipo_documento_id', '=', 2)->get();
                 $extra['dia'] = null;
                 $extra['dia_inicio'] = $dia_inicio;
                 $extra['dia_fin'] = $dia_fin;
@@ -59,8 +58,7 @@ class InformesController extends Controller
         $monto_dia = 0.00;
         $monto_iva_dia = 0.00;
         $monto_total_dia = 0.00;
-        foreach ($fcf_dia as $venta)
-        {
+        foreach ($fcf_dia as $venta) {
             $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
@@ -71,8 +69,7 @@ class InformesController extends Controller
             $monto_iva_dia += $monto_iva;
             $monto_total_dia += $monto_total;
         }
-        foreach ($ccf_dia as $venta)
-        {
+        foreach ($ccf_dia as $venta) {
             $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
@@ -99,10 +96,10 @@ class InformesController extends Controller
 
         $dia_inicio = Carbon::parse($request->input('fecha_inicio'));
         $dia_fin = Carbon::parse($request->input('fecha_fin'));
-        $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-        $fcf_dia = $ventas->where('tipo_documento_id','=',1)->get();
-        $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-        $ccf_dia = $ventas->where('tipo_documento_id','=',2)->get();
+        $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+        $fcf_dia = $ventas->where('tipo_documento_id', '=', 1)->get();
+        $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+        $ccf_dia = $ventas->where('tipo_documento_id', '=', 2)->get();
         $extra['dia'] = null;
         $extra['dia_inicio'] = $dia_inicio;
         $extra['dia_fin'] = $dia_fin;
@@ -111,8 +108,7 @@ class InformesController extends Controller
         $monto_dia = 0.00;
         $monto_iva_dia = 0.00;
         $monto_total_dia = 0.00;
-        foreach ($fcf_dia as $venta)
-        {
+        foreach ($fcf_dia as $venta) {
             $monto = $venta->orden_pedido->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
@@ -123,8 +119,7 @@ class InformesController extends Controller
             $monto_iva_dia += $monto_iva;
             $monto_total_dia += $monto_total;
         }
-        foreach ($ccf_dia as $venta)
-        {
+        foreach ($ccf_dia as $venta) {
             $monto = $venta->orden_pedido->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
@@ -151,17 +146,16 @@ class InformesController extends Controller
 
         $dia_inicio = Carbon::parse($request->input('fecha_inicio'));
         $dia_fin = Carbon::parse($request->input('fecha_fin'));
-        $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-        $fcf_dia = $ventas->where('tipo_documento_id','=',1)->get();
-        $ventas = Venta::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')]);
-        $ccf_dia = $ventas->where('tipo_documento_id','=',2)->get();
+        $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+        $fcf_dia = $ventas->where('tipo_documento_id', '=', 1)->get();
+        $ventas = Venta::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')]);
+        $ccf_dia = $ventas->where('tipo_documento_id', '=', 2)->get();
 
         $monto_dia = 0.00;
         $monto_iva_dia = 0.00;
         $monto_total_dia = 0.00;
         $datos = [];
-        foreach ($fcf_dia as $venta)
-        {
+        foreach ($fcf_dia as $venta) {
             $monto = $venta->orden_pedido->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
@@ -175,14 +169,13 @@ class InformesController extends Controller
                 'Numero' => $venta->numero,
                 'Cliente' => $venta->cliente->nombre,
                 'Vendedor' => $venta->vendedor->nombre,
-                'Monto' => round($venta->venta_total,2),
-                'Monto IVA' => round($monto_iva,2),
-                'Monto Total' => round($monto_total,2),
+                'Monto' => round($venta->venta_total, 2),
+                'Monto IVA' => round($monto_iva, 2),
+                'Monto Total' => round($monto_total, 2),
             ];
             $datos[] = $fila;
         }
-        foreach ($ccf_dia as $venta)
-        {
+        foreach ($ccf_dia as $venta) {
             $monto = $venta->orden_pedido->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
@@ -196,18 +189,18 @@ class InformesController extends Controller
                 'Numero' => $venta->numero,
                 'Cliente' => $venta->cliente->nombre,
                 'Vendedor' => $venta->vendedor->nombre,
-                'Monto' => round($venta->venta_total,2),
-                'Monto IVA' => round($monto_iva,2),
-                'Monto Total' => round($monto_total,2),
+                'Monto' => round($venta->venta_total, 2),
+                'Monto IVA' => round($monto_iva, 2),
+                'Monto Total' => round($monto_total, 2),
             ];
             $datos[] = $fila;
         }
         // Extra para informe
-        $fila = ['TOTALES','','',round($monto_dia,2),round($monto_iva_dia,2),round($monto_total_dia,2)];
+        $fila = ['TOTALES', '', '', round($monto_dia, 2), round($monto_iva_dia, 2), round($monto_total_dia, 2)];
         $datos[] = $fila;
         $nombre_documento = 'facturacion-del-' . $dia_inicio->format('d-m-Y') . '-al-' . $dia_fin->format('d-m-Y');
-        Excel::create($nombre_documento, function($excel) use($datos) {
-            $excel->sheet('Abonos diarios', function($sheet) use($datos) {
+        Excel::create($nombre_documento, function ($excel) use ($datos) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($datos) {
 
                 $sheet->fromArray($datos);
 
@@ -218,12 +211,11 @@ class InformesController extends Controller
 
     public function Abonos($rango)
     {
-        switch ($rango)
-        {
+        switch ($rango) {
             case 'dia':
                 $dia_inicio = Carbon::now();
                 $dia_fin = Carbon::now();
-                $abonos = Abono::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')])->get();
+                $abonos = Abono::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')])->get();
                 $extra['dia'] = null;
                 $extra['dia_inicio'] = $dia_inicio;
                 $extra['dia_fin'] = $dia_fin;
@@ -231,7 +223,7 @@ class InformesController extends Controller
             case 'semana':
                 $dia_inicio = Carbon::now()->startOfWeek();
                 $dia_fin = Carbon::now()->endOfWeek();
-                $abonos = Abono::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')])->get();
+                $abonos = Abono::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')])->get();
                 $extra['dia'] = null;
                 $extra['dia_inicio'] = $dia_inicio;
                 $extra['dia_fin'] = $dia_fin;
@@ -240,7 +232,7 @@ class InformesController extends Controller
             case 'mes':
                 $dia_inicio = Carbon::now()->startOfMonth();
                 $dia_fin = Carbon::now()->endOfMonth();
-                $abonos = Abono::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')])->get();
+                $abonos = Abono::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')])->get();
                 $extra['dia'] = null;
                 $extra['dia_inicio'] = $dia_inicio;
                 $extra['dia_fin'] = $dia_fin;
@@ -252,17 +244,13 @@ class InformesController extends Controller
         $abono_cheque = 0.00;
         $abono_retencion = 0.00;
         $documento_total = 0.00;
-        foreach ($abonos as $abono)
-        {
+        foreach ($abonos as $abono) {
             $abono_total += $abono->cantidad;
-            if ($abono->forma_pago->codigo == 'EFECT')
-            {
+            if ($abono->forma_pago->codigo == 'EFECT') {
                 $abono_efectivo += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'CHEQU')
-            {
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
                 $abono_cheque += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'RETEN')
-            {
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
             }
             $documento_total += $abono->venta->venta_total_con_impuestos;
@@ -282,7 +270,7 @@ class InformesController extends Controller
     {
         $dia_inicio = Carbon::parse($request->input('fecha_inicio'));
         $dia_fin = Carbon::parse($request->input('fecha_fin'));
-        $abonos = Abono::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')])->get();
+        $abonos = Abono::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')])->get();
 
         $extra['dia'] = null;
         $extra['dia_inicio'] = $dia_inicio;
@@ -292,17 +280,13 @@ class InformesController extends Controller
         $abono_cheque = 0.00;
         $abono_retencion = 0.00;
         $documento_total = 0.00;
-        foreach ($abonos as $abono)
-        {
+        foreach ($abonos as $abono) {
             $abono_total += $abono->cantidad;
-            if ($abono->forma_pago->codigo == 'EFECT')
-            {
+            if ($abono->forma_pago->codigo == 'EFECT') {
                 $abono_efectivo += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'CHEQU')
-            {
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
                 $abono_cheque += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'RETEN')
-            {
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
             }
             $documento_total += $abono->venta->venta_total_con_impuestos;
@@ -323,47 +307,43 @@ class InformesController extends Controller
         $datos = [];
         $dia_inicio = Carbon::parse($request->input('fecha_inicio'));
         $dia_fin = Carbon::parse($request->input('fecha_fin'));
-        $abonos = Abono::whereBetween('fecha',[$dia_inicio->format('Y-m-d'),$dia_fin->format('Y-m-d')])->get();
+        $abonos = Abono::whereBetween('fecha', [$dia_inicio->format('Y-m-d'), $dia_fin->format('Y-m-d')])->get();
         $abono_total = 0.00;
         $abono_efectivo = 0.00;
         $abono_cheque = 0.00;
         $abono_retencion = 0.00;
         $documento_total = 0.00;
-        foreach ($abonos as $abono)
-        {
+        foreach ($abonos as $abono) {
             $fila = [
                 'Tipo documento' => $abono->venta->tipo_documento->nombre,
                 'Numero' => $abono->venta->numero,
                 'Cliente' => $abono->venta->cliente->nombre,
                 'Tipo pago' => $abono->forma_pago->nombre,
                 'Cantidad abono' => round($abono->cantidad),
-                'Total documento' => round($abono->venta->venta_total_con_impuestos,2)];
+                'Total documento' => round($abono->venta->venta_total_con_impuestos, 2)];
             $datos[] = $fila;
             $abono_total += $abono->cantidad;
-            if ($abono->forma_pago->codigo == 'EFECT')
-            {
+            if ($abono->forma_pago->codigo == 'EFECT') {
                 $abono_efectivo += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'CHEQU')
-            {
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
                 $abono_cheque += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'RETEN')
-            {
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
             }
             $documento_total += $abono->venta->venta_total_con_impuestos;
         }
         // Extra para informe
-        $fila = ['TOTAL EFECTIVO',$abono_efectivo];
+        $fila = ['TOTAL EFECTIVO', $abono_efectivo];
         $datos[] = $fila;
-        $fila = ['TOTAL CHEQUE',$abono_cheque];
+        $fila = ['TOTAL CHEQUE', $abono_cheque];
         $datos[] = $fila;
-        $fila = ['TOTAL RETENCIONES',$abono_retencion];
+        $fila = ['TOTAL RETENCIONES', $abono_retencion];
         $datos[] = $fila;
-        $fila = ['TOTAL ABONOS',$abono_total];
+        $fila = ['TOTAL ABONOS', $abono_total];
         $datos[] = $fila;
         $nombre_documento = 'abonos-del-' . $dia_inicio->format('d-m-Y') . '-al-' . $dia_fin->format('d-m-Y');
-        Excel::create($nombre_documento, function($excel) use($datos) {
-            $excel->sheet('Abonos diarios', function($sheet) use($datos) {
+        Excel::create($nombre_documento, function ($excel) use ($datos) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($datos) {
 
                 $sheet->fromArray($datos);
 
@@ -378,11 +358,11 @@ class InformesController extends Controller
 
     public function ProductosExistenciasInforme()
     {
-        $productos_mp = TipoProducto::where('codigo','=','MP')->first()->productos;
-        $productos_pt = TipoProducto::where('codigo','=','PT')->first()->productos;
-        $productos_rv = TipoProducto::where('codigo','=','RV')->first()->productos;
-        $productos_mr = TipoProducto::where('codigo','=','MR')->first()->productos;
-        $productos_pm = TipoProducto::where('codigo','=','PM')->first()->productos;
+        $productos_mp = TipoProducto::where('codigo', '=', 'MP')->first()->productos;
+        $productos_pt = TipoProducto::where('codigo', '=', 'PT')->first()->productos;
+        $productos_rv = TipoProducto::where('codigo', '=', 'RV')->first()->productos;
+        $productos_mr = TipoProducto::where('codigo', '=', 'MR')->first()->productos;
+        $productos_pm = TipoProducto::where('codigo', '=', 'PM')->first()->productos;
         $productos['productos_mp'] = $productos_mp;
         $productos['productos_pt'] = $productos_pt;
         $productos['productos_rv'] = $productos_rv;
@@ -395,8 +375,7 @@ class InformesController extends Controller
             }
         }
         $extra['dia'] = Carbon::now();
-        foreach ($productos as $producto)
-        {
+        foreach ($productos as $producto) {
             null;
         }
         return view('informes.productoExistenciaInforme')
@@ -406,10 +385,10 @@ class InformesController extends Controller
 
     public function ProductosPreciosInforme()
     {
-        $productos_pt = TipoProducto::where('codigo','=','PT')->first()->productos;
-        $productos_rv = TipoProducto::where('codigo','=','RV')->first()->productos;
-        $productos_mr = TipoProducto::where('codigo','=','MR')->first()->productos;
-        $productos_pm = TipoProducto::where('codigo','=','PM')->first()->productos;
+        $productos_pt = TipoProducto::where('codigo', '=', 'PT')->first()->productos;
+        $productos_rv = TipoProducto::where('codigo', '=', 'RV')->first()->productos;
+        $productos_mr = TipoProducto::where('codigo', '=', 'MR')->first()->productos;
+        $productos_pm = TipoProducto::where('codigo', '=', 'PM')->first()->productos;
         $productos['productos_pt'] = $productos_pt;
         $productos['productos_rv'] = $productos_rv;
         $productos['productos_mr'] = $productos_mr;
@@ -425,11 +404,10 @@ class InformesController extends Controller
         $extra['dia'] = Carbon::now();
         $estado_venta = EstadoVenta::whereCodigo('PP')->first();
         $ventas = Venta::where([
-            ['estado_venta_id','=',$estado_venta->id],
-            ['fecha','!=',$extra['dia']->format('Y-m-d')]
-        ])->orderBy('fecha','desc')->get();
-        foreach ($ventas as $venta)
-        {
+            ['estado_venta_id', '=', $estado_venta->id],
+            ['fecha', '!=', $extra['dia']->format('Y-m-d')]
+        ])->orderBy('fecha', 'desc')->get();
+        foreach ($ventas as $venta) {
             $venta->antiguedad = $venta->fecha->diffInDays(Carbon::now());
         }
         return view('informes.cxcAntiguedad')
@@ -437,11 +415,49 @@ class InformesController extends Controller
             ->with(['extra' => $extra]);
     }
 
+    public function CXCAntiguedadExcel()
+    {
+        $datos = [];
+        $extra['dia'] = Carbon::now();
+        $estado_venta = EstadoVenta::whereCodigo('PP')->first();
+        $ventas = Venta::where([
+            ['estado_venta_id', '=', $estado_venta->id],
+            ['fecha', '!=', $extra['dia']->format('Y-m-d')]
+        ])->orderBy('fecha', 'desc')->get();
+        $total_saldos = 0.00;
+        foreach ($ventas as $venta) {
+            $venta->antiguedad = $venta->fecha->diffInDays(Carbon::now());
+            $fila = [
+                'Vendedor' => $venta->vendedor->nombre,
+                'Cliente' => $venta->cliente->nombre,
+                'N° documento' => $venta->numero,
+                'Tipo doc' => $venta->tipo_documento->codigo,
+                'Fecha' => $venta->fecha->format('d/m/Y'),
+                'Valor doc' => number_format($venta->venta_total_con_impuestos,2),
+                'Saldo pendiente' => number_format($venta->saldo,2),
+                'Antigüedad' => $venta->antiguedad,
+            ];
+            $total_saldos += $venta->saldo;
+            $datos[] = $fila;
+        }
+        $fila = ['TOTAL SALDO PENDIENTE','','','','','', number_format($total_saldos,2)];
+        $datos[] = $fila;
+        $nombre_documento = 'informe-de-antiguedad-saldos-al-' . Carbon::now()->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($datos) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($datos) {
+
+                $sheet->fromArray($datos);
+
+            });
+        })->download('xls');
+    }
+
+
     public function IngresoDiario(Request $request)
     {
         $dia = ($request->input('fecha') == null) ? Carbon::now()->format('Y-m-d') : $request->input('fecha');
-        $abonos = Abono::where('fecha','=',$dia)->get();
-        $ventaCredito = Venta::where('fecha','=',$dia)->get();
+        $abonos = Abono::where('fecha', '=', $dia)->get();
+        $ventaCredito = Venta::where('fecha', '=', $dia)->get();
         $extra['dia'] = $dia;
         $abono_total = 0.00;
         $abono_efectivo = 0.00;
@@ -450,20 +466,15 @@ class InformesController extends Controller
         $abono_deposito = 0.00;
         $documento_total = 0.00;
         $credito_total = 0.00;
-        foreach ($abonos as $abono)
-        {
+        foreach ($abonos as $abono) {
             $abono_total += $abono->cantidad;
-            if ($abono->forma_pago->codigo == 'EFECT')
-            {
+            if ($abono->forma_pago->codigo == 'EFECT') {
                 $abono_efectivo += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'CHEQU')
-            {
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
                 $abono_cheque += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'RETEN')
-            {
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'DEPOS')
-            {
+            } elseif ($abono->forma_pago->codigo == 'DEPOS') {
                 $abono_deposito += $abono->cantidad;
             }
             $dev[] = $abono->venta;
@@ -472,13 +483,10 @@ class InformesController extends Controller
         // Ventas contado
         $ventasContadoArray = [];
         $cobrosArray = [];
-        foreach ($abonos as $abono)
-        {
-            if ($abono->venta->fecha->format('d/m/Y') == $dia)
-            {
+        foreach ($abonos as $abono) {
+            if ($abono->venta->fecha->format('d/m/Y') == $dia) {
                 $ventasContadoArray[] = $abono;
-            } else
-            {
+            } else {
                 $cobrosArray[] = $abono;
             }
         }
@@ -488,16 +496,14 @@ class InformesController extends Controller
 
         // Ventas al credito
         $ventaCreditoArray = [];
-        foreach ($ventaCredito as $venta)
-        {
-            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3)
-            {
+        foreach ($ventaCredito as $venta) {
+            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3) {
                 $ventaCreditoArray[] = $venta;
                 $documento_total += $venta->saldo;
             }
         }
         $ventaCredito = collect($ventaCreditoArray);
-        $ventas_anuladas = Venta::where('fecha_anulado','=',$dia)->get();
+        $ventas_anuladas = Venta::where('fecha_anulado', '=', $dia)->get();
 //        dd($ventas_anuladas->isEmpty());
         // Extra para informe
         $extra['abono_total'] = $abono_total;
@@ -519,8 +525,8 @@ class InformesController extends Controller
     {
         $datos = [];
         $dia = ($request->input('fecha') == null) ? Carbon::now()->format('Y-m-d') : $request->input('fecha');
-        $abonos = Abono::where('fecha','=',$dia)->get();
-        $ventaCredito = Venta::where('fecha','=',$dia)->get();
+        $abonos = Abono::where('fecha', '=', $dia)->get();
+        $ventaCredito = Venta::where('fecha', '=', $dia)->get();
         $extra['dia'] = $dia;
         $abono_total = 0.00;
         $abono_efectivo = 0.00;
@@ -528,17 +534,13 @@ class InformesController extends Controller
         $abono_retencion = 0.00;
         $documento_total = 0.00;
         $credito_total = 0.00;
-        foreach ($abonos as $abono)
-        {
+        foreach ($abonos as $abono) {
             $abono_total += $abono->cantidad;
-            if ($abono->forma_pago->codigo == 'EFECT')
-            {
+            if ($abono->forma_pago->codigo == 'EFECT') {
                 $abono_efectivo += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'CHEQU')
-            {
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
                 $abono_cheque += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'RETEN')
-            {
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
             }
             $dev[] = $abono->venta;
@@ -548,13 +550,10 @@ class InformesController extends Controller
         // Ventas contado
         $ventasContadoArray = [];
         $cobrosArray = [];
-        foreach ($abonos as $abono)
-        {
-            if ($abono->venta->fecha->format('d/m/Y') == $dia)
-            {
+        foreach ($abonos as $abono) {
+            if ($abono->venta->fecha->format('d/m/Y') == $dia) {
                 $ventasContadoArray[] = $abono;
-            } else
-            {
+            } else {
                 $cobrosArray[] = $abono;
             }
         }
@@ -563,16 +562,14 @@ class InformesController extends Controller
 
         // Ventas al credito
         $ventaCreditoArray = [];
-        foreach ($ventaCredito as $venta)
-        {
-            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3)
-            {
+        foreach ($ventaCredito as $venta) {
+            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3) {
                 $ventaCreditoArray[] = $venta;
                 $documento_total += $venta->saldo;
             }
         }
         $ventaCredito = collect($ventaCreditoArray);
-        $ventas_anuladas = Venta::where('fecha_anulado','=',$dia)->get();
+        $ventas_anuladas = Venta::where('fecha_anulado', '=', $dia)->get();
         // Extra para informe
         $extra['abono_total'] = $abono_total;
         $extra['documento_total'] = $documento_total;
@@ -580,8 +577,8 @@ class InformesController extends Controller
         $extra['abono_cheque'] = $abono_cheque;
         $extra['abono_retencion'] = $abono_retencion;
         $nombre_documento = 'ingresos-diarios-del-' . $dia;
-        Excel::create($nombre_documento, function($excel) use($datos) {
-            $excel->sheet('Abonos diarios', function($sheet) use($datos) {
+        Excel::create($nombre_documento, function ($excel) use ($datos) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($datos) {
 
                 $sheet->fromArray($datos);
 
@@ -592,10 +589,10 @@ class InformesController extends Controller
     public function IngresoVentasPost(Request $request)
     {
         $dia = Carbon::parse($request->input('fecha'));
-        $abonos = Abono::where('fecha','=',$dia->format('Y-m-d'))->get();
+        $abonos = Abono::where('fecha', '=', $dia->format('Y-m-d'))->get();
         $ventaCredito = Venta::where([
-            ['fecha','=',$dia->format('Y-m-d')],
-            ['estado_venta_id','!=',3]
+            ['fecha', '=', $dia->format('Y-m-d')],
+            ['estado_venta_id', '!=', 3]
         ])->get();
         $extra['dia'] = $dia;
         $abono_total = 0.00;
@@ -603,17 +600,13 @@ class InformesController extends Controller
         $abono_cheque = 0.00;
         $abono_retencion = 0.00;
         $documento_total = 0.00;
-        foreach ($abonos as $abono)
-        {
+        foreach ($abonos as $abono) {
             $abono_total += $abono->cantidad;
-            if ($abono->forma_pago->codigo == 'EFECT')
-            {
+            if ($abono->forma_pago->codigo == 'EFECT') {
                 $abono_efectivo += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'CHEQU')
-            {
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
                 $abono_cheque += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'RETEN')
-            {
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
             }
             $dev[] = $abono->venta;
@@ -623,13 +616,10 @@ class InformesController extends Controller
         // Ventas contado
         $ventasContadoArray = [];
         $cobrosArray = [];
-        foreach ($abonos as $abono)
-        {
-            if ($abono->venta->fecha->format('d/m/Y') == $dia->format('d/m/Y'))
-            {
+        foreach ($abonos as $abono) {
+            if ($abono->venta->fecha->format('d/m/Y') == $dia->format('d/m/Y')) {
                 $ventasContadoArray[] = $abono;
-            } else
-            {
+            } else {
                 $cobrosArray[] = $abono;
             }
         }
@@ -639,16 +629,14 @@ class InformesController extends Controller
 
         // Ventas al credito
         $ventaCreditoArray = [];
-        foreach ($ventaCredito as $venta)
-        {
-            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3)
-            {
+        foreach ($ventaCredito as $venta) {
+            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3) {
                 $ventaCreditoArray[] = $venta;
                 $documento_total += $venta->saldo;
             }
         }
         $ventaCredito = collect($ventaCreditoArray);
-        $ventas_anuladas = Venta::where('fecha_anulado','=',$dia->format('Y-m-d'))->get();
+        $ventas_anuladas = Venta::where('fecha_anulado', '=', $dia->format('Y-m-d'))->get();
 //        dd($ventas_anuladas->isEmpty());
         // Extra para informe
         $extra['abono_total'] = $abono_total;
