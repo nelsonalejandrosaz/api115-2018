@@ -14,7 +14,7 @@
 @endsection
 
 @section('contentheader_description')
-    Realizar un abono para cliente: {{$cliente->nombre}}
+    -- Realizar un abono para cliente: {{$cliente->nombre}}
 @endsection
 
 @section('main-content')

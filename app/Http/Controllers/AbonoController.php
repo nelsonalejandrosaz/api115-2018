@@ -12,6 +12,12 @@ use Illuminate\Http\Request;
 class AbonoController extends Controller
 {
 
+    /**
+     * @return $this
+     * Estado: Revisada y funcionando
+     * Fecha rev: 20-03-18
+     * Observaciones: Falta filtrar por fechas
+     */
     public function AbonoLista()
     {
         $abonos = Abono::all();
@@ -19,6 +25,11 @@ class AbonoController extends Controller
             ->with(['abonos' => $abonos]);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     *
+     */
     public function AbonoVer($id)
     {
         $abono = Abono::find($id);
@@ -30,6 +41,11 @@ class AbonoController extends Controller
             ->with(['venta' => $venta]);
     }
 
+    /**
+     * @return $this
+     * Estado: Revisado y funcionando
+     * Fecha rev: 20-03-18
+     */
     public function AbonoNuevoSinVenta()
     {
         $clientes = Cliente::where('saldo','>',0)->get();
@@ -48,6 +64,12 @@ class AbonoController extends Controller
             ->with(['venta' => $venta]);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     */
     public function AbonoNuevoPost(Request $request, $id)
     {
         /**
@@ -82,6 +104,7 @@ class AbonoController extends Controller
             'detalle' => $request->input('detalle'),
             'venta_id' => $venta->id,
             'cliente_id' => $cliente->id,
+            'recibo_caja' => $request->input('recibo_caja'),
         ]);
 
         if ($venta->saldo == 0.00)
@@ -97,6 +120,10 @@ class AbonoController extends Controller
         return redirect()->route('abonoVer',['id' => $abono->id]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function AbonoNuevoSinVentaPost(Request $request)
     {
         /**
@@ -134,6 +161,7 @@ class AbonoController extends Controller
             'venta_id' => $venta->id,
             'cliente_id' => $cliente->id,
             'forma_pago_id' => $request->input('forma_pago_id'),
+            'recibo_caja' => $request->input('recibo_caja'),
         ]);
 
         if ($venta->saldo == 0.00)

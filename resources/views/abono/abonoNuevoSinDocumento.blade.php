@@ -14,7 +14,7 @@
 @endsection
 
 @section('contentheader_description')
-    Realizar un abono
+    -- Realizar un nuevo abono
 @endsection
 
 @section('main-content')
@@ -27,7 +27,7 @@
             <h3 class="box-title">Datos del abono</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('abonoNuevoSinVentaPost') }}" method="POST" id="abono-form-id">
+        <form class="form-horizontal" action="{{ route('abonoNuevoSinVentaPost') }}" method="POST" id="abono-form">
             {{ csrf_field() }}
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
@@ -36,8 +36,8 @@
 
                     {{-- Nombre del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Cliente</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label"><b>Cliente</b></label>
+                        <div class="col-sm-8">
                             <select class="form-control select2" style="width: 100%" name="cliente_id" id="clienteID" onchange="cambioCliente()">
                                 <option value="" selected disabled>Seleciona un cliente</option>
                                 @foreach($clientes as $cliente)
@@ -50,21 +50,21 @@
 
                     {{-- Numero de venta --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Numero factura</label>
+                        <label class="col-sm-4 control-label"><b>Numero factura</b></label>
                         <div class="col-sm-5">
                             <select class="form-control select2" style="width: 100%" name="venta_id" id="ventaID" onchange="cambioVenta()">
                                 <option value="" selected disabled>Selecciona un cliente</option>
                             </select>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <a href="" target="_blank" class="btn btn-info pull-right"><span class="fa fa-file"></span> Ver factura</a>
                         </div>
                     </div>
 
                     {{-- Saldo venta --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Saldo factura</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label" title="El saldo pendiente del documento">Saldo documento</label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
                                 <input readonly type="text" class="form-control" placeholder="0.00" name="saldo_venta"
@@ -75,8 +75,8 @@
 
                     {{-- Saldo cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Saldo cliente</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label" title="El saldo pendiente del cliente">Saldo cliente</label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
                                 <input readonly type="text" class="form-control" placeholder="0.00" name="saldo_total"
@@ -92,8 +92,8 @@
 
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><b>Fecha ingreso:</b></label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label"><b>Fecha ingreso:</b></label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input readonly type="date" class="form-control" name="fecha" id="fecha-input" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 <div class="input-group-addon">
@@ -105,8 +105,8 @@
 
                     {{-- Cantidad abono --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Cantidad a abonar</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label"><b>Cantidad abono</b></label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
                                 <input type="number" min="0.00" step="0.01" class="form-control" placeholder="0" name="cantidad"
@@ -115,10 +115,19 @@
                         </div>
                     </div>
 
+                    {{-- Recibo de caja --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">N° Recibo caja</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" placeholder="0" name="recibo_caja"
+                                   value="{{ old('cantidad') }}">
+                        </div>
+                    </div>
+
                     {{-- Forma de pago --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><b>Forma pago</b></label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label"><b>Forma pago</b></label>
+                        <div class="col-sm-8">
                             <select class="form-control select2" style="width: 100%" name="forma_pago_id" id="clienteID">
                                 <option value="" selected disabled>Selecciona modo pago</option>
                                 @foreach($tipo_abonos as $tipo_abono)
@@ -130,8 +139,8 @@
 
                     {{-- Detalle --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Detalle</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label">Detalle</label>
+                        <div class="col-sm-8">
                             <textarea name="detalle" class="form-control">{{ old('detalle') }}</textarea>
                         </div>
                     </div>
@@ -140,8 +149,8 @@
             </div><!-- /.box-body -->
 
             <div class="box-footer">
-                <a href="{{ route('produccionLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
-                <button type="button" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-credit-card"></span> Abonar</button>
+                <a href="{{ route('abonoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-close"></span> Cancelar</a>
+                <button type="submit" class="btn btn-lg btn-success pull-right" id="enviar-buttom-id"><span class="fa fa-credit-card"></span> Abonar</button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -149,24 +158,87 @@
 @endsection
 
 @section('JSExtras')
+    {{--Validacion--}}
+    <script src="{{asset('/plugins/jquery-validation/dist/jquery.validate.js')}}"></script>
+    <script src="{{asset('/plugins/jquery-validation/dist/additional-methods.min.js')}}"></script>
     <script>
 
         $(document).on('ready', Principal());
 
-
         function Principal() {
-            $('#enviar-buttom-id').click(EnviarAbono);
             $('#fecha-input').dblclick(FechaModificar);
+            Validacion();
+        }
+
+        function Validacion() {
+            $('#abono-form').validate({
+                ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                rules: {
+                    "cliente_id": {
+                        required: true,
+                    },
+                    "venta_id": {
+                        required: true,
+                    },
+                    "fecha": {
+                        required: true,
+                    },
+                    "cantidad": {
+                        required: true,
+                        min: 0.01,
+                    },
+                    "forma_pago_id": {
+                        required: true,
+                    }
+                },
+                messages: {
+                    "cliente_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione un cliente a abonar', 'Ups!');
+                        },
+                    },
+                    "venta_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione un documento a abonar', 'Ups!');
+                        },
+                    },
+                    "fecha": {
+                        required: function () {
+                            toastr.error('Por favor complete la fecha del abono', 'Ups!');
+                        },
+                    },
+                    "cantidad": {
+                        required: function () {
+                            toastr.error('Por favor complete la cantidad a abonar', 'Ups!');
+                        },
+                        min: function () {
+                            toastr.error('La cantidad debe ser mayor a cero', 'Ups!');
+                        },
+                    },
+                    "forma_pago_id": {
+                        required: function () {
+                            toastr.error('Por favor seleccione una forma de pago', 'Ups!');
+                        },
+                    },
+                },
+                submitHandler: function (form) {
+                    $('#enviar-buttom').attr('disabled','true');
+                    toastr.success('Por favor espere a que se procese','Excelente');
+                    form.submit();
+                }
+            });
         }
 
         function FechaModificar() {
             $('#fecha-input').removeAttr('readonly');
         }
 
-        function EnviarAbono() {
-            $('#enviar-buttom-id').attr('disabled','true');
-            $('#abono-form-id').submit();
-        }
+        // function EnviarAbono() {
+        //     $('#enviar-buttom-id').attr('disabled','true');
+        //     $('#abono-form-id').submit();
+        // }
 
         function cambioCliente() {
             let cliente_input = $('#clienteID');
@@ -203,6 +275,7 @@
             console.log(saldo);
             saldo_venta_input.val(saldo.toFixed(2));
         }
+
     </script>
     @include('comun.select2Jses')
 @endsection

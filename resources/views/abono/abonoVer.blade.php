@@ -24,7 +24,7 @@
     {{--Barra herramientas--}}
     <div class="box box-default box-solid">
         <div class="box-header with-border">
-            <h3 class="box-title">Herramientas</h3>
+            <h3 class="box-title">Opciones</h3>
             <div class="box-tools pull-right">
                 <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                 <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -32,8 +32,7 @@
         </div><!-- /.box-header -->
 
         <!-- form start -->
-        <form class="form-horizontal" action="{{ route('ingresoVentasPost') }}" method="POST" id="fechas-form-id">
-            {{ csrf_field() }}
+        <form class="form-horizontal" id="fechas-form-id">
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
 
@@ -53,7 +52,7 @@
     <!-- Form de nuevo producto -->
     <div class="box box-default">
         <div class="box-header with-border">
-            <h3 class="box-title">Datos del producto</h3>
+            <h3 class="box-title">Datos del abono</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
         <form class="form-horizontal" action="" method="POST">
@@ -66,8 +65,8 @@
 
                     {{-- Nombre del cliente --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Cliente</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label">Cliente</label>
+                        <div class="col-sm-8">
                             <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
                                    value="{{ $cliente->nombre }}">
                         </div>
@@ -75,13 +74,22 @@
 
                     {{-- Numero de venta --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Numero factura</label>
-                        <div class="col-sm-5">
+                        <label class="col-sm-4 control-label">N° documento</label>
+                        <div class="col-sm-8">
                             <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
                                    value="{{ $venta->numero }}">
                         </div>
-                        <div class="col-sm-4">
-                            <a href="{{ Storage::url($venta->ruta_archivo) }}" target="_blank" class="btn btn-info pull-right"><span class="fa fa-file"></span> Ver factura</a>
+                        {{--<div class="col-sm-3">--}}
+                            {{--<a href="{{ Storage::url($venta->ruta_archivo) }}" target="_blank" class="btn btn-info pull-right"><span class="fa fa-file"></span> Ver factura</a>--}}
+                        {{--</div>--}}
+                    </div>
+
+                    {{-- Numero de venta --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">N° recibo caja</label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="{{ $abono->recibo_caja }}">
                         </div>
                     </div>
 
@@ -116,8 +124,8 @@
 
                     {{-- Fecha --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><b>Fecha ingreso:</b></label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label"><b>Fecha ingreso:</b></label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input readonly type="date" class="form-control" name="fecha" value="{{$abono->fecha->format('Y-m-d')}}">
                                 <div class="input-group-addon">
@@ -129,20 +137,29 @@
 
                     {{-- Cantidad abono --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Cantidad abonada</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label">Cantidad abonada</label>
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input readonly type="number" min="0.00" step="0.01" class="form-control" placeholder="0" name="cantidad"
-                                       value="{{ $abono->cantidad }}">
+                                <input readonly type="number" class="form-control" placeholder="0" name="cantidad"
+                                       value="{{ number_format($abono->cantidad,2) }}">
                             </div>
+                        </div>
+                    </div>
+
+                    {{-- Forma de pago --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Forma de pago</label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" class="form-control" placeholder="Producto" name="nombre"
+                                   value="{{ $abono->forma_pago->nombre }}">
                         </div>
                     </div>
 
                     {{-- Detalle --}}
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Detalle</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-4 control-label">Detalle</label>
+                        <div class="col-sm-8">
                             <textarea readonly name="detalle" class="form-control">{{ $abono->detalle }}</textarea>
                         </div>
                     </div>

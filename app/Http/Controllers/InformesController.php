@@ -447,6 +447,7 @@ class InformesController extends Controller
         $abono_efectivo = 0.00;
         $abono_cheque = 0.00;
         $abono_retencion = 0.00;
+        $abono_deposito = 0.00;
         $documento_total = 0.00;
         $credito_total = 0.00;
         foreach ($abonos as $abono)
@@ -461,11 +462,13 @@ class InformesController extends Controller
             } elseif ($abono->forma_pago->codigo == 'RETEN')
             {
                 $abono_retencion += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPOS')
+            {
+                $abono_deposito += $abono->cantidad;
             }
             $dev[] = $abono->venta;
             $documento_total += $abono->venta->saldo;
         }
-
         // Ventas contado
         $ventasContadoArray = [];
         $cobrosArray = [];
@@ -502,6 +505,7 @@ class InformesController extends Controller
         $extra['abono_efectivo'] = $abono_efectivo;
         $extra['abono_cheque'] = $abono_cheque;
         $extra['abono_retencion'] = $abono_retencion;
+        $extra['abono_deposito'] = $abono_deposito;
         return view('informes.ingresosDiariosInforme')
             ->with(['abonos' => $abonos])
             ->with(['extra' => $extra])

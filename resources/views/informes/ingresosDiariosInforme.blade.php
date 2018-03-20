@@ -292,6 +292,11 @@
                                 <td><b></b></td>
                             </tr>
                             <tr>
+                                <td colspan="7" style="text-align: right"><b>TOTAL DEPOSITOS</b></td>
+                                <td><b>$ {{ number_format($extra['abono_deposito'],2) }}</b></td>
+                                <td><b></b></td>
+                            </tr>
+                            <tr>
                                 <td colspan="7" style="text-align: right"><b>TOTALES</b></td>
                                 <td><b>$ {{ number_format($extra['abono_total'],2) }}</b></td>
                                 <td><b>$ {{ number_format($extra['documento_total'],2) }}</b></td>
