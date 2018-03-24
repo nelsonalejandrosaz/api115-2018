@@ -277,15 +277,15 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Produccion</h3>
-                                        <h3 style="font-size: 25px"><br></h3>
+                                        <h3 style="font-size: 25px">por producto</h3>
                                     </div>
                                     <div class="icon">
                                         <i class="fa fa-gears"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer">Ver informe <i
+                                    <a href="{{ route('informeProducciones') }}" class="small-box-footer">Ver informe <i
                                                 class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
@@ -293,7 +293,7 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Movimientos</h3>
                                         <h3 style="font-size: 25px">ajustes</h3>
@@ -301,7 +301,7 @@
                                     <div class="icon">
                                         <i class="fa fa-exchange"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer">Ver informe <i
+                                    <a href="{{ route('movimientosAjuste') }}" class="small-box-footer">Ver informe <i
                                                 class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
@@ -331,7 +331,7 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Informe</h3>
                                         <h3 style="font-size: 25px">ventas</h3>
@@ -339,7 +339,7 @@
                                     <div class="icon">
                                         <i class="fa fa-book"></i>
                                     </div>
-                                    <a href="{{ route('abonosInforme',['rango' => 'dia']) }}" class="small-box-footer">Ver
+                                    <a href="{{ route('informeVentas') }}" class="small-box-footer">Ver
                                         informe <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
@@ -347,7 +347,7 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Por</h3>
                                         <h3 style="font-size: 25px">clientes</h3>
@@ -355,7 +355,7 @@
                                     <div class="icon">
                                         <i class="fa fa-list-alt"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer">Ver informe <i
+                                    <a href="{{ route('informeVentasPorCliente') }}" class="small-box-footer">Ver informe <i
                                                 class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>

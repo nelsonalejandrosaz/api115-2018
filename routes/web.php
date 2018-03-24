@@ -266,7 +266,23 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/cxc/antiguedad/excel','InformesController@CXCAntiguedadExcel')->name('cxcAntiguedadExcel');
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
 
+    Route::get('informe/ventas','InformesController@Ventas')->name('informeVentas');
+    Route::get('informe/ventas/cliente','InformesController@VentasPorCliente')->name('informeVentasPorCliente');
+    Route::get('informe/producciones','InformesController@Producciones')->name('informeProducciones');
+    Route::get('informe/movimientos/ajustes','InformesController@MovimientosAjuste')->name('movimientosAjuste');
+
+
     /**
      * Rutas de usuarios
      */
+    Route::group(['middleware' => ['administrador']], function () {
+        Route::get('/usuario','UsuarioController@UsuarioLista')->name('usuarioLista');
+        Route::get('/usuario/nuevo','UsuarioController@UsuarioNuevo')->name('usuarioNuevo');
+        Route::post('/usuario/nuevo','UsuarioController@UsuarioNuevoPost')->name('usuarioNuevoPost');
+        Route::get('/usuario/{id}','UsuarioController@UsuarioVer')->name('usuarioVer');
+        Route::get('/usuario/{id}/editar','UsuarioController@UsuarioEditar')->name('usuarioEditar');
+        Route::put('/usuario/{id}','UsuarioController@UsuarioEditarPut')->name('usuarioEditarPut');
+        Route::delete('/usuario/{id}','UsuarioController@ProveedorEliminar')->name('usuarioEliminar');
+    });
+
 });

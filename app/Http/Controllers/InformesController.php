@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Abono;
+use App\Ajuste;
 use App\Cliente;
 use App\Configuracion;
 use App\EstadoVenta;
+use App\Formula;
+use App\Movimiento;
+use App\Produccion;
 use App\Producto;
 use App\TipoProducto;
 use App\Venta;
@@ -667,5 +671,139 @@ class InformesController extends Controller
             ->with(['productos' => $productos])
             ->with(['producto_seleccion' => $producto])
             ->with(['extra' => $extra]);
+    }
+
+    public function Ventas(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $total_dias = $fecha_inicio->diffInDays($fecha_fin);
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $ventas = Venta::whereBetween('fecha',[$fecha_inicio,$fecha_fin])->get();
+        $tabla = collect();
+        $fecha = Carbon::parse($fecha_inicio);
+        for ($i = 0; $i < $total_dias; $i++)
+        {
+            if (!$fecha->isSunday())
+            {
+                $valor = $ventas->where('fecha','=',$fecha)->sum('venta_total');
+                $valor = round($valor,2);
+                $iva = $valor * 0.13;
+                $iva = round($iva,2);
+                $total = $valor + $iva;
+                $fila = ['fecha' => $fecha->format('d/m/Y'), 'valor' => $valor, 'iva' => $iva, 'total' => $total];
+                $tabla->push($fila);
+            }
+            $fecha->addDay();
+        }
+        return view('informes.informeVentas')
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function VentasPorCliente(Request $request)
+    {
+        $clientes = Cliente::all();
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $cliente = ($request->input('cliente_id') == null) ? null : Cliente::find($request->input('cliente_id'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $tabla = collect();
+//        $ventas = $cliente->ventas;
+//        dd($ventas->whereIn('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')]));
+        if ($cliente != null)
+        {
+            $ventas = Venta::where('cliente_id','=',$cliente->id)
+                ->where('estado_venta_id','!=',3)
+                ->whereBetween('fecha',[$fecha_inicio,$fecha_fin])->get();
+            foreach ($ventas as $venta)
+            {
+                $fila = [
+                    'fecha' => $venta->fecha->format('d/m/Y'),
+                    'tipo_documento' => $venta->tipo_documento->nombre,
+                    'numero' => $venta->numero,
+                    'total' => $venta->venta_total_con_impuestos,
+                ];
+                $tabla->push($fila);
+            }
+        }
+        return view('informes.informeVentasPorCliente')
+            ->with(['clientes' => $clientes])
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function Producciones(Request $request)
+    {
+        $productos = Producto::all();
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $producto = ($request->input('producto_id') == null) ? null : Producto::find($request->input('producto_id'));
+        $nombre_producto = ($producto == null) ? "Sin producto" : $producto->nombre;
+        $datos = [];
+        $tabla = collect();
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $datos += ['nombre_producto' => $nombre_producto];
+        if ($producto != null)
+        {
+            $producciones = Produccion::where('producto_id','=',$producto->id)
+                ->whereBetween('fecha',[$fecha_inicio,$fecha_fin])->get();
+            foreach ($producciones as $produccion)
+            {
+                $fila = [
+                    'fecha' => $produccion->fecha->format('d/m/Y'),
+                    'cantidad' => $produccion->cantidad,
+                    'costo_unitario' => $produccion->entrada->movimiento->costo_unitario,
+                    'costo_total' => $produccion->entrada->movimiento->costo_total,
+                ];
+                $tabla->push($fila);
+            }
+        }
+        return view('informes.informeProducciones')
+//            ->with(['producto' => $producto])
+            ->with(['productos' => $productos])
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function MovimientosAjuste(Request $request)
+    {
+        $productos = Producto::all();
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $producto = ($request->input('producto_id') == null) ? null : Producto::find($request->input('producto_id'));
+        $nombre_producto = ($producto == null) ? "Sin producto" : $producto->nombre;
+        $datos = [];
+        $tabla = collect();
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $datos += ['nombre_producto' => $nombre_producto];
+        if ($producto != null)
+        {
+            $movimientos = Movimiento::whereBetween('tipo_movimiento_id',[5,6])
+                ->where('producto_id','=',$producto->id)->get();
+            foreach ($movimientos as $movimiento)
+            {
+                $fila = [
+                    'tipo_movimiento' => $movimiento->ajuste->tipo_ajuste->tipo,
+                    'fecha' => $movimiento->fecha->format('d/m/Y'),
+                    'tipo_ajuste' => $movimiento->ajuste->tipo_ajuste->nombre,
+                    'cantidad' => $movimiento->cantidad,
+                    'costo_unitario' => $movimiento->costo_unitario,
+                    'costo_total' => $movimiento->costo_total,
+                ];
+                $tabla->push($fila);
+            }
+        }
+//        dd($tabla);
+        return view('informes.informeMovimientosAjustes')
+            ->with(['productos' => $productos])
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
     }
 }

@@ -211,8 +211,8 @@
                     <a href="#"><i class='fa fa-users'></i> <span>Usuarios</span> <i
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="">Usuarios</a></li>
-                        <li><a href="">Nuevo usuario</a></li>
+                        <li><a href="{{route('usuarioLista')}}">Usuarios</a></li>
+                        <li><a href="{{route('usuarioNuevo')}}">Nuevo usuario</a></li>
                     </ul>
                 </li>
 

@@ -34,6 +34,11 @@ class Produccion extends Model
         return $this->belongsTo('App\Producto')->withTrashed();
     }
 
+    public function entrada()
+    {
+        return $this->hasOne('App\Entrada');
+    }
+
     protected $fillable = [
         'bodega_id',
         'formula_id',
