@@ -31,7 +31,8 @@
                 <li class="active"><a href="{{ url('home') }}"><i class='fa fa-home'></i> <span>Inicio</span></a></li>
 
                 {{-- Inventario general --}}
-                <li><a href="{{route('inventarioLista')}}"><i class='glyphicon glyphicon-list'></i> <span>Inventario</span></a>
+                <li><a href="{{route('inventarioLista')}}"><i class='glyphicon glyphicon-list'></i>
+                        <span>Inventario</span></a>
                 </li>
 
                 {{-- Productos --}}
@@ -80,19 +81,39 @@
                     <a href="#"><i class='fa fa-truck'></i> <span>Ventas</span> <i
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="{{route('ventaOrdenesLista')}}"><i class="fa fa-bars"></i>Ordenes sin facturar</a></li>
+                        <li><a href="{{route('ventaOrdenesLista')}}"><i class="fa fa-bars"></i>Ordenes sin facturar</a>
+                        </li>
                         <li><a href="{{route('ventaLista',['tipo' => 'todo'])}}"><i class="fa fa-bars"></i>Ventas
                                 facturadas</a></li>
-                        <li><a href="{{route('ventaLista',['tipo' => 'factura'])}}"><i class="fa fa-bars"></i>Facturas</a>
+                        <li><a href="{{route('ventaLista',['tipo' => 'factura'])}}"><i
+                                        class="fa fa-bars"></i>Facturas</a>
                         </li>
                         <li><a href="{{route('ventaLista',['tipo' => 'ccf'])}}"><i class="fa fa-bars"></i>Créditos
                                 fiscales</a></li>
                         <li><a href="{{route('ventaLista',['tipo' => 'anulada'])}}"><i class="fa fa-window-close"></i>Ventas
                                 anuladas</a></li>
                         <li><a href="{{route('ventaSinOrdenNueva')}}"><i class="fa fa-plus"></i>Nueva venta comisión</a>
-                        <li><a href="{{route('ventaSinOrdenAnuladaNueva')}}"><i class="fa fa-plus"></i>Nuevo documento anulado</a>
+                        <li><a href="{{route('ventaSinOrdenAnuladaNueva')}}"><i class="fa fa-plus"></i>Nuevo documento
+                                anulado</a>
                     </ul>
                 </li>
+
+                {{-- Orden de pedido --}}
+                {{--<li class="treeview">--}}
+                    {{--<a href="#"><i class='fa fa-clone'></i> <span>Orden de muestra</span> <i--}}
+                                {{--class="fa fa-angle-left pull-right"></i></a>--}}
+                    {{--<ul class="treeview-menu">--}}
+                        {{--<li><a href="{{route('ordenMuestraLista')}}"><i class="fa fa-bars"></i>Ordenes de muestra</a>--}}
+                        {{--</li>--}}
+                        {{--<li><a href="{{route('ordenMuestraNueva')}}"><i class="fa fa-plus"></i>Nueva orden de muestra</a>--}}
+                        {{--</li>--}}
+                        {{--<li><a href="{{route('ordenPedidoListaBodega')}}"><i class="fa fa-bars"></i>Ordenes en--}}
+                        {{--proceso</a></li>--}}
+                        {{--<li><a href="{{route('ordenPedidoListaProcesadoBodega')}}"><i class="fa fa-bars"></i>Ordenes--}}
+                        {{--procesadas</a></li>--}}
+
+                    {{--</ul>--}}
+                {{--</li>--}}
 
                 {{-- Abonos --}}
                 <li class="treeview">
@@ -109,7 +130,8 @@
                     <a href="#"><i class='fa fa-money'></i> <span>Cuentas por cobrar</span> <i
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="{{route('cuentasPorCobrar')}}"><i class="fa fa-money"></i>Cobros pendientes</a></li>
+                        <li><a href="{{route('cuentasPorCobrar')}}"><i class="fa fa-money"></i>Cobros pendientes</a>
+                        </li>
                         <li><a href="{{route('clienteVentaLista')}}"><i class="fa fa-bars"></i>Ventas clientes</a></li>
                     </ul>
                 </li>
@@ -186,7 +208,8 @@
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{route('produccionLista')}}"><i class="fa fa-bars"></i>Producciones</a></li>
-                        <li><a href="{{route('produccionRevertidaLista')}}"><i class="fa fa-bars"></i>Producciones revertidas</a></li>
+                        <li><a href="{{route('produccionRevertidaLista')}}"><i class="fa fa-bars"></i>Producciones
+                                revertidas</a></li>
                         <li><a href="{{route('produccionNuevo')}}"><i class="fa fa-plus"></i>Nueva producción</a></li>
                     </ul>
                 </li>
@@ -254,10 +277,12 @@
                     <a href="#"><i class='fa fa-truck'></i> <span>Ventas</span> <i
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
-                        <li><a href="{{route('ventaOrdenesLista')}}"><i class="fa fa-bars"></i>Ordenes sin facturar</a></li>
+                        <li><a href="{{route('ventaOrdenesLista')}}"><i class="fa fa-bars"></i>Ordenes sin facturar</a>
+                        </li>
                         <li><a href="{{route('ventaLista',['tipo' => 'todo'])}}"><i class="fa fa-bars"></i>Ventas
                                 facturadas</a></li>
-                        <li><a href="{{route('ventaLista',['tipo' => 'factura'])}}"><i class="fa fa-bars"></i>Facturas</a>
+                        <li><a href="{{route('ventaLista',['tipo' => 'factura'])}}"><i
+                                        class="fa fa-bars"></i>Facturas</a>
                         </li>
                         <li><a href="{{route('ventaLista',['tipo' => 'ccf'])}}"><i class="fa fa-bars"></i>Créditos
                                 fiscales</a></li>
@@ -283,7 +308,8 @@
                 <li class="active"><a href="{{ url('home') }}"><i class='fa fa-home'></i> <span>Inicio</span></a></li>
 
                 {{-- Inventario general --}}
-                <li><a href="{{route('inventarioLista')}}"><i class='glyphicon glyphicon-list'></i> <span>Inventario</span></a>
+                <li><a href="{{route('inventarioLista')}}"><i class='glyphicon glyphicon-list'></i>
+                        <span>Inventario</span></a>
                 </li>
 
                 {{-- Orden de pedido --}}
@@ -315,7 +341,8 @@
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="{{route('ajusteLista')}}"><i class="fa fa-bars"></i>Ajustes realizados</a></li>
-                        <li><a href="{{route('ajusteNuevo')}}"><i class="fa fa-plus"></i>Nuevo ajuste existencia</a></li>
+                        <li><a href="{{route('ajusteNuevo')}}"><i class="fa fa-plus"></i>Nuevo ajuste existencia</a>
+                        </li>
                     </ul>
                 </li>
 

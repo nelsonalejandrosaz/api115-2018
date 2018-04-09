@@ -24,9 +24,9 @@
 @section('main-content')
 
     {{--Cuadro de herramientas--}}
-    <div class="box box-success no-print">
+    <div class="box box-default box-solid no-print">
         <div class="box-header with-border">
-            <h3 class="box-title">Opciones</h3>
+            <h3 class="box-title">Herramientas</h3>
             <div class="box-tools pull-right">
                 <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                 <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -34,7 +34,7 @@
         </div><!-- /.box-header -->
 
         <!-- form start -->
-        <form class="form-horizontal" action="" method="POST">
+        <form class="form-horizontal" action="{{ route('facturacionInformeFechaPost') }}" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
 
@@ -43,10 +43,10 @@
             <div class="box-footer">
                 <a href="{{ URL::previous() }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
                 <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-print"></span> Imprimir</a>
-                <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>
+                <a href='{{route('productoExistenciaInformeExcel')}}' class="btn btn-lg btn-success pull-right"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>
             </div>
         </form>
-    </div>
+    </div><!-- /.box -->
     {{--Fin cuadro de herramientas--}}
 
     <section class="invoice">
@@ -57,7 +57,7 @@
                     <i class="fa fa-globe"></i> LGL S.A. de C.V.
                     <small class="pull-right">Generado: {{\Carbon\Carbon::now()->format('d/m/Y -- h:m:s A')}}</small>
                 </h2>
-                <p class="lead">Informe de existencia de producto en bodega al dia: {{ $extra['dia']->format('d/m/Y') }}</p>
+                <p class="lead">Informe de existencia de producto en bodega al dia: {{ $datos['dia']->format('d/m/Y') }}</p>
                 Generado por: {{Auth::user()->nombre}} {{Auth::user()->apellido}} <br>
             </div>
 
@@ -68,9 +68,10 @@
                         <thead>
                         <tr>
                             <th style="width: 5%">#</th>
+                            <th style="width: 10%"></th>
                             <th style="width: 35%">Producto</th>
-                            <th style="width: 15%">Existencia</th>
-                            <th style="width: 15%">Unidad Medida</th>
+                            <th style="width: 10%">Existencia</th>
+                            <th style="width: 10%">Unidad Medida</th>
                             <th style="width: 10%">Existencia min</th>
                             <th style="width: 10%">Existencia max</th>
                             <th style="width: 10%">Estado</th>
@@ -81,31 +82,34 @@
                             <tr>
                                 <td colspan="7"><b>Materias primas</b></td>
                             </tr>
-                            @foreach($productos['productos_mp'] as $producto)
+                            @foreach($tabla->where('tipo_producto','=','MP') as $fila)
                             <tr>
                                 <td>
                                     {{ $i }}
                                 </td>
                                 <td>
-                                    {{ $producto->nombre }}
+                                    {{ $fila['codigo'] }}
                                 </td>
                                 <td>
-                                    {{ number_format($producto->cantidad_existencia,3) }}
+                                    {{ $fila['nombre_producto'] }}
                                 </td>
                                 <td>
-                                    {{ $producto->unidad_medida->abreviatura }}
+                                    {{ number_format($fila['existencia'],3) }}
                                 </td>
                                 <td>
-                                    {{ $producto->existencia_min }}
+                                    {{ $fila['unidad_medida'] }}
                                 </td>
                                 <td>
-                                    {{ $producto->existencia_max }}
+                                    {{ $fila['existencia_min'] }}
                                 </td>
-                                @if($producto->porcentaje_stock >= 40)
+                                <td>
+                                    {{ $fila['existencia_max'] }}
+                                </td>
+                                @if($fila['estado'] == 1)
                                     <td>
                                         <span class="label label-success">Alto</span>
                                     </td>
-                                @elseif($producto->porcentaje_stock >= 20)
+                                @elseif($fila['estado'] == 2)
                                     <td>
                                         <span class="label label-warning">Medio</span>
                                     </td>
@@ -120,31 +124,34 @@
                             <tr>
                                 <td colspan="7"><b>Productos terminados</b></td>
                             </tr>
-                            @foreach($productos['productos_pt'] as $producto)
+                            @foreach($tabla->where('tipo_producto','=','PT') as $fila)
                                 <tr>
                                     <td>
                                         {{ $i }}
                                     </td>
                                     <td>
-                                        {{ $producto->nombre }}
+                                        {{ $fila['codigo'] }}
                                     </td>
                                     <td>
-                                        {{ number_format($producto->cantidad_existencia,3) }}
+                                        {{ $fila['nombre_producto'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->unidad_medida->abreviatura }}
+                                        {{ number_format($fila['existencia'],3) }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_min }}
+                                        {{ $fila['unidad_medida'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_max }}
+                                        {{ $fila['existencia_min'] }}
                                     </td>
-                                    @if($producto->porcentaje_stock >= 40)
+                                    <td>
+                                        {{ $fila['existencia_max'] }}
+                                    </td>
+                                    @if($fila['estado'] == 1)
                                         <td>
                                             <span class="label label-success">Alto</span>
                                         </td>
-                                    @elseif($producto->porcentaje_stock >= 20)
+                                    @elseif($fila['estado'] == 2)
                                         <td>
                                             <span class="label label-warning">Medio</span>
                                         </td>
@@ -159,31 +166,34 @@
                             <tr>
                                 <td colspan="7"><b>Reventa</b></td>
                             </tr>
-                            @foreach($productos['productos_rv'] as $producto)
+                            @foreach($tabla->where('tipo_producto','=','RV') as $fila)
                                 <tr>
                                     <td>
                                         {{ $i }}
                                     </td>
                                     <td>
-                                        {{ $producto->nombre }}
+                                        {{ $fila['codigo'] }}
                                     </td>
                                     <td>
-                                        {{ number_format($producto->cantidad_existencia,3) }}
+                                        {{ $fila['nombre_producto'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->unidad_medida->abreviatura }}
+                                        {{ number_format($fila['existencia'],3) }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_min }}
+                                        {{ $fila['unidad_medida'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_max }}
+                                        {{ $fila['existencia_min'] }}
                                     </td>
-                                    @if($producto->porcentaje_stock >= 40)
+                                    <td>
+                                        {{ $fila['existencia_max'] }}
+                                    </td>
+                                    @if($fila['estado'] == 1)
                                         <td>
                                             <span class="label label-success">Alto</span>
                                         </td>
-                                    @elseif($producto->porcentaje_stock >= 20)
+                                    @elseif($fila['estado'] == 2)
                                         <td>
                                             <span class="label label-warning">Medio</span>
                                         </td>
@@ -198,31 +208,34 @@
                             <tr>
                                 <td colspan="7"><b>Productos materia prima y reventa</b></td>
                             </tr>
-                            @foreach($productos['productos_mr'] as $producto)
+                            @foreach($tabla->where('tipo_producto','=','MR') as $fila)
                                 <tr>
                                     <td>
                                         {{ $i }}
                                     </td>
                                     <td>
-                                        {{ $producto->nombre }}
+                                        {{ $fila['codigo'] }}
                                     </td>
                                     <td>
-                                        {{ number_format($producto->cantidad_existencia,3) }}
+                                        {{ $fila['nombre_producto'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->unidad_medida->abreviatura }}
+                                        {{ number_format($fila['existencia'],3) }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_min }}
+                                        {{ $fila['unidad_medida'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_max }}
+                                        {{ $fila['existencia_min'] }}
                                     </td>
-                                    @if($producto->porcentaje_stock >= 40)
+                                    <td>
+                                        {{ $fila['existencia_max'] }}
+                                    </td>
+                                    @if($fila['estado'] == 1)
                                         <td>
                                             <span class="label label-success">Alto</span>
                                         </td>
-                                    @elseif($producto->porcentaje_stock >= 20)
+                                    @elseif($fila['estado'] == 2)
                                         <td>
                                             <span class="label label-warning">Medio</span>
                                         </td>
@@ -237,31 +250,34 @@
                             <tr>
                                 <td colspan="7"><b>Productos producto terminado y materia prima</b></td>
                             </tr>
-                            @foreach($productos['productos_pm'] as $producto)
+                            @foreach($tabla->where('tipo_producto','=','PM') as $fila)
                                 <tr>
                                     <td>
                                         {{ $i }}
                                     </td>
                                     <td>
-                                        {{ $producto->nombre }}
+                                        {{ $fila['codigo'] }}
                                     </td>
                                     <td>
-                                        {{ number_format($producto->cantidad_existencia,3) }}
+                                        {{ $fila['nombre_producto'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->unidad_medida->abreviatura }}
+                                        {{ number_format($fila['existencia'],3) }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_min }}
+                                        {{ $fila['unidad_medida'] }}
                                     </td>
                                     <td>
-                                        {{ $producto->existencia_max }}
+                                        {{ $fila['existencia_min'] }}
                                     </td>
-                                    @if($producto->porcentaje_stock >= 40)
+                                    <td>
+                                        {{ $fila['existencia_max'] }}
+                                    </td>
+                                    @if($fila['estado'] == 1)
                                         <td>
                                             <span class="label label-success">Alto</span>
                                         </td>
-                                    @elseif($producto->porcentaje_stock >= 20)
+                                    @elseif($fila['estado'] == 2)
                                         <td>
                                             <span class="label label-warning">Medio</span>
                                         </td>

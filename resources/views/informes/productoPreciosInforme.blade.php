@@ -2,7 +2,7 @@
 
 @section('htmlheader_title')
     {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
-    Informe de existencia de inventario
+    Informe de precios de los productos
 @endsection
 
 @section('CSSExtras')
@@ -14,7 +14,7 @@
 
 @section('contentheader_title')
     {{-- {{ trans('message.tituloProveedorNuevo') }} --}}
-    Informe de existencia de inventario
+    Informe de precios de los productos
 @endsection
 
 @section('contentheader_description')
@@ -24,9 +24,9 @@
 @section('main-content')
 
     {{--Cuadro de herramientas--}}
-    <div class="box box-success no-print">
+    <div class="box box-default box-solid no-print">
         <div class="box-header with-border">
-            <h3 class="box-title">Opciones</h3>
+            <h3 class="box-title">Herramientas</h3>
             <div class="box-tools pull-right">
                 <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                 <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -34,7 +34,7 @@
         </div><!-- /.box-header -->
 
         <!-- form start -->
-        <form class="form-horizontal" action="" method="POST">
+        <form class="form-horizontal" action="{{ route('facturacionInformeFechaPost') }}" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
 
@@ -43,10 +43,10 @@
             <div class="box-footer">
                 <a href="{{ URL::previous() }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
                 <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-print"></span> Imprimir</a>
-                <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>
+                <a href='{{route('productoPreciosInformeExcel')}}' class="btn btn-lg btn-success pull-right"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>
             </div>
         </form>
-    </div>
+    </div><!-- /.box -->
     {{--Fin cuadro de herramientas--}}
 
     <section class="invoice">

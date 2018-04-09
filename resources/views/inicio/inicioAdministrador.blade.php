@@ -5,7 +5,7 @@
 @endsection
 
 @section('contentheader_title')
-    Inicio del sistema de facturación e inventario
+    Inicio
 @endsection
 
 @section('contentheader_description')

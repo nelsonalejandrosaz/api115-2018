@@ -252,7 +252,6 @@ Route::group(['middleware' => 'auth'], function () {
      * Rutas de informes
      */
     Route::get('informe/lista','InformesController@InformeLista')->name('informeLista');
-    Route::get('informe/ingresos-diario','InformesController@IngresoDiario')->name('ingresoVentas');
     Route::get('informe/facturacion/{rango}','InformesController@facturacionDia')->name('facturacion');
     Route::get('informe/facturacionxls','InformesController@FacturacionInformeExcelPost')->name('facturacionExcelPost');
     Route::post('informe/facturacion','InformesController@facturacionDiaInformeFechaPost')->name('facturacionInformeFechaPost');
@@ -260,16 +259,27 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/abonos','InformesController@AbonosFecha')->name('abonosInformeFecha');
     Route::post('informe/abonos','InformesController@AbonosFechaPost')->name('abonosFechaPost');
     Route::get('informe/abonosxls','InformesController@AbonosFechaExcelPost')->name('abonosFechaExcelPost');
-    Route::get('informe/producto/existencias','InformesController@ProductosExistenciasInforme')->name('productoExistenciaInforme');
     Route::get('informe/producto/movimientos','InformesController@ProductoMovimiento')->name('productoMovimiento');
     Route::get('informe/cxc/antiguedad','InformesController@CXCAntiguedad')->name('cxcAntiguedad');
     Route::get('informe/cxc/antiguedad/excel','InformesController@CXCAntiguedadExcel')->name('cxcAntiguedadExcel');
-    Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
 
     Route::get('informe/ventas','InformesController@Ventas')->name('informeVentas');
     Route::get('informe/ventas/cliente','InformesController@VentasPorCliente')->name('informeVentasPorCliente');
+    Route::get('informe/ventas/vendedor','InformesController@VentasPorVendedor')->name('informeVentasPorVendedor');
     Route::get('informe/producciones','InformesController@Producciones')->name('informeProducciones');
     Route::get('informe/movimientos/ajustes','InformesController@MovimientosAjuste')->name('movimientosAjuste');
+    Route::get('informe/producto/existencias','InformesController@ProductosExistenciasInforme')->name('productoExistenciaInforme');
+    Route::get('informe/producto/existencias/excel','InformesController@ProductosExistenciasInformeExcel')->name('productoExistenciaInformeExcel');
+    Route::get('informe/compras','InformesController@Compras')->name('informeCompras');
+    Route::get('informe/compras/excel','InformesController@ComprasExcel')->name('informeComprasExcel');
+    Route::get('informe/compras/proveedor','InformesController@ComprasProveedor')->name('informeComprasProveedor');
+    Route::get('informe/compras/proveedor/excel','InformesController@ComprasProveedorExcel')->name('informeComprasProveedorExcel');
+
+    Route::get('informe/compras/libro','InformesController@LibroCompras')->name('informeLibroCompras');
+
+    Route::get('informe/ingresos-diario','InformesController@IngresoDiario')->name('ingresoVentas');
+    Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
+    Route::get('informe/producto/precios/excel','InformesController@ProductosPreciosInformeExcel')->name('productoPreciosInformeExcel');
 
 
     /**
@@ -283,6 +293,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/usuario/{id}/editar','UsuarioController@UsuarioEditar')->name('usuarioEditar');
         Route::put('/usuario/{id}','UsuarioController@UsuarioEditarPut')->name('usuarioEditarPut');
         Route::delete('/usuario/{id}','UsuarioController@ProveedorEliminar')->name('usuarioEliminar');
+    });
+
+    /**
+     * Rutas Orden de pedido
+     */
+    Route::group(['middleware' => ['vendedor']], function () {
+        Route::get('/orden-muestra','OrdenMuestraController@OrdenMuestraLista')->name('ordenMuestraLista');
+        Route::get('/orden-muestra/nueva','OrdenMuestraController@OrdenMuestraNueva')->name('ordenMuestraNueva');
+        Route::post('/orden-muestra/nueva','OrdenMuestraController@OrdenMuestrasNuevaPost')->name('ordenMuestraNuevaPost');
+//        Route::get('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
+//        Route::delete('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoEliminar')->name('ordenPedidoEliminar');
+//        Route::delete('/orden-pedido-despachada/{id}','OrdenPedidoController@OrdenPedidoEliminarDespachada')->name('ordenPedidoEliminarDespachada');
     });
 
 });

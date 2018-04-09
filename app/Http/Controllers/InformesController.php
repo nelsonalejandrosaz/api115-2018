@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Abono;
 use App\Ajuste;
 use App\Cliente;
+use App\Compra;
 use App\Configuracion;
 use App\EstadoVenta;
 use App\Formula;
 use App\Movimiento;
 use App\Produccion;
 use App\Producto;
+use App\Proveedor;
 use App\TipoProducto;
+use App\User;
 use App\Venta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -113,7 +116,7 @@ class InformesController extends Controller
         $monto_iva_dia = 0.00;
         $monto_total_dia = 0.00;
         foreach ($fcf_dia as $venta) {
-            $monto = $venta->orden_pedido->venta_total;
+            $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
             $monto_iva = $monto_total - $monto;
@@ -124,7 +127,7 @@ class InformesController extends Controller
             $monto_total_dia += $monto_total;
         }
         foreach ($ccf_dia as $venta) {
-            $monto = $venta->orden_pedido->venta_total;
+            $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
             $monto_iva = $monto_total - $monto;
@@ -160,7 +163,7 @@ class InformesController extends Controller
         $monto_total_dia = 0.00;
         $datos = [];
         foreach ($fcf_dia as $venta) {
-            $monto = $venta->orden_pedido->venta_total;
+            $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
             $monto_iva = $monto_total - $monto;
@@ -180,7 +183,7 @@ class InformesController extends Controller
             $datos[] = $fila;
         }
         foreach ($ccf_dia as $venta) {
-            $monto = $venta->orden_pedido->venta_total;
+            $monto = $venta->venta_total;
 //            $iva = Configuracion::find(1)->iva;
             $monto_total = $venta->venta_total_con_impuestos;
             $monto_iva = $monto_total - $monto;
@@ -360,33 +363,6 @@ class InformesController extends Controller
         return view('informes.informeLista');
     }
 
-    public function ProductosExistenciasInforme()
-    {
-        $productos_mp = TipoProducto::where('codigo', '=', 'MP')->first()->productos;
-        $productos_pt = TipoProducto::where('codigo', '=', 'PT')->first()->productos;
-        $productos_rv = TipoProducto::where('codigo', '=', 'RV')->first()->productos;
-        $productos_mr = TipoProducto::where('codigo', '=', 'MR')->first()->productos;
-        $productos_pm = TipoProducto::where('codigo', '=', 'PM')->first()->productos;
-        $productos['productos_mp'] = $productos_mp;
-        $productos['productos_pt'] = $productos_pt;
-        $productos['productos_rv'] = $productos_rv;
-        $productos['productos_mr'] = $productos_mr;
-        $productos['productos_pm'] = $productos_pm;
-        foreach ($productos as $producto_cat) {
-            foreach ($producto_cat as $producto) {
-                $producto->costo_total = $producto->cantidad_existencia * $producto->costo;
-                $producto->porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
-            }
-        }
-        $extra['dia'] = Carbon::now();
-        foreach ($productos as $producto) {
-            null;
-        }
-        return view('informes.productoExistenciaInforme')
-            ->with(['productos' => $productos])
-            ->with(['extra' => $extra]);
-    }
-
     public function ProductosPreciosInforme()
     {
         $productos_pt = TipoProducto::where('codigo', '=', 'PT')->first()->productos;
@@ -401,6 +377,41 @@ class InformesController extends Controller
         return view('informes.productoPreciosInforme')
             ->with(['productos' => $productos])
             ->with(['extra' => $extra]);
+    }
+
+    public function ProductosPreciosInformeExcel()
+    {
+        $productos = Producto::all();
+        $extra['dia'] = Carbon::now();
+        $tabla = collect();
+        foreach ($productos as $producto) {
+            $fila = [
+                'presentacion' => $producto->nombre,
+                'unidad_medida' => null,
+                'precio' => null,
+                'precio_con_iva' => null,
+                'peso_kilogramo' => null,
+            ];
+            $tabla->push($fila);
+            foreach ($producto->precios as $precio) {
+                $fila = [
+                    'presentacion' => $precio->presentacion,
+                    'unidad_medida' => $precio->unidad_medida->abreviatura,
+                    'precio' => number_format($precio->precio, 2),
+                    'precio_con_iva' => number_format($precio->precio * 1.13, 2),
+                    'peso_kilogramo' => number_format($precio->factor, 4),
+                ];
+                $tabla->push($fila);
+            }
+        }
+        $nombre_documento = 'informe-de-precios-productos-al-' . Carbon::now()->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
     }
 
     public function CXCAntiguedad()
@@ -437,14 +448,14 @@ class InformesController extends Controller
                 'N° documento' => $venta->numero,
                 'Tipo doc' => $venta->tipo_documento->codigo,
                 'Fecha' => $venta->fecha->format('d/m/Y'),
-                'Valor doc' => number_format($venta->venta_total_con_impuestos,2),
-                'Saldo pendiente' => number_format($venta->saldo,2),
+                'Valor doc' => number_format($venta->venta_total_con_impuestos, 2),
+                'Saldo pendiente' => number_format($venta->saldo, 2),
                 'Antigüedad' => $venta->antiguedad,
             ];
             $total_saldos += $venta->saldo;
             $datos[] = $fila;
         }
-        $fila = ['TOTAL SALDO PENDIENTE','','','','','', number_format($total_saldos,2)];
+        $fila = ['TOTAL SALDO PENDIENTE', '', '', '', '', '', number_format($total_saldos, 2)];
         $datos[] = $fila;
         $nombre_documento = 'informe-de-antiguedad-saldos-al-' . Carbon::now()->format('d-m-Y');
         Excel::create($nombre_documento, function ($excel) use ($datos) {
@@ -681,17 +692,15 @@ class InformesController extends Controller
         $datos = [];
         $datos += ['fecha_inicio' => $fecha_inicio];
         $datos += ['fecha_fin' => $fecha_fin];
-        $ventas = Venta::whereBetween('fecha',[$fecha_inicio,$fecha_fin])->get();
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
         $tabla = collect();
         $fecha = Carbon::parse($fecha_inicio);
-        for ($i = 0; $i < $total_dias; $i++)
-        {
-            if (!$fecha->isSunday())
-            {
-                $valor = $ventas->where('fecha','=',$fecha)->sum('venta_total');
-                $valor = round($valor,2);
+        for ($i = 0; $i < $total_dias; $i++) {
+            if (!$fecha->isSunday()) {
+                $valor = $ventas->where('fecha', '=', $fecha)->sum('venta_total');
+                $valor = round($valor, 2);
                 $iva = $valor * 0.13;
-                $iva = round($iva,2);
+                $iva = round($iva, 2);
                 $total = $valor + $iva;
                 $fila = ['fecha' => $fecha->format('d/m/Y'), 'valor' => $valor, 'iva' => $iva, 'total' => $total];
                 $tabla->push($fila);
@@ -715,13 +724,11 @@ class InformesController extends Controller
         $tabla = collect();
 //        $ventas = $cliente->ventas;
 //        dd($ventas->whereIn('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')]));
-        if ($cliente != null)
-        {
-            $ventas = Venta::where('cliente_id','=',$cliente->id)
-                ->where('estado_venta_id','!=',3)
-                ->whereBetween('fecha',[$fecha_inicio,$fecha_fin])->get();
-            foreach ($ventas as $venta)
-            {
+        if ($cliente != null) {
+            $ventas = Venta::where('cliente_id', '=', $cliente->id)
+                ->where('estado_venta_id', '!=', 3)
+                ->whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+            foreach ($ventas as $venta) {
                 $fila = [
                     'fecha' => $venta->fecha->format('d/m/Y'),
                     'tipo_documento' => $venta->tipo_documento->nombre,
@@ -733,6 +740,38 @@ class InformesController extends Controller
         }
         return view('informes.informeVentasPorCliente')
             ->with(['clientes' => $clientes])
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function VentasPorVendedor(Request $request)
+    {
+        $vendedores = User::whereRolId(2)->get();
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $vendedor = ($request->input('vendedor_id') == null) ? null : User::find($request->input('vendedor_id'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $tabla = collect();
+//        $ventas = $cliente->ventas;
+//        dd($ventas->whereIn('fecha',[$fecha_inicio->format('Y-m-d'),$fecha_fin->format('Y-m-d')]));
+        if ($vendedor != null) {
+            $ventas = Venta::where('vendedor_id', '=', $vendedor->id)
+                ->where('estado_venta_id', '=', 2)
+                ->whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+            foreach ($ventas as $venta) {
+                $fila = [
+                    'fecha' => $venta->fecha->format('d/m/Y'),
+                    'tipo_documento' => $venta->tipo_documento->nombre,
+                    'numero' => $venta->numero,
+                    'total' => $venta->venta_total_con_impuestos,
+                ];
+                $tabla->push($fila);
+            }
+        }
+        return view('informes.informeVentasPorVendedor')
+            ->with(['vendedores' => $vendedores])
             ->with(['datos' => $datos])
             ->with(['tabla' => $tabla]);
     }
@@ -749,12 +788,10 @@ class InformesController extends Controller
         $datos += ['fecha_inicio' => $fecha_inicio];
         $datos += ['fecha_fin' => $fecha_fin];
         $datos += ['nombre_producto' => $nombre_producto];
-        if ($producto != null)
-        {
-            $producciones = Produccion::where('producto_id','=',$producto->id)
-                ->whereBetween('fecha',[$fecha_inicio,$fecha_fin])->get();
-            foreach ($producciones as $produccion)
-            {
+        if ($producto != null) {
+            $producciones = Produccion::where('producto_id', '=', $producto->id)
+                ->whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+            foreach ($producciones as $produccion) {
                 $fila = [
                     'fecha' => $produccion->fecha->format('d/m/Y'),
                     'cantidad' => $produccion->cantidad,
@@ -783,12 +820,10 @@ class InformesController extends Controller
         $datos += ['fecha_inicio' => $fecha_inicio];
         $datos += ['fecha_fin' => $fecha_fin];
         $datos += ['nombre_producto' => $nombre_producto];
-        if ($producto != null)
-        {
-            $movimientos = Movimiento::whereBetween('tipo_movimiento_id',[5,6])
-                ->where('producto_id','=',$producto->id)->get();
-            foreach ($movimientos as $movimiento)
-            {
+        if ($producto != null) {
+            $movimientos = Movimiento::whereBetween('tipo_movimiento_id', [5, 6])
+                ->where('producto_id', '=', $producto->id)->get();
+            foreach ($movimientos as $movimiento) {
                 $fila = [
                     'tipo_movimiento' => $movimiento->ajuste->tipo_ajuste->tipo,
                     'fecha' => $movimiento->fecha->format('d/m/Y'),
@@ -806,4 +841,280 @@ class InformesController extends Controller
             ->with(['datos' => $datos])
             ->with(['tabla' => $tabla]);
     }
+
+    public function ProductosExistenciasInforme()
+    {
+        $productos = Producto::all();
+        $datos = [];
+        $datos += ['dia' => Carbon::now()];
+        $tabla = collect();
+        foreach ($productos as $producto) {
+            $porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
+            if ($porcentaje_stock >= 40) {
+                $estado_stock = 1;
+            } elseif ($porcentaje_stock >= 20) {
+                $estado_stock = 2;
+            } else {
+                $estado_stock = 3;
+            }
+            $fila = [
+                'tipo_producto' => $producto->tipo_producto->codigo,
+                'codigo' => $producto->codigo,
+                'nombre_producto' => $producto->nombre,
+                'existencia' => $producto->cantidad_existencia,
+                'unidad_medida' => $producto->unidad_medida->abreviatura,
+                'existencia_min' => $producto->existencia_min,
+                'existencia_max' => $producto->existencia_max,
+                'estado' => $estado_stock,
+            ];
+            $tabla->push($fila);
+        }
+        return view('informes.productoExistenciaInforme')
+            ->with(['tabla' => $tabla])
+            ->with(['datos' => $datos]);
+    }
+
+    public function ProductosExistenciasInformeExcel()
+    {
+        $productos = Producto::all();
+        $datos = [];
+        $datos += ['dia' => Carbon::now()];
+        $tabla = collect();
+        foreach ($productos as $producto) {
+            $porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
+            if ($porcentaje_stock >= 40) {
+                $estado_stock = "Alto";
+            } elseif ($porcentaje_stock >= 20) {
+                $estado_stock = "Medio";
+            } else {
+                $estado_stock = "Bajo";
+            }
+            $fila = [
+                'tipo_producto' => $producto->tipo_producto->nombre,
+                'codigo' => $producto->codigo,
+                'nombre_producto' => $producto->nombre,
+                'existencia' => $producto->cantidad_existencia,
+                'unidad_medida' => $producto->unidad_medida->abreviatura,
+                'existencia_min' => $producto->existencia_min,
+                'existencia_max' => $producto->existencia_max,
+                'estado' => $estado_stock,
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-de-existencia-al-' . Carbon::now()->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
+    public function Compras(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        $tabla = collect();
+        foreach ($compras as $compra) {
+            $total = $compra->compra_total_con_impuestos;
+            $total_sin_iva = $compra->compra_total;
+            $iva = $total - $total_sin_iva;
+            $fila = [
+                'fecha' => $compra->fecha->format('d/m/Y'),
+                'numero' => $compra->numero,
+                'proveedor' => $compra->proveedor->nombre,
+                'total_sin_iva' => $total_sin_iva,
+                'iva' => $iva,
+                'total' => $total,
+            ];
+            $tabla->push($fila);
+        }
+        return view('informes.informeCompras')
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function ComprasExcel(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        $tabla = collect();
+        foreach ($compras as $compra) {
+            $total = $compra->compra_total_con_impuestos;
+            $total_sin_iva = $compra->compra_total;
+            $iva = $total - $total_sin_iva;
+            $fila = [
+                'fecha' => $compra->fecha->format('d/m/Y'),
+                'numero' => $compra->numero,
+                'proveedor' => $compra->proveedor->nombre,
+                'total_sin_iva' => number_format($total_sin_iva, 2),
+                'iva' => number_format($iva, 2),
+                'total' => number_format($total, 2),
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-de-compras-del-' . $fecha_inicio->format('d/m/Y') . ' al ' . $fecha_fin->format('d/m/Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
+    public function ComprasProveedor(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+//        dd();
+        if ($request->input('proveedor_id') == 'todos') {
+            $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        } else {
+            $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->where('proveedor_id', '=', $request->input('proveedor_id'))->get();
+        }
+        $compras_provedor = $compras->groupBy('proveedor_id');
+        $tabla_agrupada = collect();
+        $tabla = collect();
+        $provedores = Proveedor::all();
+//        $dev = ['proveedor' => 'El manguito','compras' => [1,2,3,4]];
+//        dd($compras_provedor);
+        foreach ($compras_provedor as $proveedor_id => $compras) {
+            $nombre_proveedor = $provedores->where('id', '=', $proveedor_id)->first();
+            $nombre_proveedor = $nombre_proveedor->nombre;
+            foreach ($compras as $compra) {
+                $total = $compra->compra_total_con_impuestos;
+                $total_sin_iva = $compra->compra_total;
+                $iva = $total - $total_sin_iva;
+                $fila = [
+                    'proveedor' => $compra->proveedor->nombre,
+                    'fecha' => $compra->fecha->format('d/m/Y'),
+                    'numero' => $compra->numero,
+                    'total_sin_iva' => $total_sin_iva,
+                    'iva' => $iva,
+                    'total' => $total,
+                ];
+                $tabla->push($fila);
+            }
+            $fila_agrupada = ['proveedor' => $nombre_proveedor, 'compras' => $tabla];
+            $tabla_agrupada->push($fila_agrupada);
+            $tabla = collect();
+        }
+//        dd($tabla_agrupada);
+        return view('informes.informeComprasVendedor')
+            ->with(['proveedores' => $provedores])
+            ->with(['datos' => $datos])
+            ->with(['tabla_agrupada' => $tabla_agrupada]);
+    }
+
+    public function ComprasProveedorExcel(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+//        dd();
+        if ($request->input('proveedor_id') == 'todos') {
+            $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        } else {
+            $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->where('proveedor_id', '=', $request->input('proveedor_id'))->get();
+        }
+        $tabla = collect();
+        foreach ($compras->sortBy('proveedor_id') as $compra) {
+            $total = $compra->compra_total_con_impuestos;
+            $total_sin_iva = $compra->compra_total;
+            $iva = $total - $total_sin_iva;
+            $fila = [
+                'proveedor' => $compra->proveedor->nombre,
+                'fecha' => $compra->fecha->format('d/m/Y'),
+                'numero' => $compra->numero,
+                'total_sin_iva' => number_format($total_sin_iva, 2),
+                'iva' => number_format($iva, 2),
+                'total' => number_format($total, 2),
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-compras-proveedor-del-' . Carbon::now()->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
+    public function LibroCompras(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        $tabla = collect();
+        foreach ($compras as $compra) {
+            $total = $compra->compra_total_con_impuestos;
+            $total_sin_iva = $compra->compra_total;
+            $iva = $total - $total_sin_iva;
+            $fila = [
+                'fecha' => $compra->fecha->format('d/m/Y'),
+                'numero' => $compra->numero,
+                'proveedor' => $compra->proveedor->nombre,
+                'nrc' => $compra->proveedor->nrc,
+                'total_sin_iva' => $total_sin_iva,
+                'iva' => $iva,
+                'total' => $total,
+            ];
+            $tabla->push($fila);
+        }
+        return view('informes.informeLibroCompras')
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function LibroComprasExcel(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        $tabla = collect();
+        foreach ($compras as $compra) {
+            $total = $compra->compra_total_con_impuestos;
+            $total_sin_iva = $compra->compra_total;
+            $iva = $total - $total_sin_iva;
+            $fila = [
+                'fecha' => $compra->fecha->format('d/m/Y'),
+                'numero' => $compra->numero,
+                'proveedor' => $compra->proveedor->nombre,
+                'nrc' => $compra->proveedor->nrc,
+                'total_sin_iva' => $total_sin_iva,
+                'iva' => $iva,
+                'total' => $total,
+            ];
+            $tabla->push($fila);
+        }
+        return view('informes.informeLibroCompras')
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+
+
 }

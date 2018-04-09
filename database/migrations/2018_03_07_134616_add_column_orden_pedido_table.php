@@ -14,7 +14,7 @@ class AddColumnOrdenPedidoTable extends Migration
     public function up()
     {
         Schema::table('orden_pedidos', function (Blueprint $table) {
-            $table->integer('tipo_orden_pedidos')->unsigned()->default(1);
+            $table->integer('tipo_orden_pedido_id')->unsigned()->default(1);
         });
     }
 

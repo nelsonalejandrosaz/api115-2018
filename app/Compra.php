@@ -44,4 +44,8 @@ class Compra extends Model
         'estado_compra_id',
         'saldo',
     ];
+
+    protected $dates = [
+        'fecha'
+    ];
 }

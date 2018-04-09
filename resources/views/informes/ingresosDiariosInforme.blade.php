@@ -68,8 +68,7 @@
                                     class="fa fa-mail-reply"></span> Regresar</a>
                         <button type="button" class="btn btn-lg btn-success pull-right" style="margin-left: 10px" id="opciones-buttom"><span class="fa fa-search" ></span> Consultar </button>
                         <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-print"></span> Imprimir</a>
-                        <button type="button" class="btn btn-lg btn-success pull-right" style="margin-left: 10px" id="exportar-excel-id"><span class="fa fa-file-excel-o" ></span> Exportar Excel </button>
-                        {{--<a href='javascript:window.print(); void 0;'  style="margin-left: 10px"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>--}}
+                        {{--<button type="button" class="btn btn-lg btn-success pull-right" style="margin-left: 10px" id="exportar-excel-id"><span class="fa fa-file-excel-o" ></span> Exportar Excel </button>--}}
                     </div>
                 </form>
             </div><!-- /.box -->

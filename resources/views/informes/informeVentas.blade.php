@@ -1,7 +1,7 @@
 @extends('adminlte::layouts.app')
 
 @section('htmlheader_title')
-    Informe de compras
+    Informe de ventas
 @endsection
 
 @section('CSSx')
@@ -12,7 +12,7 @@
 @endsection
 
 @section('contentheader_title')
-    Informe de compras
+    Informe de ventas
 @endsection
 
 @section('contentheader_description')

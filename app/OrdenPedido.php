@@ -62,6 +62,7 @@ class OrdenPedido extends Model
         'ruta_archivo',
         'estado_id',
         'tipo_documento_id',
+        'tipo_orden_pedido_id',
     ];
 
     protected $dates = [

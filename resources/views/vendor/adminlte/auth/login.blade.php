@@ -10,9 +10,9 @@
         <div class="login-box">
             <div class="login-logo">
                 {{--<a href="{{ url('/home') }}"><b>LGL</b>LTE</a>--}}
-                <img src="{{ asset('img/437.png') }}" class="">
+                <img src="{{ asset('img/lgl-sc.png') }}" class="">
                 <br>
-                <h3>Facturación e inventario</h3>
+                {{--<h3>Facturación e inventario</h3>--}}
             </div><!-- /.login-logo -->
 
             @if (count($errors) > 0)

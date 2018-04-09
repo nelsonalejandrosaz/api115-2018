@@ -225,22 +225,6 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
-                                    <div class="inner">
-                                        <h3 style="font-size: 25px">Costos</h3>
-                                        <h3 style="font-size: 25px">productos</h3>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fa fa-dollar"></i>
-                                    </div>
-                                    <a href="" class="small-box-footer">Ver informe <i
-                                                class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-
-                            <div class="col-lg-3 col-xs-6">
-                                <!-- small box -->
                                 <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Precios</h3>
@@ -254,26 +238,6 @@
                                 </div>
                             </div>
                             <!-- ./col -->
-
-                            <div class="col-lg-3 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-gray">
-                                    <div class="inner">
-                                        <h3 style="font-size: 25px">Movimientos</h3>
-                                        <h3 style="font-size: 25px">producto</h3>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fa fa-exchange"></i>
-                                    </div>
-                                    <a href="{{ route('productoMovimiento') }}" class="small-box-footer">Ver informe <i
-                                                class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-
-
-                        </div><!-- /.row -->
-                        <div class="row">
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
@@ -306,6 +270,41 @@
                                 </div>
                             </div>
                             <!-- ./col -->
+
+                        </div><!-- /.row -->
+                        <div class="row">
+
+                            {{--<div class="col-lg-3 col-xs-6">--}}
+                            {{--<!-- small box -->--}}
+                            {{--<div class="small-box bg-gray">--}}
+                            {{--<div class="inner">--}}
+                            {{--<h3 style="font-size: 25px">Movimientos</h3>--}}
+                            {{--<h3 style="font-size: 25px">producto</h3>--}}
+                            {{--</div>--}}
+                            {{--<div class="icon">--}}
+                            {{--<i class="fa fa-exchange"></i>--}}
+                            {{--</div>--}}
+                            {{--<a href="{{ route('productoMovimiento') }}" class="small-box-footer">Ver informe <i--}}
+                            {{--class="fa fa-arrow-circle-right"></i></a>--}}
+                            {{--</div>--}}
+                            {{--</div>--}}
+                            {{--<!-- ./col -->--}}
+
+                            {{--<div class="col-lg-3 col-xs-6">--}}
+                            {{--<!-- small box -->--}}
+                            {{--<div class="small-box bg-gray">--}}
+                            {{--<div class="inner">--}}
+                            {{--<h3 style="font-size: 25px">Costos</h3>--}}
+                            {{--<h3 style="font-size: 25px">productos</h3>--}}
+                            {{--</div>--}}
+                            {{--<div class="icon">--}}
+                            {{--<i class="fa fa-dollar"></i>--}}
+                            {{--</div>--}}
+                            {{--<a href="" class="small-box-footer">Ver informe <i--}}
+                            {{--class="fa fa-arrow-circle-right"></i></a>--}}
+                            {{--</div>--}}
+                            {{--</div>--}}
+                            {{--<!-- ./col -->--}}
 
                         </div>
                     </div><!-- ./box-body -->
@@ -363,7 +362,7 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Por</h3>
                                         <h3 style="font-size: 25px">vendedor</h3>
@@ -371,11 +370,27 @@
                                     <div class="icon">
                                         <i class="fa fa-user"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer">Ver informe <i
+                                    <a href="{{route('informeVentasPorVendedor')}}" class="small-box-footer">Ver informe <i
                                                 class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <!-- ./col -->
+
+                            {{--<div class="col-lg-3 col-xs-6">--}}
+                                {{--<!-- small box -->--}}
+                                {{--<div class="small-box bg-blue">--}}
+                                    {{--<div class="inner">--}}
+                                        {{--<h3 style="font-size: 25px">Libro</h3>--}}
+                                        {{--<h3 style="font-size: 25px">ventas</h3>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="icon">--}}
+                                        {{--<i class="fa fa-cube"></i>--}}
+                                    {{--</div>--}}
+                                    {{--<a href="{{route('informeLibroCompras')}}" class="small-box-footer">Ver lista <i--}}
+                                                {{--class="fa fa-arrow-circle-right"></i></a>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                            {{--<!-- ./col -->--}}
 
                         </div><!-- /.row -->
 
@@ -402,7 +417,7 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Informe</h3>
                                         <h3 style="font-size: 25px">compras</h3>
@@ -410,7 +425,7 @@
                                     <div class="icon">
                                         <i class="fa fa-book"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer">Ver
+                                    <a href="{{route('informeCompras')}}" class="small-box-footer">Ver
                                         informe <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
@@ -418,7 +433,7 @@
 
                             <div class="col-lg-3 col-xs-6">
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
+                                <div class="small-box bg-blue">
                                     <div class="inner">
                                         <h3 style="font-size: 25px">Por</h3>
                                         <h3 style="font-size: 25px">proveedor</h3>
@@ -426,55 +441,42 @@
                                     <div class="icon">
                                         <i class="fa fa-truck"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer">Ver
+                                    <a href="{{route('informeComprasProveedor')}}" class="small-box-footer">Ver
                                         informe <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <!-- ./col -->
 
                             <div class="col-lg-3 col-xs-6">
+                                
                                 <!-- small box -->
-                                <div class="small-box bg-gray">
-                                    <div class="inner">
-                                        <h3 style="font-size: 25px">Por</h3>
-                                        <h3 style="font-size: 25px">producto</h3>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fa fa-cube"></i>
-                                    </div>
-                                    <a href="" class="small-box-footer">Ver lista <i
-                                                class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-
-                            {{--<div class="col-lg-3 col-xs-6">--}}
-                            {{--<!-- small box -->--}}
-                            {{--<div class="small-box bg-yellow">--}}
-                            {{--<div class="inner">--}}
-                            {{--<h3 style="font-size: 25px">Precios</h3>--}}
-                            {{--<h3 style="font-size: 25px">productos</h3>--}}
-                            {{--</div>--}}
-                            {{--<div class="icon">--}}
-                            {{--<i class="fa fa-book"></i>--}}
-                            {{--</div>--}}
-                            {{--<a href="" class="small-box-footer">Ver lista <i class="fa fa-arrow-circle-right"></i></a>--}}
-                            {{--</div>--}}
+                                {{--<div class="small-box bg-blue">--}}
+                                    {{--<div class="inner">--}}
+                                        {{--<h3 style="font-size: 25px">Libro</h3>--}}
+                                        {{--<h3 style="font-size: 25px">compras</h3>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="icon">--}}
+                                        {{--<i class="fa fa-cube"></i>--}}
+                                    {{--</div>--}}
+                                    {{--<a href="{{route('informeLibroCompras')}}" class="small-box-footer">Ver lista <i--}}
+                                                {{--class="fa fa-arrow-circle-right"></i></a>--}}
+                                {{--</div>--}}
                             {{--</div>--}}
                             {{--<!-- ./col -->--}}
 
                             {{--<div class="col-lg-3 col-xs-6">--}}
-                            {{--<!-- small box -->--}}
-                            {{--<div class="small-box bg-red">--}}
-                            {{--<div class="inner">--}}
-                            {{--<h3 style="font-size: 25px">qwerty</h3>--}}
-                            {{--<h3 style="font-size: 25px">qwerty</h3>--}}
-                            {{--</div>--}}
-                            {{--<div class="icon">--}}
-                            {{--<i class="fa fa-book"></i>--}}
-                            {{--</div>--}}
-                            {{--<a href="" class="small-box-footer">Ver lista <i class="fa fa-arrow-circle-right"></i></a>--}}
-                            {{--</div>--}}
+                                {{--<!-- small box -->--}}
+                                {{--<div class="small-box bg-gray">--}}
+                                    {{--<div class="inner">--}}
+                                        {{--<h3 style="font-size: 25px">Por</h3>--}}
+                                        {{--<h3 style="font-size: 25px">producto</h3>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="icon">--}}
+                                        {{--<i class="fa fa-cube"></i>--}}
+                                    {{--</div>--}}
+                                    {{--<a href="" class="small-box-footer">Ver lista <i--}}
+                                                {{--class="fa fa-arrow-circle-right"></i></a>--}}
+                                {{--</div>--}}
                             {{--</div>--}}
                             {{--<!-- ./col -->--}}
 
