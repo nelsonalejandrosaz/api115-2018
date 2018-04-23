@@ -23,6 +23,7 @@ class CreateProveedoresTable extends Migration
             $table->string('nrc',20)->nullable();
             $table->string('nombre_contacto')->nullable();
             $table->float('saldo',12,4)->default(0.00);
+            $table->boolean('nacional')->default(true);
             $table->timestamps();
         });
     }

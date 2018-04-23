@@ -29,8 +29,6 @@ class ProveedorController extends Controller
     {
         $this->validate($request, [
             'nombre' => 'required|unique:proveedores|max:140',
-            'telefono_1' => 'min:8|nullable',
-            'telefono_2' => 'min:8|nullable',
         ]);
 
         $proveedor = Proveedor::create($request->only(
@@ -38,7 +36,10 @@ class ProveedorController extends Controller
             'nombre_contacto',
             'direccion',
             'telefono_1',
-            'telefono_2'
+            'telefono_2',
+            'nit',
+            'nrc',
+            'nacional'
         ));
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
@@ -61,8 +62,6 @@ class ProveedorController extends Controller
                 'required',
                 Rule::unique('proveedores')->ignore($proveedor->id),
             ],
-            'telefono_1' => 'min:8|nullable',
-            'telefono_2' => 'min:8|nullable',
         ]);
 
         $proveedor->update($request->only(
@@ -70,7 +69,10 @@ class ProveedorController extends Controller
             'nombre_contacto',
             'direccion',
             'telefono_1',
-            'telefono_2'
+            'telefono_2',
+            'nit',
+            'nrc',
+            'nacional'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

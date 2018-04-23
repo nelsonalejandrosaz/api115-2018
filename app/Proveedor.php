@@ -20,6 +20,7 @@ class Proveedor extends Model
         'nrc',
         'nombre_contacto',
         'saldo',
+        'nacional',
     ];
 
     protected $table = 'proveedores';
