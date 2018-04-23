@@ -79,6 +79,11 @@ class ProductoController extends Controller
         $unidad_factor = ($request->input('unidad_medida_volumen') == null) ? 'Sin factor' : UnidadMedida::find($request->input('unidad_medida_volumen'))->nombre;
         $costo = ($request->input('costo') == null) ? 0.00 : $request->input('costo');
         $factor_volumen = ($request->input('factor_volumen') == null) ? 0 : $request->input('factor_volumen');
+        // Parche
+        if ($existencia_min == $existencia_max){
+            $existencia_min = 0;
+            $existencia_max = 100;
+        }
         $producto = Producto::create([
             'nombre' => $request->input('nombre'),
             'nombre_alternativo' => $request->input('nombre_alternativo'),
@@ -143,7 +148,11 @@ class ProductoController extends Controller
         $existencia_max = ($request->input('existencia_max') == null) ? 1000 : $existencia_max = $request->input('existencia_max');
         $unidad_factor = ($request->input('unidad_medida_volumen') == null) ? 'Sin factor' : UnidadMedida::find($request->input('unidad_medida_volumen'))->nombre;
         $margen_ganancia = ($request->input('margen_ganancia') == null) ? 0 : $request->input('margen_ganancia');
-
+        // Parche
+        if ($existencia_min == $existencia_max){
+            $existencia_min = 0;
+            $existencia_max = 100;
+        }
         $producto->update([
             'nombre' => $request->input('nombre'),
             'nombre_alternativo' => $request->input('nombre_alternativo'),

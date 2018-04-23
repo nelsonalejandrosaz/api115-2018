@@ -23,6 +23,12 @@ class InicioController extends Controller
         $clientes_con_saldo = sizeof($clientes_con_saldo);
         foreach ($productos as $producto)
         {
+            // Parche para la div por zero
+            if ($producto->existencia_max == $producto->existencia_min) {
+                $producto->existencia_max = 100 ;
+                $producto->existencia_min = 0 ;
+                $producto->save();
+            }
             $porcentaje_stock = ($producto->cantidad_existencia / ($producto->existencia_max - $producto->existencia_min)) * 100;
             if ($porcentaje_stock >= 40)
             {
