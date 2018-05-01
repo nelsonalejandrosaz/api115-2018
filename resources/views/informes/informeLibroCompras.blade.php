@@ -100,32 +100,42 @@
                     <table class="table table-striped table-condensed" id="tblProductos">
                         <thead>
                         <tr>
-                            <th style="width: 10%">Fecha</th>
-                            <th style="width: 10%">n° documento</th>
-                            <th style="width: 35%">Proveedor</th>
-                            <th style="width: 10%">NRC</th>
-                            <th style="width: 10%">Total sin IVA</th>
-                            <th style="width: 10%">IVA</th>
-                            <th style="width: 15%">Total</th>
+                            <th style="width: 7%">Fecha</th>
+                            <th style="width: 7%">N° de comprobante</th>
+                            <th style="width: 7%">N° de registro</th>
+                            <th style="width: 23%">Nombre proveedor</th>
+                            <th style="width: 7%">Internas E</th>
+                            <th style="width: 7%">Importacion E</th>
+                            <th style="width: 7%">Internas G</th>
+                            <th style="width: 7%">Importacion G</th>
+                            <th style="width: 7%">IVA CCF</th>
+                            <th style="width: 7%">Total compras</th>
+                            <th style="width: 7%">Retencion a terceros</th>
+                            <th style="width: 7%">Percepcion</th>
                         </tr>
                         </thead>
                         <tbody>
                             @foreach($tabla as $fila)
                                 <tr>
-                                    <td>{{ $fila['fecha'] }}</td>
-                                    <td>{{ $fila['numero'] }}</td>
-                                    <td>{{ $fila['proveedor'] }}</td>
-                                    <td>{{ $fila['nrc'] }}</td>
-                                    <td>$ {{ number_format($fila['total_sin_iva'],2) }}</td>
-                                    <td>$ {{ number_format($fila['iva'],2) }}</td>
-                                    <td>$ {{ number_format($fila['total'] ,2) }}</td>
+                                    <td>{{ $fila['FECHA EMISION'] }}</td>
+                                    <td>{{ $fila['N° DE COMPRA'] }}</td>
+                                    <td>{{ $fila['N° DE REGISTRO'] }}</td>
+                                    <td>{{ $fila['NOMBRE DEL PROVEEDOR'] }}</td>
+                                    <td>{{ $fila['INTERNAS E'] }}</td>
+                                    <td>{{ $fila['IMPORTACION E'] }}</td>
+                                    <td>{{ $fila['INTERNAS G'] }}</td>
+                                    <td>{{ $fila['IMPORTACION G'] }}</td>
+                                    <td>{{ $fila['IVA CCF'] }}</td>
+                                    <td>{{ $fila['TOTAL DE COMPRAS'] }}</td>
+                                    <td>{{ $fila['RETENCION A TERCEROS'] }}</td>
+                                    <td>{{ $fila['PERCEPCION'] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
-                        <td colspan="4"><b>TOTALES</b></td>
-                        <td><b>$ {{ number_format($tabla->sum('total_sin_iva'),2) }}</b></td>
-                        <td><b>$ {{ number_format($tabla->sum('iva'),2) }}</b></td>
-                        <td><b>$ {{ number_format($tabla->sum('total'),2) }}</b></td>
+                        {{--<td colspan="4"><b>TOTALES</b></td>--}}
+                        {{--<td><b>$ {{ number_format($tabla->sum('total_sin_iva'),2) }}</b></td>--}}
+                        {{--<td><b>$ {{ number_format($tabla->sum('iva'),2) }}</b></td>--}}
+                        {{--<td><b>$ {{ number_format($tabla->sum('total'),2) }}</b></td>--}}
                     </table>
                 </div>
             </div>
@@ -146,7 +156,6 @@
         }
 
         function CambiarFecha() {
-            toastr.info('Voy en cambiar fechas');
             let fecha_form = $('#opciones-form');
             let fechas_str = fecha_form.serialize();
             let path = window.location.pathname;
@@ -156,7 +165,6 @@
         }
 
         function ExportarExcel() {
-            toastr.info('Voy en cambiar fechas');
             let fecha_form = $('#opciones-form');
             let fechas_str = fecha_form.serialize();
             let path = window.location.pathname;

@@ -276,6 +276,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/compras/proveedor/excel','InformesController@ComprasProveedorExcel')->name('informeComprasProveedorExcel');
 
     Route::get('informe/compras/libro','InformesController@LibroCompras')->name('informeLibroCompras');
+    Route::get('informe/compras/libro/excel','InformesController@LibroComprasExcel')->name('informeLibroComprasExcel');
+    Route::get('informe/ventas/libro/fac','InformesController@LibroVentasFAC')->name('informeLibroVentasFAC');
+    Route::get('informe/ventas/libro/fac/excel','InformesController@LibroVentasFAC')->name('informeLibroVentasFACExcel');
+    Route::get('informe/ventas/libro/ccf','InformesController@LibroVentasCCF')->name('informeLibroVentasCCF');
+    Route::get('informe/ventas/libro/ccf/excel','InformesController@LibroVentasCCF')->name('informeLibroVentasCCFExcel');
 
     Route::get('informe/ingresos-diario','InformesController@IngresoDiario')->name('ingresoVentas');
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');

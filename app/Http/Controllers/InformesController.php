@@ -1067,17 +1067,26 @@ class InformesController extends Controller
         $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
         $tabla = collect();
         foreach ($compras as $compra) {
-            $total = $compra->compra_total_con_impuestos;
-            $total_sin_iva = $compra->compra_total;
-            $iva = $total - $total_sin_iva;
+            if ($compra->proveedor->nacional){
+                $interna = number_format($compra->compra_total,2);
+                $exportacion = number_format(0,2);
+            } else {
+                $interna = number_format(0,2);
+                $exportacion = number_format($compra->compra_total,2);
+            }
             $fila = [
-                'fecha' => $compra->fecha->format('d/m/Y'),
-                'numero' => $compra->numero,
-                'proveedor' => $compra->proveedor->nombre,
-                'nrc' => $compra->proveedor->nrc,
-                'total_sin_iva' => $total_sin_iva,
-                'iva' => $iva,
-                'total' => $total,
+                'FECHA EMISION' => $compra->fecha->format('d/m/Y'),
+                'N° DE COMPRA' => $compra->numero,
+                'N° DE REGISTRO' => $compra->proveedor->nrc,
+                'NOMBRE DEL PROVEEDOR' => $compra->proveedor->nombre,
+                'INTERNAS E' => '-',
+                'IMPORTACION E' => '-',
+                'INTERNAS G' => $interna,
+                'IMPORTACION G' => $exportacion,
+                'IVA CCF' => number_format(($compra->compra_total * 0.13),2),
+                'TOTAL DE COMPRAS' => number_format(($compra->compra_total * 1.13),2),
+                'RETENCION A TERCEROS' => '-',
+                'PERCEPCION' => '-',
             ];
             $tabla->push($fila);
         }
@@ -1095,18 +1104,91 @@ class InformesController extends Controller
         $datos += ['fecha_fin' => $fecha_fin];
         $compras = Compra::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
         $tabla = collect();
+        $fila = [
+            'LGL S.A. DE C.V'
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'LIBRO DE COMPRAS'
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'FECHA EMISION',
+            'N° DE COMPRA',
+            'N° DE REGISTRO',
+            'NOMBRE DEL PROVEEDOR',
+            'INTERNAS E',
+            'IMPORTACION E',
+            'INTERNAS G',
+            'IMPORTACION G',
+            'IVA CCF',
+            'TOTAL DE COMPRAS',
+            'RETENCION A TERCEROS',
+            'PERCEPCION',
+        ];
+        $tabla->push($fila);
         foreach ($compras as $compra) {
-            $total = $compra->compra_total_con_impuestos;
-            $total_sin_iva = $compra->compra_total;
-            $iva = $total - $total_sin_iva;
+            if ($compra->proveedor->nacional){
+                $interna = number_format($compra->compra_total,2);
+                $exportacion = number_format(0,2);
+            } else {
+                $interna = number_format(0,2);
+                $exportacion = number_format($compra->compra_total,2);
+            }
             $fila = [
-                'fecha' => $compra->fecha->format('d/m/Y'),
-                'numero' => $compra->numero,
-                'proveedor' => $compra->proveedor->nombre,
-                'nrc' => $compra->proveedor->nrc,
-                'total_sin_iva' => $total_sin_iva,
-                'iva' => $iva,
-                'total' => $total,
+                'FECHA EMISION' => $compra->fecha->format('d/m/Y'),
+                'N° DE COMPRA' => $compra->numero,
+                'N° DE REGISTRO' => $compra->proveedor->nrc,
+                'NOMBRE DEL PROVEEDOR' => $compra->proveedor->nombre,
+                'INTERNAS E' => '-',
+                'IMPORTACION E' => '-',
+                'INTERNAS G' => $interna,
+                'IMPORTACION G' => $exportacion,
+                'IVA CCF' => number_format(($compra->compra_total * 0.13),2),
+                'TOTAL DE COMPRAS' => number_format(($compra->compra_total * 1.13),2),
+                'RETENCION A TERCEROS' => '-',
+                'PERCEPCION' => '-',
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-libro-compras-del-' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
+    public function LibroVentasFAC(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->where('tipo_documento_id','=',1)->get();
+        $tabla = collect();
+        foreach ($ventas as $venta) {
+            if ($venta->cliente->rentencion){
+                $retencion = number_format(($venta->venta_total * 0.01),2);
+            } else {
+                $retencion = '-';
+            }
+            $fila = [
+                'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                'N° DE COMPRA' => $venta->numero,
+                'N° DE REGISTRO' => $venta->cliente->nrc,
+                'NOMBRE DEL PROVEEDOR' => $venta->cliente->nombre,
+                'PROPIAS EXENTAS' => '-',
+                'PROPIAS GRAVADAS' => $venta->venta_total,
+                'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
+                'TERCEROS EXENTAS' => '-',
+                'TERCEROS GRAVADAS' => '-',
+                'TERCEROS DEB FISCAL' => '-',
+                'IVA RETENIDO' => $retencion,
+                'TOTAL' => number_format($venta->venta_total_con_impuestos),
             ];
             $tabla->push($fila);
         }
@@ -1114,7 +1196,5 @@ class InformesController extends Controller
             ->with(['datos' => $datos])
             ->with(['tabla' => $tabla]);
     }
-
-
 
 }
