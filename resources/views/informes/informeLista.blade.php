@@ -533,7 +533,7 @@
                                     <div class="icon">
                                         <i class="fa fa-dollar"></i>
                                     </div>
-                                    <a href="{{ route('productoPreciosInforme') }}" class="small-box-footer">Ver informe
+                                    <a href="{{ route('informeLibroVentasFAC') }}" class="small-box-footer">Ver informe
                                         <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
@@ -549,7 +549,7 @@
                                     <div class="icon">
                                         <i class="fa fa-gears"></i>
                                     </div>
-                                    <a href="{{ route('informeProducciones') }}" class="small-box-footer">Ver informe <i
+                                    <a href="{{ route('informeLibroVentasCCF') }}" class="small-box-footer">Ver informe <i
                                                 class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>

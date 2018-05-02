@@ -103,7 +103,7 @@
                             <div class="input-group">
                                 <input readonly type="number" min="0.00" step="any" class="form-control" placeholder="0"
                                        name="cantidad"
-                                       value="{{ number_format($produccion->cantidad,2) }}">
+                                       value="{{ number_format($produccion->cantidad,3) }}">
                                 <span class="input-group-addon">Kgs</span>
                             </div>
                         </div>

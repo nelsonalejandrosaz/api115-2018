@@ -21,6 +21,7 @@ class Proveedor extends Model
         'nombre_contacto',
         'saldo',
         'nacional',
+        'percepcion',
     ];
 
     protected $table = 'proveedores';

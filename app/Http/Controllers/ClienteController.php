@@ -101,7 +101,8 @@ class ClienteController extends Controller
             'nit',
             'giro',
             'vendedor_id',
-            'municipio_id'
+            'municipio_id',
+            'retencion'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

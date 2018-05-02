@@ -24,6 +24,7 @@ class CreateProveedoresTable extends Migration
             $table->string('nombre_contacto')->nullable();
             $table->float('saldo',12,4)->default(0.00);
             $table->boolean('nacional')->default(true);
+            $table->boolean('rentencion')->default(false);
             $table->timestamps();
         });
     }

@@ -66,6 +66,22 @@
                         </div>
                     </div>
 
+                    {{-- Percepcion --}}
+                    <div class="form-group">
+                        <label class="col-md-4  control-label"><b>Percepcion</b></label>
+                        <div class="col-md-8 ">
+                            <select class="form-control select2" style="width: 100%" name="percepcion">
+                                @if($proveedor->percepcion)
+                                    <option selected value="1">Con percepcion</option>
+                                    <option value="0">Sin percepcion</option>
+                                @else
+                                    <option value="1">Con percepcion</option>
+                                    <option selected value="0">Sin percepcion</option>
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+
                     {{-- NIT --}}
                     <div class="form-group">
                         <label class="col-sm-4 control-label">NIT</label>

@@ -28,6 +28,7 @@ class CreateClientesTable extends Migration
             $table->string('giro')->nullable();
             $table->string('nombre_contacto')->nullable();
             $table->float('saldo',12,4)->default(0.00);
+            $table->boolean('retencion')->default(false);
             $table->timestamps();
         });
     }

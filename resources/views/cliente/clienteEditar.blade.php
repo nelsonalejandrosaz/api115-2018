@@ -160,6 +160,17 @@
                         </div>
                     </div>
 
+                    {{--Retencion--}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Retención</label>
+                        <div class="col-sm-9">
+                            <select class="form-control select2" name="retencion">
+                                <option value="0" selected >Sin retención</option>
+                                <option value="1" >Con retención</option>
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- /.box-body -->
 

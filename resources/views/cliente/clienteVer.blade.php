@@ -152,6 +152,18 @@
                         </div>
                     </div>
 
+                    {{--Retencion --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Retención</label>
+                        <div class="col-sm-9">
+                            @if($cliente->retencion == true)
+                                <input readonly type="text" class="form-control" name="municipio_id" id="" value="Con retención">
+                            @else
+                                <input readonly type="text" class="form-control" name="municipio_id" id="" value="Sin retención">
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- /.box-body -->
 

@@ -72,7 +72,8 @@ class ProveedorController extends Controller
             'telefono_2',
             'nit',
             'nrc',
-            'nacional'
+            'nacional',
+            'percepcion'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

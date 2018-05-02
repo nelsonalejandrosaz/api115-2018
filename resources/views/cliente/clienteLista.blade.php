@@ -54,11 +54,11 @@
                                     <a href="{{ route('clienteVer', ['id' => $cliente->id]) }}" class="btn btn-info"><span class="fa fa-eye"></span></a>
                                     <a href="{{ route('clienteEditar', ['id' => $cliente->id]) }}"
                                        class="btn btn-warning"><span class="fa fa-edit"></span></a>
-                                    <button type="button" class="btn btn-danger" data-toggle="modal"
-                                            data-target="#modalEliminar" data-objeto="{{ $cliente->nombre }}"
-                                            data-id="{{ $cliente->id }}" data-ruta="cliente">
-                                        <span class="fa fa-trash"></span>
-                                    </button>
+                                    {{--<button type="button" class="btn btn-danger" data-toggle="modal"--}}
+                                            {{--data-target="#modalEliminar" data-objeto="{{ $cliente->nombre }}"--}}
+                                            {{--data-id="{{ $cliente->id }}" data-ruta="cliente">--}}
+                                        {{--<span class="fa fa-trash"></span>--}}
+                                    {{--</button>--}}
                                 </td>
                             </tr>
                         @endforeach

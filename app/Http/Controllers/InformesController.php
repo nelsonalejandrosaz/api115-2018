@@ -1069,10 +1069,15 @@ class InformesController extends Controller
         foreach ($compras as $compra) {
             if ($compra->proveedor->nacional){
                 $interna = number_format($compra->compra_total,2);
-                $exportacion = number_format(0,2);
+                $exportacion =  number_format(0,2);
             } else {
                 $interna = number_format(0,2);
                 $exportacion = number_format($compra->compra_total,2);
+            }
+            if ($compra->proveedor->percepcion == true && $compra->compra_total >= 100){
+                $percepcion = number_format(($compra->compra_total * 0.01),2);
+            } else {
+                $percepcion = '-';
             }
             $fila = [
                 'FECHA EMISION' => $compra->fecha->format('d/m/Y'),
@@ -1086,7 +1091,7 @@ class InformesController extends Controller
                 'IVA CCF' => number_format(($compra->compra_total * 0.13),2),
                 'TOTAL DE COMPRAS' => number_format(($compra->compra_total * 1.13),2),
                 'RETENCION A TERCEROS' => '-',
-                'PERCEPCION' => '-',
+                'PERCEPCION' => $percepcion,
             ];
             $tabla->push($fila);
         }
@@ -1112,6 +1117,12 @@ class InformesController extends Controller
             'LIBRO DE COMPRAS'
         ];
         $tabla->push($fila);
+        $rango_fecha = 'Del ' . $fecha_inicio->format('d/m/Y') . ' al ' . $fecha_fin->format('d/m/Y');
+        $rango_fecha = strtoupper($rango_fecha);
+        $fila = [
+            $rango_fecha, '', '' , '', '', 'REGISTRO: 76461-2', '', 'NIT: 0614-251093-106-9'
+        ];
+        $tabla->push($fila);
         $fila = [
             'FECHA EMISION',
             'N° DE COMPRA',
@@ -1135,6 +1146,11 @@ class InformesController extends Controller
                 $interna = number_format(0,2);
                 $exportacion = number_format($compra->compra_total,2);
             }
+            if ($compra->proveedor->percepcion == true && $compra->compra_total >= 100){
+                $percepcion = number_format(($compra->compra_total * 0.01),2);
+            } else {
+                $percepcion = '-';
+            }
             $fila = [
                 'FECHA EMISION' => $compra->fecha->format('d/m/Y'),
                 'N° DE COMPRA' => $compra->numero,
@@ -1147,11 +1163,123 @@ class InformesController extends Controller
                 'IVA CCF' => number_format(($compra->compra_total * 0.13),2),
                 'TOTAL DE COMPRAS' => number_format(($compra->compra_total * 1.13),2),
                 'RETENCION A TERCEROS' => '-',
-                'PERCEPCION' => '-',
+                'PERCEPCION' => $percepcion,
             ];
             $tabla->push($fila);
         }
         $nombre_documento = 'informe-libro-compras-del-' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
+    public function LibroVentasCCF(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('tipo_documento_id','=',2)
+            ->where('estado_venta_id','!=',3)->get();
+        $tabla = collect();
+        foreach ($ventas as $venta) {
+            if ($venta->cliente->retencion == true && $venta->venta_total >= 100){
+                $retencion = number_format(($venta->venta_total * 0.01),2);
+            } else {
+                $retencion = '-';
+            }
+            $fila = [
+                'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                'N° DE VENTA' => $venta->numero,
+                'N° DE REGISTRO' => $venta->cliente->nrc,
+                'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                'PROPIAS EXENTAS' => '-',
+                'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
+                'TERCEROS EXENTAS' => '-',
+                'TERCEROS GRAVADAS' => '-',
+                'TERCEROS DEB FISCAL' => '-',
+                'IVA RETENIDO' => $retencion,
+                'TOTAL' => number_format(($venta->venta_total * 1.13),2),
+            ];
+            $tabla->push($fila);
+        }
+        return view('informes.informeLibroVentasCCF')
+            ->with(['datos' => $datos])
+            ->with(['tabla' => $tabla]);
+    }
+
+    public function LibroVentasCCFExcel(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('tipo_documento_id','=',2)
+            ->where('estado_venta_id','!=',3)->get();
+        $tabla = collect();
+        // Cabeceras
+        $fila = [
+            'LGL S.A. DE C.V'
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'LIBRO DE VENTAS CCF'
+        ];
+        $tabla->push($fila);
+        $rango_fecha = 'Del ' . $fecha_inicio->format('d/m/Y') . ' al ' . $fecha_fin->format('d/m/Y');
+        $rango_fecha = strtoupper($rango_fecha);
+        $fila = [
+            $rango_fecha, '', '' , '', '', 'REGISTRO: 76461-2', '', 'NIT: 0614-251093-106-9'
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'FECHA EMISION',
+            'N° DE VENTA',
+            'N° DE REGISTRO',
+            'NOMBRE DEL CLIENTE',
+            'PROPIAS EXENTAS',
+            'PROPIAS GRAVADAS',
+            'PROPIAS DEB FISCAL',
+            'TERCEROS EXENTAS',
+            'TERCEROS GRAVADAS',
+            'TERCEROS DEB FISCAL',
+            'IVA RETENIDO',
+            'TOTAL',
+        ];
+        $tabla->push($fila);
+        // Fin cabeceras
+        foreach ($ventas as $venta) {
+            if ($venta->cliente->retencion == true && $venta->venta_total >= 100){
+                $retencion = number_format(($venta->venta_total * 0.01),2);
+            } else {
+                $retencion = '-';
+            }
+            $fila = [
+                'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                'N° DE VENTA' => $venta->numero,
+                'N° DE REGISTRO' => $venta->cliente->nrc,
+                'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                'PROPIAS EXENTAS' => '-',
+                'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
+                'TERCEROS EXENTAS' => '-',
+                'TERCEROS GRAVADAS' => '-',
+                'TERCEROS DEB FISCAL' => '-',
+                'IVA RETENIDO' => $retencion,
+                'TOTAL' => number_format(($venta->venta_total * 1.13),2),
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-libro-ventas-ccf-del-' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
         Excel::create($nombre_documento, function ($excel) use ($tabla) {
             $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
 
@@ -1168,33 +1296,109 @@ class InformesController extends Controller
         $datos = [];
         $datos += ['fecha_inicio' => $fecha_inicio];
         $datos += ['fecha_fin' => $fecha_fin];
-        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->where('tipo_documento_id','=',1)->get();
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('tipo_documento_id','=',1)
+            ->where('estado_venta_id','!=',3)->get();
         $tabla = collect();
         foreach ($ventas as $venta) {
-            if ($venta->cliente->rentencion){
+            if ($venta->cliente->retencion == true && $venta->venta_total >= 100){
                 $retencion = number_format(($venta->venta_total * 0.01),2);
             } else {
                 $retencion = '-';
             }
             $fila = [
                 'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
-                'N° DE COMPRA' => $venta->numero,
+                'N° DE VENTA' => $venta->numero,
                 'N° DE REGISTRO' => $venta->cliente->nrc,
-                'NOMBRE DEL PROVEEDOR' => $venta->cliente->nombre,
+                'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
                 'PROPIAS EXENTAS' => '-',
-                'PROPIAS GRAVADAS' => $venta->venta_total,
+                'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
                 'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
                 'TERCEROS EXENTAS' => '-',
                 'TERCEROS GRAVADAS' => '-',
                 'TERCEROS DEB FISCAL' => '-',
                 'IVA RETENIDO' => $retencion,
-                'TOTAL' => number_format($venta->venta_total_con_impuestos),
+                'TOTAL' => number_format(($venta->venta_total * 1.13),2),
             ];
             $tabla->push($fila);
         }
-        return view('informes.informeLibroCompras')
+        return view('informes.informeLibroVentasFAC')
             ->with(['datos' => $datos])
             ->with(['tabla' => $tabla]);
+    }
+
+    public function LibroVentasFACExcel(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])
+            ->where('tipo_documento_id','=',1)
+            ->where('estado_venta_id','!=',3)->get();
+        $tabla = collect();
+        // Cabeceras
+        $fila = [
+            'LGL S.A. DE C.V'
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'LIBRO DE VENTAS FACTURAS'
+        ];
+        $tabla->push($fila);
+        $rango_fecha = 'Del ' . $fecha_inicio->format('d/m/Y') . ' al ' . $fecha_fin->format('d/m/Y');
+        $rango_fecha = strtoupper($rango_fecha);
+        $fila = [
+            $rango_fecha, '', '' , '', '', 'REGISTRO: 76461-2', '', 'NIT: 0614-251093-106-9'
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'FECHA EMISION',
+            'N° DE VENTA',
+            'N° DE REGISTRO',
+            'NOMBRE DEL CLIENTE',
+            'PROPIAS EXENTAS',
+            'PROPIAS GRAVADAS',
+            'PROPIAS DEB FISCAL',
+            'TERCEROS EXENTAS',
+            'TERCEROS GRAVADAS',
+            'TERCEROS DEB FISCAL',
+            'IVA RETENIDO',
+            'TOTAL',
+        ];
+        $tabla->push($fila);
+        // Fin cabeceras
+        foreach ($ventas as $venta) {
+            if ($venta->cliente->retencion == true && $venta->venta_total >= 100){
+                $retencion = number_format(($venta->venta_total * 0.01),2);
+            } else {
+                $retencion = '-';
+            }
+            $fila = [
+                'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                'N° DE VENTA' => $venta->numero,
+                'N° DE REGISTRO' => $venta->cliente->nrc,
+                'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                'PROPIAS EXENTAS' => '-',
+                'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
+                'TERCEROS EXENTAS' => '-',
+                'TERCEROS GRAVADAS' => '-',
+                'TERCEROS DEB FISCAL' => '-',
+                'IVA RETENIDO' => $retencion,
+                'TOTAL' => number_format(($venta->venta_total * 1.13),2),
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-libro-ventas-fac-del-' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
     }
 
 }

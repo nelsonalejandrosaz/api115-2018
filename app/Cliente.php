@@ -46,6 +46,7 @@ class Cliente extends Model
         'numero_registro',
         'saldo',
         'correo',
+        'retencion',
     ];
 
 }
