@@ -203,7 +203,7 @@
         <td class="tg-cw2b">TOTAL</td>
         <td class="tg-cw2b"></td>
         <td class="tg-cw2b"></td>
-        <td class="tg-cw2b">$ {{number_format($venta->venta_total_con_impuestos,2)}}</td>
+        <td class="tg-cw2b"><p style="font-size: 1.5em; margin-top: 0px">$ {{number_format($venta->venta_total_con_impuestos,2)}}</p></td>
     </tr>
     <tr>
         <td class="tg-cw2b"></td>
