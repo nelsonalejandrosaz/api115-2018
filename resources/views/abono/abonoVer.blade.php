@@ -55,8 +55,9 @@
             <h3 class="box-title">Datos del abono</h3>
         </div><!-- /.box-header -->
         <!-- form start -->
-        <form class="form-horizontal" action="" method="POST">
+        <form class="form-horizontal" action="{{ route('abonoRevertir',['id' => $abono->id]) }}" method="POST">
             {{ csrf_field() }}
+            {{ method_field('DELETE') }}
             <div class="box-body">
                 <div class="col-md-6 col-sm-12">
                     <h4>Datos de cliente</h4>
@@ -169,7 +170,7 @@
 
             <div class="box-footer">
                 <a href="{{ route('abonoLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar a lista</a>
-                {{--<button type="submit" class="btn btn-lg btn-success pull-right"><span class="fa fa-credit-card"></span> Abonar</button>--}}
+                <button type="submit" class="btn btn-lg btn-danger pull-right"><span class="fa fa-trash"></span> Revertir</button>
             </div>
         </form>
     </div><!-- /.box -->

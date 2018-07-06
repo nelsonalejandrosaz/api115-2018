@@ -198,6 +198,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/abono/nuevo','AbonoController@AbonoNuevoSinVentaPost')->name('abonoNuevoSinVentaPost');
         Route::post('/abono/nuevo/{id}','AbonoController@AbonoNuevoPost')->name('abonoNuevoPost');
         Route::get('/abono/{id}','AbonoController@AbonoVer')->name('abonoVer');
+        Route::delete('/abono/{id}','AbonoController@revertirAbono')->name('abonoRevertir');
     });
 
 

@@ -177,4 +177,23 @@ class AbonoController extends Controller
         session()->flash('mensaje.contenido', 'El abono fue ingresado correctamente!');
         return redirect()->route('abonoVer',['id' => $abono->id]);
     }
+
+    public function revertirAbono($id) {
+        $abono = Abono::find($id);
+//        dd($abono);
+        $cantidad = round($abono->cantidad,2);
+        $cliente = Cliente::find($abono->venta->cliente_id);
+        $venta = Venta::find($abono->venta_id);
+        $cliente->saldo = $cliente->saldo + $cantidad;
+        $cliente->save();
+        $venta->saldo = $venta->saldo + $cantidad;
+        $venta->estado_venta_id = 1;
+        $venta->save();
+        $abono->delete();
+        // Mensaje de exito
+        session()->flash('mensaje.tipo', 'success');
+        session()->flash('mensaje.icono', 'fa-check');
+        session()->flash('mensaje.contenido', 'El abono fue revertido correctamente!');
+        return redirect()->route('abonoLista');
+    }
 }
