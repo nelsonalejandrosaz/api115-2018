@@ -258,7 +258,7 @@
                     <ul class="treeview-menu">
                         <li><a href="">Configuración usuarios</a></li>
                         {{--<li><a href="{{route('importarDatos')}}">Configuración inicial</a></li>--}}
-                        {{--<li><a href="{{route('importarOrdenes')}}">Configuración ordenes</a></li>--}}
+                        <li><a href="{{route('importarOrdenes')}}">Configuración ordenes</a></li>
                         <li><a href="{{route('conversionUnidadesLista')}}">Conversión de unidades</a></li>
                         <li><a href="#">Cierre inventario mensual</a></li>
                     </ul>

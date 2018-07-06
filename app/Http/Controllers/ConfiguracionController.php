@@ -273,34 +273,15 @@ class ConfiguracionController extends Controller
             /**
              * Crear nuevas ordenes pedido
              */
-//            dd($results);
-            foreach ($results as $orden_pedido_x)
+            foreach ($results as $clienteX)
             {
-                $orden_pedido = OrdenPedido::create([
-                    'cliente_id' => $orden_pedido_x->id,
-                    'numero' => $orden_pedido_x->doc,
-                    'detalle' => "Orden de pedido con saldo pendiente",
-                    'fecha' => $orden_pedido_x->fecha,
-                    'condicion_pago_id' => 4,
-                    'vendedor_id' => 1,
-                    'ventas_exentas' => 0,
-                    'ventas_gravadas' => round(($orden_pedido_x->saldo_inicial / 1.13),4),
-                    'venta_total' => round(($orden_pedido_x->saldo_inicial / 1.13),4),
-                    'estado_id' => 3,
-                ]);
-                $venta = Venta::create([
-                    'numero' => $orden_pedido_x->doc,
-                    'orden_pedido_id' => $orden_pedido->id,
-                    'tipo_documento_id' => 1,
-                    'fecha' => $orden_pedido_x->fecha,
-                    'vendedor_id' => 1,
-                    'estado_venta_id' => 1,
-                    'saldo' => $orden_pedido_x->saldo_inicial,
-                    'venta_total_con_impuestos' => $orden_pedido_x->saldo_inicial,
-                ]);
-                $cliente = Cliente::find($orden_pedido->cliente_id);
-                $cliente->saldo = $cliente->saldo + $orden_pedido_x->saldo_inicial;
-                $cliente->save();
+                $cliente = Cliente::find($clienteX->id);
+                if ($clienteX->cuenta_contable == "NULL") {
+                    $cliente->cuenta_contable = null;
+                } else {
+                    $cliente->cuenta_contable = (string) $clienteX->cuenta_contable;
+                    $cliente->save();
+                }
             }
         });
         // Mensaje de exito al guardar
