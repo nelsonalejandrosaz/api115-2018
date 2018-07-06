@@ -17,8 +17,8 @@ class CreateComponentesTable extends Migration
             $table->increments('id');
             $table->integer('formula_id')->unsigned();
             $table->integer('producto_id')->unsigned();
-            $table->float('porcentaje',8,3)->nullable();
-            $table->float('cantidad',8,3)->nullable();
+            $table->float('porcentaje',16,4)->nullable();
+            $table->float('cantidad',16,4)->nullable();
             $table->timestamps();
         });
     }

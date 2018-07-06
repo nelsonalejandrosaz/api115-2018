@@ -98,6 +98,14 @@
                         </div>
                     </div>
 
+                    {{-- ID Cuenta contable --}}
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">ID Cuenta contable</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" value="{{ $proveedor->cuenta_contable }}" name="cuenta_contable">
+                        </div>
+                    </div>
+
                 </div>
                 <div class="col-xs-6">
                     <h4>Telefonos</h4>

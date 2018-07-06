@@ -57,7 +57,8 @@ class ClienteController extends Controller
             'nrc',
             'vendedor_id',
             'giro',
-            'municipio_id'
+            'municipio_id',
+            'cuenta_contable'
         ));
 //        Mensaje de exito al guardar
         session()->flash('mensaje.tipo', 'success');
@@ -102,7 +103,8 @@ class ClienteController extends Controller
             'giro',
             'vendedor_id',
             'municipio_id',
-            'retencion'
+            'retencion',
+            'cuenta_contable'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

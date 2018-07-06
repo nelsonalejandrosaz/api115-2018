@@ -240,17 +240,31 @@
                 </li>
 
 
+                {{-- Exportar SAC --}}
+                <li class="treeview">
+                    <a href="#"><i class='fa fa-arrow-circle-o-up'></i> <span>Exportacion SAC</span> <i
+                                class="fa fa-angle-left pull-right"></i></a>
+                    <ul class="treeview-menu">
+{{--                        <li><a href="{{route('usuarioNuevo')}}">Exportar</a></li>--}}
+                        <li><a href="{{route('exportar.configuracion')}}">Exportar</a></li>
+                    </ul>
+                </li>
+
+
                 {{-- Configuracion --}}
                 <li class="treeview">
                     <a href="#"><i class='fa fa-cog'></i> <span>Configuración</span> <i
                                 class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu">
                         <li><a href="">Configuración usuarios</a></li>
-                        <li><a href="{{route('importarDatos')}}">Configuración inicial</a></li>
-                        <li><a href="{{route('importarOrdenes')}}">Configuración ordenes</a></li>
+                        {{--<li><a href="{{route('importarDatos')}}">Configuración inicial</a></li>--}}
+                        {{--<li><a href="{{route('importarOrdenes')}}">Configuración ordenes</a></li>--}}
                         <li><a href="{{route('conversionUnidadesLista')}}">Conversión de unidades</a></li>
+                        <li><a href="#">Cierre inventario mensual</a></li>
                     </ul>
                 </li>
+
+
             @elseif(Auth::user()->rol->nombre == 'Vendedor')
 
                 {{--Inicio--}}

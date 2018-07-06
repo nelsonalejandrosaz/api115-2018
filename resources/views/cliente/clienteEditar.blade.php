@@ -143,6 +143,15 @@
                         </div>
                     </div>
 
+                    {{-- Cuenta contable --}}
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">ID Cuenta Contable</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="Cuenta contable"
+                                   name="cuenta_contable" value="{{$cliente->cuenta_contable}}">
+                        </div>
+                    </div>
+
                     {{--Vendedor--}}
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Vendedor</label>

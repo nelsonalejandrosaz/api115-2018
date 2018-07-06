@@ -264,7 +264,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/cxc/antiguedad/excel','InformesController@CXCAntiguedadExcel')->name('cxcAntiguedadExcel');
 
     Route::get('informe/ventas','InformesController@Ventas')->name('informeVentas');
+    Route::get('informe/ventas-excel','InformesController@VentasExcel')->name('informeVentasExcel');
     Route::get('informe/ventas/cliente','InformesController@VentasPorCliente')->name('informeVentasPorCliente');
+    Route::get('informe/ventas/cliente-excel','InformesController@VentasPorClienteExcel')->name('informeVentasPorClienteExcel');
     Route::get('informe/ventas/vendedor','InformesController@VentasPorVendedor')->name('informeVentasPorVendedor');
     Route::get('informe/producciones','InformesController@Producciones')->name('informeProducciones');
     Route::get('informe/movimientos/ajustes','InformesController@MovimientosAjuste')->name('movimientosAjuste');
@@ -310,6 +312,22 @@ Route::group(['middleware' => 'auth'], function () {
 //        Route::get('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoVer')->name('ordenPedidoVer');
 //        Route::delete('/orden-pedido/{id}','OrdenPedidoController@OrdenPedidoEliminar')->name('ordenPedidoEliminar');
 //        Route::delete('/orden-pedido-despachada/{id}','OrdenPedidoController@OrdenPedidoEliminarDespachada')->name('ordenPedidoEliminarDespachada');
+    
+    /**
+     * Rutas para refactorizar la base de datos
+     */
+    Route::get('rf/entradas1','DevController@Entradas1');
+
     });
+
+    /**
+     * Rutas para exportar a SAC
+     */
+    Route::get('exportar/sac/','DevController@Entradas1');
+    Route::get('exportar/sac/configuracion','ExportarController@configuracionSAC')->name('exportar.configuracion');
+    Route::post('exportar/sac/configuracion','ExportarController@store')->name('exportar.configuracion.store');
+    Route::get('exportar/sac/configuracion/{id}','ExportarController@edit')->name('exportar.configuracion.edit');
+    Route::post('exportar/sac/configuracion/{id}','ExportarController@update')->name('exportar.configuracion.update');
+
 
 });

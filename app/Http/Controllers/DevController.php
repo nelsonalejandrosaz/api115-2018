@@ -30,6 +30,18 @@ use Response;
 
 class DevController extends Controller
 {
+    public function Entradas1()
+    {
+        $entradas = Entrada::all();
+        // dd($entradas[0]->movimiento->producto_id);
+        foreach ($entradas as $entrada) {
+            $producto_id = $entrada->movimiento->producto_id;
+            $entrada->producto_id = $producto_id;
+            $entrada->save();
+        }
+        return "Funcion ejecutada correctamente";
+    }
+
     public function VentaSinOrden()
     {
         $tipo_documentos = TipoDocumento::all();

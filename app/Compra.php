@@ -37,6 +37,7 @@ class Compra extends Model
         'detalle',
         'fecha',
         'compra_total',
+        'compra_total_con_impuestos',
         'ruta_archivo',
         'ingresado_id',
         'bodega_id',

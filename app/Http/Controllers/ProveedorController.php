@@ -73,7 +73,8 @@ class ProveedorController extends Controller
             'nit',
             'nrc',
             'nacional',
-            'percepcion'
+            'percepcion',
+            'cuenta_contable'
         ));
 //        Mensaje de exito al modificar
         session()->flash('mensaje.tipo', 'success');

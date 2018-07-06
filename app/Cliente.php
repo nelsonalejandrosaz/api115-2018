@@ -47,6 +47,7 @@ class Cliente extends Model
         'saldo',
         'correo',
         'retencion',
+        'cuenta_contable',
     ];
 
 }

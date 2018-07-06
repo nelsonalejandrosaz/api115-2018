@@ -77,7 +77,7 @@
                 <a href="{{ route('informeLista') }}" class="btn btn-lg btn-default"><span class="fa fa-mail-reply"></span> Regresar</a>
                 <button type="button" class="btn btn-lg btn-success pull-right" style="margin-left: 10px" id="opciones-buttom"><span class="fa fa-search" ></span> Consultar </button>
                 <a href='javascript:window.print(); void 0;' class="btn btn-lg btn-success pull-right" style="margin-left: 10px"><span class="fa fa-print"></span> Imprimir</a>
-                <a href='{{route('cxcAntiguedadExcel')}}' class="btn btn-lg btn-success pull-right"><span class="fa fa-file-excel-o"></span> Exportar Excel</a>
+                <button type="button" class="btn btn-lg btn-success pull-right" id="excel-buttom"><span class="fa fa-file-excel-o"></span> Exportar Excel</button>
             </div>
         </form>
     </div><!-- /.box -->
@@ -135,17 +135,26 @@
         $(document).ready(Principal);
 
         function Principal() {
-            // $('#exportar-excel-id').click(exportarExcel);
             $('#opciones-buttom').click(CambiarFecha);
+            $('#excel-buttom').click(ExportarExcel);
         }
 
         function CambiarFecha() {
-            toastr.info('Voy en cambiar fechas');
+            // toastr.info('Voy en cambiar fechas');
             let fecha_form = $('#opciones-form');
             let fechas_str = fecha_form.serialize();
             let path = window.location.pathname;
             let uri = path + "?" + fechas_str;
             toastr.info("Consultando fecha selecionada","Excelente!!");
+            window.location.href = uri;
+        }
+
+        function ExportarExcel() {
+            let fecha_form = $('#opciones-form');
+            let fechas_str = fecha_form.serialize();
+            let path = window.location.pathname;
+            let uri = path + "-excel" + "?" + fechas_str;
+            toastr.info("Generando el Excel en la fecha selecionada","Excelente!!");
             window.location.href = uri;
         }
 

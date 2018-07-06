@@ -22,6 +22,7 @@ class Proveedor extends Model
         'saldo',
         'nacional',
         'percepcion',
+        'cuenta_contable',
     ];
 
     protected $table = 'proveedores';

@@ -712,6 +712,40 @@ class InformesController extends Controller
             ->with(['tabla' => $tabla]);
     }
 
+    public function VentasExcel(Request $request)
+    {
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $total_dias = $fecha_inicio->diffInDays($fecha_fin);
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+        $tabla = collect();
+        $fecha = Carbon::parse($fecha_inicio);
+        for ($i = 0; $i < $total_dias; $i++) {
+            if (!$fecha->isSunday()) {
+                $valor = $ventas->where('fecha', '=', $fecha)->sum('venta_total');
+                $valor = round($valor, 2);
+                $iva = $valor * 0.13;
+                $iva = round($iva, 2);
+                $total = $valor + $iva;
+                $fila = ['fecha' => $fecha->format('d/m/Y'), 'valor' => $valor, 'iva' => $iva, 'total' => $total];
+                $tabla->push($fila);
+            }
+            $fecha->addDay();
+        }
+//        dd($tabla);
+        $nombre_documento = 'informe-ventas-' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
     public function VentasPorCliente(Request $request)
     {
         $clientes = Cliente::all();
@@ -742,6 +776,41 @@ class InformesController extends Controller
             ->with(['clientes' => $clientes])
             ->with(['datos' => $datos])
             ->with(['tabla' => $tabla]);
+    }
+
+    public function VentasPorClienteExcel(Request $request)
+    {
+        $clientes = Cliente::all();
+        $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
+        $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+        $cliente = ($request->input('cliente_id') == null) ? null : Cliente::find($request->input('cliente_id'));
+        $datos = [];
+        $datos += ['fecha_inicio' => $fecha_inicio];
+        $datos += ['fecha_fin' => $fecha_fin];
+        $tabla = collect();
+        if ($cliente != null) {
+            $ventas = Venta::where('cliente_id', '=', $cliente->id)
+                ->where('estado_venta_id', '!=', 3)
+                ->whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+            foreach ($ventas as $venta) {
+                $fila = [
+                    'fecha' => $venta->fecha->format('d/m/Y'),
+                    'tipo_documento' => $venta->tipo_documento->nombre,
+                    'numero' => $venta->numero,
+                    'total' => $venta->venta_total_con_impuestos,
+                ];
+                $tabla->push($fila);
+            }
+        }
+//        dd($tabla);
+        $nombre_documento = 'informe-ventas-por-cliente' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
     }
 
     public function VentasPorVendedor(Request $request)
