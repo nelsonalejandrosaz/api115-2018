@@ -137,13 +137,22 @@ class OrdenPedidoController extends Controller
         $salidas = $orden_pedido->salidas;
         $cantidad = $request->input('cantidades');
         $max = sizeof($cantidad);
+        // Reserva de cantidades
+        for ($i = 0; $i < $max; $i++) {
+            $producto = Producto::find($salidas[$i]->movimiento->producto_id);
+            $producto->cantidad_reserva = $producto->cantidad_existencia;
+            $producto->save();
+        }
+
         // Comprobar si existencias alcanzan para procesar orden
         for ($i = 0; $i < $max; $i++) {
             $producto = Producto::find($salidas[$i]->movimiento->producto_id);
-            $cantidad_existencia = round($producto->cantidad_existencia, 4);
+            $cantidad_existencia = round($producto->cantidad_reserva, 4);
             $cantidad_salida = round($cantidad[$i], 4);
+            $producto->cantidad_reserva = $producto->cantidad_reserva - $cantidad_salida;
+            $producto->save();
             $salidas[$i]->movimiento->cantidad = $cantidad_salida;
-//            $salidas[$i]->save();
+            $salidas[$i]->movimiento->save();
             if ($cantidad_existencia < $cantidad_salida) {
                 // Mensaje de exito al guardar
                 session()->flash('mensaje.tipo', 'danger');

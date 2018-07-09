@@ -20,23 +20,25 @@ class ExportarController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
+    public function store3(Request $request) {
         $cuentas_generales = ExportacionSac::all();
-        $fecha = Carbon::parse($request->input('fecha'))->format('Y/m/d');
-        $fechaC = Carbon::parse($request->input('fecha'));
-        $ventas_dia = Venta::whereFecha($fecha)->get();
-        $compras_dia = Compra::whereFecha($fecha)->get();
+        $fecha = Carbon::parse($request->input('fecha'));
+        $ventas_dia = Venta::whereFecha($fecha->format('Y/m/d'))->get();
+        $compras_dia = Compra::whereFecha($fecha->format('Y/m/d'))->get();
+        $abonos_dia = Abono::whereFecha($fecha->format('Y/m/d'))->get();
         $tabla = collect();
-//        dd($ventas_dia);
+
+        // Variables
+//        $suma_ventas_fac = $ventas_dia->where('tipo_documento_id',1)->sum('venta_total_con_impuestos');
+        $suma_ventas_fac = 0.00;
+        $suma_abonos_fac = 0.00;
+
         // Ventas del dia
         foreach ($ventas_dia as $venta) {
-            // Ventas contado
-            if ($venta->condicion_pago_id = 1) {
-                // Compara si se pago el documento este dia
-                $abonos_dia = $venta->abonos->where('fecha','=',$fechaC);
-                $saldo_pendiente = round($venta->venta_total_con_impuestos,2) - round($abonos_dia->sum('cantidad'),2);
-                if ($saldo_pendiente == 0.00) {
+            // Ventas FAC
+            if ($venta->tipo_documento_id == 1) {
+                if ($venta->fecha_liquidado == $fecha) {
+                    // Logica venta fac pagada
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
                         'concepto' => 'Venta consumidor final # ' . $venta->numero,
@@ -59,20 +61,11 @@ class ExportarController extends Controller
                     ];
                     $tabla->push($fila);
                 } else {
-                    $saldo_pagado = round($venta->venta_total_con_impuestos,2) - $saldo_pendiente;
-                    if ($saldo_pagado > 0) {
-                        $fila = [
-                            'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
-                            'concepto' => 'Venta consumidor final # ' . $venta->numero,
-                            'cargo' => number_format($saldo_pagado,2),
-                            'abono' => number_format(0,2),
-                        ];
-                        $tabla->push($fila);
-                    }
+                    // Logica venta fac no pagada
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(12)->id_cuenta, // 12 - Cuenta clientes varios
                         'concepto' => 'Venta consumidor final # ' . $venta->numero,
-                        'cargo' => number_format($saldo_pendiente,2),
+                        'cargo' => number_format($venta->venta_total_con_impuestos,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
@@ -91,94 +84,193 @@ class ExportarController extends Controller
                     ];
                     $tabla->push($fila);
                 }
+            } else {
+                // Logica venta ccf al credito
+                $fila = [
+                    'id_cuenta' => $venta->cliente->cuenta_contable, // CxC de cliente
+                    'concepto' => 'Venta contribuyente # ' . $venta->numero,
+                    'cargo' => number_format($venta->venta_total_con_impuestos,2),
+                    'abono' => number_format(0,2),
+                ];
+                $tabla->push($fila);
+                $fila = [
+                    'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas Contribuyentes
+                    'concepto' => 'Por venta contribuyente # ' . $venta->numero,
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format($venta->venta_total,2),
+                ];
+                $tabla->push($fila);
+                $fila = [
+                    'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito Ventas a Contribuyentes
+                    'concepto' => 'IVA por venta contribuyente # ' . $venta->numero,
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format(($venta->venta_total * 0.13),2),
+                ];
+                $tabla->push($fila);
             }
-            // Venta Credito
-            elseif ($venta->condicion_pago_id > 1) {
-                if ($venta->cliente->retencion == false) {
-                    // Logica venta credito sin retencion
-                    $fila = [
-                        'id_cuenta' => $venta->cliente->cuenta_contable,
-                        'concepto' => 'Venta contribuyente # ' . $venta->numero,
-                        'cargo' => number_format($venta->venta_total_con_impuestos,2),
-                        'abono' => number_format(0,2),
-                    ];
-                    $tabla->push($fila);
-                    $fila = [
-                        'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas Contribuyentes
-                        'concepto' => 'Por venta contribuyente # ' . $venta->numero,
-                        'cargo' => number_format(0,2),
-                        'abono' => number_format($venta->venta_total,2),
-                    ];
-                    $tabla->push($fila);
-                    $fila = [
-                        'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito Ventas a Contribuyentes
-                        'concepto' => 'IVA por venta contribuyente # ' . $venta->numero,
-                        'cargo' => number_format(0,2),
-                        'abono' => number_format(($venta->venta_total * 0.13),2),
-                    ];
-                    $tabla->push($fila);
-                } else {
-                    // Logica venta credito con retencion
-                    if(round($venta->venta_total) >= 100) {
-                        // Logica Venta CCF con retencion
-                        $retencion = $venta->venta_total * 0.01;
-                        $venta_total = $venta->venta_total * 1.12;
+        } // Fin ventas del dia
+        // Abonos
+        foreach ($abonos_dia as $abono) {
+
+        }
+
+    }
+
+    public function store(Request $request)
+    {
+        $cuentas_generales = ExportacionSac::all();
+        $fecha = Carbon::parse($request->input('fecha'))->format('Y/m/d');
+        $fechaC = Carbon::parse($request->input('fecha'));
+        $ventas_dia = Venta::whereFecha($fecha)->where('estado_venta_id','!=','3')->get();
+        $compras_dia = Compra::whereFecha($fecha)->get();
+        $tabla = collect();
+        // Ventas del dia
+//        dd($ventas_dia->where('condicion_pago_id','1'));
+        foreach ($ventas_dia as $venta) {
+            // Ventas contado
+            if ($venta->condicion_pago_id == 1) {
+                // Compara si se pago el documento este dia
+                $abonos_dia = $venta->abonos->where('fecha','=',$fechaC);
+                $saldo_pendiente = round($venta->venta_total_con_impuestos,2) - round($abonos_dia->sum('cantidad'),2);
+                if ($saldo_pendiente == 0.00) {
+                    // Comparar si es FAC o CCF
+                    if ($venta->tipo_documento_id == 1) { // Es FAC
                         $fila = [
-                            'id_cuenta' => $venta->cliente->cuenta_contable,
-                            'concepto' => 'Venta contribuyente # ' . $venta->numero,
-                            'cargo' => number_format($venta_total,2),
-                            'abono' => number_format(0,2),
-                        ];
-                        $tabla->push($fila);
-                        $fila = [
-                            'id_cuenta' => $cuentas_generales->find(6)->id_cuenta, // 6 - Anticipo a impuesto por venta  -- IVA RETENIDO
-                            'concepto' => 'Anticipo a impuesto por venta contribuyente # ' . $venta->numero,
-                            'cargo' => number_format($retencion,2),
-                            'abono' => number_format(0,2),
-                        ];
-                        $tabla->push($fila);
-                        $fila = [
-                            'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas Contribuyentes
-                            'concepto' => 'Por venta contribuyente # ' . $venta->numero,
-                            'cargo' => number_format(0,2),
-                            'abono' => number_format($venta->venta_total,2),
-                        ];
-                        $tabla->push($fila);
-                        $fila = [
-                            'id_cuenta' => $cuentas_generales->find(3)->id_cuenta, // 5 - IVA Débito Ventas a Contribuyentes
-                            'concepto' => 'IVA por venta contribuyente # ' . $venta->numero,
-                            'cargo' => number_format(0,2),
-                            'abono' => number_format(($venta->venta_total * 0.13),2),
-                        ];
-                        $tabla->push($fila);
-                    } else {
-                        // Logica venta credito sin retencion
-                        $fila = [
-                            'id_cuenta' => $venta->cliente->cuenta_contable,
-                            'concepto' => 'Venta contribuyente # ' . $venta->numero,
+                            'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
+                            'concepto' => 'Venta consumidor final # ' . $venta->numero,
                             'cargo' => number_format($venta->venta_total_con_impuestos,2),
                             'abono' => number_format(0,2),
                         ];
                         $tabla->push($fila);
                         $fila = [
-                            'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas Contribuyentes
+                            'id_cuenta' => $cuentas_generales->find(2)->id_cuenta, // 2 - Ventas Consumidor Final
+                            'concepto' => 'Por venta consumidor final # ' . $venta->numero,
+                            'cargo' => number_format(0,2),
+                            'abono' => number_format($venta->venta_total,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(3)->id_cuenta, // 3 - IVA Débito Ventas a Consumidor Final
+                            'concepto' => 'IVA por venta consumidor final # ' . $venta->numero,
+                            'cargo' => number_format(0,2),
+                            'abono' => number_format(($venta->venta_total * 0.13),2),
+                        ];
+                        $tabla->push($fila);
+                    } else { // Es CCF
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
+                            'concepto' => 'Venta por contribuyente # ' . $venta->numero,
+                            'cargo' => number_format($venta->venta_total_con_impuestos,2),
+                            'abono' => number_format(0,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 2 - Ventas CCF
+                            'concepto' => 'Por venta Venta por contribuyente # ' . $venta->numero,
+                            'cargo' => number_format(0,2),
+                            'abono' => number_format($venta->venta_total,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito CCF
+                            'concepto' => 'IVA por Venta por contribuyente # ' . $venta->numero,
+                            'cargo' => number_format(0,2),
+                            'abono' => number_format(($venta->venta_total * 0.13),2),
+                        ];
+                        $tabla->push($fila);
+                    }
+                } else { // No se pago el documento en el dia
+                    $saldo_pagado = round($venta->venta_total_con_impuestos,2) - $saldo_pendiente;
+                    // Comprobar si es FAC o CCF
+                    if ($venta->tipo_documento_id == 1) { // Es FAC
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
+                            'concepto' => 'Venta consumidor final # ' . $venta->numero,
+                            'cargo' => number_format($saldo_pagado,2),
+                            'abono' => number_format(0,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(12)->id_cuenta, // 12 - Cuenta clientes varios
+                            'concepto' => 'Venta consumidor final # ' . $venta->numero,
+                            'cargo' => number_format($saldo_pendiente,2),
+                            'abono' => number_format(0,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(2)->id_cuenta, // 2 - Ventas Consumidor Final
+                            'concepto' => 'Por venta consumidor final # ' . $venta->numero,
+                            'cargo' => number_format(0,2),
+                            'abono' => number_format($venta->venta_total,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(3)->id_cuenta, // 3 - IVA Débito Ventas a Consumidor Final
+                            'concepto' => 'IVA por venta consumidor final # ' . $venta->numero,
+                            'cargo' => number_format(0,2),
+                            'abono' => number_format(($venta->venta_total * 0.13),2),
+                        ];
+                        $tabla->push($fila);
+                    } else { // Es CCF
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
+                            'concepto' => 'Venta contribuyente # ' . $venta->numero,
+                            'cargo' => number_format($saldo_pagado,2),
+                            'abono' => number_format(0,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $venta->cliente->cuenta_contable, // CxC de cliente
+                            'concepto' => 'Por venta contribuyente # ' . $venta->numero,
+                            'cargo' => number_format($saldo_pendiente,2),
+                            'abono' => number_format(0,2),
+                        ];
+                        $tabla->push($fila);
+                        $fila = [
+                            'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas CCF
                             'concepto' => 'Por venta contribuyente # ' . $venta->numero,
                             'cargo' => number_format(0,2),
                             'abono' => number_format($venta->venta_total,2),
                         ];
                         $tabla->push($fila);
                         $fila = [
-                            'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito Ventas a Contribuyentes
+                            'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito Ventas CCF
                             'concepto' => 'IVA por venta contribuyente # ' . $venta->numero,
                             'cargo' => number_format(0,2),
                             'abono' => number_format(($venta->venta_total * 0.13),2),
                         ];
+                        $tabla->push($fila);
                     }
                 }
             }
+            // Venta Credito
+            elseif ($venta->condicion_pago_id > 1) {
+                // Logica venta credito
+                $fila = [
+                    'id_cuenta' => $venta->cliente->cuenta_contable,
+                    'concepto' => 'Venta contribuyente # ' . $venta->numero,
+                    'cargo' => number_format($venta->venta_total_con_impuestos,2),
+                    'abono' => number_format(0,2),
+                ];
+                $tabla->push($fila);
+                $fila = [
+                    'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas Contribuyentes
+                    'concepto' => 'Por venta contribuyente # ' . $venta->numero,
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format($venta->venta_total,2),
+                ];
+                $tabla->push($fila);
+                $fila = [
+                    'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito Ventas a Contribuyentes
+                    'concepto' => 'IVA por venta contribuyente # ' . $venta->numero,
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format(($venta->venta_total * 0.13),2),
+                ];
+                $tabla->push($fila);
+            }
         }
 
-        // Compras contado
+        // Compras
         foreach ($compras_dia as $compra) {
             // Compra contado
             if ($compra->condicion_pago_id == 1) {
@@ -352,10 +444,16 @@ class ExportarController extends Controller
 
         // Abonos
         $abonos = Abono::where('fecha','=',$fecha)->get();
-//        dd($abonos);
+        $abonos_nd = collect();
         foreach ($abonos as $abono) {
+            if ($abono->venta->fecha != $fechaC) {
+                $abonos_nd->push($abono);
+            }
+        }
+//        dd($abonos_nd);
+        foreach ($abonos_nd as $abono) {
             // Efectivo
-            if ($abono->forma_pago_id == 1 && $abono->venta->condicion_pago_id > 1) {
+            if ($abono->forma_pago_id == 1) {
                 $fila = [
                     'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
                     'concepto' => 'Abono a compra # ' . $abono->venta->numero,
@@ -370,7 +468,7 @@ class ExportarController extends Controller
                     'abono' => number_format($abono->cantidad,2),
                 ];
                 $tabla->push($fila);
-            } elseif(($abono->forma_pago_id == 2 || $abono->forma_pago_id == 3) && $abono->venta->condicion_pago_id > 1) {
+            } elseif(($abono->forma_pago_id == 2 || $abono->forma_pago_id == 3)) {
                 $fila = [
                     'id_cuenta' => $cuentas_generales->find(11)->id_cuenta, // 11 - Cuentas corrientes
                     'concepto' => 'Abono a compra # ' . $abono->venta->numero,
@@ -385,27 +483,24 @@ class ExportarController extends Controller
                     'abono' => number_format($abono->cantidad,2),
                 ];
                 $tabla->push($fila);
-            }
-            if ($abono->forma_pago_id == 1 && $abono->venta->condicion_pago_id == 1) {
-                if ($abono->fecha != $abono->venta->fecha) {
-                    $fila = [
-                        'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
-                        'concepto' => 'Abono a compra # ' . $abono->venta->numero,
-                        'cargo' => number_format($abono->cantidad,2),
-                        'abono' => number_format(0,2),
-                    ];
-                    $tabla->push($fila);
-                    $fila = [
-                        'id_cuenta' => $cuentas_generales->find(12)->id_cuenta, // 12 - Cuenta clientes varios
-                        'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
-                        'cargo' => number_format(0,2),
-                        'abono' => number_format($abono->cantidad,2),
-                    ];
-                    $tabla->push($fila);
-                }
+            } elseif ($abono->forma_pago_id == 4) { // Retencion
+                $fila = [
+                    'id_cuenta' => $cuentas_generales->find(6)->id_cuenta, // 6 - IVA retenido por ventas
+                    'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                    'cargo' => number_format($abono->cantidad,2),
+                    'abono' => number_format(0,2),
+                ];
+                $tabla->push($fila);
+                $fila = [
+                    'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                    'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format($abono->cantidad,2),
+                ];
+                $tabla->push($fila);
             }
         }
-//        dd($tabla);
+//        dd($tabla->sum('abono'));
         $nombre_documento = 'datos-para-sac-dia-' . $fecha;
         Excel::create($nombre_documento, function ($excel) use ($tabla) {
             $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
