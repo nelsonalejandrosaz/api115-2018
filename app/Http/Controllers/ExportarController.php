@@ -769,7 +769,7 @@ class ExportarController extends Controller
         }
 
 
-        dd($tabla2->sum('cargo'));
+//        dd($tabla2->sum('cargo'));
 
         $nombre_documento = 'datos-para-sac-dia-' . $fecha;
         Excel::create($nombre_documento, function ($excel) use ($tabla2) {
