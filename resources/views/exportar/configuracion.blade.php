@@ -34,7 +34,23 @@
 
                                 <form action="{{route('exportar.configuracion.store')}}" method="POST">
                                     {{ csrf_field() }}
-                                    <h4>Exportar datos a SAC</h4><br>
+                                    <h4>Exportar datos a SAC Resumen</h4><br>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Fecha</label>
+                                        <div class="col-sm-4">
+                                            <input required type="date" class="form-control" name="fecha" value="{{\Carbon\Carbon::now()->format('Y-m-d')}}">
+                                        </div>
+                                    </div>
+                                    <br><br><br>
+                                    <button type="submit" class="btn btn-lg btn-default">Exportar a CSV</button>
+                                </form>
+
+                                <br><br>
+
+                                <form action="{{route('exportar.configuracion.store2')}}" method="POST">
+                                    {{ csrf_field() }}
+                                    <h4>Exportar datos a SAC Detalle</h4><br>
 
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Fecha</label>

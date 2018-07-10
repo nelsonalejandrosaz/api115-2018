@@ -327,6 +327,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('exportar/sac/','DevController@Entradas1');
     Route::get('exportar/sac/configuracion','ExportarController@configuracionSAC')->name('exportar.configuracion');
     Route::post('exportar/sac/configuracion','ExportarController@store')->name('exportar.configuracion.store');
+    Route::post('exportar/sac/configuracion2','ExportarController@store2')->name('exportar.configuracion.store2');
     Route::get('exportar/sac/configuracion/{id}','ExportarController@edit')->name('exportar.configuracion.edit');
     Route::post('exportar/sac/configuracion/{id}','ExportarController@update')->name('exportar.configuracion.update');
 
