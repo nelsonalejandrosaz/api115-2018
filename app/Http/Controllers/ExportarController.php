@@ -289,6 +289,90 @@ class ExportarController extends Controller
                 ];
                 $tabla->push($fila);
                 $suma_iva_ccf += number_format(($venta->venta_total * 0.13),2);
+                $abonos_ccf = $venta->abonos;
+                if ($abonos_ccf->isNotEmpty()) {
+                    foreach ($abonos_ccf as $abono) {
+                        // Efectivo
+                        if ($abono->forma_pago_id == 1 || $abono->forma_pago_id == 2) {
+                            $fila = [
+                                'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
+                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format($abono->cantidad,2),
+                                'abono' => number_format(0,2),
+                            ];
+                            $tabla->push($fila);
+                            $suma_caja_ventas += number_format($abono->cantidad,2);
+                            $fila = [
+                                'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format(0,2),
+                                'abono' => number_format($abono->cantidad,2),
+                            ];
+                            $tabla->push($fila);
+                        } elseif(($abono->forma_pago_id == 3)) {
+                            $fila = [
+                                'id_cuenta' => '1101030102', // 11 - Cuentas corrientes Agricola
+                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format($abono->cantidad,2),
+                                'abono' => number_format(0,2),
+                            ];
+                            $tabla->push($fila);
+                            $fila = [
+                                'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format(0,2),
+                                'abono' => number_format($abono->cantidad,2),
+                            ];
+                            $tabla->push($fila);
+                        } elseif ($abono->forma_pago_id == 4) { // Retencion
+                            $fila = [
+                                'id_cuenta' => $cuentas_generales->find(6)->id_cuenta, // 6 - IVA retenido por ventas
+                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format($abono->cantidad,2),
+                                'abono' => number_format(0,2),
+                            ];
+                            $tabla->push($fila);
+                            $fila = [
+                                'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format(0,2),
+                                'abono' => number_format($abono->cantidad,2),
+                            ];
+                            $tabla->push($fila);
+                        } elseif(($abono->forma_pago_id == 5)) {
+                            $fila = [
+                                'id_cuenta' => '1101030101', // 11 - Cuentas corrientes Citi
+                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format($abono->cantidad,2),
+                                'abono' => number_format(0,2),
+                            ];
+                            $tabla->push($fila);
+                            $fila = [
+                                'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format(0,2),
+                                'abono' => number_format($abono->cantidad,2),
+                            ];
+                            $tabla->push($fila);
+                        } elseif(($abono->forma_pago_id == 6)) {
+                            $fila = [
+                                'id_cuenta' => '1101030103', // 11 - Cuentas corrientes Scotiablank
+                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format($abono->cantidad,2),
+                                'abono' => number_format(0,2),
+                            ];
+                            $tabla->push($fila);
+                            $fila = [
+                                'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'cargo' => number_format(0,2),
+                                'abono' => number_format($abono->cantidad,2),
+                            ];
+                            $tabla->push($fila);
+                        }
+                    }
+
+                }
             }
         }
 
@@ -685,7 +769,7 @@ class ExportarController extends Controller
         }
 
 
-//        dd($tabla2->sum('abono'));
+        dd($tabla2->sum('cargo'));
 
         $nombre_documento = 'datos-para-sac-dia-' . $fecha;
         Excel::create($nombre_documento, function ($excel) use ($tabla2) {
