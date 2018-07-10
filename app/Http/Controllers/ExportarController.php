@@ -557,20 +557,131 @@ class ExportarController extends Controller
         $tabla = $tabla->groupBy('id_cuenta');
         $tabla2 = collect();
 
+//        dd($tabla);
+
         foreach ($tabla as $item) {
             $cargo = 0.00;
             $abono = 0.00;
             $codigo_cuenta = $item->first()['id_cuenta'];
-            $concepto = "Sumas del dia ". $fechaC->format('d-m-Y');
-            $cargo += $item->sum('cargo');
-            $abono += $item->sum('abono');
-            $fila = [
-                'id_cuenta' => $codigo_cuenta,
-                'concepto' => $concepto,
-                'cargo' => number_format($cargo,2),
-                'abono' => number_format($abono,2),
-            ];
-            $tabla2->push($fila);
+            if ($codigo_cuenta == '110101') { // Caja general
+                $concepto = "Entrada del dia";
+                $cargo += $item->sum('cargo');
+                $abono += $item->sum('abono');
+                if ($cargo > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format($cargo,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+                if ($abono > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($abono,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+            } elseif ($codigo_cuenta == '1101030101' || $codigo_cuenta == '1101030102' || $codigo_cuenta == '1101030103') { // Depositos
+                $concepto = "Entrada del dia en depositos";
+                $cargo += $item->sum('cargo');
+                $abono += $item->sum('abono');
+                if ($cargo > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format($cargo,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+                if ($abono > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($abono,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+            } elseif ($codigo_cuenta == '51010101' || $codigo_cuenta == '51010102') { // Ventas del dia
+                $concepto = "Ventas del dia";
+                $cargo += $item->sum('cargo');
+                $abono += $item->sum('abono');
+                if ($cargo > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format($cargo,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+                if ($abono > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($abono,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+            } elseif ($codigo_cuenta == '210601' || $codigo_cuenta == '210602') { // IVA por ventas
+                $concepto = 'IVA por ventas del dia';
+                $cargo += $item->sum('cargo');
+                $abono += $item->sum('abono');
+                if ($cargo > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format($cargo,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+                if ($abono > 0) {
+                    $fila = [
+                        'id_cuenta' => $codigo_cuenta,
+                        'concepto' => $concepto,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($abono,2),
+                    ];
+                    $tabla2->push($fila);
+                }
+            } else {
+                foreach ($item as $value) {
+                    $fila = [
+                        'id_cuenta' => $value['id_cuenta'],
+                        'concepto' => $value['concepto'],
+                        'cargo' => number_format($value['cargo'],2),
+                        'abono' => number_format($value['abono'],2),
+                    ];
+                    $tabla2->push($fila);
+                }
+            }
+//            $cargo += $item->sum('cargo');
+//            $abono += $item->sum('abono');
+//            if ($cargo > 0) {
+//                $fila = [
+//                    'id_cuenta' => $codigo_cuenta,
+//                    'concepto' => $concepto,
+//                    'cargo' => number_format($cargo,2),
+//                    'abono' => number_format(0,2),
+//                ];
+//                $tabla2->push($fila);
+//            }
+//            if ($abono > 0) {
+//                $fila = [
+//                    'id_cuenta' => $codigo_cuenta,
+//                    'concepto' => $concepto,
+//                    'cargo' => number_format(0,2),
+//                    'abono' => number_format($abono,2),
+//                ];
+//                $tabla2->push($fila);
+//            }
         }
 
 
@@ -1026,7 +1137,7 @@ class ExportarController extends Controller
 
 //        $tabla = $tabla->groupBy('id_cuenta');
         $tabla2 = collect();
-        
+
 
 
 //        dd($tabla2->sum('abono'));
