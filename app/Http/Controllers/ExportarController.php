@@ -207,7 +207,7 @@ class ExportarController extends Controller
                         $suma_caja_ventas += $venta->venta_total_con_impuestos;
                         $fila = [
                             'id_cuenta' => $cuentas_generales->find(12)->id_cuenta, // 12 - Cuenta clientes varios
-                            'concepto' => 'Venta consumidor final # ' . $venta->numero,
+                            'concepto' => 'FAC # ' . $venta->numero,
                             'cargo' => number_format($saldo_pendiente,2),
                             'abono' => number_format(0,2),
                         ];
@@ -239,14 +239,14 @@ class ExportarController extends Controller
                         $suma_caja_ventas += number_format($saldo_pagado,2);
                         $fila = [
                             'id_cuenta' => $venta->cliente->cuenta_contable, // CxC de cliente
-                            'concepto' => 'Por venta contribuyente # ' . $venta->numero,
+                            'concepto' => 'CCF # ' . $venta->numero,
                             'cargo' => number_format($saldo_pendiente,2),
                             'abono' => number_format(0,2),
                         ];
                         $tabla->push($fila);
                         $fila = [
                             'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas CCF
-                            'concepto' => 'Por venta contribuyente # ' . $venta->numero,
+                            'concepto' => 'CCF # ' . $venta->numero,
                             'cargo' => number_format(0,2),
                             'abono' => number_format($venta->venta_total,2),
                         ];
@@ -268,14 +268,14 @@ class ExportarController extends Controller
                 // Logica venta credito
                 $fila = [
                     'id_cuenta' => $venta->cliente->cuenta_contable,
-                    'concepto' => 'Venta contribuyente # ' . $venta->numero,
+                    'concepto' => 'CCF # ' . $venta->numero,
                     'cargo' => number_format($venta->venta_total_con_impuestos,2),
                     'abono' => number_format(0,2),
                 ];
                 $tabla->push($fila);
                 $fila = [
                     'id_cuenta' => $cuentas_generales->find(4)->id_cuenta, // 4 - Ventas Contribuyentes
-                    'concepto' => 'Por venta contribuyente # ' . $venta->numero,
+                    'concepto' => 'POR CCF # ' . $venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format($venta->venta_total,2),
                 ];
@@ -283,7 +283,7 @@ class ExportarController extends Controller
                 $suma_ventas_ccf += number_format($venta->venta_total,2);
                 $fila = [
                     'id_cuenta' => $cuentas_generales->find(5)->id_cuenta, // 5 - IVA Débito Ventas a Contribuyentes
-                    'concepto' => 'IVA por venta contribuyente # ' . $venta->numero,
+                    'concepto' => 'IVA POR CCF # ' . $venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format(($venta->venta_total * 0.13),2),
                 ];
@@ -291,6 +291,7 @@ class ExportarController extends Controller
                 $suma_iva_ccf += number_format(($venta->venta_total * 0.13),2);
                 $abonos_ccf = $venta->abonos;
                 if ($abonos_ccf->isNotEmpty()) {
+
                     foreach ($abonos_ccf as $abono) {
                         // Efectivo
                         if ($abono->forma_pago_id == 1 || $abono->forma_pago_id == 2) {
@@ -304,7 +305,7 @@ class ExportarController extends Controller
                             $suma_caja_ventas += number_format($abono->cantidad,2);
                             $fila = [
                                 'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                                 'cargo' => number_format(0,2),
                                 'abono' => number_format($abono->cantidad,2),
                             ];
@@ -312,14 +313,14 @@ class ExportarController extends Controller
                         } elseif(($abono->forma_pago_id == 3)) {
                             $fila = [
                                 'id_cuenta' => '1101030102', // 11 - Cuentas corrientes Agricola
-                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'ABONO A COMPRAS # ' . $abono->venta->numero,
                                 'cargo' => number_format($abono->cantidad,2),
                                 'abono' => number_format(0,2),
                             ];
                             $tabla->push($fila);
                             $fila = [
                                 'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                                 'cargo' => number_format(0,2),
                                 'abono' => number_format($abono->cantidad,2),
                             ];
@@ -334,7 +335,7 @@ class ExportarController extends Controller
                             $tabla->push($fila);
                             $fila = [
                                 'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'COMPROBANTE DE RETENCION ### POR VENTA # ' . $abono->venta->numero,
                                 'cargo' => number_format(0,2),
                                 'abono' => number_format($abono->cantidad,2),
                             ];
@@ -342,14 +343,14 @@ class ExportarController extends Controller
                         } elseif(($abono->forma_pago_id == 5)) {
                             $fila = [
                                 'id_cuenta' => '1101030101', // 11 - Cuentas corrientes Citi
-                                'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'ABONO A COMPRA # ' . $abono->venta->numero,
                                 'cargo' => number_format($abono->cantidad,2),
                                 'abono' => number_format(0,2),
                             ];
                             $tabla->push($fila);
                             $fila = [
                                 'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                                 'cargo' => number_format(0,2),
                                 'abono' => number_format($abono->cantidad,2),
                             ];
@@ -364,7 +365,7 @@ class ExportarController extends Controller
                             $tabla->push($fila);
                             $fila = [
                                 'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                                'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                                'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                                 'cargo' => number_format(0,2),
                                 'abono' => number_format($abono->cantidad,2),
                             ];
@@ -384,21 +385,21 @@ class ExportarController extends Controller
                 if ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == false) {
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format(0,2),
                         'abono' => number_format($compra->compra_total_con_impuestos,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(7)->id_cuenta, // 7 - INVENTARIOS DE MATERIA PRIMA
-                        'concepto' => 'Por compra # ' . $compra->numero,
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format($compra->compra_total,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(8)->id_cuenta, // 8 - IVA compras locales
-                        'concepto' => 'IVA por compra # ' . $compra->numero,
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format(($compra->compra_total * 0.13),2),
                         'abono' => number_format(0,2),
                     ];
@@ -410,28 +411,28 @@ class ExportarController extends Controller
                     $compra_total = $compra->compra_total * 1.14;
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format(0,2),
                         'abono' => number_format($compra_total,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(9)->id_cuenta, // 9 - IVA PERCIBIDO
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format($percepcion,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(7)->id_cuenta, // 7 - INVENTARIOS DE MATERIA PRIMA
-                        'concepto' => 'Por compra # ' . $compra->numero,
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format($compra->compra_total,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(8)->id_cuenta, // 8 - IVA compras locales
-                        'concepto' => 'IVA por compra # ' . $compra->numero,
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format(($compra->compra_total * 0.13),2),
                         'abono' => number_format(0,2),
                     ];
@@ -441,21 +442,21 @@ class ExportarController extends Controller
                 elseif ($compra->proveedor->nacional == false) {
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(1)->id_cuenta, // 1 - Caja general
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format(0,2),
                         'abono' => number_format($compra->compra_total_con_impuestos,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(7)->id_cuenta, // 7 - INVENTARIOS DE MATERIA PRIMA
-                        'concepto' => 'Por compra # ' . $compra->numero,
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format($compra->compra_total,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(10)->id_cuenta, // 10 - IVA compras importaciones
-                        'concepto' => 'IVA por compra # ' . $compra->numero,
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format(($compra->compra_total * 0.13),2),
                         'abono' => number_format(0,2),
                     ];
@@ -468,21 +469,21 @@ class ExportarController extends Controller
                 if ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == false) {
                     $fila = [
                         'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format(0,2),
                         'abono' => number_format($compra->compra_total_con_impuestos,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(7)->id_cuenta, // 7 - INVENTARIOS DE MATERIA PRIMA
-                        'concepto' => 'Por compra # ' . $compra->numero,
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format($compra->compra_total,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(8)->id_cuenta, // 8 - IVA compras locales
-                        'concepto' => 'IVA por compra # ' . $compra->numero,
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format(($compra->compra_total * 0.13),2),
                         'abono' => number_format(0,2),
                     ];
@@ -494,28 +495,28 @@ class ExportarController extends Controller
                     $compra_total = $compra->compra_total * 1.14;
                     $fila = [
                         'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format(0,2),
                         'abono' => number_format($compra_total,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(9)->id_cuenta, // 9 - IVA PERCIBIDO
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format($percepcion,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(7)->id_cuenta, // 7 - INVENTARIOS DE MATERIA PRIMA
-                        'concepto' => 'Por compra # ' . $compra->numero,
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format($compra->compra_total,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(8)->id_cuenta, // 8 - IVA compras locales
-                        'concepto' => 'IVA por compra # ' . $compra->numero,
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format(($compra->compra_total * 0.13),2),
                         'abono' => number_format(0,2),
                     ];
@@ -525,21 +526,21 @@ class ExportarController extends Controller
                 elseif ($compra->proveedor->nacional == false) {
                     $fila = [
                         'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
-                        'concepto' => 'Compra # ' . $compra->numero,
+                        'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => number_format(0,2),
                         'abono' => number_format($compra->compra_total_con_impuestos,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(7)->id_cuenta, // 7 - INVENTARIOS DE MATERIA PRIMA
-                        'concepto' => 'Por compra # ' . $compra->numero,
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format($compra->compra_total,2),
                         'abono' => number_format(0,2),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => $cuentas_generales->find(10)->id_cuenta, // 10 - IVA compras importaciones
-                        'concepto' => 'IVA por compra # ' . $compra->numero,
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
                         'cargo' => number_format(($compra->compra_total * 0.13),2),
                         'abono' => number_format(0,2),
                     ];
@@ -570,7 +571,7 @@ class ExportarController extends Controller
                 $suma_caja_ventas += number_format($abono->cantidad,2);
                 $fila = [
                     'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                    'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format($abono->cantidad,2),
                 ];
@@ -578,14 +579,14 @@ class ExportarController extends Controller
             } elseif(($abono->forma_pago_id == 3)) {
                 $fila = [
                     'id_cuenta' => '1101030102', // 11 - Cuentas corrientes Agricola
-                    'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'ABONO A COMPRAS # ' . $abono->venta->numero,
                     'cargo' => number_format($abono->cantidad,2),
                     'abono' => number_format(0,2),
                 ];
                 $tabla->push($fila);
                 $fila = [
                     'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                    'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format($abono->cantidad,2),
                 ];
@@ -593,14 +594,14 @@ class ExportarController extends Controller
             } elseif ($abono->forma_pago_id == 4) { // Retencion
                 $fila = [
                     'id_cuenta' => $cuentas_generales->find(6)->id_cuenta, // 6 - IVA retenido por ventas
-                    'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'COMPROBANTE DE RETENCION ### POR VENTA # ' . $abono->venta->numero,
                     'cargo' => number_format($abono->cantidad,2),
                     'abono' => number_format(0,2),
                 ];
                 $tabla->push($fila);
                 $fila = [
                     'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                    'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'COMPROBANTE DE RETENCION ### POR VENTA # ' . $abono->venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format($abono->cantidad,2),
                 ];
@@ -608,14 +609,14 @@ class ExportarController extends Controller
             } elseif(($abono->forma_pago_id == 5)) {
                 $fila = [
                     'id_cuenta' => '1101030101', // 11 - Cuentas corrientes Citi
-                    'concepto' => 'Abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'ABONO A COMPRA # ' . $abono->venta->numero,
                     'cargo' => number_format($abono->cantidad,2),
                     'abono' => number_format(0,2),
                 ];
                 $tabla->push($fila);
                 $fila = [
                     'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                    'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format($abono->cantidad,2),
                 ];
@@ -630,7 +631,7 @@ class ExportarController extends Controller
                 $tabla->push($fila);
                 $fila = [
                     'id_cuenta' => $abono->venta->cliente->cuenta_contable,
-                    'concepto' => 'Por abono a compra # ' . $abono->venta->numero,
+                    'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' #' . $abono->venta->numero,
                     'cargo' => number_format(0,2),
                     'abono' => number_format($abono->cantidad,2),
                 ];
@@ -648,7 +649,7 @@ class ExportarController extends Controller
             $abono = 0.00;
             $codigo_cuenta = $item->first()['id_cuenta'];
             if ($codigo_cuenta == '110101') { // Caja general
-                $concepto = "Entrada del dia";
+                $concepto = "INGRESO DE ESTE DIA";
                 $cargo += $item->sum('cargo');
                 $abono += $item->sum('abono');
                 if ($cargo > 0) {
@@ -670,7 +671,7 @@ class ExportarController extends Controller
                     $tabla2->push($fila);
                 }
             } elseif ($codigo_cuenta == '1101030101' || $codigo_cuenta == '1101030102' || $codigo_cuenta == '1101030103') { // Depositos
-                $concepto = "Entrada del dia en depositos";
+                $concepto = "INGRESO DE ESTE DIA ABONOS";
                 $cargo += $item->sum('cargo');
                 $abono += $item->sum('abono');
                 if ($cargo > 0) {
@@ -692,7 +693,7 @@ class ExportarController extends Controller
                     $tabla2->push($fila);
                 }
             } elseif ($codigo_cuenta == '51010101' || $codigo_cuenta == '51010102') { // Ventas del dia
-                $concepto = "Ventas del dia";
+                $concepto = "VENTAS DE ESTE DIA";
                 $cargo += $item->sum('cargo');
                 $abono += $item->sum('abono');
                 if ($cargo > 0) {
@@ -714,7 +715,7 @@ class ExportarController extends Controller
                     $tabla2->push($fila);
                 }
             } elseif ($codigo_cuenta == '210601' || $codigo_cuenta == '210602') { // IVA por ventas
-                $concepto = 'IVA por ventas del dia';
+                $concepto = 'IVA VENTAS DE ESTE DIA';
                 $cargo += $item->sum('cargo');
                 $abono += $item->sum('abono');
                 if ($cargo > 0) {
@@ -746,26 +747,6 @@ class ExportarController extends Controller
                     $tabla2->push($fila);
                 }
             }
-//            $cargo += $item->sum('cargo');
-//            $abono += $item->sum('abono');
-//            if ($cargo > 0) {
-//                $fila = [
-//                    'id_cuenta' => $codigo_cuenta,
-//                    'concepto' => $concepto,
-//                    'cargo' => number_format($cargo,2),
-//                    'abono' => number_format(0,2),
-//                ];
-//                $tabla2->push($fila);
-//            }
-//            if ($abono > 0) {
-//                $fila = [
-//                    'id_cuenta' => $codigo_cuenta,
-//                    'concepto' => $concepto,
-//                    'cargo' => number_format(0,2),
-//                    'abono' => number_format($abono,2),
-//                ];
-//                $tabla2->push($fila);
-//            }
         }
 
 
