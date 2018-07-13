@@ -311,7 +311,7 @@ class OrdenPedidoController extends Controller
             // Se crea el movimiento; tipo_movimiento -> 4: Salida por orden
             $movimiento = Movimiento::create([
                 'producto_id' => $producto->id,
-                'tipo_movimiento_id' => 4,
+                'tipo_movimiento_id' => 3,
                 'salida_id' => $salida->id,
                 'fecha' => $orden_pedido->fecha,
                 'detalle' => 'Salida de producto por orden de pedido n° ' . $orden_pedido->numero,

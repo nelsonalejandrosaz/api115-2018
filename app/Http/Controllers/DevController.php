@@ -42,6 +42,18 @@ class DevController extends Controller
         return "Funcion ejecutada correctamente";
     }
 
+    public function VentasREF()
+    {
+        $orden_pedidos = OrdenPedido::all();
+        foreach ($orden_pedidos as $orden_pedido) {
+            foreach ($orden_pedido->salidas as $salida) {
+                $salida->movimiento->tipo_movimiento_id = 3;
+                $salida->movimiento->save();
+            }
+        }
+        dd("ok");
+    }
+
     public function VentaSinOrden()
     {
         $tipo_documentos = TipoDocumento::all();
@@ -82,10 +94,8 @@ class DevController extends Controller
     public function Corregir()
     {
         $ventas = Venta::all();
-        foreach ($ventas as $venta)
-        {
-            if ($venta->orden_pedido == null)
-            {
+        foreach ($ventas as $venta) {
+            if ($venta->orden_pedido == null) {
                 dd($venta);
             }
             $venta->condicion_pago_id = $venta->orden_pedido->condicion_pago_id;
@@ -96,9 +106,8 @@ class DevController extends Controller
 
     public function Corregir2()
     {
-        $producciones = Produccion::where('id','<',221)->withTrashed()->get();
-        foreach ($producciones as $produccion)
-        {
+        $producciones = Produccion::where('id', '<', 221)->withTrashed()->get();
+        foreach ($producciones as $produccion) {
             $produccion->procesado = true;
             $produccion->save();
         }
@@ -149,15 +158,14 @@ class DevController extends Controller
         // Se realiza el detalle de la produccion
         $bodegueros = $request->input('fabricado_id');
         $max = sizeof($bodegueros);
-        for ($i = 0; $i < $max; $i ++)
-        {
+        for ($i = 0; $i < $max; $i++) {
             $detalle_controller = DetalleProduccion::create([
                 'bodega_id' => $bodegueros[$i],
                 'produccion_id' => $produccion->id,
             ]);
         }
 
-        return redirect()->route('produccionPrevia',['id' => $produccion->id]);
+        return redirect()->route('produccionPrevia', ['id' => $produccion->id]);
     }
 
     public function ProduccionPrevia($id)
@@ -171,8 +179,7 @@ class DevController extends Controller
         $bodegueros = User::whereRolId($rol_bodega->id)->get();
 
         // Calculando cantidades
-        foreach ($formula->componentes as $componente)
-        {
+        foreach ($formula->componentes as $componente) {
             $componente->cantidad = ($cantidad_produccion * $componente->cantidad) / $formula->cantidad_formula;
         }
 
@@ -201,21 +208,20 @@ class DevController extends Controller
         /**
          * Validación de existencias
          */
-        for ($i = 0; $i < $max; $i++)
-        {
+        for ($i = 0; $i < $max; $i++) {
             $producto = Producto::find($componentes[$i]);
             $cantidad = $cantidades[$i];
-            $cantidad = round($cantidad,4);
+            $cantidad = round($cantidad, 4);
             $cantidad_real = $cantidad / 1000;
-            $cantidad_real = round($cantidad_real,4);
-            $cantidad_producto = round($producto->cantidad_existencia,4);
-            if ($cantidad_producto < $cantidad_real){
+            $cantidad_real = round($cantidad_real, 4);
+            $cantidad_producto = round($producto->cantidad_existencia, 4);
+            if ($cantidad_producto < $cantidad_real) {
                 // Mensaje de error al guardar
                 session()->flash('mensaje.tipo', 'danger');
                 session()->flash('mensaje.icono', 'fa-close');
                 session()->flash('mensaje.titulo', 'Error!');
                 session()->flash('mensaje.contenido', 'No hay suficiente ' . $producto->nombre . ' necesaria para generar la producción!');
-                return redirect()->route('produccionPrevia',['id' => $produccion->id]);
+                return redirect()->route('produccionPrevia', ['id' => $produccion->id]);
             }
         }
         /**
@@ -224,25 +230,24 @@ class DevController extends Controller
 
         $costo_total_produccion = 0.00;
         // Se registran las salidas
-        for ($i = 0; $i < $max; $i++)
-        {
+        for ($i = 0; $i < $max; $i++) {
             // Se carga el producto
             $producto = Producto::find($componentes[$i]);
             $cantidad = $cantidades[$i];
-            $cantidad = round($cantidad,4);
+            $cantidad = round($cantidad, 4);
             $cantidad_real = $cantidad / 1000;
-            $cantidad_real = round($cantidad_real,4);
+            $cantidad_real = round($cantidad_real, 4);
             $cantidad_salida = $cantidad;
             // Se calcula la cantidad y costo
             // Calculo costo salida
             $costo_unitario_salida = $producto->costo;
             $costo_total_salida = $cantidad_real * $costo_unitario_salida;
-            $costo_total_salida = round($costo_total_salida,4);
+            $costo_total_salida = round($costo_total_salida, 4);
             // Calculo de cantidad y costos existencias
             $cantidad_existencia = $producto->cantidad_existencia - $cantidad_real;
             $costo_unitario_existencia = $producto->costo;
             $costo_total_existencia = $cantidad_existencia * $costo_unitario_existencia;
-            $costo_total_existencia = round($costo_total_existencia,4);
+            $costo_total_existencia = round($costo_total_existencia, 4);
 
             // Se crea la salida
             $salida = Salida::create([
@@ -280,11 +285,11 @@ class DevController extends Controller
         $producto = Producto::find($formula->producto_id);
         // Se calcula la cantidad y costo
         $costo_unitario_produccion = $costo_total_produccion / $produccion->cantidad;
-        $costo_unitario_produccion = round($costo_unitario_produccion,4);
+        $costo_unitario_produccion = round($costo_unitario_produccion, 4);
         $cantidad = $produccion->cantidad;
         $costo_unitario_entrada = $costo_unitario_produccion;
         $costo_total_entrada = $cantidad * $costo_unitario_entrada;
-        $costo_total_entrada = round($costo_total_entrada,4);
+        $costo_total_entrada = round($costo_total_entrada, 4);
 //            Calculo de existencias
         $cantidad_existencia = $producto->cantidad_existencia + $cantidad;
         /**
@@ -295,10 +300,10 @@ class DevController extends Controller
         } else {
             $costo_total_existencia = $producto->costo * $producto->cantidad_existencia;
             $costo_unitario_existencia = ($costo_total_existencia + $costo_total_entrada) / $cantidad_existencia;
-            $costo_unitario_existencia = round($costo_unitario_existencia,4);
+            $costo_unitario_existencia = round($costo_unitario_existencia, 4);
         }
         $costo_total_existencia = $costo_unitario_existencia * $cantidad_existencia;
-        $costo_total_existencia = round($costo_total_existencia,4);
+        $costo_total_existencia = round($costo_total_existencia, 4);
 
         // Se crea la entrada
         $entrada = Entrada::create([

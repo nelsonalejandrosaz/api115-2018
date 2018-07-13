@@ -13,12 +13,13 @@ class CreateCierreDiariosTable extends Migration
      */
     public function up()
     {
-        Schema::create('cierre_muensual', function (Blueprint $table) {
+        Schema::create('cierre_mensual', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('producto_id')->unsigned();
             $table->date('fecha');
             $table->string('detalle',160);
-            $table->decimal('inventario_inicial',16,2);
-            $table->decimal('inventario_final',16,2);
+            $table->decimal('inventario_inicial',16,4);
+            $table->decimal('inventario_final',16,4);
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateCierreDiariosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cierre_diarios');
+        Schema::dropIfExists('cierre_mensual');
     }
 }

@@ -274,21 +274,21 @@
                         </div><!-- /.row -->
                         <div class="row">
 
-                            {{--<div class="col-lg-3 col-xs-6">--}}
-                            {{--<!-- small box -->--}}
-                            {{--<div class="small-box bg-gray">--}}
-                            {{--<div class="inner">--}}
-                            {{--<h3 style="font-size: 25px">Movimientos</h3>--}}
-                            {{--<h3 style="font-size: 25px">producto</h3>--}}
-                            {{--</div>--}}
-                            {{--<div class="icon">--}}
-                            {{--<i class="fa fa-exchange"></i>--}}
-                            {{--</div>--}}
-                            {{--<a href="{{ route('productoMovimiento') }}" class="small-box-footer">Ver informe <i--}}
-                            {{--class="fa fa-arrow-circle-right"></i></a>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<!-- ./col -->--}}
+                            <div class="col-lg-3 col-xs-6">
+                                <!-- small box -->
+                                <div class="small-box bg-blue">
+                                    <div class="inner">
+                                        <h3 style="font-size: 25px">Costo de</h3>
+                                        <h3 style="font-size: 25px">Ventas</h3>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-exchange"></i>
+                                    </div>
+                                    <a href="{{route('informeCostoVentas')}}" class="small-box-footer">Ver informe <i
+                                                class="fa fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            <!-- ./col -->
 
                             {{--<div class="col-lg-3 col-xs-6">--}}
                             {{--<!-- small box -->--}}

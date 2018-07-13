@@ -247,6 +247,7 @@
                     <ul class="treeview-menu">
 {{--                        <li><a href="{{route('usuarioNuevo')}}">Exportar</a></li>--}}
                         <li><a href="{{route('exportar.configuracion')}}">Exportar</a></li>
+                        <li><a href="{{route('cierre.index')}}">Cierre mensual</a></li>
                     </ul>
                 </li>
 

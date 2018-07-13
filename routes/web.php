@@ -289,6 +289,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/producto/precios','InformesController@ProductosPreciosInforme')->name('productoPreciosInforme');
     Route::get('informe/producto/precios/excel','InformesController@ProductosPreciosInformeExcel')->name('productoPreciosInformeExcel');
 
+    Route::get('informe/costo-ventas','CierreMensualController@informeCostoVentas')->name('informeCostoVentas');
+    Route::get('informe/costo-ventas/excel','CierreMensualController@informeCostoVentasExcel')->name('informeCostoVentasExcel');
+    Route::get('informe/costo-ventas/SAC','CierreMensualController@informeCostoVentasSAC')->name('informeCostoVentasSAC');
+
 
     /**
      * Rutas de usuarios
@@ -317,7 +321,8 @@ Route::group(['middleware' => 'auth'], function () {
     /**
      * Rutas para refactorizar la base de datos
      */
-    Route::get('rf/entradas1','DevController@Entradas1');
+        Route::get('rf/entradas1','DevController@Entradas1');
+        Route::get('rf/ventas','DevController@VentasREF');
 
     });
 
@@ -330,6 +335,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('exportar/sac/configuracion2','ExportarController@store2')->name('exportar.configuracion.store2');
     Route::get('exportar/sac/configuracion/{id}','ExportarController@edit')->name('exportar.configuracion.edit');
     Route::post('exportar/sac/configuracion/{id}','ExportarController@update')->name('exportar.configuracion.update');
+
+    /**
+     * Cierre mensual
+     */
+    Route::get('cierre-mensual','CierreMensualController@index')->name('cierre.index');
 
 
 });
