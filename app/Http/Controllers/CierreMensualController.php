@@ -51,12 +51,15 @@ class CierreMensualController extends Controller
         foreach ($productos as $producto) {
             $movimientos_mes = Movimiento::where('producto_id','=',$producto->id)
                 ->whereBetween('fecha_procesado',[$inicio_mes,$fin_mes])->where('tipo_movimiento_id','=',3)->get();
+            $cantidad_venta = 0.00;
             $costo_mes = 0.00;
+
             foreach ($movimientos_mes as $movimiento) {
                 if ($movimiento->salida->orden_pedido->venta != null) {
                     if ($movimiento->salida->orden_pedido->venta->estado_venta_id != 3) {
                         // Aqui va la logica
                         $cantidad = $movimiento->cantidad;
+                        $cantidad_venta += $cantidad;
                         $costo_unitario = $movimiento->costo_unitario;
                         $costo_mes += $cantidad * $costo_unitario;
                     }
@@ -67,6 +70,7 @@ class CierreMensualController extends Controller
                 $fila = [
                     'codigo' => $producto->codigo,
                     'producto' => $producto->nombre,
+                    'cantidad_venta' => $cantidad_venta,
                     'costo_vendido' => $costo_mes,
                 ];
                 $tabla->push($fila);
@@ -90,12 +94,15 @@ class CierreMensualController extends Controller
         foreach ($productos as $producto) {
             $movimientos_mes = Movimiento::where('producto_id','=',$producto->id)
                 ->whereBetween('fecha_procesado',[$inicio_mes,$fin_mes])->where('tipo_movimiento_id','=',3)->get();
+            $cantidad_venta = 0.00;
             $costo_mes = 0.00;
+
             foreach ($movimientos_mes as $movimiento) {
                 if ($movimiento->salida->orden_pedido->venta != null) {
                     if ($movimiento->salida->orden_pedido->venta->estado_venta_id != 3) {
                         // Aqui va la logica
                         $cantidad = $movimiento->cantidad;
+                        $cantidad_venta += $cantidad;
                         $costo_unitario = $movimiento->costo_unitario;
                         $costo_mes += $cantidad * $costo_unitario;
                     }
@@ -106,6 +113,7 @@ class CierreMensualController extends Controller
                 $fila = [
                     'codigo' => $producto->codigo,
                     'producto' => $producto->nombre,
+                    'cantidad_venta' => number_format($cantidad_venta,2),
                     'costo_vendido' => number_format($costo_mes,2),
                 ];
                 $tabla->push($fila);

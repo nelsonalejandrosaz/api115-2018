@@ -290,21 +290,21 @@
                             </div>
                             <!-- ./col -->
 
-                            {{--<div class="col-lg-3 col-xs-6">--}}
-                            {{--<!-- small box -->--}}
-                            {{--<div class="small-box bg-gray">--}}
-                            {{--<div class="inner">--}}
-                            {{--<h3 style="font-size: 25px">Costos</h3>--}}
-                            {{--<h3 style="font-size: 25px">productos</h3>--}}
-                            {{--</div>--}}
-                            {{--<div class="icon">--}}
-                            {{--<i class="fa fa-dollar"></i>--}}
-                            {{--</div>--}}
-                            {{--<a href="" class="small-box-footer">Ver informe <i--}}
-                            {{--class="fa fa-arrow-circle-right"></i></a>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<!-- ./col -->--}}
+                            <div class="col-lg-3 col-xs-6">
+                                <!-- small box -->
+                                <div class="small-box bg-blue">
+                                    <div class="inner">
+                                        <h3 style="font-size: 25px">Costo</h3>
+                                        <h3 style="font-size: 25px">inventario</h3>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-dollar"></i>
+                                    </div>
+                                    <a href="{{route('informeCostoInventario')}}" class="small-box-footer">Ver informe <i
+                                                class="fa fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                            <!-- ./col -->
 
                         </div>
                     </div><!-- ./box-body -->

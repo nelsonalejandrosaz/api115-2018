@@ -1470,4 +1470,42 @@ class InformesController extends Controller
         })->download('xls');
     }
 
+    public function CostoInvenatario()
+    {
+        $productos = Producto::all();
+        foreach ($productos as $producto) {
+            $producto->costo_total = $producto->costo * $producto->cantidad_existencia;
+        }
+        $productos_agrupados = $productos->groupBy('tipo_producto_id');
+        return view('informes.informeCostoInventario',[
+            'productos_agrupados' => $productos_agrupados,
+        ]);
+    }
+
+    public function CostoInvenatarioExcel()
+    {
+        $productos = Producto::all();
+        $tabla = collect();
+        foreach ($productos as $producto) {
+            $producto->costo_total = $producto->costo * $producto->cantidad_existencia;
+            $fila = [
+                'codigo' => $producto->codigo,
+                'producto' => $producto->nombre,
+                'tipo_producto' => $producto->tipo_producto->nombre,
+                'cantidad' => number_format($producto->cantidad_existencia,4),
+                'costo_unitario' => number_format($producto->costo,2),
+                'costo_total' => number_format($producto->costo_total,2),
+            ];
+            $tabla->push($fila);
+        }
+        $nombre_documento = 'informe-costo-inventario-al-dia-' . Carbon::now()->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('xls');
+    }
+
 }

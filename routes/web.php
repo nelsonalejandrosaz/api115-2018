@@ -293,6 +293,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('informe/costo-ventas/excel','CierreMensualController@informeCostoVentasExcel')->name('informeCostoVentasExcel');
     Route::get('informe/costo-ventas/SAC','CierreMensualController@informeCostoVentasSAC')->name('informeCostoVentasSAC');
 
+    Route::get('informe/costo-inventario','InformesController@CostoInvenatario')->name('informeCostoInventario');
+    Route::get('informe/costo-inventario/excel','InformesController@CostoInvenatarioExcel')->name('informeCostoInventarioExcel');
+
+
 
     /**
      * Rutas de usuarios

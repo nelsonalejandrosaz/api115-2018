@@ -69,7 +69,7 @@
             {{--Encabezado--}}
             <div class="col-xs-12">
                 <h2 class="page-header">
-                    <i class="fa fa-globe"></i> LGL S.A. de C.V. -- Informe de compras
+                    <i class="fa fa-globe"></i> LGL S.A. de C.V. -- Informe de costo de ventas
                     <small class="pull-right">Generado: {{\Carbon\Carbon::now()->format('d/m/Y -- h:m:s A')}}</small>
                 </h2>
                 <p class="lead">Del mes: {{ $datos['mes']->format('m/Y') }}</p>
@@ -83,7 +83,8 @@
                         <thead>
                         <tr>
                             <th style="width: 20%">Codigo</th>
-                            <th style="width: 20%">Producto</th>
+                            <th style="width: 40%">Producto</th>
+                            <th style="width: 20%">Cantidad vendida</th>
                             <th style="width: 20%">Costo de venta</th>
                         </tr>
                         </thead>
@@ -92,11 +93,12 @@
                             <tr>
                                 <td>{{ $fila['codigo'] }}</td>
                                 <td>{{ $fila['producto'] }}</td>
+                                <td>{{ number_format($fila['cantidad_venta'],2) }} Kgs</td>
                                 <td>$ {{ number_format($fila['costo_vendido'],2) }}</td>
                             </tr>
                         @endforeach
                             <tr>
-                                <td colspan="2"><b>TOTAL</b></td>
+                                <td colspan="3"><b>TOTAL</b></td>
                                 <td><b>$ {{number_format($tabla->sum('costo_vendido'),2)}}</b></td>
                             </tr>
                         </tbody>
