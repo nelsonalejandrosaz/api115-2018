@@ -471,6 +471,7 @@ class InformesController extends Controller
     public function IngresoDiario(Request $request)
     {
         $dia = ($request->input('fecha') == null) ? Carbon::now()->format('Y-m-d') : $request->input('fecha');
+        $fecha = Carbon::parse($dia);
         $abonos = Abono::where('fecha', '=', $dia)->get();
         $ventaCredito = Venta::where('fecha', '=', $dia)->get();
         $extra['dia'] = $dia;
@@ -478,7 +479,9 @@ class InformesController extends Controller
         $abono_efectivo = 0.00;
         $abono_cheque = 0.00;
         $abono_retencion = 0.00;
-        $abono_deposito = 0.00;
+        $abono_deposito_ba = 0.00;
+        $abono_deposito_bc = 0.00;
+        $abono_deposito_bs = 0.00;
         $documento_total = 0.00;
         $credito_total = 0.00;
         foreach ($abonos as $abono) {
@@ -489,8 +492,12 @@ class InformesController extends Controller
                 $abono_cheque += $abono->cantidad;
             } elseif ($abono->forma_pago->codigo == 'RETEN') {
                 $abono_retencion += $abono->cantidad;
-            } elseif ($abono->forma_pago->codigo == 'DEPOS') {
-                $abono_deposito += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBA') {
+                $abono_deposito_ba += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBC') {
+                $abono_deposito_bc += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBS') {
+                $abono_deposito_bs += $abono->cantidad;
             }
             $dev[] = $abono->venta;
             $documento_total += $abono->venta->saldo;
@@ -512,7 +519,8 @@ class InformesController extends Controller
         // Ventas al credito
         $ventaCreditoArray = [];
         foreach ($ventaCredito as $venta) {
-            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3) {
+            $abonoZ = $venta->abonos->where('fecha','=',$fecha);
+            if ($abonoZ->isEmpty() && $venta->estado_venta_id != 3) {
                 $ventaCreditoArray[] = $venta;
                 $documento_total += $venta->saldo;
             }
@@ -526,7 +534,9 @@ class InformesController extends Controller
         $extra['abono_efectivo'] = $abono_efectivo;
         $extra['abono_cheque'] = $abono_cheque;
         $extra['abono_retencion'] = $abono_retencion;
-        $extra['abono_deposito'] = $abono_deposito;
+        $extra['abono_deposito_ba'] = $abono_deposito_ba;
+        $extra['abono_deposito_bc'] = $abono_deposito_bc;
+        $extra['abono_deposito_bs'] = $abono_deposito_bs;
         return view('informes.ingresosDiariosInforme')
             ->with(['abonos' => $abonos])
             ->with(['extra' => $extra])

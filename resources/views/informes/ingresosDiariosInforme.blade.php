@@ -221,7 +221,11 @@
                                                     <span class="label label-success">{{ $abono->forma_pago->nombre }}</span>
                                                 @elseif($abono->forma_pago->codigo == 'CHEQU')
                                                     <span class="label label-default">{{ $abono->forma_pago->nombre }}</span>
-                                                @elseif($abono->forma_pago->codigo == 'DEPOS')
+                                                @elseif($abono->forma_pago->codigo == 'DEPBA')
+                                                    <span class="label label-primary">{{ $abono->forma_pago->nombre }}</span>
+                                                @elseif($abono->forma_pago->codigo == 'DEPBC')
+                                                    <span class="label label-primary">{{ $abono->forma_pago->nombre }}</span>
+                                                @elseif($abono->forma_pago->codigo == 'DEPBS')
                                                     <span class="label label-primary">{{ $abono->forma_pago->nombre }}</span>
                                                 @elseif($abono->forma_pago->codigo == 'RETEN')
                                                     <span class="label label-info">{{ $abono->forma_pago->nombre }}</span>
@@ -291,8 +295,18 @@
                                 <td><b></b></td>
                             </tr>
                             <tr>
-                                <td colspan="7" style="text-align: right"><b>TOTAL DEPOSITOS</b></td>
-                                <td><b>$ {{ number_format($extra['abono_deposito'],2) }}</b></td>
+                                <td colspan="7" style="text-align: right"><b>TOTAL DEPOSITOS BANCO AGRICOLA</b></td>
+                                <td><b>$ {{ number_format($extra['abono_deposito_ba'],2) }}</b></td>
+                                <td><b></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" style="text-align: right"><b>TOTAL DEPOSITOS CITI BANK</b></td>
+                                <td><b>$ {{ number_format($extra['abono_deposito_bc'],2) }}</b></td>
+                                <td><b></b></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" style="text-align: right"><b>TOTAL DEPOSITOS BANCO SCOTIABANK</b></td>
+                                <td><b>$ {{ number_format($extra['abono_deposito_bs'],2) }}</b></td>
                                 <td><b></b></td>
                             </tr>
                             <tr>

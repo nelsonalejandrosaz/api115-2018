@@ -1725,4 +1725,871 @@ class ExportarController extends Controller
         $exportacion_sac->update($request->all());
         return redirect()->route('exportar.configuracion');
     }
+
+    public function show(Request $request) {
+
+        $dia = ($request->input('dia') == null) ? Carbon::now()->format('Y-m-d') : $request->input('dia');
+        $fecha = Carbon::parse($dia);
+        $abonos = Abono::where('fecha', '=', $dia)->get();
+        $ventaCredito = Venta::where('fecha', '=', $dia)->get();
+        $extra['dia'] = $dia;
+        $abono_total = 0.00;
+        $abono_efectivo = 0.00;
+        $abono_cheque = 0.00;
+        $abono_retencion = 0.00;
+        $abono_deposito_ba = 0.00;
+        $abono_deposito_bc = 0.00;
+        $abono_deposito_bs = 0.00;
+        $documento_total = 0.00;
+        $credito_total = 0.00;
+        foreach ($abonos as $abono) {
+            $abono_total += $abono->cantidad;
+            if ($abono->forma_pago->codigo == 'EFECT') {
+                $abono_efectivo += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
+                $abono_cheque += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
+                $abono_retencion += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBA') {
+                $abono_deposito_ba += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBC') {
+                $abono_deposito_bc += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBS') {
+                $abono_deposito_bs += $abono->cantidad;
+            }
+            $dev[] = $abono->venta;
+            $documento_total += $abono->venta->saldo;
+        }
+        // Ventas contado
+        $ventasContadoArray = [];
+        $cobrosArray = [];
+        foreach ($abonos as $abono) {
+            if ($abono->venta->fecha->format('d/m/Y') == $dia) {
+                $ventasContadoArray[] = $abono;
+            } else {
+                $cobrosArray[] = $abono;
+            }
+        }
+        $ventas_contado = collect($ventasContadoArray);
+//        dd($ventas_contado->isNotEmpty());
+        $cobros = collect($cobrosArray);
+
+        // Ventas al credito
+        $ventaCreditoArray = [];
+        foreach ($ventaCredito as $venta) {
+            $abonoZ = $venta->abonos->where('fecha','=',$fecha);
+            if ($abonoZ->isEmpty() && $venta->estado_venta_id != 3) {
+                $ventaCreditoArray[] = $venta;
+                $documento_total += $venta->saldo;
+            }
+        }
+        $ventaCredito = collect($ventaCreditoArray);
+        $ventas_anuladas = Venta::where('fecha_anulado', '=', $dia)->get();
+//        dd($ventas_anuladas->isEmpty());
+        // Extra para informe
+        $extra['abono_total'] = $abono_total;
+        $extra['documento_total'] = $documento_total;
+        $extra['abono_efectivo'] = $abono_efectivo;
+        $extra['abono_cheque'] = $abono_cheque;
+        $extra['abono_retencion'] = $abono_retencion;
+        $extra['abono_deposito_ba'] = $abono_deposito_ba;
+        $extra['abono_deposito_bc'] = $abono_deposito_bc;
+        $extra['abono_deposito_bs'] = $abono_deposito_bs;
+
+        // Aqui va lo de la exportacion
+        $tabla = collect();
+
+        $ventas_dia_abono = collect();
+        $cobros_otros_dias = collect();
+        foreach ($cobros as $cobro) {
+            if ($cobro->venta->fecha == $fecha) {
+                $ventas_dia_abono->push($cobro);
+            } else {
+                $cobros_otros_dias->push($cobro);
+            }
+        }
+
+        $ventasX = Venta::where('fecha','=',$dia);
+        $fcf_dia = $ventasX->where('tipo_documento_id', '=', 1)->get();
+        $ventasX = Venta::where('fecha','=',$dia);
+        $ccf_dia = $ventasX->where('tipo_documento_id', '=', 2)->get();
+
+        // CUENTA CAJA
+        $caja = $abono_efectivo + $abono_cheque;
+        $fila = [
+            'id_cuenta' => '110101',
+            'concepto' => 'INGRESOS DE ESTE DIA ',
+            'cargo' => $caja,
+            'abono' => 0,
+        ];
+        $tabla->push($fila);
+        // CUENTA BANCO AGRICOLA
+        if ($abono_deposito_ba > 0) {
+            foreach ($abonos as $abono) {
+                if ($abono->forma_pago->codigo == 'DEPBA') {
+                    $fila = [
+                        'id_cuenta' => '1101030102',
+                        'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
+                        'cargo' => $abono->cantidad,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+        // CUENTA CITI BANK
+        if ($abono_deposito_bc > 0) {
+            foreach ($abonos as $abono) {
+                if ($abono->forma_pago->codigo == 'DEPBC') {
+                    $fila = [
+                        'id_cuenta' => '1101030101',
+                        'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
+                        'cargo' => $abono->cantidad,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+        // CUENTA BANCO SCOTIABANK
+        if ($abono_deposito_bs > 0) {
+            foreach ($abonos as $abono) {
+                if ($abono->forma_pago->codigo == 'DEPBS') {
+                    $fila = [
+                        'id_cuenta' => '1101030103',
+                        'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
+                        'cargo' => $abono->cantidad,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+        // CUENTAS POR COBRAR
+        foreach ($ventaCredito as $venta) {
+            if ($venta->cliente->cuenta_contable != null) {
+                $fila = [
+                    'id_cuenta' => $venta->cliente->cuenta_contable,
+                    'concepto' => $venta->tipo_documento->codigo . ' ' . $venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => $venta->venta_total_con_impuestos,
+                    'abono' => 0,
+                ];
+                $tabla->push($fila);
+            } else {
+                // CUENTA POR COBRAR GENERAL
+                $fila = [
+                    'id_cuenta' => '11030101999',
+                    'concepto' => $venta->tipo_documento->codigo . ' ' . $venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => $venta->venta_total_con_impuestos,
+                    'abono' => 0,
+                ];
+                $tabla->push($fila);
+            }
+        }
+        // CUENTAS POR COBRAR CON ABONO
+        foreach ($ventas_dia_abono as $abono) {
+            $ventaY = $abono->venta;
+            $abonosY = $ventaY->abonos->where('fecha','=',$fecha);
+            $saldoY = round($ventaY->venta_total_con_impuestos,2) - round($abonosY->sum('cantidad'),2);
+            if ($saldoY > 0.00) {
+                if ($abono->venta->cliente->cuenta_contable != null) {
+                    $fila = [
+                        'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                        'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                        'cargo' => $saldoY,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                } else {
+                    $fila = [
+                        'id_cuenta' => '11030101999',
+                        'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                        'cargo' => $saldoY,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+
+            }
+        }
+        // IVA RETENIDO
+        foreach ($abonos as $abono) {
+            if ($abono->forma_pago->codigo == 'RETEN') {
+                $fila = [
+                    'id_cuenta' => '210605',
+                    'concepto' => 'RETENCION DE ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => $abono->cantidad,
+                    'abono' => 0,
+                ];
+                $tabla->push($fila);
+            }
+        }
+        // CUENTAS POR COBRAR DESCARGO
+        foreach ($cobros_otros_dias as $abono) {
+            if ($abono->venta->cliente->cuenta_contable != null) {
+                $fila = [
+                    'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                    'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => 0,
+                    'abono' => $abono->cantidad,
+                ];
+                $tabla->push($fila);
+            } else {
+                $fila = [
+                    'id_cuenta' => '11030101999',
+                    'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => 0,
+                    'abono' => $abono->cantidad,
+                ];
+                $tabla->push($fila);
+            }
+        }
+        // IVA variables
+        $total_ventas_fac = $fcf_dia->sum('venta_total');
+        $total_ventas_ccf = $ccf_dia->sum('venta_total');
+        $iva_venta_fac = $fcf_dia->sum('venta_total_con_impuestos') - $fcf_dia->sum('venta_total');
+        $iva_venta_ccf = $ccf_dia->sum('venta_total_con_impuestos') - $ccf_dia->sum('venta_total');
+        // IVA
+        $fila = [
+            'id_cuenta' => '210602',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => 0,
+            'abono' => $iva_venta_fac,
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'id_cuenta' => '210601',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => 0,
+            'abono' => $iva_venta_ccf,
+        ];
+        $tabla->push($fila);
+        // VENTAS
+        $fila = [
+            'id_cuenta' => '51010102',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => 0,
+            'abono' => $total_ventas_fac,
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'id_cuenta' => '51010101',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => 0,
+            'abono' => $total_ventas_ccf,
+        ];
+        $tabla->push($fila);
+
+        // COMPRAS
+        $compras_dia = Compra::whereFecha($dia)->get();
+        foreach ($compras_dia as $compra) {
+            // Compra contado
+            if ($compra->condicion_pago_id == 1) {
+                // -- Locales sin percepcion
+                if ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == false) {
+                    $fila = [
+                        'id_cuenta' => '110101', // 1 - Caja general
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => 0,
+                        'abono' => $compra->compra_total_con_impuestos,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total * 0.13,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Locales con percepcion
+                elseif ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == true){
+                    $percepcion = $compra->compra_total * 0.01;
+                    $compra_total = $compra->compra_total * 1.14;
+                    $fila = [
+                        'id_cuenta' => '110101', // 1 - Caja general
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => 0,
+                        'abono' => $compra_total,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110704', // 9 - IVA PERCIBIDO
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => $percepcion,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => ($compra->compra_total * 0.13),
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Importacion
+                elseif ($compra->proveedor->nacional == false) {
+                    $fila = [
+                        'id_cuenta' => '110101', // 1 - Caja general
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => 0,
+                        'abono' => $compra->compra_total_con_impuestos,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110702', // 10 - IVA compras importaciones
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => ($compra->compra_total * 0.13),
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+            // Compra credito
+            else {
+                // -- Locales sin percepcion
+                if ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == false) {
+                    $fila = [
+                        'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => 0,
+                        'abono' => $compra->compra_total_con_impuestos,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => ($compra->compra_total * 0.13),
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Locales con percepcion
+                elseif ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == true){
+                    $percepcion = $compra->compra_total * 0.01;
+                    $compra_total = $compra->compra_total * 1.14;
+                    $fila = [
+                        'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => 0,
+                        'abono' => $compra_total,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110704', // 9 - IVA PERCIBIDO
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => $percepcion,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => ($compra->compra_total * 0.13),
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Importacion
+                elseif ($compra->proveedor->nacional == false) {
+                    $fila = [
+                        'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => 0,
+                        'abono' => $compra->compra_total_con_impuestos,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => $compra->compra_total,
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110702', // 10 - IVA compras importaciones
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => ($compra->compra_total * 0.13),
+                        'abono' => 0,
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+
+        return view('exportar.informeExportacionSAC',[
+            'tabla' => $tabla,
+            'fecha' => $fecha,
+        ]);
+    }
+
+    public function showExcel(Request $request) {
+
+        $dia = ($request->input('dia') == null) ? Carbon::now()->format('Y-m-d') : $request->input('dia');
+        $fecha = Carbon::parse($dia);
+        $abonos = Abono::where('fecha', '=', $dia)->get();
+        $ventaCredito = Venta::where('fecha', '=', $dia)->get();
+        $extra['dia'] = $dia;
+        $abono_total = 0.00;
+        $abono_efectivo = 0.00;
+        $abono_cheque = 0.00;
+        $abono_retencion = 0.00;
+        $abono_deposito_ba = 0.00;
+        $abono_deposito_bc = 0.00;
+        $abono_deposito_bs = 0.00;
+        $documento_total = 0.00;
+        $credito_total = 0.00;
+        foreach ($abonos as $abono) {
+            $abono_total += $abono->cantidad;
+            if ($abono->forma_pago->codigo == 'EFECT') {
+                $abono_efectivo += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'CHEQU') {
+                $abono_cheque += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'RETEN') {
+                $abono_retencion += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBA') {
+                $abono_deposito_ba += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBC') {
+                $abono_deposito_bc += $abono->cantidad;
+            } elseif ($abono->forma_pago->codigo == 'DEPBS') {
+                $abono_deposito_bs += $abono->cantidad;
+            }
+            $dev[] = $abono->venta;
+            $documento_total += $abono->venta->saldo;
+        }
+        // Ventas contado
+        $ventasContadoArray = [];
+        $cobrosArray = [];
+        foreach ($abonos as $abono) {
+            if ($abono->venta->fecha->format('d/m/Y') == $dia) {
+                $ventasContadoArray[] = $abono;
+            } else {
+                $cobrosArray[] = $abono;
+            }
+        }
+        $ventas_contado = collect($ventasContadoArray);
+//        dd($ventas_contado->isNotEmpty());
+        $cobros = collect($cobrosArray);
+
+        // Ventas al credito
+        $ventaCreditoArray = [];
+        foreach ($ventaCredito as $venta) {
+            if ($venta->abonos->isEmpty() && $venta->estado_venta_id != 3) {
+                $ventaCreditoArray[] = $venta;
+                $documento_total += $venta->saldo;
+            }
+        }
+        $ventaCredito = collect($ventaCreditoArray);
+        $ventas_anuladas = Venta::where('fecha_anulado', '=', $dia)->get();
+//        dd($ventas_anuladas->isEmpty());
+        // Extra para informe
+        $extra['abono_total'] = $abono_total;
+        $extra['documento_total'] = $documento_total;
+        $extra['abono_efectivo'] = $abono_efectivo;
+        $extra['abono_cheque'] = $abono_cheque;
+        $extra['abono_retencion'] = $abono_retencion;
+        $extra['abono_deposito_ba'] = $abono_deposito_ba;
+        $extra['abono_deposito_bc'] = $abono_deposito_bc;
+        $extra['abono_deposito_bs'] = $abono_deposito_bs;
+
+        // Aqui va lo de la exportacion
+        $tabla = collect();
+
+        $ventas_dia_abono = collect();
+        $cobros_otros_dias = collect();
+        foreach ($cobros as $cobro) {
+            if ($cobro->venta->fecha == $fecha) {
+                $ventas_dia_abono->push($cobro);
+            } else {
+                $cobros_otros_dias->push($cobro);
+            }
+        }
+
+        $ventasX = Venta::where('fecha','=',$dia);
+        $fcf_dia = $ventasX->where('tipo_documento_id', '=', 1)->get();
+        $ventasX = Venta::where('fecha','=',$dia);
+        $ccf_dia = $ventasX->where('tipo_documento_id', '=', 2)->get();
+
+        // CUENTA CAJA
+        $caja = $abono_efectivo + $abono_cheque;
+        $fila = [
+            'id_cuenta' => '110101',
+            'concepto' => 'INGRESOS DE ESTE DIA ',
+            'cargo' => number_format($caja,2),
+            'abono' => number_format(0,2),
+        ];
+        $tabla->push($fila);
+        // CUENTA BANCO AGRICOLA
+        if ($abono_deposito_ba > 0) {
+            foreach ($abonos as $abono) {
+                if ($abono->forma_pago->codigo == 'DEPBA') {
+                    $fila = [
+                        'id_cuenta' => '1101030102',
+                        'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
+                        'cargo' => number_format($abono->cantidad,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+        // CUENTA CITI BANK
+        if ($abono_deposito_bc > 0) {
+            foreach ($abonos as $abono) {
+                if ($abono->forma_pago->codigo == 'DEPBC') {
+                    $fila = [
+                        'id_cuenta' => '1101030101',
+                        'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
+                        'cargo' => number_format($abono->cantidad,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+        // CUENTA BANCO SCOTIABANK
+        if ($abono_deposito_bs > 0) {
+            foreach ($abonos as $abono) {
+                if ($abono->forma_pago->codigo == 'DEPBS') {
+                    $fila = [
+                        'id_cuenta' => '1101030103',
+                        'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
+                        'cargo' => number_format($abono->cantidad,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+        // CUENTAS POR COBRAR
+        foreach ($ventaCredito as $venta) {
+            if ($venta->cliente->cuenta_contable != null) {
+                $fila = [
+                    'id_cuenta' => $venta->cliente->cuenta_contable,
+                    'concepto' => $venta->tipo_documento->codigo . ' ' . $venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => number_format($venta->venta_total_con_impuestos,2),
+                    'abono' => number_format(0,2),
+                ];
+                $tabla->push($fila);
+            } else {
+                // CUENTA POR COBRAR GENERAL
+                $fila = [
+                    'id_cuenta' => '11030101999',
+                    'concepto' => $venta->tipo_documento->codigo . ' ' . $venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => number_format($venta->venta_total_con_impuestos,2),
+                    'abono' => number_format(0,2),
+                ];
+                $tabla->push($fila);
+            }
+        }
+        // CUENTAS POR COBRAR CON ABONO
+        foreach ($ventas_dia_abono as $abono) {
+            if ($abono->venta->saldo > 0) {
+                if ($abono->venta->cliente->cuenta_contable != null) {
+                    $fila = [
+                        'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                        'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                        'cargo' => number_format($abono->venta->saldo,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                } else {
+                    $fila = [
+                        'id_cuenta' => '11030101999',
+                        'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                        'cargo' => number_format($abono->venta->saldo,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+
+            }
+        }
+        // IVA RETENIDO
+        foreach ($abonos as $abono) {
+            if ($abono->forma_pago->codigo == 'RETEN') {
+                $fila = [
+                    'id_cuenta' => '210605',
+                    'concepto' => 'RETENCION DE ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => number_format($abono->cantidad,2),
+                    'abono' => number_format(0,2),
+                ];
+                $tabla->push($fila);
+            }
+        }
+        // COMPRAS
+
+        // CUENTAS POR COBRAR DESCARGO
+        foreach ($cobros_otros_dias as $abono) {
+            if ($abono->venta->cliente->cuenta_contable != null) {
+                $fila = [
+                    'id_cuenta' => $abono->venta->cliente->cuenta_contable,
+                    'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format($abono->cantidad,2),
+                ];
+                $tabla->push($fila);
+            } else {
+                $fila = [
+                    'id_cuenta' => '11030101999',
+                    'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
+                    'cargo' => number_format(0,2),
+                    'abono' => number_format($abono->cantidad,2),
+                ];
+                $tabla->push($fila);
+            }
+        }
+        $total_ventas_fac = $fcf_dia->sum('venta_total');
+        $total_ventas_ccf = $ccf_dia->sum('venta_total');
+        $iva_venta_fac = $fcf_dia->sum('venta_total_con_impuestos') - $fcf_dia->sum('venta_total');
+        $iva_venta_ccf = $ccf_dia->sum('venta_total_con_impuestos') - $ccf_dia->sum('venta_total');
+        // IVA
+        $fila = [
+            'id_cuenta' => '210602',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => number_format(0,2),
+            'abono' => number_format($iva_venta_fac,2),
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'id_cuenta' => '210601',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => number_format(0,2),
+            'abono' => number_format($iva_venta_ccf,2),
+        ];
+        $tabla->push($fila);
+        // VENTAS
+        $fila = [
+            'id_cuenta' => '51010102',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => number_format(0,2),
+            'abono' => number_format($total_ventas_fac,2),
+        ];
+        $tabla->push($fila);
+        $fila = [
+            'id_cuenta' => '51010101',
+            'concepto' => 'VENTAS DE ESTE DIA',
+            'cargo' => number_format(0,2),
+            'abono' => number_format($total_ventas_ccf,2),
+        ];
+        $tabla->push($fila);
+
+        // COMPRAS
+        $compras_dia = Compra::whereFecha($dia)->get();
+        foreach ($compras_dia as $compra) {
+            // Compra contado
+            if ($compra->condicion_pago_id == 1) {
+                // -- Locales sin percepcion
+                if ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == false) {
+                    $fila = [
+                        'id_cuenta' => '110101', // 1 - Caja general
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($compra->compra_total_con_impuestos,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($compra->compra_total,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Locales con percepcion
+                elseif ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == true){
+                    $percepcion = $compra->compra_total * 0.01;
+                    $compra_total = $compra->compra_total * 1.14;
+                    $fila = [
+                        'id_cuenta' => '110101', // 1 - Caja general
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($compra_total,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110704', // 9 - IVA PERCIBIDO
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($percepcion,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($compra->compra_total,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Importacion
+                elseif ($compra->proveedor->nacional == false) {
+                    $fila = [
+                        'id_cuenta' => '110101', // 1 - Caja general
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($compra->compra_total_con_impuestos,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($compra->compra_total,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110702', // 10 - IVA compras importaciones
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+            // Compra credito
+            else {
+                // -- Locales sin percepcion
+                if ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == false) {
+                    $fila = [
+                        'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($compra->compra_total_con_impuestos,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($compra->compra_total,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Locales con percepcion
+                elseif ($compra->proveedor->nacional == true && $compra->proveedor->percepcion == true){
+                    $percepcion = $compra->compra_total * 0.01;
+                    $compra_total = $compra->compra_total * 1.14;
+                    $fila = [
+                        'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($compra_total,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110704', // 9 - IVA PERCIBIDO
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($percepcion,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($compra->compra_total,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110701', // 8 - IVA compras locales
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+                // -- Importacion
+                elseif ($compra->proveedor->nacional == false) {
+                    $fila = [
+                        'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
+                        'concepto' => 'COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(0,2),
+                        'abono' => number_format($compra->compra_total_con_impuestos,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
+                        'concepto' => 'POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format($compra->compra_total,2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                    $fila = [
+                        'id_cuenta' => '110702', // 10 - IVA compras importaciones
+                        'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2),
+                        'abono' => number_format(0,2),
+                    ];
+                    $tabla->push($fila);
+                }
+            }
+        }
+
+        $nombre_documento = 'datos-para-sac-dia-' . $fecha->format('d-m-Y');
+        Excel::create($nombre_documento, function ($excel) use ($tabla) {
+            $excel->sheet('Abonos diarios', function ($sheet) use ($tabla) {
+
+                $sheet->fromArray($tabla);
+
+            });
+        })->download('csv');
+    }
 }

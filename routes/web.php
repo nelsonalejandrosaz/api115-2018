@@ -340,6 +340,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('exportar/sac/configuracion/{id}','ExportarController@edit')->name('exportar.configuracion.edit');
     Route::post('exportar/sac/configuracion/{id}','ExportarController@update')->name('exportar.configuracion.update');
 
+    Route::get('sac/exportar','ExportarController@show')->name('sac.exportar');
+    Route::get('sac/exportar/SAC','ExportarController@showExcel')->name('sac.exportarExcel');
+
     /**
      * Cierre mensual
      */
