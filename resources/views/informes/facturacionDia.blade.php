@@ -149,7 +149,12 @@
                             </tr>
                             @php( $i++ )
                             @endforeach
-
+                            <tr>
+                                <td colspan="4">SUB TOTAL FAC</td>
+                                <td><b>$ {{number_format($fcf_dia->sum('monto'),2)}}</b></td>
+                                <td><b>$ {{number_format($fcf_dia->sum('monto_iva'),2)}}</b></td>
+                                <td><b>$ {{number_format($fcf_dia->sum('venta_total_con_impuestos'),2)}}</b></td>
+                            </tr>
                             <tr>
                                 <td colspan="6">Comprobantes de crédito fiscal</td>
                             </tr>
@@ -179,6 +184,12 @@
                                 </tr>
                                 @php( $i++ )
                             @endforeach
+                            <tr>
+                                <td colspan="4">SUB TOTAL CCF</td>
+                                <td><b>$ {{number_format($ccf_dia->sum('monto'),2)}}</b></td>
+                                <td><b>$ {{number_format($ccf_dia->sum('monto_iva'),2)}}</b></td>
+                                <td><b>$ {{number_format($ccf_dia->sum('venta_total_con_impuestos'),2)}}</b></td>
+                            </tr>
                         </tbody>
                         <td colspan="4"><b>TOTALES</b></td>
                         <td><b>$ {{ number_format($extra['monto_dia'],2) }}</b></td>
