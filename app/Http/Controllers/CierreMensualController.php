@@ -163,19 +163,21 @@ class CierreMensualController extends Controller
             }
         }
 
+//        dd($tabla->sum('costo_vendido'));
+
         $tabla2 = collect();
         $fila = [
             'id_cuenta' => '110501', // Inventario
             'concepto' => 'COSTO DE VENTA DEL MES ' . $mes->format('m/Y'),
-            'cargo' => number_format(0,2),
-            'abono' => number_format(($tabla->sum('costo_vendido')),2),
+            'cargo' => round(0,2),
+            'abono' => round(($tabla->sum('costo_vendido')),2),
         ];
         $tabla2->push($fila);
         $fila = [
             'id_cuenta' => '410101', // Costo de lo vendido
             'concepto' => 'COSTO DE VENTA DEL MES ' . $mes->format('m/Y'),
-            'cargo' => number_format(($tabla->sum('costo_vendido')),2),
-            'abono' => number_format(0,2),
+            'cargo' => round(($tabla->sum('costo_vendido')),2),
+            'abono' => round(0,2),
         ];
         $tabla2->push($fila);
 
