@@ -35,10 +35,10 @@
             <div class="box-body">
 
                 <div class="col-md-6 col-sm-12">
-                    <h4>Mes</h4>
+                    <h4>Fecha</h4>
                     {{-- Fecha inicio --}}
                     <div class="form-group">
-                        <label class="col-md-4 control-label"><b>Mes</b></label>
+                        <label class="col-md-4 control-label"><b>Fecha</b></label>
                         <div class="col-md-8">
                             <div class="input-group">
                                 <input type="date" class="form-control" name="dia" value="{{$fecha->format('Y-m-d')}}">

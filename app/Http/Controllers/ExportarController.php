@@ -2252,7 +2252,7 @@ class ExportarController extends Controller
         $fila = [
             'id_cuenta' => '110101',
             'concepto' => 'INGRESOS DE ESTE DIA ',
-            'cargo' => $caja,
+            'cargo' => number_format($caja,2,'.',''),
             'abono' => 0,
         ];
         $tabla->push($fila);
@@ -2263,7 +2263,7 @@ class ExportarController extends Controller
                     $fila = [
                         'id_cuenta' => '1101030102',
                         'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
-                        'cargo' => $abono->cantidad,
+                        'cargo' => number_format($abono->cantidad,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2277,7 +2277,7 @@ class ExportarController extends Controller
                     $fila = [
                         'id_cuenta' => '1101030101',
                         'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
-                        'cargo' => $abono->cantidad,
+                        'cargo' => number_format($abono->cantidad,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2291,7 +2291,7 @@ class ExportarController extends Controller
                     $fila = [
                         'id_cuenta' => '1101030103',
                         'concepto' => 'CANCELACION ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero,
-                        'cargo' => $abono->cantidad,
+                        'cargo' => number_format($abono->cantidad,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2304,7 +2304,7 @@ class ExportarController extends Controller
                 $fila = [
                     'id_cuenta' => $venta->cliente->cuenta_contable,
                     'concepto' => $venta->tipo_documento->codigo . ' ' . $venta->numero . ' ' . $fecha->format('d/m/Y'),
-                    'cargo' => $venta->venta_total_con_impuestos,
+                    'cargo' => number_format($venta->venta_total_con_impuestos,2,'.',''),
                     'abono' => 0,
                 ];
                 $tabla->push($fila);
@@ -2313,7 +2313,7 @@ class ExportarController extends Controller
                 $fila = [
                     'id_cuenta' => '11030101999',
                     'concepto' => $venta->tipo_documento->codigo . ' ' . $venta->numero . ' ' . $fecha->format('d/m/Y'),
-                    'cargo' => $venta->venta_total_con_impuestos,
+                    'cargo' => number_format($venta->venta_total_con_impuestos,2,'.',''),
                     'abono' => 0,
                 ];
                 $tabla->push($fila);
@@ -2329,7 +2329,7 @@ class ExportarController extends Controller
                     $fila = [
                         'id_cuenta' => $abono->venta->cliente->cuenta_contable,
                         'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
-                        'cargo' => $saldoY,
+                        'cargo' => number_format($saldoY,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2337,7 +2337,7 @@ class ExportarController extends Controller
                     $fila = [
                         'id_cuenta' => '11030101999',
                         'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
-                        'cargo' => $saldoY,
+                        'cargo' => number_format($saldoY,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2351,7 +2351,7 @@ class ExportarController extends Controller
                 $fila = [
                     'id_cuenta' => '210605',
                     'concepto' => 'RETENCION DE ' . $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
-                    'cargo' => $abono->cantidad,
+                    'cargo' => number_format($abono->cantidad,2,'.',''),
                     'abono' => 0,
                 ];
                 $tabla->push($fila);
@@ -2364,7 +2364,7 @@ class ExportarController extends Controller
                     'id_cuenta' => $abono->venta->cliente->cuenta_contable,
                     'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
                     'cargo' => 0,
-                    'abono' => $abono->cantidad,
+                    'abono' => number_format($abono->cantidad,2,'.',''),
                 ];
                 $tabla->push($fila);
             } else {
@@ -2372,7 +2372,7 @@ class ExportarController extends Controller
                     'id_cuenta' => '11030101999',
                     'concepto' => $abono->venta->tipo_documento->codigo . ' ' . $abono->venta->numero . ' ' . $fecha->format('d/m/Y'),
                     'cargo' => 0,
-                    'abono' => $abono->cantidad,
+                    'abono' => number_format($abono->cantidad,2,'.',''),
                 ];
                 $tabla->push($fila);
             }
@@ -2387,14 +2387,14 @@ class ExportarController extends Controller
             'id_cuenta' => '210602',
             'concepto' => 'VENTAS DE ESTE DIA',
             'cargo' => 0,
-            'abono' => $iva_venta_fac,
+            'abono' => number_format($iva_venta_fac,2,'.',''),
         ];
         $tabla->push($fila);
         $fila = [
             'id_cuenta' => '210601',
             'concepto' => 'VENTAS DE ESTE DIA',
             'cargo' => 0,
-            'abono' => $iva_venta_ccf,
+            'abono' => number_format($iva_venta_ccf,2,'.',''),
         ];
         $tabla->push($fila);
         // VENTAS
@@ -2402,14 +2402,14 @@ class ExportarController extends Controller
             'id_cuenta' => '51010102',
             'concepto' => 'VENTAS DE ESTE DIA',
             'cargo' => 0,
-            'abono' => $total_ventas_fac,
+            'abono' => number_format($total_ventas_fac,2,'.',''),
         ];
         $tabla->push($fila);
         $fila = [
             'id_cuenta' => '51010101',
             'concepto' => 'VENTAS DE ESTE DIA',
             'cargo' => 0,
-            'abono' => $total_ventas_ccf,
+            'abono' => number_format($total_ventas_ccf,2,'.',''),
         ];
         $tabla->push($fila);
 
@@ -2424,20 +2424,20 @@ class ExportarController extends Controller
                         'id_cuenta' => '110101', // 1 - Caja general
                         'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => 0,
-                        'abono' => $compra->compra_total_con_impuestos,
+                        'abono' => number_format($compra->compra_total_con_impuestos,2,'.',''),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
                         'concepto' => 'POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total,
+                        'cargo' => number_format($compra->compra_total,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110701', // 8 - IVA compras locales
                         'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total * 0.13,
+                        'cargo' => number_format(($compra->compra_total * 0.13),2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2450,27 +2450,27 @@ class ExportarController extends Controller
                         'id_cuenta' => '110101', // 1 - Caja general
                         'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => 0,
-                        'abono' => $compra_total,
+                        'abono' => number_format($compra_total,2,'.',''),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110704', // 9 - IVA PERCIBIDO
                         'concepto' => 'COMPRA # ' . $compra->numero,
-                        'cargo' => $percepcion,
+                        'cargo' => number_format($percepcion,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
                         'concepto' => 'POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total,
+                        'cargo' => number_format($compra->compra_total,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110701', // 8 - IVA compras locales
                         'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
-                        'cargo' => ($compra->compra_total * 0.13),
+                        'cargo' => number_format(($compra->compra_total * 0.13),2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2481,20 +2481,20 @@ class ExportarController extends Controller
                         'id_cuenta' => '110101', // 1 - Caja general
                         'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => 0,
-                        'abono' => $compra->compra_total_con_impuestos,
+                        'abono' => number_format($compra->compra_total_con_impuestos,2,'.',''),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
                         'concepto' => 'POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total,
+                        'cargo' => number_format($compra->compra_total,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110702', // 10 - IVA compras importaciones
                         'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
-                        'cargo' => ($compra->compra_total * 0.13),
+                        'cargo' => number_format(($compra->compra_total * 0.13),2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2508,20 +2508,20 @@ class ExportarController extends Controller
                         'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
                         'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => 0,
-                        'abono' => $compra->compra_total_con_impuestos,
+                        'abono' => number_format($compra->compra_total_con_impuestos,2,'.',''),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
                         'concepto' => 'POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total,
+                        'cargo' => number_format($compra->compra_total,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110701', // 8 - IVA compras locales
                         'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
-                        'cargo' => ($compra->compra_total * 0.13),
+                        'cargo' => number_format(($compra->compra_total * 0.13),2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2534,27 +2534,27 @@ class ExportarController extends Controller
                         'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
                         'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => 0,
-                        'abono' => $compra_total,
+                        'abono' => number_format($compra_total,2,'.',''),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110704', // 9 - IVA PERCIBIDO
                         'concepto' => 'COMPRA # ' . $compra->numero,
-                        'cargo' => $percepcion,
+                        'cargo' => number_format($percepcion,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
                         'concepto' => 'POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total,
+                        'cargo' => number_format($compra->compra_total,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110701', // 8 - IVA compras locales
                         'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
-                        'cargo' => ($compra->compra_total * 0.13),
+                        'cargo' => number_format(($compra->compra_total * 0.13),2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
@@ -2565,26 +2565,29 @@ class ExportarController extends Controller
                         'id_cuenta' => $compra->proveedor->cuenta_contable, // CxP Proveedor
                         'concepto' => 'COMPRA # ' . $compra->numero,
                         'cargo' => 0,
-                        'abono' => $compra->compra_total_con_impuestos,
+                        'abono' => number_format($compra->compra_total_con_impuestos,2,'.',''),
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110501', // 7 - INVENTARIOS DE MATERIA PRIMA
                         'concepto' => 'POR COMPRA # ' . $compra->numero,
-                        'cargo' => $compra->compra_total,
+                        'cargo' => number_format($compra->compra_total,2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                     $fila = [
                         'id_cuenta' => '110702', // 10 - IVA compras importaciones
                         'concepto' => 'IVA POR COMPRA # ' . $compra->numero,
-                        'cargo' => ($compra->compra_total * 0.13),
+                        'cargo' => number_format(($compra->compra_total * 0.13),2,'.',''),
                         'abono' => 0,
                     ];
                     $tabla->push($fila);
                 }
             }
         }
+
+        
+
 
         $nombre_documento = 'datos-para-sac-dia-' . $fecha->format('d-m-Y');
         Excel::create($nombre_documento, function ($excel) use ($tabla) {

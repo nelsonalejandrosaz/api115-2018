@@ -639,7 +639,7 @@
                                         <i class="fa fa-th-list"></i>
                                     </div>
                                     <a href="{{ route('sac.exportar') }}" class="small-box-footer">Ver
-                                        libro <i class="fa fa-arrow-circle-right"></i></a>
+                                        informe <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                             <!-- ./col -->

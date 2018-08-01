@@ -241,15 +241,15 @@
 
 
                 {{-- Exportar SAC --}}
-                <li class="treeview">
-                    <a href="#"><i class='fa fa-arrow-circle-o-up'></i> <span>Exportacion SAC</span> <i
-                                class="fa fa-angle-left pull-right"></i></a>
-                    <ul class="treeview-menu">
+                {{--<li class="treeview">--}}
+                    {{--<a href="#"><i class='fa fa-arrow-circle-o-up'></i> <span>Exportacion SAC</span> <i--}}
+                                {{--class="fa fa-angle-left pull-right"></i></a>--}}
+                    {{--<ul class="treeview-menu">--}}
 {{--                        <li><a href="{{route('usuarioNuevo')}}">Exportar</a></li>--}}
-                        <li><a href="{{route('exportar.configuracion')}}">Exportar</a></li>
+                        {{--<li><a href="{{route('exportar.configuracion')}}">Exportar</a></li>--}}
                         {{--<li><a href="{{route('cierre.index')}}">Cierre mensual</a></li>--}}
-                    </ul>
-                </li>
+                    {{--</ul>--}}
+                {{--</li>--}}
 
 
                 {{-- Configuracion --}}
