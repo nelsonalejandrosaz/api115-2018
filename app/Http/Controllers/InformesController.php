@@ -698,14 +698,16 @@ class InformesController extends Controller
     {
         $fecha_inicio = ($request->input('fecha_inicio') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_inicio'));
         $fecha_fin = ($request->input('fecha_fin') == null) ? Carbon::now() : Carbon::parse($request->input('fecha_fin'));
+//        $fecha_fin->addHours(23)->addMinutes(59)->addSeconds(59);
         $total_dias = $fecha_inicio->diffInDays($fecha_fin);
         $datos = [];
         $datos += ['fecha_inicio' => $fecha_inicio];
         $datos += ['fecha_fin' => $fecha_fin];
         $ventas = Venta::whereBetween('fecha', [$fecha_inicio, $fecha_fin])->get();
+//        dd($total_dias);
         $tabla = collect();
         $fecha = Carbon::parse($fecha_inicio);
-        for ($i = 0; $i < $total_dias; $i++) {
+        for ($i = 0; $i <= $total_dias; $i++) {
             if (!$fecha->isSunday()) {
                 $valor = $ventas->where('fecha', '=', $fecha)->sum('venta_total');
                 $valor = round($valor, 2);

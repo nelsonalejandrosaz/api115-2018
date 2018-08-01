@@ -2586,7 +2586,7 @@ class ExportarController extends Controller
             }
         }
 
-        
+
 
 
         $nombre_documento = 'datos-para-sac-dia-' . $fecha->format('d-m-Y');
