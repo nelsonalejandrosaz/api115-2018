@@ -95,7 +95,7 @@
                         <label class="col-sm-4 control-label"><b>Fecha ingreso:</b></label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                                <input readonly type="date" class="form-control" name="fecha" id="fecha-input" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                <input type="date" class="form-control" name="fecha" id="fecha-input" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
