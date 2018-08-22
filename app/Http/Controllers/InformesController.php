@@ -1387,20 +1387,40 @@ class InformesController extends Controller
             } else {
                 $retencion = '-';
             }
-            $fila = [
-                'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
-                'N° DE VENTA' => $venta->numero,
-                'N° DE REGISTRO' => $venta->cliente->nrc,
-                'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
-                'PROPIAS EXENTAS' => '-',
-                'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
-                'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
-                'TERCEROS EXENTAS' => '-',
-                'TERCEROS GRAVADAS' => '-',
-                'TERCEROS DEB FISCAL' => '-',
-                'IVA RETENIDO' => $retencion,
-                'TOTAL' => number_format(($venta->venta_total * 1.13),2),
-            ];
+            /*
+             * Complementos alimenticios
+             */
+            if ($venta->cliente_id == 358) {
+                $fila = [
+                    'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                    'N° DE VENTA' => $venta->numero,
+                    'N° DE REGISTRO' => $venta->cliente->nrc,
+                    'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                    'PROPIAS EXENTAS' => '-',
+                    'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                    'PROPIAS DEB FISCAL' =>'-',
+                    'TERCEROS EXENTAS' => '-',
+                    'TERCEROS GRAVADAS' => '-',
+                    'TERCEROS DEB FISCAL' => '-',
+                    'IVA RETENIDO' => $retencion,
+                    'TOTAL' => number_format(($venta->venta_total),2),
+                ];
+            } else {
+                $fila = [
+                    'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                    'N° DE VENTA' => $venta->numero,
+                    'N° DE REGISTRO' => $venta->cliente->nrc,
+                    'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                    'PROPIAS EXENTAS' => '-',
+                    'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                    'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
+                    'TERCEROS EXENTAS' => '-',
+                    'TERCEROS GRAVADAS' => '-',
+                    'TERCEROS DEB FISCAL' => '-',
+                    'IVA RETENIDO' => $retencion,
+                    'TOTAL' => number_format(($venta->venta_total * 1.13),2),
+                ];
+            }
             $tabla->push($fila);
         }
         return view('informes.informeLibroVentasFAC')
@@ -1456,20 +1476,40 @@ class InformesController extends Controller
             } else {
                 $retencion = '-';
             }
-            $fila = [
-                'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
-                'N° DE VENTA' => $venta->numero,
-                'N° DE REGISTRO' => $venta->cliente->nrc,
-                'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
-                'PROPIAS EXENTAS' => '-',
-                'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
-                'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
-                'TERCEROS EXENTAS' => '-',
-                'TERCEROS GRAVADAS' => '-',
-                'TERCEROS DEB FISCAL' => '-',
-                'IVA RETENIDO' => $retencion,
-                'TOTAL' => number_format(($venta->venta_total * 1.13),2),
-            ];
+            /*
+             * Complementos alimenticios
+             */
+            if ($venta->cliente_id == 358) {
+                $fila = [
+                    'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                    'N° DE VENTA' => $venta->numero,
+                    'N° DE REGISTRO' => $venta->cliente->nrc,
+                    'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                    'PROPIAS EXENTAS' => '-',
+                    'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                    'PROPIAS DEB FISCAL' =>'-',
+                    'TERCEROS EXENTAS' => '-',
+                    'TERCEROS GRAVADAS' => '-',
+                    'TERCEROS DEB FISCAL' => '-',
+                    'IVA RETENIDO' => $retencion,
+                    'TOTAL' => number_format(($venta->venta_total),2),
+                ];
+            } else {
+                $fila = [
+                    'FECHA EMISION' => $venta->fecha->format('d/m/Y'),
+                    'N° DE VENTA' => $venta->numero,
+                    'N° DE REGISTRO' => $venta->cliente->nrc,
+                    'NOMBRE DEL CLIENTE' => $venta->cliente->nombre,
+                    'PROPIAS EXENTAS' => '-',
+                    'PROPIAS GRAVADAS' => number_format($venta->venta_total,2),
+                    'PROPIAS DEB FISCAL' => number_format(($venta->venta_total * 0.13),2),
+                    'TERCEROS EXENTAS' => '-',
+                    'TERCEROS GRAVADAS' => '-',
+                    'TERCEROS DEB FISCAL' => '-',
+                    'IVA RETENIDO' => $retencion,
+                    'TOTAL' => number_format(($venta->venta_total * 1.13),2),
+                ];
+            }
             $tabla->push($fila);
         }
         $nombre_documento = 'informe-libro-ventas-fac-del-' . $fecha_inicio->format('d-m-Y') . ' al ' . $fecha_fin->format('d-m-Y');
